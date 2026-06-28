@@ -1,0 +1,107 @@
+{
+  "id": "REQ-ATC-01",
+  "title": "Flight Registration",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow air traffic controllers to register incoming and outgoing flights with fields: flight number, airline, origin/destination, scheduled time, and type (arrival/departure).",
+  "rationale": "This requirement is necessary to ensure all flight operations are recorded and managed within the system.",
+  "business_value": "Enhanced operational efficiency and safety through accurate and timely flight information management.",
+  "source": {
+    "type": "User Story",
+    "id": 65,
+    "description": "As an air traffic controller, I need to register incoming and outgoing flights so that all flight operations are recorded and managed within the system."
+  },
+  "stakeholders": [
+    "Air Traffic Controllers",
+    "Flight Operations Team"
+  ],
+  "acceptance_criteria": [
+    "The flight is recorded in the system",
+    "They can edit or cancel the flight",
+    "They can view the list of all flights"
+  ],
+  "preconditions": [
+    "The air traffic controller is on the flight management dashboard"
+  ],
+  "postconditions": [
+    "The new flight is added to the system database",
+    "Existing flight data is updated if edited",
+    "Flight registration history is maintained for future reference"
+  ],
+  "functional_constraints": [
+    "All required fields (flight number, airline, origin/destination, scheduled time, type) must be filled out for a successful registration",
+    "Edit or cancel operations should only affect the specific flight in question without altering other records"
+  ],
+  "security_requirements": [
+    "Data transmission between the controller and system should be encrypted to prevent interception of sensitive information",
+    "Access to flight registration features should be restricted based on user roles (e.g., only authorized personnel can edit or cancel flights)"
+  ],
+  "non_functional_requirements": {
+    "performance": "The system should handle up to 100 concurrent flight registrations without significant delay",
+    "availability": "The system must be available 99.9% of the time to ensure uninterrupted operation",
+    "scalability": "The system should be able to support at least 5000 registered flights without performance degradation",
+    "usability": "Error messages for incomplete or invalid inputs should be clear and actionable, and the interface should be intuitive for air traffic controllers"
+  },
+  "edge_cases": [
+    "What happens if a flight number is already registered?",
+    "How should the system handle time zone differences between flights and the controller's location?",
+    "What are the consequences of attempting to edit or cancel a non-existent flight?"
+  ],
+  "dependencies": [
+    "Flight Management Dashboard",
+    "Database for storing flight data"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Flight Registration API",
+      "description": "The system should provide an API to register, edit, and cancel flights."
+    },
+    {
+      "type": "Database",
+      "name": "Flight Data Store",
+      "description": "The system should interact with a database to store flight registration data, including updates and deletions."
+    },
+    {
+      "type": "UI",
+      "name": "Flight Management Dashboard",
+      "description": "The requirement interacts with the user interface where air traffic controllers can perform flight registration operations."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ATC-01",
+      "description": "Register a new arrival flight.",
+      "expected_result": "A new flight record is created with the provided details and marked as an arrival."
+    },
+    {
+      "id": "TC-ATC-02",
+      "description": "Edit an existing departure flight's scheduled time.",
+      "expected_result": "The specified departure flight's scheduled time is updated in the database."
+    },
+    {
+      "id": "TC-ATC-03",
+      "description": "Cancel a registered incoming flight.",
+      "expected_result": "The registered incoming flight record is marked as cancelled and removed from active listings."
+    },
+    {
+      "id": "TC-ATC-04",
+      "description": "Attempt to register a flight with incomplete details.",
+      "expected_result": "An error message should be displayed indicating missing required fields."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T19:46:32.327641",
+  "last_updated": "2026-06-15T19:54:35.498992",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Flight"
+    ],
+    "test_artifacts": []
+  }
+}

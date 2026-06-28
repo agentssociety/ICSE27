@@ -1,0 +1,118 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam titleBorderRoundCorner 8
+title "Healthcare Queue Display & Remove Flows"
+
+box "Actors" #LightGray
+  participant "Healthcare_Practitioner" as HP
+  participant "Patient_Care_Coordinator" as PCC
+  participant "System_Administrator" as SA
+end box
+
+box "API / Controller" #LightBlue
+  participant "Queue_Service_API" as API <<Controller>>
+end box
+
+box "Application" #LightGreen
+  participant "QueueService" as Service <<Application>>
+end box
+
+box "Domain" #LightYellow
+  participant "AccessControl" as AC <<Domain>>
+  participant "Queue" as Q <<Domain>>
+  participant "Patient" as P <<Domain>>
+end box
+
+box "Infrastructure" #LightPink
+  participant "QueueRepository" as QRepo <<Infrastructure>>
+  participant "PatientRepository" as PRepo <<Infrastructure>>
+end box
+
+== FLOW-DISPLAY (Take Next Patient) ==
+
+HP -> API : HTTP GET /queue/next [TLS]
+note right of API : Authenticated channel (transport-layer encryption)
+
+alt Invalid authentication token
+    API --> HP : 401 Unauthorized
+else Valid token
+    API -> Service : displayNextPatient(HP : Healthcare_Practitioner)
+    
+    Service -> AC : authorize(HP, "Queue", Permission.Read)
+    alt Authorization failed
+        AC --> Service : false
+        Service -> API : 403 Forbidden
+        API --> HP : 403 Forbidden
+    else Authorized
+        Service -> QRepo : findQueue()
+        QRepo --> Service : queue : Queue
+        
+        Service -> Q : isEmpty() : Bool
+        alt Queue empty
+            Q --> Service : true
+            Service -> API : 200 OK (message: "Queue is empty")
+            API --> HP : 200 OK ("Queue is empty")
+        else Queue not empty
+            Q --> Service : false
+            Service -> Q : getHead() : Patient
+            Q --> Service : patient (head)
+            note right of Service : Display patient without removal
+            Service -> API : 200 OK (patient data)
+            API --> HP : 200 OK (patient info)
+        end
+        note over Service : System state transition: Pre1 -> PostDone
+    end
+end
+
+== FLOW-REMOVE (Confirm Removal) ==
+
+HP -> API : HTTP POST /queue/remove-next [TLS]
+note right of API : Authenticated channel (transport-layer encryption)
+
+alt Invalid authentication token
+    API --> HP : 401 Unauthorized
+else Valid token
+    API -> Service : removeNextPatient(HP : Healthcare_Practitioner)
+    
+    Service -> AC : authorize(HP, "Queue", Permission.Execute)  // Also Write allowed
+    alt Authorization failed
+        AC --> Service : false
+        Service -> API : 403 Forbidden
+        API --> HP : 403 Forbidden
+    else Authorized
+        Service -> QRepo : findQueue()
+        QRepo --> Service : queue : Queue
+        
+        Service -> Q : isEmpty() : Bool
+        alt Queue empty
+            Q --> Service : true
+            Service -> API : 409 Conflict (message: "Queue is empty")
+            API --> HP : 409 Conflict
+        else Queue not empty
+            Q --> Service : false
+            Service -> Q : getHead() : Patient
+            Q --> Service : patient (head)
+            
+            alt patient.served == true
+                Service -> PRepo : findPatient(patient.getId())
+                PRepo --> Service : patient : Patient
+                note over Service : Patient already served – cannot remove
+                Service -> API : 409 Conflict (message: "Patient already served")
+                API --> HP : 409 Conflict
+                Service -> API : [error logged internally]
+            else patient.served == false
+                Service -> Q : removeHead() : Patient
+                Q --> Service : removedPatient : Patient
+                Service -> P : setServed(true)
+                note over P : Patient.served = True
+                Service -> Q : updateEmptyFlag()
+                note over Q : Queue.empty flag updated if needed
+                Service -> API : 200 OK (message: "Patient removed")
+                API --> HP : 200 OK
+                note over Service : System state transition: Pre1 -> PostDone
+            end
+        end
+    end
+end
+
+@enduml

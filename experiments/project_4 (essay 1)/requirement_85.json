@@ -1,0 +1,107 @@
+{
+  "id": "REQ-SEC-01",
+  "title": "Admin Lock and Unlock User Account",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow an admin to lock a user's account due to suspicious activity and later unlock it when the issue is resolved.",
+  "rationale": "To manage user account security and access effectively, allowing admins to control user access based on identified issues.",
+  "business_value": "Improves overall system security by enabling quick response to potential threats and enhancing user trust in the platform's management capabilities.",
+  "source": {
+    "type": "User Story",
+    "id": 85,
+    "description": "As a admin I need to lock a user's account (e.g., due to suspicious activity) and later unlock it when the issue is resolved So that I can manage user account security and access"
+  },
+  "stakeholders": [
+    "Admins",
+    "IT Support",
+    "Security Team",
+    "User Management Team"
+  ],
+  "acceptance_criteria": [
+    "Given a user account with suspicious activity",
+    "When the admin locks the account",
+    "Then the account is locked and the user cannot log in",
+    "Given a locked user account",
+    "When the admin resolves the issue and unlocks the account",
+    "Then the account is unlocked and the user can log in again"
+  ],
+  "preconditions": [
+    "The system must have an active user account",
+    "The system must be able to identify suspicious activity",
+    "The admin must have the necessary permissions to lock/unlock accounts"
+  ],
+  "postconditions": [
+    "The user's account is locked and the user cannot log in when the admin decides to lock it due to suspicious activity",
+    "The user's account is unlocked and the user can log in again when the admin resolves the issue and unlocks it"
+  ],
+  "functional_constraints": [
+    "The system must track the reason for locking the account",
+    "The system must provide a mechanism for admins to lock/unlock accounts",
+    "The system must notify affected users of their account status change"
+  ],
+  "security_requirements": [
+    "The system must implement strong access control measures to prevent unauthorized account locking/unlocking",
+    "The system must maintain logs of all lock/unlock actions for auditing purposes"
+  ],
+  "non_functional_requirements": {
+    "performance": "The system should respond within 5 seconds to lock or unlock requests",
+    "availability": "The system must be available at least 99.9% of the time",
+    "scalability": "The system must be able to handle up to 1,000 account locking/unlocking requests per minute without degradation in performance",
+    "usability": "Error messages should be clear and actionable"
+  },
+  "edge_cases": [
+    "What happens if an admin attempts to lock a non-existent account?",
+    "How should the system handle multiple concurrent lock/unlock requests for the same account?",
+    "What happens if the system fails to log the reason for locking an account?"
+  ],
+  "dependencies": [
+    "User Management System",
+    "Authentication and Authorization Service"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "AccountManagementAPI",
+      "description": "Provides endpoints for locking, unlocking, and retrieving account status."
+    },
+    {
+      "type": "Database",
+      "name": "UserDatabase",
+      "description": "Stores user information, including lock status and reasons for lockout."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-SEC-01",
+      "description": "Verify that an admin can successfully lock a user account due to suspicious activity.",
+      "expected_result": "The account is locked, and the user cannot log in."
+    },
+    {
+      "id": "TC-SEC-02",
+      "description": "Verify that an admin can unlock a previously locked user account when the issue is resolved.",
+      "expected_result": "The account is unlocked, and the user can log in again."
+    },
+    {
+      "id": "TC-SEC-03",
+      "description": "Verify that attempting to lock a non-existent account results in an error message.",
+      "expected_result": "A clear error message indicating the account does not exist is returned."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-16T10:00:07.703897",
+  "last_updated": "2026-06-16T10:13:41.399224",
+  "traceability": {
+    "related_requirements": [
+      "REQ-AUTH-01"
+    ],
+    "design_components": [
+      "Account",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

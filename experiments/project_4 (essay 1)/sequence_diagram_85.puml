@@ -1,0 +1,217 @@
+@startuml
+title Account Lock/Unlock Flows
+
+' === Participants ===
+actor Admin
+participant AccountManagementAPI as API
+participant AccountManagementService as Service
+participant UserAccount as Account
+participant AuditLog as Audit
+participant REQ_SEC_01 as SecurityEvent
+participant UserDatabase as UserDB
+participant "AuthenticationAndAuthorizationService" as Auth
+participant "NotificationService" as Notif
+
+' === Box Grouping ===
+box "User / Actor" #LightBlue
+    actor Admin
+end box
+
+box "Controller Layer" #LightGreen
+    participant API
+end box
+
+box "Application Layer" #LightYellow
+    participant Service
+end box
+
+box "Domain Layer" #LightPink
+    participant Account
+    participant Audit
+    participant SecurityEvent
+end box
+
+box "Infrastructure Layer" #LightCyan
+    participant UserDB
+end box
+
+box "External Systems" #LightGray
+    participant Auth
+    participant Notif
+end box
+
+' ============================================================
+== Lock Account Flow ==
+' ============================================================
+
+Admin -> API: **POST /lockAccount** (accountId, reason)
+note right: [TLS] transport encryption optional
+
+API -> Auth: authenticateRequest(token)
+Auth --> API: AuthenticationResult (success, principal)
+
+alt Authentication fails
+    API -> Admin: 401 Unauthorized
+    note right: Authentication required per security constraint
+end
+
+API -> Auth: authorizeAction(principal, "lockAccount")
+Auth --> API: AuthorizationResult (granted)
+
+alt Authorization fails (permission ≠ Admin)
+    API -> Admin: 403 Forbidden
+    note right: Only Admin role allowed
+end
+
+API -> Service: lockAccount(accountId, reason)
+
+' Validate reason
+alt reason is null or empty
+    Service --> API: 400 Bad Request (Reason required)
+    API -> Admin: 400
+end
+
+Service -> UserDB: findById(accountId) : UserAccount
+
+alt Account not found
+    UserDB --> Service: null
+    Service --> API: 404 Account not found
+    API -> Admin: 404
+    note right: No state change – pre = post
+end
+
+UserDB --> Service: Account
+
+' Check that Admin is in target.accessible set (invariant: owner∈accessible, Admin allowed via relationship)
+Service -> Account: isAdminAccessible(principal) : boolean
+note right: Domain invariant enforcement
+
+alt Admin not in accessible set
+    Account --> Service: false
+    Service --> API: 403 Forbidden
+    API -> Admin: 403
+end
+
+Account --> Service: true
+
+Service -> Account: lock(reason) : success
+note right: Transition UNLOCKED→LOCKED\nPre != Post, reason stored
+
+Account --> Service: success
+
+Service -> UserDB: save(account) [optimistic lock]
+
+alt Concurrent request conflict (OptimisticLockException)
+    UserDB --> Service: OptimisticLockException
+    Service --> API: 409 Conflict
+    API -> Admin: 409
+end
+
+UserDB --> Service: ok
+
+' Audit log (REQ_SEC_01)
+Service -> Audit: createEntry(initiator=Admin, target=Account, channel=API, grant=Admin, pre=UNLOCKED, post=LOCKED) : AuditLogEntry
+Audit -> SecurityEvent: **new** REQ_SEC_01(...)
+note right: Captures REQ_SEC_01 invariants
+
+SecurityEvent --> Audit: created
+
+alt Audit persistence fails (e.g., DB error)
+    Audit --> Service: DbException
+    ' Constraint: state change already happened, return success anyway
+    Service -> Notif: notifyUser(accountId, "Account locked")
+    note right: Write permission implies state change even if logging fails
+else
+    Audit -> UserDB: save(auditEntry)
+    UserDB --> Audit: success
+end
+
+Service -> Notif: notifyUser(accountId, "Account locked")
+note right: async notification
+
+Service --> API: 200 OK
+API -> Admin: 200 OK
+
+' ============================================================
+== Unlock Account Flow ==
+' ============================================================
+
+Admin -> API: **POST /unlockAccount** (accountId)
+note right: [TLS]
+
+API -> Auth: authenticateRequest(token)
+Auth --> API: AuthenticationResult
+
+alt Authentication fails
+    API -> Admin: 401
+end
+
+API -> Auth: authorizeAction(principal, "unlockAccount")
+Auth --> API: AuthorizationResult
+
+alt Authorization fails
+    API -> Admin: 403
+end
+
+API -> Service: unlockAccount(accountId)
+
+Service -> UserDB: findById(accountId) : UserAccount
+
+alt Account not found
+    UserDB --> Service: null
+    Service --> API: 404
+    API -> Admin: 404
+end
+
+UserDB --> Service: Account
+
+' Check accessible (same as lock)
+Service -> Account: isAdminAccessible(principal) : boolean
+alt Not accessible
+    Account --> Service: false
+    Service --> API: 403
+    API -> Admin: 403
+end
+
+Service -> Account: unlock() : success
+
+alt Account is not locked (state mismatch)
+    Account --> Service: DomainException("Account is not locked")
+    Service --> API: 400 Bad Request
+    API -> Admin: 400
+    note right: Pre state must be LOCKED
+end
+
+Account --> Service: success
+note right: Transition LOCKED→UNLOCKED, reason cleared
+
+Service -> UserDB: save(account) [optimistic lock]
+
+alt Concurrent conflict
+    UserDB --> Service: OptimisticLockException
+    Service --> API: 409
+    API -> Admin: 409
+end
+
+UserDB --> Service: ok
+
+' Audit log
+Service -> Audit: createEntry(initiator=Admin, target=Account, channel=API, grant=Admin, pre=LOCKED, post=UNLOCKED) : AuditLogEntry
+Audit -> SecurityEvent: **new** REQ_SEC_01(...)
+SecurityEvent --> Audit: created
+
+alt Audit fails but state already changed
+    Audit --> Service: DbException
+    ' Still proceed (constraint: state change happens)
+    Service -> Notif: notifyUser(accountId, "Account unlocked")
+else
+    Audit -> UserDB: save(auditEntry)
+    UserDB --> Audit: success
+end
+
+Service -> Notif: notifyUser(accountId, "Account unlocked")
+
+Service --> API: 200 OK
+API -> Admin: 200 OK
+
+@enduml

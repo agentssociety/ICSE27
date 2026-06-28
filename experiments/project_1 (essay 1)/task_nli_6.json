@@ -1,0 +1,30 @@
+{
+  "task_id": 6,
+  "confidence": 0.9897,
+  "evidence": [
+    {
+      "claim": "The system provides a live dashboard.",
+      "fact": "The system shows a live dashboard of the queue.",
+      "score": 0.999,
+      "user_story_span": "a live dashboard",
+      "fact_span": "a live dashboard"
+    },
+    {
+      "claim": "The dashboard displays each patient's urgency level.",
+      "fact": "The dashboard includes each patient's urgency.",
+      "score": 0.9989,
+      "user_story_span": "displays each patient's urgency level",
+      "fact_span": "includes each patient's urgency"
+    },
+    {
+      "claim": "Urgency levels are predefined as critical, high, medium, and low.",
+      "fact": "The system assigns each patient an urgency level from 1 (critical) to 5 (non-urgent) based on symptoms.",
+      "score": 0.9713,
+      "user_story_span": "Urgency levels are predefined (e.g., critical, high, medium, low)",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

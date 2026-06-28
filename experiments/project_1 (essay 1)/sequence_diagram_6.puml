@@ -1,0 +1,182 @@
+@startuml
+skinparam participantPadding 20
+skinparam boxPadding 10
+skinparam shadowing false
+
+' Domain model participants with exact names
+box "External Actors" #LightBlue
+  actor "Hospital_Administrator" as HA
+  actor "Authorized_Hospital_Staff" as Staff
+  actor "Unauthorized_Actor" as UA
+end box
+
+box "Controller Layer" #LightGreen
+  boundary "Live_Dashboard_Interface" as UI
+end box
+
+box "Application Layer" #LightYellow
+  control "DashboardAccessOperation" as DAO
+  entity "Patient_Management_API" as PMAPI
+  entity "Wait_Time_Estimation_Service" as WTES
+end box
+
+box "Domain Layer" #LightCoral
+  entity "ResourceCapacity" as RC
+  entity "UrgencyChange" as UC
+  entity "AuditLog" as AL
+  entity "Permission" as Perm
+  entity "State" as St
+  entity "Resource" as Res
+end box
+
+box "Infrastructure Layer" #LightGrey
+  database "Patient DB" as DB
+  database "Audit DB" as AudDB
+end box
+
+' ============================================
+== Main Flow - Display Dashboard ==
+' ============================================
+
+group "Main Flow - Display Dashboard"
+  HA -> UI : authenticate()
+  alt Authentication Success
+    HA -> UI : provide credentials
+    UI -> DAO : authenticate(credentials)
+    note right: SR-1 All channels must be authenticated
+    DAO -> Perm : validate permission(initiator: HA, grant: "Read")
+    alt Authorization Success (initiator has Read permission)
+      DAO -> PMAPI : fetchPatientData()
+      PMAPI -> DB : query patient records [TLS]
+      note right: SR-6 Encryption-in-transit
+      DB --> PMAPI : patientData: List<PatientData>
+      PMAPI --> DAO : patientData
+      alt patientData Not Empty
+        DAO -> RC : checkCapacity(resource: PatientData.resource)
+        alt Capacity Constraints Satisfied (maxConcurrent >0)
+          DAO -> WTES : calculateWaitTimes(patientData, capacity)
+          note right: INV-3 Initiator must hold required permission
+          WTES --> DAO : waitTimes: Map<Patient, Duration>
+          DAO -> AL : logAccess(initiator: HA, resource: patientData, action: "Read")
+          AL -> AudDB : insert audit entry [encrypted at rest]
+          DAO --> UI : displayData(patientData, waitTimes)
+          UI -> HA : show dashboard with urgency levels and estimated wait times
+          note right: Post1: Live dashboard displayed with up-to-date info
+        else Capacity Exceeded (maxConcurrent == 0 or spike)
+          DAO --> UI : showError("Resource capacity exceeded")
+          UI -> HA : display capacity alert
+          note right: EC-2 Number of targets must not exceed maxConcurrent
+        end
+      else patientData Empty
+        DAO --> UI : showEmptyQueueMessage()
+        UI -> HA : display "No patients waiting"
+        note right: EC-1 Operation not proceed without valid target
+      end
+    else Authorization Failed (Read not granted)
+      DAO --> UI : error("Unauthorized: insufficient permissions")
+      UI -> HA : display access denied
+      note right: SR-2 Authorization must be in initiator's permissions
+    end
+  else Authentication Failed
+    UI --> HA : error("Invalid credentials")
+    note right: SR-5 Non-repudiation requires identified initiator
+  end
+end
+
+' ============================================
+== Alternate Flow - No Patients in Queue ==
+' ============================================
+
+group "Alternate Flow - No Patients in Queue"
+  HA -> UI : authenticate()
+  alt Authentication Success
+    HA -> UI : provide credentials
+    UI -> DAO : authenticate(credentials)
+    DAO -> Perm : validate permission(initiator: HA, grant: "Read")
+    alt Authorization Success
+      DAO -> PMAPI : fetchPatientData()
+      PMAPI -> DB : query patient records [TLS]
+      DB --> PMAPI : empty list
+      PMAPI --> DAO : patientData: []
+      DAO --> UI : showEmptyQueueMessage()
+      UI -> HA : display "No patients waiting"
+      note right: TC-4 No UrgencyChange occurs
+    else Authorization Failed
+      DAO --> UI : error("Unauthorized")
+      UI -> HA : display access denied
+    end
+  else Authentication Failed
+    UI --> HA : error("Invalid credentials")
+  end
+end
+
+' ============================================
+== Alternate Flow - Unauthorized Access ==
+' ============================================
+
+group "Alternate Flow - Unauthorized Access"
+  UA -> UI : attempt to open dashboard
+  UI -> DAO : authenticate(credentials)
+  alt Authentication Failed (no valid credentials)
+    DAO --> UI : deny access
+    UI -> UA : display error message "Access Denied"
+    note right: SR-8 Dashboard access restricted to authorized staff only
+  else Authentication Success (but no permission)
+    DAO -> Perm : validate permission(initiator: UA, grant: "Read")
+    DAO --> UI : deny access
+    UI -> UA : display error message "Access Denied"
+    note right: SR-2 Authorization check
+  end
+end
+
+' ============================================
+== Alternate Flow - Sudden Spike in Patient Arrivals ==
+' ============================================
+
+group "Alternate Flow - Sudden Spike in Patient Arrivals"
+  PMAPI -> DAO : spikeUpdate(newPatientData: List<PatientData>)
+  note right: EC-2 Check maxConcurrent capacity
+  DAO -> RC : checkCapacity(resource: overallResource)
+  alt Capacity Not Exceeded (within maxConcurrent)
+    DAO -> UI : updateDisplay(newPatientData)
+    UI -> DAO : requestWaitTimeUpdate()
+    DAO -> WTES : recalculateWaitTimes(allPatients)
+    note right: TC-5 More than 2 patients and UrgencyChange count > 2
+    WTES --> DAO : newWaitTimes
+    DAO -> AL : logAccess(initiator: "System", resource: patientData, action: "Write")
+    DAO --> UI : displayUpdatedWaitTimes(newWaitTimes)
+    UI -> UI : update dashboard immediately
+    note right: INV-5 State change (pre != post)
+  else Capacity Exceeded
+    DAO --> UI : showAlert("Resource capacity exceeded – spike")
+    UI -> UI : display warning message
+    note right: INV-4 Only authorized resources
+  end
+end
+
+' ============================================
+== Alternate Flow - Urgency Change During Wait ==
+' ============================================
+
+group "Alternate Flow - Urgency Change During Wait"
+  PMAPI -> DAO : urgencyChange(patientId: String, newPermission: Permission)
+  alt New Permission Different from Old (oldPerm != newPerm)
+    DAO -> UC : createUrgencyChange(patient: Actor, oldPermission: Permission, newPermission: Permission)
+    note right: EC-3 Grant must match new permission
+    UC -> UC : transition state (oldPerm -> newPerm)
+    note right: INV-1 Operation must use at least one channel; INV-2 affect at least one resource
+    DAO -> UI : updateDisplay(patientId, newPermission)
+    UI -> DAO : requestWaitTimeRecalc()
+    DAO -> WTES : recalculateWaitTime(patientId)
+    WTES --> DAO : newWaitTime: Duration
+    DAO -> AL : logAccess(initiator: "System", resource: patientData, action: "Write")
+    DAO --> UI : displayUpdatedWaitTime(patientId, newWaitTime)
+    UI -> UI : update dashboard with new urgency and wait time
+    note right: INV-5 State change (pre != post)
+  else New Permission Same as Old (violates urgency_consistency)
+    DAO --> UI : error("Urgency change failed: oldPermission == newPermission")
+    note right: INV-3 Initiator must hold required permission
+  end
+end
+
+@enduml

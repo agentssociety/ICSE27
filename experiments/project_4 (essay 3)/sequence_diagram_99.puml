@@ -1,0 +1,260 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+    participant "Withdrawal_API" as API
+end box
+
+box "Application Layer" #LightGreen
+    participant "REQ_SEC_01" as Operation
+    participant "SuspiciousPattern" as Detector
+end box
+
+box "Domain Layer" #LightYellow
+    participant "Actor" as Actor
+    participant "Security_Team" as SecurityTeam
+    participant "Finance_Team" as FinanceTeam
+    participant "Operations_Team" as OpsTeam
+    participant "Resource" as Resource
+    participant "Account" as Account
+    participant "WithdrawalTransaction" as Transaction
+    participant "FlaggedTransaction" as FlaggedTx
+    participant "Permission" as Permission
+    participant "State" as State
+end box
+
+box "Infrastructure Layer" #LightCoral
+    participant "Transaction_Database" as DB
+end box
+
+== Main Flow: Normal Withdrawal ==
+
+API -> Operation : submitWithdrawal(amount: Int, userId: UserID, initiator: Actor) : REQ_SEC_01
+note right: [encrypted] [authenticated]
+
+Operation -> Actor : checkPermission(initiator: Actor, requiredPermission: Permission) : Bool
+Operation -> Resource : checkAccessibility(initiator: Actor, target: Resource) : Bool
+
+alt Permission check fails
+    Operation --> API : return Error("Insufficient permissions")
+    API --> API : return HTTP 403 Forbidden
+else Accessibility check fails
+    Operation --> API : return Error("Resource inaccessible")
+    API --> API : return HTTP 403 Forbidden
+else Authentication check fails
+    Operation --> API : return Error("Authentication required")
+    API --> API : return HTTP 401 Unauthorized
+else All checks pass
+    Operation -> State : setPreState(PreIdle)
+    Operation -> Detector : evaluatePattern(transaction: WithdrawalTransaction, initiator: Actor, target: Resource) : Bool
+    
+    alt Pattern not suspicious
+        Detector --> Operation : return false
+        Operation -> State : setPostState(PreIdle)
+        note right: post != Post1 - normal processing
+        Operation -> Transaction : createTransaction(amount: Int, timestamp: Time, userId: UserID) : WithdrawalTransaction
+        Operation -> Account : updateBalance(accountId: AccountID, amount: Int) : Money
+        Operation -> DB : storeTransaction(transaction: WithdrawalTransaction) [TLS]
+        DB --> Operation : return success
+        Operation --> API : return WithdrawalTransaction
+        API --> API : return HTTP 200 OK
+        
+    else Pattern suspicious
+        Detector --> Operation : return true
+        note right: initiator not owner of target AND grant is Write
+        Operation -> State : setPostState(Post1)
+        note right: Flagged for review
+        Operation -> FlaggedTx : createFlaggedTransaction(transaction: WithdrawalTransaction, reason: String) : FlaggedTransaction
+        Operation -> DB : storeFlaggedTransaction(flaggedTx: FlaggedTransaction) [TLS]
+        DB --> Operation : return success
+        Operation --> API : return FlaggedTransaction
+        API --> API : return HTTP 202 Accepted
+    end
+end
+
+== Flow: Security Team Suspicious Pattern Detection ==
+
+API -> Operation : submitWithdrawal(amount: Int, userId: UserID, initiator: Security_Team) : REQ_SEC_01
+note right: [encrypted] [authenticated]
+
+Operation -> SecurityTeam : checkPermission(initiator: Security_Team, requiredPermission: Permission) : Bool
+note right: Security_Team has Admin permission
+
+Operation -> Resource : checkAccessibility(initiator: Security_Team, target: Transaction_Database) : Bool
+note right: Security_Team in accessible set
+
+alt All checks pass
+    Operation -> State : setPreState(PreIdle)
+    Operation -> Detector : evaluatePattern(transaction: WithdrawalTransaction, initiator: Security_Team, target: Transaction_Database) : Bool
+    
+    alt Pattern detected as suspicious
+        Detector --> Operation : return true
+        note right: Multiple rapid successive withdrawals detected
+        Operation -> State : setPostState(Post1)
+        Operation -> FlaggedTx : createFlaggedTransaction(transaction: WithdrawalTransaction, reason: "Rapid successive withdrawals") : FlaggedTransaction
+        Operation -> DB : storeFlaggedTransaction(flaggedTx: FlaggedTransaction) [TLS]
+        DB --> Operation : return success
+        Operation --> API : return FlaggedTransaction
+        API --> API : return HTTP 202 Accepted
+    else Pattern not suspicious
+        Detector --> Operation : return false
+        Operation -> State : setPostState(PreIdle)
+        Operation -> Transaction : createTransaction(amount: Int, timestamp: Time, userId: UserID) : WithdrawalTransaction
+        Operation -> DB : storeTransaction(transaction: WithdrawalTransaction) [TLS]
+        DB --> Operation : return success
+        Operation --> API : return WithdrawalTransaction
+        API --> API : return HTTP 200 OK
+    end
+else Permission check fails
+    Operation --> API : return Error("Security_Team lacks required permission")
+    API --> API : return HTTP 403 Forbidden
+end
+
+== Flow: Finance Team Large Transaction ==
+
+API -> Operation : submitWithdrawal(amount: Int, userId: UserID, initiator: Finance_Team) : REQ_SEC_01
+note right: [encrypted] [authenticated]
+
+Operation -> FinanceTeam : checkPermission(initiator: Finance_Team, requiredPermission: Permission) : Bool
+note right: Finance_Team has Write permission
+
+Operation -> Resource : checkAccessibility(initiator: Finance_Team, target: Transaction_Database) : Bool
+
+alt All checks pass
+    Operation -> State : setPreState(PreIdle)
+    Operation -> Detector : evaluatePattern(transaction: WithdrawalTransaction, initiator: Finance_Team, target: Transaction_Database) : Bool
+    
+    alt Large legitimate transaction
+        Detector --> Operation : return false
+        note right: Finance_Team is owner of target resource
+        Operation -> State : setPostState(PreIdle)
+        note right: post != Post1 - normal processing
+        Operation -> Transaction : createTransaction(amount: Int, timestamp: Time, userId: UserID) : WithdrawalTransaction
+        Operation -> Account : updateBalance(accountId: AccountID, amount: Int) : Money
+        Operation -> DB : storeTransaction(transaction: WithdrawalTransaction) [TLS]
+        DB --> Operation : return success
+        Operation --> API : return WithdrawalTransaction
+        API --> API : return HTTP 200 OK
+    else Pattern suspicious
+        Detector --> Operation : return true
+        Operation -> State : setPostState(Post1)
+        Operation -> FlaggedTx : createFlaggedTransaction(transaction: WithdrawalTransaction, reason: "Unusual amount pattern") : FlaggedTransaction
+        Operation -> DB : storeFlaggedTransaction(flaggedTx: FlaggedTransaction) [TLS]
+        DB --> Operation : return success
+        Operation --> API : return FlaggedTransaction
+        API --> API : return HTTP 202 Accepted
+    end
+else Permission check fails
+    Operation --> API : return Error("Finance_Team lacks required permission")
+    API --> API : return HTTP 403 Forbidden
+end
+
+== Flow: Operations Team Database Access ==
+
+API -> Operation : submitWithdrawal(amount: Int, userId: UserID, initiator: Operations_Team) : REQ_SEC_01
+note right: [encrypted] [authenticated]
+
+Operation -> OpsTeam : checkPermission(initiator: Operations_Team, requiredPermission: Permission) : Bool
+note right: Operations_Team has Read, Write, Execute permissions
+
+Operation -> Resource : checkAccessibility(initiator: Operations_Team, target: Transaction_Database) : Bool
+note right: Operations_Team is owner of Transaction_Database
+
+alt All checks pass
+    Operation -> State : setPreState(PreIdle)
+    Operation -> Detector : evaluatePattern(transaction: WithdrawalTransaction, initiator: Operations_Team, target: Transaction_Database) : Bool
+    
+    alt Pattern not suspicious
+        Detector --> Operation : return false
+        Operation -> State : setPostState(PreIdle)
+        Operation -> Transaction : createTransaction(amount: Int, timestamp: Time, userId: UserID) : WithdrawalTransaction
+        Operation -> DB : storeTransaction(transaction: WithdrawalTransaction) [TLS]
+        DB --> Operation : return success
+        Operation --> API : return WithdrawalTransaction
+        API --> API : return HTTP 200 OK
+    else Pattern suspicious
+        Detector --> Operation : return true
+        Operation -> State : setPostState(Post1)
+        Operation -> FlaggedTx : createFlaggedTransaction(transaction: WithdrawalTransaction, reason: "Suspicious pattern detected") : FlaggedTransaction
+        Operation -> DB : storeFlaggedTransaction(flaggedTx: FlaggedTransaction) [TLS]
+        DB --> Operation : return success
+        Operation --> API : return FlaggedTransaction
+        API --> API : return HTTP 202 Accepted
+    end
+else Permission check fails
+    Operation --> API : return Error("Operations_Team lacks required permission")
+    API --> API : return HTTP 403 Forbidden
+end
+
+== Flow: Concurrent Withdrawals Edge Case ==
+
+API -> Operation : submitWithdrawal(amount: Int, userId: UserID, initiator: Actor) : REQ_SEC_01
+note right: [encrypted] [authenticated] - Multiple concurrent requests
+
+Operation -> Actor : checkPermission(initiator: Actor, requiredPermission: Permission) : Bool
+Operation -> Resource : checkAccessibility(initiator: Actor, target: Transaction_Database) : Bool
+
+alt All checks pass
+    Operation -> State : setPreState(PreIdle)
+    Operation -> Detector : evaluatePattern(transaction: WithdrawalTransaction, initiator: Actor, target: Transaction_Database) : Bool
+    
+    alt Concurrent rapid withdrawals detected
+        Detector --> Operation : return true
+        note right: Multiple operations from different initiators sharing same target
+        Operation -> State : setPostState(Post1)
+        Operation -> FlaggedTx : createFlaggedTransaction(transaction: WithdrawalTransaction, reason: "Concurrent rapid withdrawals") : FlaggedTransaction
+        Operation -> DB : storeFlaggedTransaction(flaggedTx: FlaggedTransaction) [TLS]
+        note right: Different channels used to avoid race conditions
+        DB --> Operation : return success
+        Operation --> API : return FlaggedTransaction
+        API --> API : return HTTP 202 Accepted
+    else Normal concurrent processing
+        Detector --> Operation : return false
+        Operation -> State : setPostState(PreIdle)
+        Operation -> Transaction : createTransaction(amount: Int, timestamp: Time, userId: UserID) : WithdrawalTransaction
+        Operation -> DB : storeTransaction(transaction: WithdrawalTransaction) [TLS]
+        DB --> Operation : return success
+        Operation --> API : return WithdrawalTransaction
+        API --> API : return HTTP 200 OK
+    end
+else Permission check fails
+    Operation --> API : return Error("Insufficient permissions")
+    API --> API : return HTTP 403 Forbidden
+end
+
+== Flow: System Under Heavy Load ==
+
+API -> Operation : submitWithdrawal(amount: Int, userId: UserID, initiator: Actor) : REQ_SEC_01
+note right: [encrypted] [authenticated] - 1000 requests/sec
+
+Operation -> Actor : checkPermission(initiator: Actor, requiredPermission: Permission) : Bool
+Operation -> Resource : checkAccessibility(initiator: Actor, target: Transaction_Database) : Bool
+
+alt All checks pass
+    Operation -> State : setPreState(PreIdle)
+    Operation -> Detector : evaluatePattern(transaction: WithdrawalTransaction, initiator: Actor, target: Transaction_Database) : Bool
+    note right: Must complete within 100ms
+    
+    alt Pattern suspicious
+        Detector --> Operation : return true
+        Operation -> State : setPostState(Post1)
+        Operation -> FlaggedTx : createFlaggedTransaction(transaction: WithdrawalTransaction, reason: "Suspicious pattern") : FlaggedTransaction
+        Operation -> DB : storeFlaggedTransaction(flaggedTx: FlaggedTransaction) [TLS]
+        DB --> Operation : return success
+        Operation --> API : return FlaggedTransaction
+        API --> API : return HTTP 202 Accepted
+    else Pattern not suspicious
+        Detector --> Operation : return false
+        Operation -> State : setPostState(PreIdle)
+        Operation -> Transaction : createTransaction(amount: Int, timestamp: Time, userId: UserID) : WithdrawalTransaction
+        Operation -> DB : storeTransaction(transaction: WithdrawalTransaction) [TLS]
+        DB --> Operation : return success
+        Operation --> API : return WithdrawalTransaction
+        API --> API : return HTTP 200 OK
+    end
+else Permission check fails
+    Operation --> API : return Error("Insufficient permissions")
+    API --> API : return HTTP 403 Forbidden
+end
+
+@enduml

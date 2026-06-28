@@ -1,0 +1,23 @@
+{
+  "task_id": 46,
+  "confidence": 0.9946,
+  "evidence": [
+    {
+      "claim": "The system records the flight.",
+      "fact": "The system registers incoming flights with their estimated times.",
+      "score": 0.9981,
+      "user_story_span": "",
+      "fact_span": "The system registers incoming flights"
+    },
+    {
+      "claim": "The flight appears in the aircraft movement log.",
+      "fact": "The system registers outgoing flights with their estimated times.",
+      "score": 0.991,
+      "user_story_span": "it appears in the aircraft movement log",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

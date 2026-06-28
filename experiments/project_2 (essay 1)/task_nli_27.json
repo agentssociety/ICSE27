@@ -1,0 +1,30 @@
+{
+  "task_id": 27,
+  "confidence": 0.9863,
+  "evidence": [
+    {
+      "claim": "The matching considers ABO blood group compatibility.",
+      "fact": "The matching uses standard ABO/Rh donor compatibility.",
+      "score": 0.995,
+      "user_story_span": "The matching considers ABO blood group and Rh factor compatibility.",
+      "fact_span": "The matching uses standard ABO/Rh donor compatibility."
+    },
+    {
+      "claim": "The matching considers Rh factor compatibility.",
+      "fact": "The matching uses standard ABO/Rh donor compatibility.",
+      "score": 0.9917,
+      "user_story_span": "The matching considers ABO blood group and Rh factor compatibility.",
+      "fact_span": "The matching uses standard ABO/Rh donor compatibility."
+    },
+    {
+      "claim": "When the interaction occurs, the system searches for compatible blood units.",
+      "fact": "The application manages compatibility between blood types.",
+      "score": 0.9721,
+      "user_story_span": "When the system searches for compatible blood units",
+      "fact_span": "The application manages compatibility between blood types."
+    }
+  ],
+  "total_claims": 9,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

@@ -1,0 +1,206 @@
+@startuml
+skinparam sequenceParticipantFontSize 11
+skinparam sequenceArrowFontSize 10
+skinparam sequenceBoxFontSize 12
+
+box "Actors" #AliceBlue
+  actor "SecurityAdministrator" as SecAdmin <<Actor>>
+  actor "ITOperationsTeam" as ItOps <<Actor>>
+end box
+
+box "Controller" #LightCyan
+  participant "AuditLogController" as Controller <<Controller>>
+end box
+
+box "Application" #LightGreen
+  participant "AuditLogService" as Service <<Application>>
+end box
+
+box "Domain" #LightYellow
+  participant "AuditLogEntry" as Entry <<Domain>>
+  participant "AuditOperation" as AuditOp <<Domain>>
+  participant "Operation" as Op <<Domain>>
+  participant "Actor" as ActorDomain <<Domain>>
+  participant "Resource" as ResourceDomain <<Domain>>
+  participant "Permission" as PermDomain <<Domain>>
+  participant "State" as GlobalState <<Domain>>
+end box
+
+box "Infrastructure" #LightPink
+  participant "AuditLogDatabase" as DB <<Infrastructure>>
+end box
+
+box "External" #LightGray
+  participant "EventNotificationAPI" as API <<External>>
+end box
+
+== Record Event via API ==
+
+group Happy path
+  SecAdmin -> Controller: POST /audit-logs (eventData, authToken)
+  note left: [TLS] required, authentication mandatory
+  Controller -> Service: recordEvent(eventData, authToken, channel="API") : 202 Accepted
+  Service -> Service: validateChannelAuthenticated(authToken) : boolean
+  Service -> ActorDomain: hasPermission(actor, Write) : boolean
+  alt permission granted
+    Service -> ResourceDomain: isAccessible(actor, auditLogResource) : boolean
+    alt accessible
+      Service -> Entry: createEntry(eventType, timestamp, userId, sourceIp, outcome) : AuditLogEntry
+      note right: timestamp must be ISO 8601 with ms precision
+      Service -> DB: storeEntry(entry) : void
+      note right: [encrypted at rest] required for Post2/Post3
+      DB --> Service: success
+      Service -> GlobalState: transitionTo(Post2)
+      Service --> Controller: 201 Created (entryId)
+      Controller --> SecAdmin: 201 Created
+    else not in accessible set
+      Service --> Controller: 403 Forbidden (accessibility)
+      Controller --> SecAdmin: 403 Forbidden
+    end
+  else no permission
+    Service --> Controller: 403 Forbidden (write permission)
+    Controller --> SecAdmin: 403 Forbidden
+  end
+end
+
+group Unauthenticated channel
+  SecAdmin -> Controller: POST /audit-logs (eventData, invalidAuth)
+  Controller -> Service: recordEvent(eventData, invalidAuth, channel="API")
+  Service -> Service: validateChannelAuthenticated(invalidAuth) : false
+  Service --> Controller: 401 Unauthorized
+  Controller --> SecAdmin: 401 Unauthorized
+end
+
+group Invalid event data (missing mandatory fields)
+  SecAdmin -> Controller: POST /audit-logs (incompleteData)
+  Controller -> Service: recordEvent(incompleteData, authToken, channel="API")
+  Service -> Service: validateMandatoryFields(incompleteData) : false
+  Service --> Controller: 400 Bad Request
+  Controller --> SecAdmin: 400 Bad Request
+end
+
+== Record Event via Direct DB ==
+
+group Happy path
+  SecAdmin -> DB: write(eventData, authToken)
+  note left: [TLS] required, authentication mandatory, direct DB interface
+  DB -> DB: validateChannelAuthenticated(authToken) : boolean
+  DB -> ActorDomain: hasPermission(actor, Write) : boolean
+  alt permission granted
+    DB -> ResourceDomain: isAccessible(actor, auditLogResource) : boolean
+    alt accessible
+      DB -> Entry: createEntry(eventType, timestamp, userId, sourceIp, outcome) : AuditLogEntry
+      DB -> DB: appendOnlyStore(entry) : void
+      note right: [encrypted at rest] optional unless Post3
+      DB --> SecAdmin: success (ack)
+      DB -> GlobalState: transitionTo(Post1)
+    else not in accessible set
+      DB --> SecAdmin: 403 Forbidden
+    end
+  else no permission
+    DB --> SecAdmin: 403 Forbidden
+  end
+end
+
+group Unauthenticated channel
+  SecAdmin -> DB: write(eventData, invalidAuth)
+  DB -> DB: validateChannelAuthenticated(invalidAuth) : false
+  DB --> SecAdmin: 401 Unauthorized
+end
+
+== Search / Export Log ==
+
+group Happy path (search)
+  SecAdmin -> Controller: GET /audit-logs?query=... (authToken)
+  Controller -> Service: searchLogs(query, authToken) : List<AuditLogEntry>
+  Service -> Service: validateChannelAuthenticated(authToken)
+  Service -> ActorDomain: hasPermission(actor, Read) : boolean
+  alt permission granted
+    Service -> ResourceDomain: isAccessible(actor, auditLogResource) : boolean
+    alt accessible
+      Service -> DB: search(query) : List<AuditLogEntry>
+      DB --> Service: results
+      Service -> AuditOp: wrapForExport(results, searchable=true, exportable=true) : AuditOperation
+      Service --> Controller: 200 OK (results)
+      Controller --> SecAdmin: 200 OK (JSON)
+    else not accessible
+      Service --> Controller: 403 Forbidden
+    end
+  else no read permission
+    Service --> Controller: 403 Forbidden
+  end
+end
+
+group Happy path (export)
+  SecAdmin -> Controller: GET /audit-logs/export?format=csv (authToken)
+  Controller -> Service: exportLogs(format, authToken) : File
+  Service -> Service: validatePermissions(as above)
+  Service -> DB: retrieveAllEntries() : List<AuditLogEntry>
+  Service -> AuditOp: generateExport(entries, format) : FileData
+  Service --> Controller: 200 OK (file)
+  Controller --> SecAdmin: 200 OK (Content-Disposition)
+end
+
+group Unauthorized access
+  SecAdmin -> Controller: GET /audit-logs (invalidAuth)
+  Controller -> Service: searchLogs(...)
+  Service -> Service: validateChannelAuthenticated : false
+  Service --> Controller: 401 Unauthorized
+  Controller --> SecAdmin: 401 Unauthorized
+end
+
+group No read permission
+  ItOps -> Controller: GET /audit-logs (authToken)
+  Controller -> Service: searchLogs(...)
+  Service -> ActorDomain: hasPermission(actor, Read) : false
+  Service --> Controller: 403 Forbidden
+  Controller --> ItOps: 403 Forbidden
+end
+
+== Tamper-Proof Operation (only SecurityAdministrator) ==
+
+group Happy path
+  SecAdmin -> Controller: POST /audit-logs/set-tamper-proof (authToken, encryptedChannel)
+  note left: requires Admin permission, [TLS] + encryption, at least 2 channels
+  Controller -> Service: enableTamperProof(authToken) : void
+  Service -> Service: validateChannelAuthenticated(authToken) : true
+  Service -> Service: validateChannelEncrypted(authToken) : true
+  Service -> ActorDomain: hasPermission(actor, Admin) : boolean
+  alt admin granted
+    Service -> ResourceDomain: isAccessible(actor, auditLogResource) : boolean
+    alt accessible
+      Service -> DB: enforceAppendOnly() : void
+      note right: sets append-only flag, modifies schema
+      DB --> Service: success
+      DB -> DB: logTamperProofActivation(actor) : void
+      note right: internal audit entry
+      Service -> GlobalState: transitionTo(Post3)
+      Service --> Controller: 200 OK (tamper-proof enabled)
+      Controller --> SecAdmin: 200 OK
+    else not accessible
+      Service --> Controller: 403 Forbidden
+    end
+  else no admin permission
+    Service --> Controller: 403 Forbidden
+  end
+end
+
+group Non-admin attempt (ITOperationsTeam)
+  ItOps -> Controller: POST /audit-logs/set-tamper-proof (authToken)
+  Controller -> Service: enableTamperProof(authToken)
+  Service -> ActorDomain: hasPermission(actor, Admin) : false
+  Service --> Controller: 403 Forbidden
+  Controller --> ItOps: 403 Forbidden
+end
+
+group Unauthenticated or unencrypted channel
+  SecAdmin -> Controller: POST /audit-logs/set-tamper-proof (plainAuth)
+  Controller -> Service: enableTamperProof(plainAuth)
+  Service -> Service: validateChannelAuthenticated : true
+  Service -> Service: validateChannelEncrypted : false
+  note left: Post3 requires encrypted channel
+  Service --> Controller: 400 Bad Request (channel not encrypted)
+  Controller --> SecAdmin: 400 Bad Request
+end
+
+@enduml

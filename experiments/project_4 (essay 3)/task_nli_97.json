@@ -1,0 +1,23 @@
+{
+  "task_id": 97,
+  "confidence": 0.9885,
+  "evidence": [
+    {
+      "claim": "The system declines the withdrawal if the requested amount is greater than the balance.",
+      "fact": "The system declines withdrawals exceeding the account balance.",
+      "score": 0.9971,
+      "user_story_span": "If either the requested amount is greater than the balance",
+      "fact_span": "The system declines withdrawals exceeding the account balance."
+    },
+    {
+      "claim": "The system must check the current account balance before approving a withdrawal.",
+      "fact": "The system declines withdrawals exceeding the account balance.",
+      "score": 0.9799,
+      "user_story_span": "",
+      "fact_span": "The system declines withdrawals exceeding the account balance."
+    }
+  ],
+  "total_claims": 9,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

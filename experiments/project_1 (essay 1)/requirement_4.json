@@ -1,0 +1,121 @@
+{
+  "id": "REQ-SYS-01",
+  "title": "Automated Queue Re-sorting upon Patient Registration or Urgency Update",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall automatically re-sort the queue whenever a new patient is registered or an existing patient's urgency level is updated, ensuring that the queue always reflects current priorities.",
+  "rationale": "This requirement ensures that the queue remains accurate and prioritized at all times, allowing healthcare professionals to attend to patients in a timely manner based on their urgency levels.",
+  "business_value": "Implementing this requirement will improve patient care by ensuring that patients with higher urgency are treated promptly, potentially reducing wait times and improving overall patient satisfaction.",
+  "source": {
+    "type": "User Story",
+    "id": 4,
+    "description": "As a system\nI need to automatically re-sort the queue whenever a new patient is registered or an existing patient's urgency level is updated (re-triage)\nSo that the queue always reflects current priorities"
+  },
+  "stakeholders": [
+    "Healthcare Professionals",
+    "Patient Care Coordinators",
+    "System Administrators"
+  ],
+  "acceptance_criteria": [
+    "Given a queue containing patients sorted by urgency",
+    "When a new patient is registered",
+    "Then the queue is automatically re-sorted to include the new patient based on urgency",
+    "Given a queue containing patients sorted by urgency",
+    "When an existing patient's urgency level is updated",
+    "Then the queue is automatically re-sorted to reflect the changed urgency"
+  ],
+  "preconditions": [
+    "The system maintains a queue of patients",
+    "New patients can be registered at any time",
+    "Existing patients' urgency levels can be updated (re-triage)"
+  ],
+  "postconditions": [
+    "The queue is automatically re-sorted immediately upon the triggering event",
+    "The queue reflects current priorities based on urgency"
+  ],
+  "functional_constraints": [
+    "The re-sorting must occur immediately upon a new patient registration or an existing patient's urgency level update.",
+    "The system must correctly prioritize patients based on their current urgency levels."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "No specific performance metrics are defined, but the system should handle real-time updates efficiently without noticeable delays.",
+    "availability": "99.9% uptime is expected to ensure continuous service availability.",
+    "scalability": "The system must be able to scale horizontally to accommodate an increasing number of patients and simultaneous update operations.",
+    "usability": {
+      "error_handling": "The system should handle errors gracefully, providing clear notifications and fallback mechanisms for failed updates."
+    }
+  },
+  "edge_cases": [
+    "What happens if multiple patients are registered at the same time?",
+    "How does the system handle a patient's urgency level being updated from very low to very high during the re-sort process?",
+    "What is the behavior when the queue becomes empty?"
+  ],
+  "dependencies": [
+    "The patient registration system must be able to trigger the re-sorting mechanism.",
+    "The re-triage system must update patient urgency levels, which will in turn trigger the re-sorting."
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Patient Registration API",
+      "description": "Interacts with the patient registration system to trigger re-sorting when a new patient is registered."
+    },
+    {
+      "type": "API",
+      "name": "Re-Triage API",
+      "description": "Interacts with the re-triage system to update patient urgency levels and trigger re-sorting."
+    },
+    {
+      "type": "Database",
+      "name": "Patient Queue Database",
+      "description": "Stores patient information and urgency levels, which is used to determine the queue order."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-SYS-01",
+      "description": "New patient registration triggers queue re-sorting",
+      "expected_result": "The new patient is added to the queue and the queue is automatically re-sorted based on urgency, with the highest urgency patient at the front of the queue."
+    },
+    {
+      "id": "TC-SYS-02",
+      "description": "Urgency level update triggers queue re-sorting",
+      "expected_result": "The patient's position in the queue is updated to reflect their new urgency level, with higher urgency patients moved closer to the front of the queue."
+    },
+    {
+      "id": "TC-SYS-03",
+      "description": "Multiple patients registered simultaneously triggers re-sorting",
+      "expected_result": "All newly registered patients are added to the queue and the queue is automatically re-sorted based on urgency, with the highest urgency patient at the front of the queue."
+    },
+    {
+      "id": "TC-SYS-04",
+      "description": "Urgency level updated from very low to very high triggers re-sorting",
+      "expected_result": "The patient's position in the queue is updated immediately to reflect their new highest urgency level, with this patient now at the front of the queue."
+    },
+    {
+      "id": "TC-SYS-05",
+      "description": "Queue becomes empty after all patients are treated",
+      "expected_result": "The queue remains empty and no errors occur. The system handles the transition gracefully without any issues."
+    }
+  ],
+  "traceability": {
+    "related_requirements": [
+      "REQ-TN-01",
+      "REQ-TRIAGE-01"
+    ],
+    "design_components": [
+      "Patient",
+      "PatientQueue",
+      "UrgencyLevel"
+    ],
+    "test_artifacts": []
+  },
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-12T10:09:58.576918Z",
+  "last_updated": "2026-06-12T10:22:46.791380Z"
+}

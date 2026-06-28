@@ -1,0 +1,101 @@
+{
+  "id": "REQ-NURS-01",
+  "title": "Queue Reordering on Patient Addition and Urgency Change",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall automatically reorder the patient queue when a new patient is added or when an existing patient's urgency level is changed.",
+  "rationale": "To ensure that the queue always reflects the current priority, allowing nurses to quickly identify and attend to patients based on their urgency levels.",
+  "business_value": "Improves patient care by ensuring timely treatment of those who require it most urgently. Reduces wait times for critical cases and minimizes delays in patient care.",
+  "source": {
+    "type": "User Story",
+    "id": 10,
+    "description": "As a triage nurse I need the queue to automatically reorder when a new patient is added or when an existing patient's urgency level is changed (re-triage) so that the queue always reflects the current priority."
+  },
+  "stakeholders": [
+    "Triage Nurses",
+    "System Administrators",
+    "Doctors"
+  ],
+  "acceptance_criteria": [
+    "Given a queue with existing patients sorted by urgency level, When a new patient is added with a specific urgency level, Then the queue reorders to place the new patient in the correct position based on priority.",
+    "Given a queue with a patient whose urgency level is 'non-urgent', When the nurse changes that patient's urgency level to 'critical', Then the queue reorders to move that patient to the front of the queue."
+  ],
+  "preconditions": [
+    "The system has a functional triage queue.",
+    "Patients have an assigned urgency level (critical, urgent, non-urgent).",
+    "Nurses have access to update patients' urgency levels."
+  ],
+  "postconditions": [
+    "The queue is reordered correctly after a new patient is added or an existing patient's urgency level is changed.",
+    "All patients in the queue are visible and accessible by nurses.",
+    "No errors occur during the reordering process."
+  ],
+  "functional_constraints": [
+    "Reordering must be based on the patient's urgency level only.",
+    "Concurrent updates from multiple users must be handled without errors."
+  ],
+  "security_requirements": [
+    "Access to update patients' urgency levels is restricted to authorized personnel (nurses).",
+    "The system must ensure data integrity and prevent unauthorized access to patient information."
+  ],
+  "non_functional_requirements": {
+    "performance": "Queue reordering should complete within 2 seconds.",
+    "availability": "99.9% uptime during regular operations.",
+    "scalability": "System should handle up to 100 concurrent users without performance degradation.",
+    "usability": "Error messages should be clear and actionable."
+  },
+  "edge_cases": [
+    "What happens if the system receives a patient with an urgency level that is not recognized?",
+    "How does the system handle concurrent updates when multiple nurses are changing patients' urgency levels simultaneously?"
+  ],
+  "dependencies": [
+    "The triage queue system must be up and running.",
+    "Patients must have an assigned urgency level (critical, urgent, non-urgent).",
+    "Nurses need access to update patients' urgency levels."
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Patient API",
+      "description": "The requirement interacts with the Patient API to retrieve and update patient information."
+    },
+    {
+      "type": "Database",
+      "name": "Queue Database",
+      "description": "The requirement interacts with the Queue Database to store and reorder patient data."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-NURS-01",
+      "description": "Adding a new 'critical' urgency level patient should place them at the front of the queue.",
+      "expected_result": "The new critical patient is placed at the front of the queue."
+    },
+    {
+      "id": "TC-NURS-02",
+      "description": "Changing an existing 'non-urgent' patient to 'critical' urgency level should move them to the front of the queue.",
+      "expected_result": "The existing non-urgent patient is moved to the front of the queue."
+    },
+    {
+      "id": "TC-NURS-03",
+      "description": "Concurrent updates from multiple nurses changing patients' urgency levels should result in a correct queue order.",
+      "expected_result": "All concurrent changes are applied correctly, and the queue is reordered accordingly."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-12T21:59:58.160417",
+  "last_updated": "2026-06-12T22:03:44.525941",
+  "traceability": {
+    "related_requirements": [
+      "REQ-TRIAGE-01"
+    ],
+    "design_components": [
+      "Patient"
+    ],
+    "test_artifacts": []
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "id": "REQ-TN-01",
+  "title": "Assign urgency level to patients based on symptoms",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall assign an urgency level (1-5) to each patient based on their symptoms evaluated by a triage nurse using a standardized assessment.",
+  "rationale": "This requirement ensures that the most critical cases are prioritized, allowing for efficient and effective treatment of patients in healthcare facilities.",
+  "business_value": "By providing timely and accurate urgency levels, the system enhances the efficiency of patient care, reduces wait times, and improves overall patient outcomes.",
+  "source": {
+    "type": "User Story",
+    "id": 2,
+    "description": "As a triage nurse I need assign an urgency level (1-5) to each patient based on their symptoms So that the most critical cases are prioritized"
+  },
+  "stakeholders": [
+    "Triage Nurse",
+    "Medical Staff",
+    "Healthcare Facility Management",
+    "Patient Care Team"
+  ],
+  "acceptance_criteria": [
+    "Given a patient with severe chest pain and shortness of breath",
+    "When the triage nurse evaluates symptoms",
+    "Then the assigned urgency level is 1",
+    "And the patient is marked as highest priority"
+  ],
+  "preconditions": [
+    "A patient is present in the triage area with identifiable symptoms",
+    "The triage nurse has access to the system for inputting patient information and assigning urgency levels"
+  ],
+  "postconditions": [
+    "The system displays the assigned urgency level for the patient",
+    "The patient's record indicates they are marked as highest priority",
+    "Medical staff are notified of the high priority status of the patient"
+  ],
+  "functional_constraints": [
+    "The urgency level must be assigned based on a standardized assessment by the triage nurse.",
+    "Symptoms input must be validated before assigning an urgency level."
+  ],
+  "security_requirements": [
+    "Patient information must be handled with strict confidentiality and access controlled to authorized personnel only."
+  ],
+  "non_functional_requirements": {
+    "performance": "The system must respond within 5 seconds for each patient evaluation.",
+    "availability": "The system must be available 99.9% of the time during operating hours.",
+    "scalability": "The system must handle up to 100 patients concurrently without significant performance degradation.",
+    "usability": "The interface should clearly display urgency levels and provide intuitive controls for updating patient statuses."
+  },
+  "edge_cases": [
+    "Patient presents with symptoms that are not covered by the standardized assessment criteria.",
+    "Triage nurse fails to input any symptoms.",
+    "System malfunction causes an incorrect urgency level to be assigned."
+  ],
+  "dependencies": [
+    "Standardized assessment criteria document",
+    "Access to patient information system"
+  ],
+  "interfaces": [
+    {
+      "type": "UI",
+      "name": "Triage Nurse Interface",
+      "description": "The triage nurse uses this interface to input patient symptoms and assign urgency levels."
+    },
+    {
+      "type": "Database",
+      "name": "Patient Information Database",
+      "description": "Stores patient data, including symptoms and assigned urgency levels."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-TN-01",
+      "description": "Evaluate patient with severe chest pain and shortness of breath.",
+      "expected_result": "Urgency level is assigned as 1, patient marked as highest priority."
+    },
+    {
+      "id": "TC-TN-02",
+      "description": "Evaluate patient with mild cough.",
+      "expected_result": "Urgency level is assigned as 5, patient marked as lowest priority."
+    },
+    {
+      "id": "TC-TN-03",
+      "description": "Evaluate patient with symptoms not covered by assessment criteria.",
+      "expected_result": "System prompts for additional information or assigns a default urgency level."
+    },
+    {
+      "id": "TC-TN-04",
+      "description": "Triage nurse fails to input any symptoms.",
+      "expected_result": "System alerts the nurse to enter valid symptoms before assigning an urgency level."
+    },
+    {
+      "id": "TC-TN-05",
+      "description": "System malfunction assigns incorrect urgency level.",
+      "expected_result": "System is reset, and nurse can manually correct the urgency level."
+    }
+  ],
+  "traceability": {
+    "related_requirements": [
+      "REQ-TRIAGE-01"
+    ],
+    "design_components": [
+      "UrgencyLevel",
+      "Patient"
+    ],
+    "test_artifacts": []
+  },
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-12T10:08:45.965806",
+  "last_updated": "2026-06-12T10:22:41.765643"
+}

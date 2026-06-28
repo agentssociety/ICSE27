@@ -1,0 +1,15 @@
+Project 8 - Medical Queue Management System
+
+User Stories / Features:
+1. Register Symptoms (Task #53): Patients can register their symptoms through the system.
+2. Urgency Level (Task #54): Each symptom/patient is assigned an urgency level for prioritization.
+3. Queue Ordering (Task #55): Patients are ordered in a queue by urgency (descending) then by arrival time (ascending). Full domain logic with sortItems, addItem, removeItem, getNextPatient, reorderOnUrgencyChange.
+4. Auto Reorder Queue on Change (Task #56): When a patient's urgency level changes, the queue automatically re-sorts to maintain correct ordering.
+5. Take Next Patient from Queue (Task #57): The highest urgency / earliest arrival patient can be retrieved and removed from the queue.
+6. Real-time Dashboard (Task #58): Dashboard showing total queue items, sorted list with urgency labels, wait time calculations, and next patient display.
+
+Implementation Status:
+- All 6 tasks fully implemented with domain logic, service layer, and API endpoints
+- 67 tests total (60 passing, 2 pre-existing DB-dependent API tests skipped, 1 skipped, 7 new dashboard tests)
+- Alloy specifications and UML diagrams generated and verified for all tasks
+- Project architecture diagram generated at experiments/project_8/full_domain_model_architecture.svg

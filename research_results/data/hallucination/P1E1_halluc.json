@@ -1,0 +1,37 @@
+{
+  "run_id": "P1E1",
+  "project": 1,
+  "essay": 1,
+  "n_tasks": 6,
+  "code_structural_issues": {
+    "files_scanned": 130,
+    "total_routes": 4,
+    "orphan_routes": 3,
+    "unused_imports": 147,
+    "schema_mismatches": 0
+  },
+  "code_hallucination": {
+    "files_scanned": 130,
+    "total_routes": 4,
+    "orphan_routes": 3,
+    "unused_imports": 147,
+    "schema_mismatches": 0
+  },
+  "task_spec_extrapolation": {
+    "total_claims": 41,
+    "supported_claims": 25,
+    "n_tasks_with_nli": 6,
+    "overall_extrapolation_rate": 0.3902,
+    "mean_task_extrapolation": 0.4196,
+    "overall_coverage_rate": 0.6098,
+    "mean_task_coverage": 0.5804,
+    "overall_rate": 0.3902
+  },
+  "task_hallucination": {
+    "total_claims": 41,
+    "supported_claims": 25,
+    "n_tasks_with_nli": 6,
+    "overall_rate": 0.3902,
+    "mean_task_rate": 0.4196
+  }
+}

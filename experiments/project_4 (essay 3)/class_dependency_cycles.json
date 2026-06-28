@@ -1,0 +1,225 @@
+{
+  "detected_cycles": [],
+  "removed_edges_to_break_cycles": [],
+  "relationship_corrections": [
+    {
+      "original": {
+        "left": "Account",
+        "arrow": "\"1\" -- \"0..*\"",
+        "right": "AccountBalance"
+      },
+      "corrected": {
+        "left": "Account",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "AccountBalance"
+      },
+      "reason": "Each Account has exactly one AccountBalance; a one-to-many association is incorrect."
+    },
+    {
+      "original": {
+        "left": "Account",
+        "arrow": "\"1\" -> \"0..*\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "Account",
+        "arrow": "\"1\" --> \"0..*\"",
+        "right": "Actor"
+      },
+      "reason": "Dependency is too weak; Account likely needs to know which Actor (user) owns it, so a directed association is appropriate."
+    },
+    {
+      "original": {
+        "left": "Account",
+        "arrow": "--> \"1\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "Account",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "Actor"
+      },
+      "reason": "Cardinality should be one-to-one because each Account is owned by exactly one Actor (user)."
+    },
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "--> \"0..*\"",
+        "right": "Permission"
+      },
+      "corrected": {
+        "left": "Actor",
+        "arrow": "\"1\" --> \"0..*\"",
+        "right": "Permission"
+      },
+      "reason": "An Actor can have multiple permissions; the direction from Actor to Permission is correct."
+    },
+    {
+      "original": {
+        "left": "Resource",
+        "arrow": "\"1\" --> \"1..*\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "Resource",
+        "arrow": "\"1\" --> \"0..*\"",
+        "right": "Actor"
+      },
+      "reason": "Cardinality 1..* from Resource to Actor is incorrect; each Resource belongs to one Actor. Should be 1..* only if many Actors, but that contradicts domain."
+    },
+    {
+      "original": {
+        "left": "Resource",
+        "arrow": "--> \"0..*\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "Resource",
+        "arrow": "\"1\" --> \"0..*\"",
+        "right": "Actor"
+      },
+      "reason": "A Resource may be owned by zero or many Actors? That's unusual; typically exactly one Actor per Resource."
+    },
+    {
+      "original": {
+        "left": "Resource",
+        "arrow": "--> \"1\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "Resource",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "Actor"
+      },
+      "reason": "Direction is fine; no correction."
+    },
+    {
+      "original": {
+        "left": "User",
+        "arrow": "\"1\" --> \"1..*\"",
+        "right": "Card"
+      },
+      "corrected": {
+        "left": "User",
+        "arrow": "\"1\" --> \"0..*\"",
+        "right": "Card"
+      },
+      "reason": "A User can have multiple cards; the cardinality 1..* (at least one) should be 0..* (optional) as a user may not have a card yet."
+    },
+    {
+      "original": {
+        "left": "User",
+        "arrow": "*--",
+        "right": "Account"
+      },
+      "corrected": {
+        "left": "User",
+        "arrow": "\"1\" --> \"0..*\"",
+        "right": "Account"
+      },
+      "reason": "Composition with *-- implies many Users own one Account, but a User can have multiple Accounts; use directed association with correct cardinality."
+    }
+  ],
+  "architecture_corrections": [
+    {
+      "kind": "wrong_inheritance",
+      "description": "FlaggedTransaction is a subtype of Transaction, but WithdrawalTransaction is not defined as a subclass of Transaction. According to the domain, FlaggedTransaction should be related to WithdrawalTransaction, not inherit from Transaction.",
+      "fix": {
+        "action": "change_class_type",
+        "details": {
+          "class": "FlaggedTransaction",
+          "new_kind": "class",
+          "remove_relation": "--|> Transaction",
+          "add_relation": "FlaggedTransaction ..> WithdrawalTransaction"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Account is missing a relationship to DailyWithdrawalLimit, which is owned by Task #97 and is essential for withdrawal limit enforcement.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "left": "Account",
+          "arrow": "\"1\" --> \"1\"",
+          "right": "DailyWithdrawalLimit",
+          "meaning": "directed association"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "WithdrawalTransaction should have a direct relationship to Account to enforce atomic withdrawal and rollback (Task #98).",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "left": "WithdrawalTransaction",
+          "arrow": "\"1\" --> \"1\"",
+          "right": "Account",
+          "meaning": "directed association"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "AuthenticationAttempt should have a relationship to Account to support account locking after 3 failed attempts (Task #96).",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "left": "AuthenticationAttempt",
+          "arrow": "\"1\" --> \"1\"",
+          "right": "Account",
+          "meaning": "directed association"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "WithdrawalTransaction should have a relationship to TransactionLog to support atomic logging and rollback (Task #98 and #101).",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "left": "WithdrawalTransaction",
+          "arrow": "\"1\" --> \"1\"",
+          "right": "TransactionLog",
+          "meaning": "directed association"
+        }
+      }
+    }
+  ],
+  "architecture_suggestions": [
+    {
+      "kind": "introduce_value_object",
+      "affected_classes": [
+        "AccountBalance",
+        "WithdrawalLimit"
+      ],
+      "suggestion": "Consider modeling AccountBalance and WithdrawalLimit as value objects (immutable, with equality by value) rather than full classes, to reflect their non-identity nature."
+    },
+    {
+      "kind": "extract_base_class",
+      "affected_classes": [
+        "Finance_Team",
+        "Operations_Team",
+        "Security_Team"
+      ],
+      "suggestion": "Consider extracting a common base class 'Team' or 'Role' to reduce duplication among these team classes, as they all inherit from Actor."
+    },
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "TransactionState"
+      ],
+      "suggestion": "Rename 'TransactionState' to 'TransactionStatus' to avoid confusion with the existing 'State' class and better reflect its purpose (enum of possible statuses)."
+    },
+    {
+      "kind": "add_aggregate_root",
+      "affected_classes": [
+        "Account",
+        "WithdrawalTransaction",
+        "AuthenticationAttempt"
+      ],
+      "suggestion": "Consider making 'Account' an aggregate root that encapsulates WithdrawalTransaction and AuthenticationAttempt as internal entities, ensuring consistency for operations like withdrawal and lockout."
+    }
+  ]
+}

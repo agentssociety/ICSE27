@@ -1,0 +1,37 @@
+{
+  "task_id": 77,
+  "confidence": 0.9971,
+  "evidence": [
+    {
+      "claim": "The system allows assigning an immediate slot to emergency flights.",
+      "fact": "The system immediately gives a declared emergency flight the earliest possible slot.",
+      "score": 0.9989,
+      "user_story_span": "assign an immediate slot to emergency flights",
+      "fact_span": "immediately gives a declared emergency flight the earliest possible slot"
+    },
+    {
+      "claim": "The system allows re-queuing other flights.",
+      "fact": "The system re-queues displaced flights by the normal rules.",
+      "score": 0.9985,
+      "user_story_span": "re-queue other flights",
+      "fact_span": "re-queues displaced flights"
+    },
+    {
+      "claim": "The emergency flight is moved to the front of the queue.",
+      "fact": "The system immediately gives a declared emergency flight the earliest possible slot.",
+      "score": 0.9977,
+      "user_story_span": "the emergency flight is moved to the front of the queue",
+      "fact_span": "immediately gives a declared emergency flight the earliest possible slot"
+    },
+    {
+      "claim": "When the interaction occurs, the system assigns an immediate slot.",
+      "fact": "The system immediately gives a declared emergency flight the earliest possible slot.",
+      "score": 0.9932,
+      "user_story_span": "the system assigns an immediate slot",
+      "fact_span": "immediately gives a declared emergency flight the earliest possible slot"
+    }
+  ],
+  "total_claims": 7,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

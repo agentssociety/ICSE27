@@ -1,0 +1,143 @@
+@startuml
+skinparam classFontName Arial
+skinparam classFontSize 12
+skinparam packageFontSize 14
+skinparam packageBorderColor #4A4A4A
+skinparam classBorderColor #4A4A4A
+skinparam classHeaderBackgroundColor #F0F0F0
+
+package "Domain Model" {
+    abstract class Actor {
+        + mayPerform : Set<Permission>
+  + getPermissions(initiator) : Set<PermissionInstance>
+    }
+    
+    class Blood_Bank_Administrators {
+    }
+    
+    class Medical_Staff {
+    }
+    
+    class Regulatory_Authorities {
+    }
+    
+    abstract class Permission {
+        {abstract}
+  + checkPermission(permissions, requiredPermission) : boolean
+    }
+    
+    enum PermissionInstance {
+        Read
+        Write
+        Execute
+        Admin
+    }
+    
+    abstract class Resource {
+        + owner : Actor
+        + accessible : Set<Actor>
+  + getAccessible() : Set<Actor>
+    }
+    
+    class BloodUnit {
+        + collectionDate : Date
+        + status : BloodUnitStatus
+  + getCollectionDate() : Date
+  + markExpired() : void
+  + setAvailableForTransfusion(false)
+  + getStatus() : BloodUnitStatus
+    }
+    
+    enum BloodUnitStatus {
+        active
+        expired
+  + setStatus(BloodUnitStatus.EXPIRED)
+    }
+    
+    abstract class State {
+        {abstract}
+    }
+    
+    enum StateInstance {
+        Pre1
+        Pre2
+        Post1
+        Post2
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface Blood_Units_Database {
+        {abstract}
+        + authenticated : boolean
+  + getBloodUnit(unitId: String) : BloodUnit
+  + updateBloodUnit(bloodUnit: BloodUnit) : void
+  + getAllBloodUnits() : List<BloodUnit>
+  + getAllActiveBloodUnits() : List<BloodUnit>
+    }
+    
+    interface System_Clock_API {
+        {abstract}
+        + authenticated : boolean
+    }
+}
+
+package "Exceptions" {
+    class ClockFailureException <<exception>> {
+    }
+}
+
+Actor <|-- Blood_Bank_Administrators
+Actor <|-- Medical_Staff
+Actor <|-- Regulatory_Authorities
+
+Permission <|.. PermissionInstance
+
+State <|.. StateInstance
+
+Resource <|-- BloodUnit
+
+BloodUnit "1" --> "1" BloodUnitStatus : status
+Resource "1" --> "1" Actor : owner
+Resource "1" --> "*" Actor : accessible
+
+Blood_Bank_Administrators "1" --> "*" PermissionInstance : mayPerform
+Medical_Staff "1" --> "*" PermissionInstance : mayPerform
+Regulatory_Authorities "1" --> "*" PermissionInstance : mayPerform
+
+BloodUnit ..> Blood_Units_Database : <<uses>>
+BloodUnit ..> System_Clock_API : <<uses>>
+
+System_Clock_API ..> ClockFailureException : <<throws>>
+
+note top of BloodUnit
+    Invariant: collectionDate must be recorded
+    Invariant: status transitions from active to expired
+end note
+
+note top of Actor
+    Invariant: mayPerform is a set of Permission
+end note
+
+note top of Resource
+    Invariant: owner in accessible
+end note
+
+note top of Blood_Units_Database
+    encrypted: false
+    authenticated: true
+end note
+
+note top of System_Clock_API
+    encrypted: false
+    authenticated: true
+end note
+
+note top of StateInstance
+    Pre1: System has access to current date and time
+    Pre2: System stores collection date of each blood unit
+    Post1: Blood unit status updated to 'expired'
+    Post2: Blood unit no longer available for transfusion
+end note
+
+@enduml

@@ -1,0 +1,114 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #F9F9F9
+skinparam classFontName Arial
+skinparam classFontSize 12
+skinparam classShadowing false
+skinparam defaultTextAlignment center
+
+package "Domain Model" {
+  class Patient {
+    + urgencyLevel : int
+    + arrivalTime : DateTime
+  }
+  note right of Patient::urgencyLevel
+    Order: urgency ascending, then arrival time ascending
+  end note
+
+  class PatientQueueData {
+    ' No explicit attributes
+  }
+  note right of PatientQueueData
+    owner : Triage_Nurse_Team
+    accessible by : Triage_Nurse_Team
+  end note
+
+  enum State {
+    PreIdle
+    Post1
+  }
+}
+
+package "Application" {
+  class PatientQueueSortOperation {
+    + initiator : Triage_Nurse_Team
+    + target : PatientQueueData
+    + channel : Patient_Queue_Database
+    + grant : Permission
+    + pre : State
+    + post : State
+  + transitionTo(State.Post1)
+  + logWarning("Invalid urgency, skipping patient")
+  + sortByUrgencyAscThenArrivalAsc()
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface Patient_Queue_Database {
+    ' Authenticated channel
+  }
+}
+
+package "Controllers" {
+  class PatientQueueController {
+    ' Handles sorting requests
+  }
+}
+
+package "DTOs" {
+  class PatientQueueSortRequest {
+    ' Input for sorting operation
+  }
+}
+
+package "Exceptions" {
+  class AuthorizationException <<exception>> {
+  }
+  class AuthenticationException <<exception>> {
+  }
+}
+
+enum Permission {
+  Read
+  Write
+  Execute
+  Admin
+}
+
+' ---- Relationships ----
+
+' Domain model
+PatientQueueData "1" -- "*" Patient : contains
+
+' Application operation dependencies
+PatientQueueSortOperation --> PatientQueueData : target
+PatientQueueSortOperation --> Patient_Queue_Database : channel
+PatientQueueSortOperation --> Permission : grant
+PatientQueueSortOperation --> State : pre
+PatientQueueSortOperation --> State : post
+PatientQueueSortOperation --> Triage_Nurse_Team : initiator
+
+' Controller uses operation (simplified)
+PatientQueueController --> PatientQueueSortOperation : initiates
+
+' Port usage
+Patient_Queue_Database ..> PatientQueueData : used by
+
+' Role associations
+class Triage_Nurse_Team <<role>> {
+}
+
+class Clinical_Leadership <<role>> {
+}
+
+Triage_Nurse_Team --> PatientQueueData : owns, accesses
+Clinical_Leadership --> PatientQueueData : oversees
+
+' Note on constraints
+note right of PatientQueueSortOperation
+  pre != post
+  at least one channel
+  at least one resource affected
+end note
+
+@enduml

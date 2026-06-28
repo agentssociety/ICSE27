@@ -1,0 +1,129 @@
+@startuml
+skinparam defaultFontName Arial
+skinparam classBackgroundColor #FEFEFE
+skinparam classBorderColor #333333
+skinparam interfaceBackgroundColor #E8F0FE
+skinparam enumBackgroundColor #FFF3CD
+skinparam noteBackgroundColor #F0F0F0
+skinparam noteBorderColor #999999
+hide empty members
+
+package "Domain Model" {
+  class Actor {
+    - mayPerform : Set<Permission>
+    .. invariants ..
+    note "mayPerform assignment:\nSecurity_Team -> Admin\nSystem_Administrators -> Write,Execute,Admin\nEnd_Users -> Read,Execute"
+  + getActorByCard(cardData: String) : Actor
+  + getActorByCard(cardData)
+  + mayPerform(grant=Admin) : bool
+  }
+
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  class Resource {
+    - owner : Actor
+    - accessible : Set<Actor>
+    .. invariants ..
+    note "owner ∈ accessible"
+  }
+
+  class Credential {
+    - actor : Actor
+    - pin : Pin
+  + getCredential(actor: Actor) : Credential
+  + getCredential(actor)
+  }
+
+  class Pin {
+    - digits : Set<Digit>
+    .. invariants ..
+    note "4 ≤ #digits ≤ 12"
+  + getPin() : Pin
+  + getPin()
+  }
+
+  class Digit {
+  }
+
+  enum State {
+    Pre1
+    Pre2
+    Pre3
+    Post1
+    Post2
+    Post3
+    Locked
+  + transition(from=Pre3, to=Post1) : boolean
+  + transition(from=Post1, to=Post2) : boolean
+  + transition(from=Post2, to=Post3) : boolean
+  + transition(from=Pre3, to=Locked) : boolean
+  }
+
+  enum IfaceKind {
+    Hardware_Interface
+    Service_Interface
+  }
+
+  enum Bool {
+    True
+    False
+  }
+}
+
+package "Application" {
+  class "REQ_AUTH_01" as Operation {
+    - initiator : Actor
+    - target : Set<Resource>
+    - channel : Set<Interface>
+    - grant : Permission
+    - pre : State
+    - post : State
+    .. invariants ..
+    note "grant ∈ initiator.mayPerform\ninitiator ∈ target.accessible\npre ≠ post\nat least one authenticated channel\nuses both hardware and service interface"
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface Interface {
+    - kind : IfaceKind
+    - encrypted : Bool
+    - authenticated : Bool
+  }
+
+  class CardReader {
+    - kind : IfaceKind = Hardware_Interface
+    - encrypted : Bool = True
+    - authenticated : Bool = True
+  + readCard(cardData)
+  }
+
+  class PINVerificationService {
+    - kind : IfaceKind = Service_Interface
+    - encrypted : Bool = False
+    - authenticated : Bool = True
+  }
+}
+
+' Relationships
+Actor "1" -- "0..*" Resource : accessible
+Actor "1" -- "1" Resource : owner
+Actor "1" -- "1" Credential : actor
+Credential *-- "1" Pin : pin
+Pin *-- "4..12" Digit : digits
+
+Operation "1" -- "1" Actor : initiator
+Operation "1" -- "1..*" Resource : target
+Operation "1" -- "1..*" Interface : channel
+Operation "1" -- "1" Permission : grant
+Operation "1" -- "1" State : pre
+Operation "1" -- "1" State : post
+
+Interface <|-- CardReader : implements
+Interface <|-- PINVerificationService : implements
+
+@enduml

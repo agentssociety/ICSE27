@@ -1,0 +1,160 @@
+{
+  "run_id": "P2E3",
+  "project": 2,
+  "essay": 3,
+  "n_tasks": 7,
+  "wall_clock_s": 39778.11,
+  "pipeline_steps": 180,
+  "total_incidents": 17,
+  "fixed_incidents": 14,
+  "escalated_incidents": 3,
+  "self_fix_rate_pct": 82.4,
+  "by_phase": {
+    "DESIGN_UML": {
+      "fixed": 3,
+      "escalated": 1
+    },
+    "TESTING": {
+      "fixed": 11,
+      "escalated": 2
+    }
+  },
+  "incidents": [
+    {
+      "line_num": 3526,
+      "timestamp": "2026-06-15 07:00:58.387",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpc6d56txk/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 3577,
+      "timestamp": "2026-06-15 07:33:26.027",
+      "phase": "DESIGN_UML",
+      "error_type": "LLM_REQUEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Error generating UML diagrams for requirement 40 on attempt 1/3: HTTPSConnectionPool(host='openrouter.ai', port=443): Read timed out. (read timeout=120)"
+    },
+    {
+      "line_num": 4053,
+      "timestamp": "2026-06-15 07:42:44.573",
+      "phase": "DESIGN_UML",
+      "error_type": "LLM_REQUEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Error generating UML diagrams for requirement 40 on attempt 1/3: Could not reach the PlantUML server while validating the class diagram."
+    },
+    {
+      "line_num": 4199,
+      "timestamp": "2026-06-15 07:49:58.839",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Class diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpq_v7a8st/class_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/"
+    },
+    {
+      "line_num": 7444,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_create_blood_unit_valid"
+    },
+    {
+      "line_num": 7445,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_create_blood_unit_invalid_type"
+    },
+    {
+      "line_num": 7446,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_mark_expired"
+    },
+    {
+      "line_num": 7452,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/blood_unit/test_blood_unit_api.py::TestBloodUnitAPI::test_list_blood_units"
+    },
+    {
+      "line_num": 7523,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_create_blood_unit_valid"
+    },
+    {
+      "line_num": 7524,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_create_blood_unit_invalid_type"
+    },
+    {
+      "line_num": 7525,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_mark_expired"
+    },
+    {
+      "line_num": 7531,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/blood_unit/test_blood_unit_api.py::TestBloodUnitAPI::test_list_blood_units"
+    },
+    {
+      "line_num": 7937,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/blood_unit/test_blood_unit_service.py::TestBloodUnitService::test_create_blood_unit"
+    },
+    {
+      "line_num": 7972,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/blood_unit/test_blood_unit_service.py::TestBloodUnitService::test_create_blood_unit"
+    },
+    {
+      "line_num": 9075,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/transfusion_request/test_transfusion_request_api.py::TestTransfusionRequestAPI::test_list_requests"
+    },
+    {
+      "line_num": 14574,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/blood_unit/test_blood_unit_service.py::TestBloodUnitService::test_get_dashboard_nearing_expiration"
+    },
+    {
+      "line_num": 14622,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/blood_unit/test_blood_unit_service.py::TestBloodUnitService::test_get_dashboard_nearing_expiration"
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+    class Transaction {
+        - id : String
+        - operations : List<Operation>
+        - status : TransactionStatus
+  + create(actor: Actor, resources: List<Resource>) : Transaction
+  + commit() : Boolean
+  + rollback() : Boolean
+    }
+    note right of Transaction::operations
+        All operations within a transaction must complete atomically;
+        either all succeed and are committed, or all fail and are rolled back.
+    end note
+
+    class Operation {
+        - id : String
+        - data : Object
+        - status : OperationStatus
+  + execute(data: Object) : Boolean
+    }
+
+    class Resource {
+        - owner : Actor
+        - accessible : Set<Actor>
+  + checkAccessibility(resourceId: String, actorId: String) : Boolean
+  + applyChange(data: Object) : Boolean
+  + checkOwnership(resourceId: String, actorId: String) : Boolean
+    }
+    note right of Resource::owner
+        Every resource is accessible at minimum by its owner.
+    end note
+
+    class Actor {
+        - mayPerform : Permission
+  + getPermissions(actorId: String) : Permission
+    }
+
+    enum Permission {
+        READ
+        WRITE
+        EXECUTE
+        ADMIN
+    }
+    note right of Permission
+        Partial order: Read < Write < Execute < Admin
+    end note
+
+    enum State {
+        PRE1
+        PRE2
+        PRE3
+        POST1
+        POST2
+  + setPreState(type: String) : void
+  + setPostState(type: String) : void
+    }
+
+    class Interface {
+        - kind : String
+        - encrypted : Boolean
+        - authenticated : Boolean
+    }
+}
+
+package "Application" {
+    interface "TransactionManagementAPI" <<interface>> {
+        + {abstract} startTransaction(initiator: Actor, resources: List<Resource>, operations: List<Operation>) : Transaction
+        + {abstract} commitTransaction(transaction: Transaction) : Boolean
+        + {abstract} rollbackTransaction(transaction: Transaction) : Boolean
+        + {abstract} queryTransaction(transactionId: String) : Transaction
+    }
+
+    interface "DataStorage" <<interface>> {
+        + {abstract} persistChanges(transaction: Transaction) : Boolean
+        + {abstract} rollbackChanges(transaction: Transaction) : Boolean
+        + {abstract} isAtomicOperationSupported() : Boolean
+  + detectIncompleteTransactions() : List<Transaction>
+    }
+}
+
+package "Infrastructure — Ports" {
+    class "TransactionManagementAPIImpl" {
+        - storage : DataStorage
+        - activeTransactions : Map<String, Transaction>
+    }
+
+    class "DataStorageImpl" {
+        - connectionString : String
+        - isEncrypted : Boolean
+        - isAuthenticated : Boolean
+    }
+}
+
+package "Exceptions" {
+    class TransactionFailedException <<exception>> {
+        - transactionId : String
+        - reason : String
+    }
+
+    class AtomicityViolationException <<exception>> {
+        - transactionId : String
+        - failedOperationId : String
+    }
+
+    class AuthorizationException <<exception>> {
+        - actorId : String
+        - requiredPermission : Permission
+    }
+
+    class ResourceUnavailableException <<exception>> {
+        - resourceId : String
+    }
+
+    class InvalidDataException <<exception>> {
+        - operationId : String
+        - validationErrors : List<String>
+    }
+
+    class NetworkFailureException <<exception>> {
+        - channelId : String
+    }
+
+    class SystemCrashException <<exception>> {
+        - timestamp : DateTime
+    }
+}
+
+package "DTOs" {
+    class TransactionDTO <<dto>> {
+        - id : String
+        - initiatorId : String
+        - operations : List<OperationDTO>
+        - preState : State
+        - postState : State
+        - status : String
+    }
+
+    class OperationDTO <<dto>> {
+        - id : String
+        - data : Object
+        - status : String
+        - resourceIds : List<String>
+        - channelIds : List<String>
+    }
+
+    class ResourceDTO <<dto>> {
+        - id : String
+        - ownerId : String
+        - accessibleActorIds : List<String>
+    }
+
+    class ActorDTO <<dto>> {
+        - id : String
+        - permission : Permission
+    }
+}
+
+' Relationships
+Actor "1" -- "1" Permission : mayPerform >
+Resource "1" -- "1" Actor : owner >
+Resource "1" -- "*" Actor : accessible >
+
+Transaction "1" *-- "*" Operation : contains
+Transaction "1" -- "1" Actor : initiated by >
+Transaction "*" -- "*" Resource : affects >
+Transaction "*" -- "*" Interface : uses >
+Transaction "1" -- "2" State : has pre/post >
+
+TransactionManagementAPI <|.. TransactionManagementAPIImpl : implements
+DataStorage <|.. DataStorageImpl : implements
+
+TransactionManagementAPIImpl --> DataStorage : uses
+TransactionManagementAPIImpl --> TransactionFailedException : throws
+TransactionManagementAPIImpl --> AtomicityViolationException : throws
+TransactionManagementAPIImpl --> AuthorizationException : throws
+TransactionManagementAPIImpl --> ResourceUnavailableException : throws
+TransactionManagementAPIImpl --> InvalidDataException : throws
+TransactionManagementAPIImpl --> NetworkFailureException : throws
+TransactionManagementAPIImpl --> SystemCrashException : throws
+
+TransactionDTO --> OperationDTO : contains
+TransactionDTO --> State : references
+TransactionDTO --> ActorDTO : references
+OperationDTO --> ResourceDTO : references
+
+@enduml

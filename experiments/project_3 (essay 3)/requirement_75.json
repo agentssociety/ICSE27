@@ -1,0 +1,91 @@
+{
+  "id": "REQ-SCHED-01",
+  "title": "Detect and Prevent Slot Overlaps",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall automatically detect when a new or modified slot overlaps with existing slots and prevent the action, displaying an error message indicating the overlap.",
+  "rationale": "To ensure efficient resource allocation without conflicts, preventing slot overlaps is essential to maintain proper scheduling and avoid wasteful gaps.",
+  "business_value": "Efficient scheduling leads to better utilization of resources, reduced downtime, and increased productivity.",
+  "source": {
+    "type": "User Story",
+    "id": 75,
+    "description": "As a scheduler I need to detect and prevent slot overlaps and gap violations so that resources are scheduled efficiently without conflicts or wasteful gaps."
+  },
+  "stakeholders": [
+    "Scheduler",
+    "Resource Manager",
+    "Project Team"
+  ],
+  "acceptance_criteria": [
+    "Given a schedule with existing slots",
+    "When a user attempts to create or modify a slot that overlaps with an existing slot",
+    "Then the system rejects the action and displays an error message indicating the overlap"
+  ],
+  "preconditions": [
+    "A valid schedule with existing slots is available in the system"
+  ],
+  "postconditions": [
+    "The attempt to create or modify a slot that overlaps with an existing slot is rejected",
+    "An error message indicating the overlap is displayed"
+  ],
+  "functional_constraints": [
+    "Overlaps are detected and prevented during slot creation or modification",
+    "Error messages are clearly and concisely communicated to the user"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens when a slot is created at the exact same time as an existing slot?",
+    "How should the system handle overlapping slots that span multiple days?",
+    "What if a user attempts to create a slot that starts after an existing slot ends but before another slot begins?"
+  ],
+  "dependencies": [],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Schedule Database",
+      "description": "The system interacts with the Schedule Database to retrieve and update slot information."
+    },
+    {
+      "type": "UI",
+      "name": "Scheduler Interface",
+      "description": "The requirement interacts with the Scheduler Interface to prevent invalid slot creation or modification and display error messages."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-SCHED-01",
+      "description": "Create a new slot that overlaps with an existing slot.",
+      "expected_result": "The system rejects the action and displays an error message indicating the overlap."
+    },
+    {
+      "id": "TC-SCHED-02",
+      "description": "Modify an existing slot to create an overlap with another slot.",
+      "expected_result": "The system rejects the modification and displays an error message indicating the overlap."
+    },
+    {
+      "id": "TC-SCHED-03",
+      "description": "Create a new slot that starts after an existing slot ends but before another slot begins.",
+      "expected_result": "The system allows the creation of the slot without any issues."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T22:41:53.946125",
+  "last_updated": "2026-06-15T22:48:13.215199",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Slot"
+    ],
+    "test_artifacts": []
+  }
+}

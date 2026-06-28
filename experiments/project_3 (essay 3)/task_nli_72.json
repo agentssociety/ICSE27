@@ -1,0 +1,51 @@
+{
+  "task_id": 72,
+  "confidence": 0.9858,
+  "evidence": [
+    {
+      "claim": "The system allows entry of a flight number.",
+      "fact": "Air traffic controllers enter flight details and the system automatically proposes the earliest feasible slot, reducing manual workload.",
+      "score": 0.999,
+      "user_story_span": "The system allows entry of flight number",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system registers flights with estimated times.",
+      "fact": "The system registers incoming flights with their estimated times.",
+      "score": 0.9989,
+      "user_story_span": "register flights with estimated times",
+      "fact_span": "registers incoming flights with their estimated times"
+    },
+    {
+      "claim": "The system allows entry of estimated departure time.",
+      "fact": "The system registers outgoing flights with their estimated times.",
+      "score": 0.9985,
+      "user_story_span": "estimated departure time",
+      "fact_span": "registers outgoing flights with their estimated times"
+    },
+    {
+      "claim": "The system allows entry of estimated arrival time.",
+      "fact": "The system registers incoming flights with their estimated times.",
+      "score": 0.9985,
+      "user_story_span": "",
+      "fact_span": "registers incoming flights with their estimated times"
+    },
+    {
+      "claim": "The system allows entry of destination.",
+      "fact": "The system gives arrivals priority over departures.",
+      "score": 0.9973,
+      "user_story_span": "destination",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system allows entry of origin.",
+      "fact": "The system registers outgoing flights with their estimated times.",
+      "score": 0.9225,
+      "user_story_span": "origin",
+      "fact_span": "registers outgoing flights with their estimated times"
+    }
+  ],
+  "total_claims": 9,
+  "supported_claims": 6,
+  "threshold": 0.6
+}

@@ -1,0 +1,23 @@
+{
+  "task_id": 39,
+  "confidence": 0.982,
+  "evidence": [
+    {
+      "claim": "The system adds the blood unit to the inventory with the provided details.",
+      "fact": "The application tracks blood unit stock in a hospital blood bank.",
+      "score": 0.9853,
+      "user_story_span": "track blood units with ABO/Rh type and collection date",
+      "fact_span": "tracks blood unit stock in a hospital blood bank"
+    },
+    {
+      "claim": "The user can view all tracked units in the inventory.",
+      "fact": "The application captures the blood group, Rh type, and collection date of every unit to support inventory management.",
+      "score": 0.9788,
+      "user_story_span": "view all tracked units in the inventory",
+      "fact_span": "captures the blood group, Rh type, and collection date of every unit to support inventory management"
+    }
+  ],
+  "total_claims": 3,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

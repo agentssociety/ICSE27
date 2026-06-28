@@ -1,0 +1,252 @@
+{
+  "run_id": "P3E3",
+  "project": 3,
+  "essay": 3,
+  "n_tasks": 7,
+  "wall_clock_s": 7429.24,
+  "pipeline_steps": 164,
+  "total_incidents": 28,
+  "fixed_incidents": 25,
+  "escalated_incidents": 3,
+  "self_fix_rate_pct": 89.3,
+  "by_phase": {
+    "DESIGN_UML": {
+      "fixed": 3,
+      "escalated": 0
+    },
+    "ARCHITECTURE": {
+      "fixed": 1,
+      "escalated": 3
+    },
+    "TESTING": {
+      "fixed": 21,
+      "escalated": 0
+    }
+  },
+  "incidents": [
+    {
+      "line_num": 920,
+      "timestamp": "2026-06-15 21:46:50.976",
+      "phase": "ARCHITECTURE",
+      "error_type": "GENERAL",
+      "outcome": "FAIL_ESCALATED",
+      "message": "[tracer] tool generate_full_project_architecture failed: ValueError: No persisted task dependency graph found in agent.md for project 10. Generate or save the task dependency gr"
+    },
+    {
+      "line_num": 933,
+      "timestamp": "2026-06-15 21:46:57.632",
+      "phase": "ARCHITECTURE",
+      "error_type": "GENERAL",
+      "outcome": "FAIL_ESCALATED",
+      "message": "[tracer] tool generate_package_design_diagram failed: ValueError: Project 10: full_domain_model_architecture.puml not found at experiments/project_10/full_domain_model_archit"
+    },
+    {
+      "line_num": 934,
+      "timestamp": "2026-06-15 21:46:57.633",
+      "phase": "ARCHITECTURE",
+      "error_type": "GENERAL",
+      "outcome": "FAIL_ESCALATED",
+      "message": "[tracer] tool generate_project_template_from_package_design failed: ValueError: Project 10: full_domain_model_architecture.puml not found at experiments/project_10/full_domain_model_archit"
+    },
+    {
+      "line_num": 5193,
+      "timestamp": "2026-06-15 22:38:48.491",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpzza9ywnt/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 5284,
+      "timestamp": "2026-06-15 22:42:39.832",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpg3vz57ha/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 5378,
+      "timestamp": "2026-06-15 22:47:08.430",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpycyry06r/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 6485,
+      "timestamp": "2026-06-15 23:09:45.207",
+      "phase": "ARCHITECTURE",
+      "error_type": "SYNTAX",
+      "outcome": "FAIL_FIXED",
+      "message": "3 file(s) still have errors after auto-fix: ['src/domain/exceptions/shared_exceptions.py', 'src/domain/slot/Slot.py', 'src/service/runway/runway_service.py']"
+    },
+    {
+      "line_num": 10302,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/slot/test_slot_domain.py::TestSlotDomain::test_create_method_invalid_duration"
+    },
+    {
+      "line_num": 10355,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/slot/test_slot_domain.py::TestSlotDomain::test_create_method_invalid_duration"
+    },
+    {
+      "line_num": 11868,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/slot/test_slot_service.py::TestSlotServiceImpl::test_allocate_slot_success"
+    },
+    {
+      "line_num": 11871,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/slot/test_slot_service.py::TestSlotServiceImpl::test_allocate_slot_gap_violation"
+    },
+    {
+      "line_num": 11872,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/slot/test_slot_service.py::TestSlotServiceImpl::test_get_slot_found"
+    },
+    {
+      "line_num": 11875,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/slot/test_slot_service.py::TestSlotServiceImpl::test_get_all_slots"
+    },
+    {
+      "line_num": 11876,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/slot/test_slot_service.py::TestSlotServiceImpl::test_update_slot"
+    },
+    {
+      "line_num": 11877,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/slot/test_slot_service.py::TestSlotServiceImpl::test_delete_slot"
+    },
+    {
+      "line_num": 11879,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/slot/test_slot_api.py::TestSlotAPI::test_create_slot"
+    },
+    {
+      "line_num": 11880,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/slot/test_slot_api.py::TestSlotAPI::test_list_slots"
+    },
+    {
+      "line_num": 11881,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/slot/test_slot_api.py::TestSlotAPI::test_get_slot_found"
+    },
+    {
+      "line_num": 11883,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/slot/test_slot_api.py::TestSlotAPI::test_update_slot"
+    },
+    {
+      "line_num": 12035,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/slot/test_slot_service.py::TestSlotServiceImpl::test_allocate_slot_gap_violation"
+    },
+    {
+      "line_num": 12036,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/slot/test_slot_service.py::TestSlotServiceImpl::test_get_slot_found"
+    },
+    {
+      "line_num": 12038,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/slot/test_slot_service.py::TestSlotServiceImpl::test_get_all_slots"
+    },
+    {
+      "line_num": 12038,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/slot/test_slot_service.py::TestSlotServiceImpl::test_update_slot"
+    },
+    {
+      "line_num": 12039,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/slot/test_slot_service.py::TestSlotServiceImpl::test_delete_slot"
+    },
+    {
+      "line_num": 12040,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/slot/test_slot_api.py::TestSlotAPI::test_create_slot"
+    },
+    {
+      "line_num": 12040,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/slot/test_slot_api.py::TestSlotAPI::test_list_slots"
+    },
+    {
+      "line_num": 12041,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/slot/test_slot_api.py::TestSlotAPI::test_get_slot_found"
+    },
+    {
+      "line_num": 12042,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/slot/test_slot_api.py::TestSlotAPI::test_update_slot"
+    }
+  ]
+}

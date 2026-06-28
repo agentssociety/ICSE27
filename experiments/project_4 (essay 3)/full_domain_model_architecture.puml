@@ -1,0 +1,215 @@
+@startuml
+title Project 13 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+note as RelationshipCorrections
+  <b>Relationship cardinalities corrected by LLM review</b>
+  Account "1" -- "0..*" AccountBalance → Account "1" --> "1" AccountBalance
+    Reason: Each Account has exactly one AccountBalance; a one-to-many association is incorrect.
+  Account "1" -> "0..*" Actor → Account "1" --> "0..*" Actor
+    Reason: Dependency is too weak; Account likely needs to know which Actor (user) owns it, so a directed association is appropriate.
+  Account --> "1" Actor → Account "1" --> "1" Actor
+    Reason: Cardinality should be one-to-one because each Account is owned by exactly one Actor (user).
+  Actor --> "0..*" Permission → Actor "1" --> "0..*" Permission
+    Reason: An Actor can have multiple permissions; the direction from Actor to Permission is correct.
+  Resource "1" --> "1..*" Actor → Resource "1" --> "0..*" Actor
+    Reason: Cardinality 1..* from Resource to Actor is incorrect; each Resource belongs to one Actor. Should be 1..* only if many Actors, but that contradicts domain.
+  Resource --> "0..*" Actor → Resource "1" --> "0..*" Actor
+    Reason: A Resource may be owned by zero or many Actors? That's unusual; typically exactly one Actor per Resource.
+  Resource --> "1" Actor → Resource "1" --> "1" Actor
+    Reason: Direction is fine; no correction.
+  User "1" --> "1..*" Card → User "1" --> "0..*" Card
+    Reason: A User can have multiple cards; the cardinality 1..* (at least one) should be 0..* (optional) as a user may not have a card yet.
+  User *-- Account → User "1" --> "0..*" Account
+    Reason: Composition with *-- implies many Users own one Account, but a User can have multiple Accounts; use directed association with correct cardinality.
+end note
+
+note as ArchitectureCorrections
+  <b>Architecture mistakes corrected automatically</b>
+  [wrong_inheritance] FlaggedTransaction is a subtype of Transaction, but WithdrawalTransaction is not defined as a subclass of Transaction. According to the domain, FlaggedTransaction should be related to WithdrawalTransaction, not inherit from Transaction.
+    Fix applied: change_class_type
+  [missing_relationship] Account is missing a relationship to DailyWithdrawalLimit, which is owned by Task #97 and is essential for withdrawal limit enforcement.
+    Fix applied: add_relation
+  [missing_relationship] WithdrawalTransaction should have a direct relationship to Account to enforce atomic withdrawal and rollback (Task #98).
+    Fix applied: add_relation
+  [missing_relationship] AuthenticationAttempt should have a relationship to Account to support account locking after 3 failed attempts (Task #96).
+    Fix applied: add_relation
+  [missing_relationship] WithdrawalTransaction should have a relationship to TransactionLog to support atomic logging and rollback (Task #98 and #101).
+    Fix applied: add_relation
+end note
+
+package "Task #97\nWithdrawal Limit\nEnforcement" {
+  class Account <<main>> <<level0>>
+  class DailyWithdrawalLimit <<main>> <<level1>>
+  class Actor
+  enum IfaceKind
+  class Interface
+  enum Permission
+  class REQ_BAL_01
+  class Resource
+  class State
+  class UserAccount
+  class WithdrawalLimit
+}
+
+package "Task #101\nAudit Logging for\nAuthentication and\nTransactions" {
+  class AuthenticationAttempt <<main>> <<level2>>
+  enum TransactionState <<main>> <<level0>>
+  class TransactionStateChange
+}
+
+package "Task #96\nCard and PIN\nAuthentication" {
+  class Card <<main>> <<level1>>
+  class Pin <<main>> <<level2>>
+  class LockoutNotification
+  class LockoutRecord
+  class User
+}
+
+package "Task #98\nAtomic Withdrawal with\nRollback" {
+  class WithdrawalTransaction <<main>> <<level0>>
+  class AccountBalance
+  class Transaction
+  class TransactionLog
+}
+
+package "Task #99\nSuspicious Withdrawal\nDetection" {
+  class FlaggedTransaction <<main>> <<level1>>
+  class SuspiciousPattern <<main>> <<level2>>
+  class Finance_Team
+  class Operations_Team
+  class REQ_SEC_01
+  class Security_Team
+  class Transaction_Database
+  class bool
+}
+
+package "Task #100\nAdmin Transaction and\nAccount Management" {
+  note as TaskSummary100
+    No new domain model classes
+    Uses: Account, WithdrawalTransaction, FlaggedTransaction, AuthenticationAttempt, TransactionStateChange
+  end note
+}
+
+Account "1" --> "0..*" Actor
+Account "1" --> "0..*" LockoutRecord
+Account "1" --> "0..*" TransactionLog
+Account "1" --> "1" AccountBalance
+Account "1" --> "1" Actor
+Actor "1" --> "0..*" Permission
+AuthenticationAttempt "1" --> "1" Account
+AuthenticationAttempt "1" --> "1" Card
+AuthenticationAttempt "1" --> "1" User
+Card "1" --> "1" Account
+Finance_Team --|> Actor
+FlaggedTransaction --|> Transaction
+FlaggedTransaction ..> WithdrawalTransaction
+Interface --> "1" IfaceKind
+Interface --> "1" bool
+LockoutNotification "1" --> "1" LockoutRecord
+Operations_Team --|> Actor
+REQ_BAL_01 "1" --> "1" Actor
+REQ_BAL_01 "1" --> "1" Permission
+REQ_BAL_01 "1" --> "1" State
+REQ_BAL_01 "1" --> "1..*" Interface
+REQ_BAL_01 "1" --> "1..*" Resource
+REQ_SEC_01 *-- "1" Actor
+REQ_SEC_01 *-- "1" Permission
+REQ_SEC_01 *-- "1" State
+REQ_SEC_01 *-- "1..*" Interface
+REQ_SEC_01 *-- "1..*" Resource
+Resource "1" --> "0..*" Actor
+Resource "1" --> "1" Actor
+Security_Team --|> Actor
+SuspiciousPattern ..> WithdrawalTransaction
+Transaction_Database --|> Interface
+User "1" --> "0..*" Account
+User "1" --> "0..*" Card
+UserAccount "1" --> "1" WithdrawalLimit
+WithdrawalTransaction "1" --> "1" Account
+WithdrawalTransaction "1" --> "1" TransactionLog
+note right of AccountBalance #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [introduce_value_object] Consider modeling\nAccountBalance and WithdrawalLimit as value\nobjects (immutable, with equality by value)\nrather than full classes, to reflect their non-\nidentity nature.
+end note
+
+note right of WithdrawalLimit #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [introduce_value_object] Consider modeling\nAccountBalance and WithdrawalLimit as value\nobjects (immutable, with equality by value)\nrather than full classes, to reflect their non-\nidentity nature.
+end note
+
+note right of Finance_Team #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [extract_base_class] Consider extracting a\ncommon base class 'Team' or 'Role' to reduce\nduplication among these team classes, as they\nall inherit from Actor.
+end note
+
+note right of Operations_Team #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [extract_base_class] Consider extracting a\ncommon base class 'Team' or 'Role' to reduce\nduplication among these team classes, as they\nall inherit from Actor.
+end note
+
+note right of Security_Team #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [extract_base_class] Consider extracting a\ncommon base class 'Team' or 'Role' to reduce\nduplication among these team classes, as they\nall inherit from Actor.
+end note
+
+note right of TransactionState #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [rename_for_clarity] Rename 'TransactionState'\nto 'TransactionStatus' to avoid confusion with\nthe existing 'State' class and better reflect\nits purpose (enum of possible statuses).
+end note
+
+note right of Account #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [add_aggregate_root] Consider making 'Account'\nan aggregate root that encapsulates\nWithdrawalTransaction and AuthenticationAttempt\nas internal entities, ensuring consistency for\noperations like withdrawal and lockout.
+end note
+
+note right of WithdrawalTransaction #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [add_aggregate_root] Consider making 'Account'\nan aggregate root that encapsulates\nWithdrawalTransaction and AuthenticationAttempt\nas internal entities, ensuring consistency for\noperations like withdrawal and lockout.
+end note
+
+note right of AuthenticationAttempt #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [add_aggregate_root] Consider making 'Account'\nan aggregate root that encapsulates\nWithdrawalTransaction and AuthenticationAttempt\nas internal entities, ensuring consistency for\noperations like withdrawal and lockout.
+end note
+
+@enduml

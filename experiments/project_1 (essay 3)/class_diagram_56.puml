@@ -1,0 +1,104 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Arial
+skinparam backgroundColor #FEFEFE
+skinparam packageStyle rectangle
+skinparam classFontColor #000000
+skinparam classBackgroundColor #E0F0FF
+skinparam interfaceBackgroundColor #D0E0D0
+skinparam enumBackgroundColor #FFE0B0
+
+package "Domain Model" {
+    class Queue {
+        +items : List<QueueItem>
+        +order : String
+        +state : State
+  + addItem(item: QueueItem) : void
+  + reorder() : void
+  + removeItem(itemId: String) : void
+  + modifyItem(itemId: String, updatedItem: QueueItem) : void
+    }
+    note right of Queue
+        invariant: must be automatically reordered
+        upon addition, removal, or modification of an item
+    end note
+
+    class QueueItem {
+        +id : String
+        +position : Integer
+        +urgency : String
+    }
+    note right of QueueItem
+        invariant: position is determined by reordering rules
+    end note
+
+    class ChangeEvent {
+        +type : ChangeType
+        +item : QueueItem
+  + recordChange(changeType: ChangeType.ADD, item: QueueItem)
+  + recordChange(ChangeType.REMOVE, item)
+  + recordChange(ChangeType.MODIFY, updatedItem)
+    }
+    note right of ChangeEvent
+        invariant: must be detected by the system
+    end note
+
+    enum ChangeType {
+        ADD
+        REMOVE
+        MODIFY
+    }
+
+    class Resource {
+        +owner : Actor
+        +accessible : Set<Actor>
+    }
+    note right of Resource
+        invariant: owner always has access
+        invariant: access controlled by permissions
+    end note
+
+    class Actor {
+        +mayPerform : Set<Permission>
+    }
+
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+    }
+
+    enum State {
+        PreIdle
+        Post1
+  + transition(State.PreIdle) : State.Post1
+    }
+    note right of State
+        invariant: operation must transition
+        from PreIdle to Post1
+    end note
+
+    ' Composition: Queue → QueueItem
+    Queue *-- QueueItem
+
+    ' Associations
+    ChangeEvent --> QueueItem : item
+    Actor --> Permission : has_permission
+    Resource --> Actor : owner
+    Resource --> Actor : accessible (0..*)
+}
+
+package "Application" {
+    interface QueueManagementSystem {
+    }
+    note right of QueueManagementSystem
+        interface for managing queue data;
+        requires encrypted and authenticated communication
+    end note
+}
+
+' Association: QueueManagementSystem manages Queue
+QueueManagementSystem --> Queue : manages
+
+@enduml

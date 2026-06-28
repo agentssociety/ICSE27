@@ -1,0 +1,94 @@
+@startuml
+title Blood Inventory Monitoring and Alerting
+
+actor "Blood Bank Manager" as BBM
+actor "Procurement Team" as PT
+participant "InventoryMonitor" as IM #LightBlue
+participant "InventoryState" as IS #LightGreen
+participant "BloodType" as BT #LightGreen
+participant "Alert" as A #LightGreen
+participant "State" as S #LightGreen
+database "InventoryDatabase" as DB #LightYellow
+participant "NotificationAPI" as NOTIF #LightYellow
+
+box "Actor" #LightGray
+  actor BBM
+  actor PT
+end box
+
+box "Application" #LightBlue
+  participant IM
+end box
+
+box "Domain" #LightGreen
+  participant IS
+  participant BT
+  participant A
+  participant S
+end box
+
+box "Infrastructure" #LightYellow
+  database DB
+  participant NOTIF
+end box
+
+== Inventory Check Flow ==
+
+BBM -> IM : checkInventory()
+note right of IM : permission check required
+IM -> IM : verifyPermission(initiator, "READ")
+alt permission denied
+  IM -> BBM : error("Unauthorized")
+else permission granted
+  ' Step 1: Retrieve current inventory
+  IM -> DB : getInventoryState() [AUTH]
+  alt DB success
+    DB --> IM : inventoryState : InventoryState
+    ' Step 2: Compare each blood type level against threshold
+    IM -> IS : getLevels() : Map<BloodType, Integer>
+    IS --> IM : levels
+    IM -> IS : getThresholds() : Map<BloodType, Integer>
+    IS --> IM : thresholds (all 5)
+    alt any blood type level < threshold
+      loop for each bloodType in levels where level < threshold
+        ' Step 3: Create Alert
+        IM -> A : createAlert(bloodType, currentLevel)
+        note left of A : Alert created with\nbloodType and currentLevel
+        ' Step 4: Send notification
+        IM -> NOTIF : sendAlert(alert: Alert) [AUTH]
+        alt notification success
+          NOTIF --> IM : ok
+          NOTIF -> PT : notify(alert: Alert)
+          note right of PT : optionally notify\nBlood Bank Manager
+        else notification failure
+          IM -> IM : logFailure()
+          IM -> NOTIF : sendAlert(alert: Alert) [AUTH] // retry
+          alt retry success
+            NOTIF --> IM : ok
+            NOTIF -> PT : notify(alert: Alert)
+          else retry failure
+            IM -> IM : logFailure("Notification API permanently failed")
+          end
+        end
+      end
+    else all levels >= threshold
+      ' No alert
+    end
+    ' Step 5: Update system state
+    IM -> S : transition(to: "Done")
+    S -> S : state = Done
+    IM -> BBM : success
+  else DB unavailable
+    IM -> IM : logError() // log error and retry
+    IM -> DB : getInventoryState() [AUTH] // retry
+    alt retry success
+      DB --> IM : inventoryState
+      ' proceed with normal flow (simplified: handle in same block)
+      IM -> BBM : success (after retry)
+    else retry failure
+      IM -> BBM : error("Database unavailable after retry")
+    end
+  end
+end
+
+@enduml

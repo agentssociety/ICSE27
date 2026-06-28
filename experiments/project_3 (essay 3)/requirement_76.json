@@ -1,0 +1,115 @@
+{
+  "id": "REQ-OPM-01",
+  "title": "Runway Closure and Flight Reassignment Management",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall automatically close a runway when requested by the airport operations manager and reassign flights to other available runways.",
+  "rationale": "To ensure safe and efficient operation of the airport during runway closures, allowing for timely reassignment of flights and accurate delay information recording.",
+  "business_value": "Improves operational safety and efficiency by providing a systematic approach to runway closure management and flight reassignment, reducing delays and ensuring passenger satisfaction.",
+  "source": {
+    "type": "User Story",
+    "id": 76,
+    "description": "As a airport operations manager I need to close a runway and reassign flights, and mark flights as delayed if the delay exceeds 60 minutes So that flights are safely and efficiently rerouted and accurate delay information is recorded"
+  },
+  "stakeholders": [
+    "Airport Operations Manager",
+    "Flight Control Center",
+    "Passenger Services Department"
+  ],
+  "acceptance_criteria": [
+    "Given a runway is closed",
+    "When flights are reassigned to other runways",
+    "Then the system calculates the new delay for each flight",
+    "And if the delay exceeds 60 minutes, the flight is marked as delayed"
+  ],
+  "preconditions": [
+    "Runway closure request is received by the airport operations manager.",
+    "There are available alternate runways and slots."
+  ],
+  "postconditions": [
+    "Flights have been reassigned to other available runways.",
+    "The new delays for each flight have been calculated.",
+    "Flights with a delay exceeding 60 minutes have been explicitly marked as delayed in the system."
+  ],
+  "functional_constraints": [
+    "The system must accurately calculate delays based on original scheduled departure or arrival time.",
+    "Reassignment of flights must consider available alternate runways and slots."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": [
+      "Response time within a reasonable threshold during runway closure events."
+    ],
+    "availability": [
+      "Uptime of at least 99.9% to ensure continuous operation.",
+      "No downtime for critical operations."
+    ],
+    "scalability": [
+      "The system must be able to handle increased load during peak travel times and runway closures without performance degradation."
+    ],
+    "usability": [
+      "Error handling should provide clear, concise messages to the airport operations manager.",
+      "User interface should be intuitive and easy to navigate."
+    ]
+  },
+  "edge_cases": [
+    "No available alternate runways during a closure.",
+    "All flights are already delayed and exceed 60 minutes."
+  ],
+  "dependencies": [
+    "Runway management system",
+    "Flight scheduling and tracking system"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Runway Closure API",
+      "description": "Interface for airport operations manager to request runway closure."
+    },
+    {
+      "type": "Database",
+      "name": "Flight Schedule Database",
+      "description": "Stores flight schedules, delays, and reassignments."
+    },
+    {
+      "type": "UI",
+      "name": "Airport Operations Manager Console",
+      "description": "User interface for airport operations manager to manage runway closures."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-OPM-01",
+      "description": "Verify runway closure request is processed successfully.",
+      "expected_result": "Runway is closed and flights are reassigned to alternate runways."
+    },
+    {
+      "id": "TC-OPM-02",
+      "description": "Test delay calculation for a flight with 61 minutes delay.",
+      "expected_result": "Flight is marked as delayed in the system."
+    },
+    {
+      "id": "TC-OPM-03",
+      "description": "Validate reassignment of flights when no alternate runways are available.",
+      "expected_result": "System handles error gracefully and informs airport operations manager."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T22:42:58.373441",
+  "last_updated": "2026-06-15T22:48:16.110805",
+  "traceability": {
+    "related_requirements": [
+      "REQ-FLIGHT-DISPATCHER-01"
+    ],
+    "design_components": [
+      "Runway",
+      "Flight",
+      "Slot"
+    ],
+    "test_artifacts": []
+  }
+}

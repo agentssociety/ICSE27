@@ -1,0 +1,149 @@
+@startuml
+skinparam backgroundColor white
+skinparam packageStyle rectangle
+skinparam classFontStyle bold
+skinparam classFontSize 14
+skinparam classAttributeFontSize 12
+skinparam classBorderColor black
+
+package "Domain Model" {
+    class Flight {
+        - flightNumber: String
+        - aircraftType: String
+        - scheduledTime: DateTime
+        - direction: Direction
+        {constraint} flightNumber must be unique
+        {constraint} all required fields must be non-null
+  + create(details)
+    }
+
+    enum Direction {
+        incoming
+        outgoing
+    }
+
+    class AircraftMovementLog {
+        - entries: Flight[]
+    }
+
+    class Operation {
+        - initiator: Actor
+        - target: Resource[]
+        - channel: Interface[]
+        - grant: Permission
+        - pre: State
+        - post: State
+        {constraint} at least one target
+        {constraint} at least one channel
+        {constraint} pre != post
+        {constraint} initiator must have grant permission
+        {constraint} initiator authorized for targets
+    }
+
+    class Actor {
+        - mayPerform: Permission[]
+    }
+
+    class Resource {
+        - owner: Actor
+        - accessible: Actor[]
+    }
+
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+        {constraint} Read < Write < Execute < Admin
+    }
+
+    enum State {
+        Pre1
+        Post1
+        Post2
+        Post3
+    }
+
+    class Interface <<interface>> {
+        - kind: InterfaceKind
+        - encrypted: Boolean
+        - authenticated: Boolean
+    }
+
+    enum InterfaceKind {
+        API
+        Database
+    }
+
+    Flight "1" *-- "many" AircraftMovementLog : part of
+    Actor -- Permission : has >
+    Actor -- Operation : performs
+    Operation -- Interface : uses >
+    Operation ..> State : transitions from/to
+    Resource -- Actor : accessible to >
+    Resource -- Actor : owned by >
+}
+
+package "Infrastructure — Ports" {
+    interface FlightRegistrationAPI {
+        {constraint} encrypted
+        {constraint} authenticated
+    }
+
+    interface AircraftMovementLogDatabase {
+        {constraint} encrypted
+        {constraint} authenticated
+        {constraint} stores Flight entries
+    }
+
+    FlightRegistrationAPI --|> Interface
+    AircraftMovementLogDatabase --|> Interface
+    AircraftMovementLogDatabase -- Flight : stores >
+}
+
+package "Exceptions" {
+    class InvalidFlightDataException <<exception>> {
+        - field: String
+        - message: String
+    }
+
+    class DuplicateFlightNumberException <<exception>> {
+        - flightNumber: String
+    }
+
+    class AuthorizationException <<exception>> {
+        - actor: Actor
+        - requiredPermission: Permission
+    }
+}
+
+package "DTOs" {
+    class FlightRegistrationRequest <<dto>> {
+        - flightNumber: String
+        - aircraftType: String
+        - scheduledTime: DateTime
+        - direction: Direction
+    }
+
+    class FlightRegistrationResponse <<dto>> {
+        - success: Boolean
+        - flight: Flight
+        - state: State
+        - message: String
+    }
+}
+
+package "Application" {
+    class FlightRegistrationService {
+        - flightLog: AircraftMovementLogDatabase
+        {constraint} validates required fields
+        {constraint} checks uniqueness of flightNumber
+    }
+}
+
+FlightRegistrationService ..> FlightRegistrationRequest
+FlightRegistrationService ..> FlightRegistrationResponse
+FlightRegistrationService --> InvalidFlightDataException : throws
+FlightRegistrationService --> DuplicateFlightNumberException : throws
+FlightRegistrationService --> AuthorizationException : throws
+@enduml

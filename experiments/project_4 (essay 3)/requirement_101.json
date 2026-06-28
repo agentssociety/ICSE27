@@ -1,0 +1,95 @@
+{
+  "id": "REQ-AUTH-01",
+  "title": "Logging Authentication Attempts and Transaction State Changes",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall record all authentication attempts (successful/failed) and all transaction state changes with timestamps.",
+  "rationale": "To audit system activity and ensure security compliance.",
+  "business_value": "Improves the ability to monitor and review user actions for security purposes, aiding in compliance with security standards.",
+  "source": {
+    "type": "User Story",
+    "id": 101,
+    "description": "As a system administrator I need to record all authentication attempts (successful/failed) and all transaction state changes with timestamps So that I can audit system activity and ensure security compliance"
+  },
+  "stakeholders": [
+    "System Administrator",
+    "Security Team"
+  ],
+  "acceptance_criteria": [
+    "Given a user attempts to authenticate, When the authentication attempt completes (success or failure), Then the system records the attempt with a timestamp and outcome",
+    "Given a transaction changes state, When the state transition occurs, Then the system records the new state with a timestamp"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "All authentication attempts are recorded in the logs",
+    "All transaction state changes are recorded in the logs",
+    "Each log entry includes a precise timestamp",
+    "Logs are stored in a tamper-proof or append-only format"
+  ],
+  "functional_constraints": [
+    "The system must record both successful and failed login attempts",
+    "The system must capture all transaction state changes (e.g., pending, completed, failed)"
+  ],
+  "security_requirements": [
+    "Logs should be stored in a tamper-proof or append-only format"
+  ],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens if the system is under heavy load and cannot keep up with logging requests?",
+    "How should the system handle network failures during logging operations?",
+    "What if there are concurrent login attempts or state changes happening at the same time?"
+  ],
+  "dependencies": [
+    "Authentication module",
+    "Transaction processing module"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Audit Log Database",
+      "description": "The system must be able to write and read from this database to store authentication attempts and transaction state changes."
+    },
+    {
+      "type": "API",
+      "name": "Authentication API",
+      "description": "The system must call into this API to determine the outcome of user authentication attempts."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-AUTH-01",
+      "description": "Verify that successful login attempts are recorded with timestamps.",
+      "expected_result": "A log entry is created in the Audit Log Database for each successful login attempt, including a precise timestamp and 'success' outcome."
+    },
+    {
+      "id": "TC-AUTH-02",
+      "description": "Verify that failed login attempts are recorded with timestamps.",
+      "expected_result": "A log entry is created in the Audit Log Database for each failed login attempt, including a precise timestamp and 'failure' outcome."
+    },
+    {
+      "id": "TC-TRANS-01",
+      "description": "Verify that transaction state changes are recorded with timestamps.",
+      "expected_result": "A log entry is created in the Audit Log Database for each transaction state change, including a precise timestamp and the new state."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-17T09:57:53.493266",
+  "last_updated": "2026-06-17T09:59:16.836916",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "AuthenticationAttempt",
+      "TransactionStateChange"
+    ],
+    "test_artifacts": []
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "id": "REQ-ATC-01",
+  "title": "Prevent Overlapping Flight Assignments",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "Critical",
+  "risk_level": "High",
+  "version": "1.0",
+  "description": "The system shall reject a flight assignment if it would result in two flights occupying the same slot or runway at the same time.",
+  "rationale": "To ensure safe operations by preventing aircraft from occupying the same space simultaneously, which could lead to collisions.",
+  "business_value": "Improves safety and reduces the risk of accidents, ensuring that air traffic can operate efficiently without interference.",
+  "source": {
+    "type": "User Story",
+    "id": 49,
+    "description": "As a air traffic controller I need the system to detect and prevent overlapping assignments where two flights would occupy the same slot or runway simultaneously So that safe operations are ensured"
+  },
+  "stakeholders": [
+    "Air Traffic Controllers",
+    "Flight Operations Management",
+    "Safety Compliance Department"
+  ],
+  "acceptance_criteria": [
+    "A flight assignment is being created or modified.",
+    "The assignment would result in two flights occupying the same slot or runway at the same time."
+  ],
+  "preconditions": [
+    "The system monitors all flight assignments for slot and runway usage."
+  ],
+  "postconditions": [
+    "The system should reject the assignment.",
+    "The air traffic controller of the conflict should be notified."
+  ],
+  "functional_constraints": [
+    "Overlaps are defined as two or more flights assigned to the same resource at the same time."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens when a new flight assignment is created and it overlaps with an existing assignment that was not yet finalized?",
+    "How should the system handle overlapping assignments when one of the flights is in a different airspace sector?"
+  ],
+  "dependencies": [
+    "Flight Management System",
+    "Airspace Management System"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Flight Assignment API",
+      "description": "The system will use this API to receive flight assignments and check for overlaps."
+    },
+    {
+      "type": "Database",
+      "name": "Flight Assignment Database",
+      "description": "The system will interact with this database to store and retrieve existing flight assignments."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ATC-01",
+      "description": "Create a new flight assignment that overlaps with an existing one.",
+      "expected_result": "The system should reject the new assignment and notify the controller of the conflict."
+    },
+    {
+      "id": "TC-ATC-02",
+      "description": "Modify an existing flight assignment to create an overlap with another assignment.",
+      "expected_result": "The system should reject the modification and notify the controller of the conflict."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T10:37:33.001803",
+  "last_updated": "2026-06-15T10:43:11.934276",
+  "traceability": {
+    "related_requirements": [
+      "REQ-ATC-01"
+    ],
+    "design_components": [
+      "Flight",
+      "Slot"
+    ],
+    "test_artifacts": []
+  }
+}

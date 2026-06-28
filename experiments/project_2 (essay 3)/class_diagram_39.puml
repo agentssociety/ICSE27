@@ -1,0 +1,66 @@
+@startuml
+skinparam style strictuml
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+
+package "Domain Model" <<Domain>> {
+    class Resource {
+        - owner: Actor
+        - accessible: set Actor
+  + isAccessible(manager: Actor) : Bool
+  + getAccessibleResources(team: Actor) : List<BloodUnit>
+    }
+    note bottom of Resource : "owner is always in accessible"
+
+    class BloodUnit extends Resource {
+        - hasCompleteData: Bool
+        - isExpired: Bool
+        - id: Int
+    }
+    note bottom of BloodUnit : "hasCompleteData must be True when added to inventory (ec_safe_1)\nisExpired must be False for operations on unit (ec_safe_2)\nAll BloodUnit instances must have unique id (ec_safe_3)"
+
+    class Actor {
+        - mayPerform: set Permission
+    }
+
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+    }
+    note bottom of Permission : "Partial order: Read < Write < Execute < Admin\nstronger(p) returns set of permissions subsumed by p"
+
+    enum State {
+        Pre1
+        PostDone
+  + transition(Pre1 -> PostDone)
+    }
+
+    ' Relationships among domain classes
+    Resource *- "owner" Actor : owns
+    Resource - "*" Actor : accessible
+    BloodUnit -|> Resource
+}
+
+package "Infrastructure — Ports" <<Infrastructure>> {
+    interface Inventory_Management_API {
+    }
+    note right of Inventory_Management_API : "Encrypted? Bool\nAuthenticated? Bool"
+
+    class Interface {
+        - kind: IfaceKind
+        - encrypted: Bool
+        - authenticated: Bool
+    }
+
+    enum IfaceKind {
+        API
+        Web
+    }
+
+    Interface --> IfaceKind : kind
+}
+
+@enduml

@@ -1,0 +1,279 @@
+@startuml
+!define STRICT
+
+box "Controller Layer" #LightBlue
+  participant "QueueController" as QC
+end box
+
+box "Application Layer" #LightGreen
+  participant "QueueSortService" as QSS
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Queue" as Q
+  participant "QueueItem" as QI
+  participant "UrgencyLevel" as UL
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "Queue Storage" as QS
+end box
+
+== Sort Queue by Urgency and Time - Happy Path ==
+
+activate QC
+
+QC -> QC : authenticateRequest() : AuthResult
+note right: Validate JWT token and permissions
+
+alt Authentication Failed
+  QC --> QC : return 401 Unauthorized
+  deactivate QC
+else Authorization Failed (No Admin Permission)
+  QC --> QC : return 403 Forbidden
+  deactivate QC
+else Authorized with Admin Permission
+  QC -> QSS : sortQueue(request: SortRequest) : List<QueueItem>
+  activate QSS
+  
+  QSS -> QS : retrieveQueueItems() : List<QueueItem> [TLS]
+  activate QS
+  
+  alt Database Unavailable
+    QS --> QSS : throw DatabaseException
+    QSS --> QC : return 503 Service Unavailable with retry guidance
+    deactivate QSS
+    deactivate QC
+  else Queue Items Retrieved Successfully
+    QS --> QSS : return items: List<QueueItem>
+    deactivate QS
+    
+    alt Queue is Empty
+      QSS --> QC : return 200 OK with empty list
+      deactivate QSS
+      deactivate QC
+    else Queue has Items
+      QSS -> Q : sortItems(items: List<QueueItem>) : List<QueueItem>
+      activate Q
+      
+      note right of Q: State transition: PreIdle -> Sorting
+      
+      Q -> QI : compareUrgency(item1: QueueItem, item2: QueueItem) : int
+      activate QI
+      QI -> UL : getUrgencyOrder(urgency: UrgencyLevel) : int
+      activate UL
+      UL --> QI : return urgencyOrder: int
+      deactivate UL
+      QI --> Q : return comparisonResult: int
+      deactivate QI
+      
+      Q -> QI : compareTimestamp(item1: QueueItem, item2: QueueItem) : int
+      activate QI
+      QI --> Q : return timestampComparison: int
+      deactivate QI
+      
+      alt Ties in Urgency and Timestamp
+        Q -> QI : compareId(item1: QueueItem, item2: QueueItem) : int
+        activate QI
+        QI --> Q : return idComparison: int
+        deactivate QI
+        note right: Deterministic tie-breaker using item ID
+      end
+      
+      Q --> QSS : return sortedItems: List<QueueItem>
+      deactivate Q
+      
+      note right of Q: State transition: Sorting -> Post1 (sorted correctly)
+      
+      QSS -> QS : storeSortedQueue(items: List<QueueItem>) [TLS, encrypted at rest]
+      activate QS
+      
+      alt Storage Write Failed
+        QS --> QSS : throw StorageException
+        QSS --> QC : return 500 Internal Server Error
+        deactivate QSS
+        deactivate QC
+      else Storage Write Successful
+        QS --> QSS : return success
+        deactivate QS
+        
+        QSS --> QC : return 200 OK with sorted queue
+        deactivate QSS
+        deactivate QC
+      end
+    end
+  end
+end
+
+== Concurrent Modification During Sort - Error Path ==
+
+activate QC
+
+QC -> QC : authenticateRequest() : AuthResult
+
+alt Authorized with Admin Permission
+  QC -> QSS : sortQueue(request: SortRequest) : List<QueueItem>
+  activate QSS
+  
+  QSS -> QS : retrieveQueueItems() : List<QueueItem> [TLS]
+  activate QS
+  QS --> QSS : return items: List<QueueItem>
+  deactivate QS
+  
+  QSS -> Q : sortItems(items: List<QueueItem>) : List<QueueItem>
+  activate Q
+  
+  note right of Q: Detecting concurrent modification
+  
+  Q -> QS : checkForUpdates(originalItems: List<QueueItem>) : boolean [TLS]
+  activate QS
+  
+  alt Items Updated During Sort
+    QS --> Q : return true (items modified)
+    deactivate QS
+    
+    Q --> QSS : throw ConcurrentModificationException
+    deactivate Q
+    
+    QSS -> QS : retrieveQueueItems() : List<QueueItem> [TLS]
+    activate QS
+    QS --> QSS : return updatedItems: List<QueueItem>
+    deactivate QS
+    
+    QSS -> Q : sortItems(items: List<QueueItem>) : List<QueueItem>
+    activate Q
+    note right: Re-sorting with fresh data
+    Q --> QSS : return sortedItems: List<QueueItem>
+    deactivate Q
+    
+    QSS -> QS : storeSortedQueue(items: List<QueueItem>) [TLS, encrypted at rest]
+    activate QS
+    QS --> QSS : return success
+    deactivate QS
+    
+    QSS --> QC : return 200 OK with sorted queue
+    deactivate QSS
+    deactivate QC
+  else No Updates During Sort
+    QS --> Q : return false (no modifications)
+    deactivate QS
+    
+    Q --> QSS : return sortedItems: List<QueueItem>
+    deactivate Q
+    
+    QSS -> QS : storeSortedQueue(items: List<QueueItem>) [TLS, encrypted at rest]
+    activate QS
+    QS --> QSS : return success
+    deactivate QS
+    
+    QSS --> QC : return 200 OK with sorted queue
+    deactivate QSS
+    deactivate QC
+  end
+else Unauthorized
+  QC --> QC : return 401 Unauthorized
+  deactivate QC
+end
+
+== Read Queue Items - Happy Path ==
+
+activate QC
+
+QC -> QC : authenticateRequest() : AuthResult
+
+alt Authentication Failed
+  QC --> QC : return 401 Unauthorized
+  deactivate QC
+else Authorization Failed (No Read Permission)
+  QC --> QC : return 403 Forbidden
+  deactivate QC
+else Authorized with Read Permission
+  QC -> QSS : getQueueItems(request: GetQueueRequest) : List<QueueItem>
+  activate QSS
+  
+  QSS -> QS : retrieveQueueItems() : List<QueueItem> [TLS]
+  activate QS
+  
+  alt Database Unavailable
+    QS --> QSS : throw DatabaseException
+    QSS --> QC : return 503 Service Unavailable
+    deactivate QSS
+    deactivate QC
+  else Items Retrieved Successfully
+    QS --> QSS : return items: List<QueueItem>
+    deactivate QS
+    
+    QSS --> QC : return 200 OK with queue items
+    deactivate QSS
+    deactivate QC
+  end
+end
+
+== Update Queue Item Urgency - Error Path ==
+
+activate QC
+
+QC -> QC : authenticateRequest() : AuthResult
+
+alt Authentication Failed
+  QC --> QC : return 401 Unauthorized
+  deactivate QC
+else Authorization Failed (No Write Permission)
+  QC --> QC : return 403 Forbidden
+  deactivate QC
+else Authorized with Write Permission
+  QC -> QSS : updateItemUrgency(itemId: String, newUrgency: UrgencyLevel) : QueueItem
+  activate QSS
+  
+  QSS -> QS : retrieveQueueItems() : List<QueueItem> [TLS]
+  activate QS
+  QS --> QSS : return items: List<QueueItem>
+  deactivate QS
+  
+  QSS -> Q : findItemById(itemId: String) : QueueItem
+  activate Q
+  
+  alt Item Not Found
+    Q --> QSS : return null
+    deactivate Q
+    QSS --> QC : return 404 Not Found
+    deactivate QSS
+    deactivate QC
+  else Item Found
+    Q --> QSS : return item: QueueItem
+    deactivate Q
+    
+    QSS -> QI : updateUrgency(newUrgency: UrgencyLevel) : void
+    activate QI
+    note right: State change requires Write permission
+    
+    alt Invalid Urgency Level
+      QI --> QSS : throw IllegalArgumentException
+      deactivate QI
+      QSS --> QC : return 400 Bad Request
+      deactivate QSS
+      deactivate QC
+    else Urgency Updated Successfully
+      QI --> QSS : return void
+      deactivate QI
+      
+      note right: Queue needs re-sorting due to urgency change
+      
+      QSS -> Q : sortItems(items: List<QueueItem>) : List<QueueItem>
+      activate Q
+      Q --> QSS : return sortedItems: List<QueueItem>
+      deactivate Q
+      
+      QSS -> QS : storeSortedQueue(items: List<QueueItem>) [TLS, encrypted at rest]
+      activate QS
+      QS --> QSS : return success
+      deactivate QS
+      
+      QSS --> QC : return 200 OK with updated queue
+      deactivate QSS
+      deactivate QC
+    end
+  end
+end
+
+@enduml

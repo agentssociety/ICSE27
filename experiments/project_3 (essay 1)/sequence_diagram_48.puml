@@ -1,0 +1,294 @@
+@startuml
+!include <C4/C4_Container>
+
+title Runway Slot Allocation - Sequence Diagrams
+
+box "Controller Layer" #LightBlue
+    participant "AirTrafficControlTeam" as ATC
+    participant "AircraftOperator" as Operator
+end box
+
+box "Application Layer" #LightGreen
+    participant "RunwaySlotAPI" as API
+end box
+
+box "Domain Layer" #LightYellow
+    participant "Allocation" as Allocation
+    participant "Flight" as Flight
+    participant "Slot" as Slot
+    participant "Runway" as Runway
+    participant "Confirmation" as Confirmation
+    participant "Schedule" as Schedule
+end box
+
+box "Infrastructure Layer" #LightCoral
+    participant "FlightScheduleDatabase" as DB
+end box
+
+box "External Systems" #LightGray
+    participant "SafetyConstraintsModule" as Safety
+end box
+
+== Arrival Priority Allocation - Happy Path ==
+
+ATC -> API : requestSlot(flightId: String, requestedTime: DateTime) : Slot
+note right: [Authenticated] - Only ATC can execute
+
+API -> DB : getFlightSchedule(flightId: String) : Schedule
+note right: [TLS] - Authenticated channel
+
+DB --> API : schedule: Schedule
+
+API -> Allocation : createAllocation(flight: Flight, time: DateTime) : AllocationState
+note right: State: InProgress
+
+API -> Safety : checkSeparation(slot: Slot, flight: Flight) : boolean
+note right: [encrypted at rest] - Mandatory encryption
+
+Safety --> API : result: boolean
+
+alt Safety check passes
+    API -> Slot : allocateFlight(flightId: String) : SlotStatus
+    note right: State transition: free -> allocated
+    Slot --> API : status: allocated
+    API -> Confirmation : createConfirmation(slot: Slot, flight: Flight) : Confirmation
+    API --> ATC : Slot (allocated)
+else Safety check fails
+    API -> Slot : release(time: DateTime) : boolean
+    API --> ATC : Error: Separation minima not met
+    note right: Pre state preserved
+end
+
+== Arrival Priority Allocation - Conflict with Departure ==
+
+ATC -> API : requestSlot(flightId: String, requestedTime: DateTime) : Slot
+
+API -> DB : getFlightSchedule(flightId: String) : Schedule
+
+API -> Allocation : createAllocation(flight: Flight, time: DateTime) : AllocationState
+
+API -> Runway : getSlotsByTime(time: DateTime) : List<Slot>
+
+Runway --> API : slots: List<Slot>
+
+alt Slot occupied by departure
+    API -> Slot : getAssignedFlight() : Flight
+    Slot --> API : departureFlight: Flight
+    
+    API -> Safety : checkSeparation(slot: Slot, arrivalFlight: Flight) : boolean
+    
+    alt Safety passes for arrival
+        API -> Slot : reallocateFlight(newFlightId: String) : SlotStatus
+        note right: State transition: departure flight moved
+        Slot --> API : status: allocated
+        
+        API -> Runway : findNextAvailableSlot(departureTime: DateTime) : Slot
+        Runway --> API : nextSlot: Slot
+        
+        API -> Safety : checkSeparation(nextSlot: Slot, departureFlight: Flight) : boolean
+        
+        alt Safety passes for departure
+            API -> Slot : allocateFlight(flightId: String) : SlotStatus
+            API --> ATC : Confirmation (arrival allocated, departure moved)
+        else Safety fails for departure
+            API -> Slot : rollbackReallocation() : boolean
+            API --> ATC : Error: Cannot satisfy separation for departure
+        end
+    else Safety fails for arrival
+        API --> ATC : Error: Arrival cannot use this slot
+    end
+else Slot free
+    API -> Slot : allocateFlight(flightId: String) : SlotStatus
+    API --> ATC : Slot (allocated)
+end
+
+== Arrival Queue - No Slots Available ==
+
+ATC -> API : requestSlot(flightId: String, requestedTime: DateTime) : Slot
+
+API -> Runway : getAvailableSlots(timeRange: TimeRange) : List<Slot>
+
+alt No slots available
+    API -> Flight : setStatus(status: FlightStatus.QUEUED) : void
+    note right: State: Pre1 preserved
+    API --> ATC : Flight queued with delay notification
+else Slots available
+    API -> Safety : checkSeparation(slot: Slot, flight: Flight) : boolean
+    alt Safety passes
+        API -> Slot : allocateFlight(flightId: String) : SlotStatus
+        API --> ATC : Slot (allocated)
+    else Safety fails
+        API --> ATC : Error: No suitable slot found
+    end
+end
+
+== Departure Allocation Post-Arrivals ==
+
+ATC -> API : processDepartureAllocations() : List<Confirmation>
+
+API -> Allocation : getRemainingSlots() : List<Slot>
+note right: All arrivals already processed
+
+API -> DB : getFlightSchedule(flightId: String) : Schedule
+
+alt Slots available
+    API -> Safety : checkSeparation(slot: Slot, departureFlight: Flight) : boolean
+    
+    alt Safety passes
+        API -> Slot : allocateFlight(flightId: String) : SlotStatus
+        API -> Confirmation : createConfirmation(slot: Slot, flight: Flight) : Confirmation
+        API --> ATC : Confirmation batch
+    else Safety fails
+        API -> Slot : release(time: DateTime) : boolean
+        API --> ATC : Error: Departure cannot be allocated
+    end
+else No slots available
+    API --> ATC : Departures in waiting list
+    note right: State: Post1
+end
+
+== Flight Cancellation During Allocation ==
+
+Operator -> API : cancelAllocation(flightId: String, authorization: Token) : void
+note right: [Authenticated] - Only own flights
+
+API -> DB : getFlightSchedule(flightId: String) : Schedule
+note right: Verify flight exists
+
+DB --> API : schedule: Schedule
+
+alt Flight not found
+    API --> Operator : Error: Flight not found
+end
+
+alt Authorization check fails
+    API --> Operator : Error: Not authorized
+    note right: Permission: Write required, only own flights
+end
+
+API -> Allocation : cancelAllocation(flightId: String) : AllocationState
+note right: State transition: InProgress -> Canceled
+
+API -> Slot : getAssignedFlight() : Flight
+
+alt Slot assigned to this flight
+    API -> Slot : release() : boolean
+    note right: State: allocated -> free
+    API -> Flight : setStatus(status: FlightStatus.CANCELED) : void
+    API --> Operator : Confirmation: Allocation canceled
+else No slot assigned
+    API -> Flight : setStatus(status: FlightStatus.CANCELED) : void
+    API --> Operator : Confirmation: Flight canceled, no slot to release
+end
+
+== Conflict Detection and Resolution ==
+
+ATC -> API : detectConflicts(timeRange: TimeRange) : List<Conflict>
+
+API -> Runway : getSlotsByTimeRange(timeRange: TimeRange) : List<Slot>
+
+API -> Allocation : findConflicts(slots: List<Slot>) : List<Conflict>
+
+alt Conflicts found
+    API -> Allocation : resolveConflict(conflict: Conflict) : AllocationState
+    note right: Priority: Arrival > Departure
+    
+    API -> Slot : getAssignedFlight() : Flight
+    Slot --> API : departureFlight: Flight
+    
+    API -> Runway : findNextAvailableSlot(departureTime: DateTime) : Slot
+    
+    API -> Safety : checkSeparation(slot: Slot, arrivalFlight: Flight) : boolean
+    
+    alt Safety passes for arrival
+        API -> Slot : reallocateFlight(newFlightId: String) : SlotStatus
+        API -> Safety : checkSeparation(nextSlot: Slot, departureFlight: Flight) : boolean
+        
+        alt Safety passes for departure
+            API -> Slot : allocateFlight(flightId: String) : SlotStatus
+            API --> ATC : Conflict resolved
+            note right: State: Post2
+        else Safety fails for departure
+            API -> Slot : adjustAndReCheck(slot: Slot) : boolean
+            alt Adjustment works
+                API -> Slot : allocateFlight(flightId: String) : SlotStatus
+                API --> ATC : Conflict resolved with adjusted timing
+            else Adjustment fails
+                API -> Slot : rollbackReallocation() : boolean
+                API --> ATC : Error: Cannot resolve conflict safely
+            end
+        end
+    else Safety fails for arrival
+        API --> ATC : Error: Cannot resolve conflict - arrival cannot use slot
+    end
+else No conflicts
+    API --> ATC : No conflicts found
+end
+
+== Edge Cases ==
+
+== Edge: No Slots for Arrivals - Pre State Preserved ==
+
+ATC -> API : requestSlot(flightId: String, requestedTime: DateTime) : Slot
+
+API -> Runway : getAvailableSlots() : List<Slot>
+
+alt No slots available
+    API -> Flight : getStatus() : FlightStatus
+    
+    alt Flight not canceled
+        API -> Flight : setStatus(status: FlightStatus.QUEUED) : void
+        API --> ATC : Flight queued - no allocation granted
+        note right: Pre state: Pre1 preserved
+    else Flight already canceled
+        API --> ATC : Flight canceled - no action needed
+    end
+else Slots available
+    API -> Safety : checkSeparation(slot: Slot, flight: Flight) : boolean
+    
+    alt Safety passes
+        API -> Slot : allocateFlight(flightId: String) : SlotStatus
+        API --> ATC : Slot allocated
+    else Safety fails
+        API -> Runway : getNextAvailableSlot() : Slot
+        
+        alt Next slot available
+            API -> Safety : checkSeparation(nextSlot: Slot, flight: Flight) : boolean
+            alt Safety passes
+                API -> Slot : allocateFlight(flightId: String) : SlotStatus
+                API --> ATC : Slot allocated at adjusted time
+            else Safety fails
+                API --> ATC : Error: No safe slot available - pre state preserved
+                note right: State: Pre1
+            end
+        else No more slots
+            API --> ATC : Error: No slots available - pre state preserved
+            note right: State: Pre1
+        end
+    end
+end
+
+== Edge: Concurrent Operations Conflict ==
+
+ATC -> API : requestSlot(flight1Id: String, time1: DateTime) : Slot
+Operator -> API : readFlightStatus(flight2Id: String) : FlightStatus
+
+note right of API: Concurrent Read/Write operations detected
+
+API -> Allocation : acquireLock(resourceId: String) : boolean
+
+alt Lock acquired
+    API -> Slot : allocateFlight(flightId: String) : SlotStatus
+    API -> Confirmation : createConfirmation(slot: Slot, flight: Flight) : Confirmation
+    API --> ATC : Slot allocated
+    
+    Operator -> API : readFlightStatus(flight2Id: String) : FlightStatus
+    API -> DB : getFlightSchedule(flight2Id: String) : Schedule
+    DB --> API : schedule: Schedule
+    API --> Operator : FlightStatus: SCHEDULED
+else Lock acquisition failed
+    API --> ATC : Error: Resource locked by concurrent operation
+    note right: Maximum 2 channels per operation constraint
+end
+
+@enduml

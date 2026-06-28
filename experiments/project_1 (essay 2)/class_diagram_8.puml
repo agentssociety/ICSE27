@@ -1,0 +1,109 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam stereotypeFontSize 10
+skinparam stereotypeFontName Arial
+
+package "Domain Model" {
+  class Patient {
+    - symptoms: string
+    - urgencyLevel: integer { constraint: 1..5 }
+    - queuePosition: integer
+  + assignUrgency(level: Integer) : void
+  }
+
+  class Queue {
+    - patientId: string
+    - priority: integer { derived from urgencyLevel }
+  + recalculateQueuePosition(patientId: String, urgencyLevel: Integer) : Integer
+  + rollbackQueueCalculation(patientId: String)
+  + updateQueuePosition(newPosition: Integer) : void
+  }
+
+  class TriageNurse {
+    - id: string
+    - role: string = "Triage Nurse"
+  + getNursePermissions(nurseId: String) : boolean
+  }
+}
+
+package "Application" {
+  interface QueueManagementAPI {
+    + recalculateQueue(patientId: string, urgencyLevel: integer): void
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface PatientDatabase {
+    + getPatient(patientId: string): Patient
+    + updateUrgencyLevel(patientId: string, urgencyLevel: integer): void
+  + rollbackTransaction()
+  }
+}
+
+package "Exceptions" {
+  class InvalidUrgencyLevelException <<exception>> {
+    - message: string
+    - invalidValue: integer
+  }
+
+  class QueueUnavailableException <<exception>> {
+    - message: string
+    - retryAllowed: boolean
+  }
+}
+
+package "DTOs" {
+  class UrgencyAssignmentDTO <<dto>> {
+    - patientId: string
+    - urgencyLevel: integer
+    - assignedBy: string
+  }
+
+  class QueuePositionDTO <<dto>> {
+    - patientId: string
+    - queuePosition: integer
+    - priority: integer
+  }
+}
+
+package "Controllers" {
+  class UrgencyAssignmentController {
+    - patientDatabase: PatientDatabase
+    - queueManagementAPI: QueueManagementAPI
+  }
+}
+
+' Relationships
+TriageNurse "1" --> "0..*" Patient : assigns urgency level
+Patient "1" --> "0..1" Queue : has position in
+Queue ..> PatientDatabase : depends on
+UrgencyAssignmentController ..> PatientDatabase : uses
+UrgencyAssignmentController ..> QueueManagementAPI : uses
+UrgencyAssignmentController ..> UrgencyAssignmentDTO : creates
+UrgencyAssignmentController ..> QueuePositionDTO : creates
+UrgencyAssignmentController ..> InvalidUrgencyLevelException : throws
+UrgencyAssignmentController ..> QueueUnavailableException : throws
+
+' Enums for state machine
+enum UrgencyState <<enum>> {
+  PRE_IDLE
+  POST1
+  POST2
+  + validateUrgencyRange(level: Integer) : boolean
+}
+
+' Note for invariants
+note top of Patient
+  urgencyLevel ∈ [1,5]
+  queuePosition recalculated on urgencyLevel change
+end note
+
+note top of Queue
+  priority derived from urgencyLevel
+  positions recalculated when urgencyLevel changes
+end note
+
+@enduml

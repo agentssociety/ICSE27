@@ -1,0 +1,56 @@
+
+sequenceDiagram
+    participant User as User
+    participant App as Flask App
+    participant Sched as Scheduler
+    participant R1 as Runway 1
+    participant R2 as Runway 2
+    participant DB as SQLite
+
+    User->>App: POST /register_flight (flight data)
+    App->>Sched: register_flight(flight)
+    Sched->>Sched: allocate_slot(flight)
+    Sched->>R1: get_next_available_slot(estimated_time)
+    Sched->>R2: get_next_available_slot(estimated_time)
+    R1-->>Sched: slot1 (or None)
+    R2-->>Sched: slot2 (or None)
+    Sched->>Sched: choose earliest slot (arrival priority)
+    Sched->>Slot: assign_flight(flight)
+    Slot-->>Sched: success
+    Sched->>DB: save flight and slot
+    Sched-->>App: allocation result
+    App-->>User: JSON response
+
+    User->>App: POST /close_runway (runway_id)
+    App->>Sched: close_runway(runway_id)
+    Sched->>R1: close()
+    Sched->>Sched: get future flights on R1
+    Sched->>Sched: reassign_flights(flights)
+    loop for each flight
+        Sched->>R2: get_next_available_slot(flight.estimated_time)
+        R2-->>Sched: slot
+        alt slot within 60 min
+            Sched->>Slot: assign_flight(flight)
+        else
+            Sched->>Flight: mark_delayed()
+            Sched->>Slot: assign_flight(flight) at earliest slot
+        end
+    end
+    Sched-->>App: list of delayed flights
+    App-->>User: JSON response
+
+    User->>App: POST /declare_emergency (flight_id)
+    App->>Sched: handle_emergency(flight)
+    Sched->>Sched: _find_earliest_slot(flight)
+    Sched->>Slot: assign_flight(flight)
+    Sched->>Sched: _displace_flights(slot)
+    Sched->>Sched: _re_queue_flights(displaced)
+    Sched-->>App: emergency slot info
+    App-->>User: JSON response
+
+    User->>App: GET /timetable (runway_id)
+    App->>Sched: get_timetable(runway_id)
+    Sched->>R1: get_slots_in_range(today, tomorrow)
+    R1-->>Sched: slots list
+    Sched-->>App: timetable data
+    App-->>User: HTML page with timetable

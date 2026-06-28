@@ -1,0 +1,153 @@
+@startuml
+skinparam BoxPadding 10
+skinparam ParticipantPadding 15
+title Runway Closure and Delay Management System
+
+box "Controller Layer" #LightBlue
+  participant "Airport_Operations_Manager_Console" as AOMConsole
+  participant "Runway_Closure_API" as ClosureAPI
+end box
+
+box "Application Layer" #LightGreen
+  participant "REQ_OPM_01" as OpHandler
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Airport_Operations_Manager" as AOM
+  participant "Flight_Control_Center" as FCC
+  participant "Passenger_Services_Department" as PSD
+  participant "FlightSchedule" as FSchedule
+  participant "DelayCalculation" as DelayCalc
+  participant "Pre1" as Pre1State
+  participant "Pre2" as Pre2State
+  participant "Post1" as Post1State
+  participant "Post2" as Post2State
+  participant "Post3" as Post3State
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "Flight_Schedule_Database" as FSDB
+end box
+
+== Flow 1: Runway Closure Request (TC-OPM-01) ==
+
+AOM -> AOMConsole : submitClosureRequest(runwayId: String)
+note right: HTTPS [TLS]
+
+AOMConsole -> OpHandler : handleClosureRequest(runwayId: String) : Response
+
+OpHandler -> OpHandler : validatePermission(actor: Airport_Operations_Manager, permission: Write) : boolean
+
+alt Permission valid
+  OpHandler -> OpHandler : checkAccess(initiator: AOM, target: Flight_Schedule_Database) : boolean
+  alt Access granted
+    OpHandler -> FSDB : findAvailableRunways() : List<Runway> [TLS]
+    note right: encrypted at rest
+    FSDB --> OpHandler : availableRunways
+    alt Alternate runways available
+      OpHandler -> FSchedule : reassignFlights(fromRunway: String, toRunways: List<Runway>)
+      FSchedule -> FSDB : updateFlightAssignments(assignments: Map) [TLS]
+      FSDB --> FSchedule : success
+      OpHandler -> Pre1State : transitionTo(Post1)
+      OpHandler -> Post1State : applyState()
+      OpHandler --> AOMConsole : successResponse(200 OK, "Flights reassigned")
+      AOMConsole --> AOM : displaySuccess(message)
+    else No alternate runways available
+      OpHandler --> AOMConsole : errorResponse(409 Conflict, "No alternate runways available")
+      note right: Error path TC-OPM-03 continues separately
+      AOMConsole --> AOM : displayError(message)
+    end
+  else Access denied
+    OpHandler --> AOMConsole : errorResponse(403 Forbidden, "Access denied")
+    AOMConsole --> AOM : displayError(message)
+  end
+else Permission invalid
+  OpHandler --> AOMConsole : errorResponse(403 Forbidden, "Insufficient permissions")
+  AOMConsole --> AOM : displayError(message)
+end
+
+== Flow 2: Delay Calculation (TC-OPM-02) ==
+
+FCC -> ClosureAPI : triggerDelayCalculation(scheduleId: String)
+note right: API call [TLS]
+
+ClosureAPI -> OpHandler : handleDelayCalculation(scheduleId: String) : Response
+
+OpHandler -> OpHandler : validatePermission(actor: Flight_Control_Center, permission: Execute) : boolean
+
+alt Permission valid
+  OpHandler -> OpHandler : checkAccess(initiator: FCC, target: Flight_Schedule_Database) : boolean
+  alt Access granted
+    OpHandler -> FSDB : getFlightSchedule(scheduleId: String) : FlightSchedule [TLS]
+    FSDB --> OpHandler : flightSchedule
+    OpHandler -> DelayCalc : calculateDelays(schedule: FlightSchedule) : Map<Flight, Duration>
+    note right: Based on original scheduled times
+    DelayCalc --> OpHandler : delayResults
+    loop For each flight
+      alt delay > 60 minutes
+        OpHandler -> FSchedule : markFlightDelayed(flightId: String, delay: Duration)
+        FSchedule -> FSDB : updateFlightDelayStatus(flightId: String, "Delayed") [TLS]
+      else delay <= 60 minutes
+        OpHandler -> FSchedule : updateFlightDelay(flightId: String, delay: Duration)
+        FSchedule -> FSDB : updateFlightDelay(flightId: String, delay: Duration) [TLS]
+      end
+    end
+    OpHandler -> Pre1State : transitionTo(Post2)
+    OpHandler -> Post2State : applyState()
+    OpHandler -> Pre1State : transitionTo(Post3)
+    OpHandler -> Post3State : applyState()
+    OpHandler --> ClosureAPI : successResponse(200 OK, "Delays calculated")
+    ClosureAPI --> FCC : displayDelays(delays: Map)
+  else Access denied
+    OpHandler --> ClosureAPI : errorResponse(403 Forbidden, "Access denied")
+    ClosureAPI --> FCC : displayError(message)
+  end
+else Permission invalid
+  OpHandler --> ClosureAPI : errorResponse(403 Forbidden, "Insufficient permissions")
+  ClosureAPI --> FCC : displayError(message)
+end
+
+PSD -> FSDB : queryFlightSchedules(status: String) : List<FlightSchedule> [TLS]
+note right: Read-only access from Passenger_Services
+FSDB --> PSD : schedules
+
+== Flow 3: Error Handling - No Alternate Runways (TC-OPM-03) ==
+
+AOM -> AOMConsole : attemptClosure(runwayId: String)
+AOMConsole -> OpHandler : handleClosureAttempt(runwayId: String) : Response
+
+OpHandler -> OpHandler : validatePermission(actor: Airport_Operations_Manager, permission: Write) : boolean
+
+alt Permission valid
+  OpHandler -> OpHandler : checkAccess(initiator: AOM, target: Flight_Schedule_Database) : boolean
+  alt Access granted
+    OpHandler -> FSDB : checkAlternateRunways(runwayId: String) : List<Runway> [TLS]
+    FSDB --> OpHandler : alternateRunways
+    alt No alternate runways available
+      OpHandler -> Pre2State : detectCondition()
+      note right: Pre2 precondition met
+      OpHandler -> FSchedule : markFlightsAsDelayed(runwayId: String)
+      loop For each affected flight
+        OpHandler -> DelayCalc : calculateDelay(flight: Flight) : Duration
+        alt delay > 60 minutes
+          FSchedule -> FSDB : updateFlightStatus(flightId: String, "Delayed") [TLS]
+        end
+      end
+      OpHandler -> Pre2State : transitionTo(Post3)
+      OpHandler -> Post3State : applyState()
+      OpHandler --> AOMConsole : errorResponse(409 Conflict, "No alternate runways available. Flights marked delayed.")
+      AOMConsole --> AOM : displayMessage(message)
+    else Alternate runways available
+      OpHandler --> AOMConsole : successResponse(200 OK, "Alternate runways available")
+      AOMConsole --> AOM : displaySuccess(message)
+    end
+  else Access denied
+    OpHandler --> AOMConsole : errorResponse(403 Forbidden, "Access denied")
+    AOMConsole --> AOM : displayError(message)
+  end
+else Permission invalid
+  OpHandler --> AOMConsole : errorResponse(403 Forbidden, "Insufficient permissions")
+  AOMConsole --> AOM : displayError(message)
+end
+
+@enduml

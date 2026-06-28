@@ -1,0 +1,148 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+
+package "Domain Model" as DM {
+  enum BloodUnitStatus {
+    AVAILABLE
+    RESERVED
+    ISSUED
+  }
+
+  enum TransfusionRequestStatus {
+    PENDING
+    FULFILLED
+    CANCELLED
+  }
+
+  enum ReservationStatus {
+    ACTIVE
+    RELEASED
+    ISSUED
+  }
+
+  enum BloodType {
+    A_POS
+    A_NEG
+    B_POS
+    B_NEG
+    AB_POS
+    AB_NEG
+    O_POS
+    O_NEG
+  }
+
+  enum Role {
+    CLINICAL_STAFF
+    BLOOD_BANK_MANAGEMENT
+    IT_TEAM
+  }
+
+  enum Permission {
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+
+  class BloodUnit {
+    + id : String
+    + bloodType : BloodType
+    + compatibleBloodTypes : List<BloodType>
+    + status : BloodUnitStatus
+    .. invariants ..
+    {field} reservedBy : Reservation [0..1]
+  + reserve()
+  + makeAvailable()
+  + issue()
+  }
+
+  class TransfusionRequest {
+    + id : String
+    + patientBloodType : BloodType
+    + status : TransfusionRequestStatus
+    + reservationId : String [optional]
+  }
+
+  class Reservation {
+    + id : String
+    + bloodUnitId : String
+    + transfusionRequestId : String
+    + reservationTimestamp : DateTime
+    + expiryTimestamp : DateTime
+    + status : ReservationStatus
+    .. invariants ..
+    {field} reservationTimestamp + 24h = expiryTimestamp
+  + release()
+  + isExpired()
+  + issue()
+  }
+}
+
+package "Infrastructure — Ports" as INF {
+  interface BloodInventoryDatabase {
+    "Stores BloodUnit records,\ncompatibility data,\nreservation state."
+  }
+
+  interface ReservationReleaseScheduler {
+    "Background job\nreleasing expired\nreservations."
+  + triggerRelease()
+  }
+
+  interface AdminDashboard {
+    "UI for monitoring\nand manual release."
+  + logReleaseEvent(reservationId)
+  + logManualRelease(reservationId, user)
+  }
+
+  class BloodTypeCompatibilityAlgorithm {
+    "ABO/Rh compatibility\nmatching algorithm."
+  + isCompatible(patientBloodType, candidateBloodType)
+  }
+}
+
+package "Controllers" as CTRL {
+  interface ReservationAPI {
+    "REST endpoints for\nreservation lifecycle."
+  }
+}
+
+package "DTOs" as DTO {
+  class ReservationRequestDTO {
+    + transfusionRequestId : String
+  }
+
+  class ReservationResponseDTO {
+    + reservationId : String
+    + status : ReservationStatus
+  }
+}
+
+package "Exceptions" as EXC {
+  class NoCompatibleUnitException <<exception>> {
+  }
+
+  class ReservationConflictException <<exception>> {
+  }
+
+  class ReservationExpiredException <<exception>> {
+  }
+
+  class PermissionDeniedException <<exception>> {
+  }
+}
+
+' Relationships
+Reservation "*" -- "1" BloodUnit : "reserves"
+Reservation "*" -- "1" TransfusionRequest : "for"
+Reservation ..> BloodTypeCompatibilityAlgorithm : depends on
+
+ReservationAPI ..> ReservationRequestDTO : uses
+ReservationAPI ..> ReservationResponseDTO : returns
+ReservationAPI ..> NoCompatibleUnitException : throws
+ReservationAPI ..> ReservationConflictException : throws
+ReservationAPI ..> ReservationExpiredException : throws
+ReservationAPI ..> PermissionDeniedException : throws
+
+@enduml

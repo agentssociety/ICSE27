@@ -1,0 +1,30 @@
+{
+  "task_id": 57,
+  "confidence": 0.9914,
+  "evidence": [
+    {
+      "claim": "There is a queue of waiting patients.",
+      "fact": "The system ensures the waiting queue always reflects current patient conditions.",
+      "score": 0.9991,
+      "user_story_span": "There is a queue of waiting patients.",
+      "fact_span": "the waiting queue"
+    },
+    {
+      "claim": "The system removes that patient from the queue.",
+      "fact": "The system removes the patient from the queue when taken by a physician.",
+      "score": 0.9987,
+      "user_story_span": "And removes that patient from the queue",
+      "fact_span": "The system removes the patient from the queue"
+    },
+    {
+      "claim": "The system displays the patient at the head of the queue.",
+      "fact": "The system lets a physician take the patient at the head of the queue.",
+      "score": 0.9765,
+      "user_story_span": "the patient at the head of the queue",
+      "fact_span": "the patient at the head of the queue"
+    }
+  ],
+  "total_claims": 7,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

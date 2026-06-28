@@ -1,0 +1,94 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam packageFontSize 14
+skinparam packageBorderColor #666666
+skinparam packageBackgroundColor #F5F5F5
+skinparam classBorderColor #333333
+skinparam classBackgroundColor #FAFAFA
+skinparam interfaceBorderColor #0066AA
+skinparam interfaceBackgroundColor #E6F2FF
+skinparam enumBorderColor #AA6600
+skinparam enumBackgroundColor #FFF8E6
+skinparam exceptionBorderColor #CC0000
+skinparam exceptionBackgroundColor #FFE6E6
+
+package "Domain Model" {
+  enum Permission <<enum>> {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  enum TransactionStatus <<enum>> {
+    Pending
+    Approved
+    Denied
+    Investigating
+  }
+
+  abstract class Actor {
+    permissions: Permission[]
+  }
+
+  class User extends Actor {
+    loginSession: String
+  }
+
+  class SystemAdministrator extends User {
+  }
+  note right of SystemAdministrator : requiredPermission = Permission.Admin
+
+  class Transaction {
+    id: UUID
+    amount: BigDecimal
+    timestamp: Instant
+    owner: Actor
+    accessibleTo: Actor[]
+  + setStatus(newStatus: TransactionStatus)
+  }
+  note left of Transaction : inv: owner in accessibleTo
+
+  class FlaggedTransaction extends Transaction {
+    flagReason: String
+    status: TransactionStatus
+  }
+  note right of FlaggedTransaction : only accessible to SystemAdministrator
+
+  SystemAdministrator "1" --> "*" FlaggedTransaction : can access
+  User "1" *-- "*" Permission : has
+}
+
+package "Infrastructure — Ports" {
+  interface FlaggedTransactionsReviewPage <<interface>> {
+  }
+  note right of FlaggedTransactionsReviewPage : UI for review (authenticated)
+
+  interface TransactionsDatabase <<interface>> {
+  + queryFlaggedTransactions() : List<Transaction>
+  + updateTransactionStatus(transactionId, status)
+  }
+  note right of TransactionsDatabase : Encrypted storage
+
+  interface AuthenticationAuthorizationService <<interface>> {
+  }
+  note right of AuthenticationAuthorizationService : Manages sessions & permissions
+}
+
+package "Exceptions" {
+  class AuthenticationException <<exception>> {
+    message: String
+  }
+  class AuthorizationException <<exception>> {
+    message: String
+  }
+  class NetworkException <<exception>> {
+    message: String
+  }
+  class TransactionUpdateException <<exception>> {
+    message: String
+  }
+}
+@enduml

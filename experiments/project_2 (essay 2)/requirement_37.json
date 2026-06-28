@@ -1,0 +1,84 @@
+{
+  "id": "REQ-INV-01",
+  "title": "Monitor Blood Inventory Levels and Alert on Low Stock",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall monitor blood inventory levels per ABO/Rh type and raise an alert when stock for any blood type falls below 5 units.",
+  "rationale": "This requirement is necessary to ensure that the blood bank has sufficient stock of all required blood types, preventing potential shortages during emergencies.",
+  "business_value": "This requirement ensures timely restocking of critical medical supplies, thereby enhancing patient care and reducing the risk of blood supply disruptions.",
+  "source": {
+    "type": "User Story",
+    "id": 37,
+    "description": "As a blood bank manager I need to monitor blood inventory levels per ABO/Rh type and be alerted when stock for any blood type falls below 5 units so that I can notify relevant personnel to initiate restocking procedures."
+  },
+  "stakeholders": [
+    "Blood Bank Manager",
+    "Procurement Team"
+  ],
+  "acceptance_criteria": [
+    "The system raises an alert when the stock level for any ABO/Rh blood type drops below 5 units.",
+    "Relevant personnel are notified to initiate restocking procedures."
+  ],
+  "preconditions": [
+    "The blood bank inventory tracking system is active."
+  ],
+  "postconditions": [],
+  "functional_constraints": [
+    "The alert threshold is defined as 5 units for any blood type."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": [],
+    "availability": [],
+    "scalability": [],
+    "usability": []
+  },
+  "edge_cases": [
+    "What happens when the inventory level drops below zero?",
+    "How does the system handle sudden spikes in demand that could temporarily cause stock to drop below the threshold?"
+  ],
+  "dependencies": [
+    "Blood bank inventory tracking system must be active and functioning properly.",
+    "Notification system for relevant personnel."
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Inventory Database",
+      "description": "Interacts with the database to retrieve current blood inventory levels and update stock counts."
+    },
+    {
+      "type": "API",
+      "name": "Notification API",
+      "description": "Communicates with the notification system to alert relevant personnel about low stock levels."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-INV-01",
+      "description": "Verify that an alert is raised when the inventory level for a specific blood type drops below 5 units.",
+      "expected_result": "The system raises an alert and sends notifications to relevant personnel."
+    },
+    {
+      "id": "TC-INV-02",
+      "description": "Check that the alert threshold is correctly set at 5 units.",
+      "expected_result": "The system does not raise an alert until the inventory level for any blood type drops below 5 units."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T20:14:51.771178",
+  "last_updated": "2026-06-14T20:15:45.565460",
+  "traceability": {
+    "related_requirements": [
+      "REQ-BLOOD-01"
+    ],
+    "design_components": [
+      "BloodUnit"
+    ],
+    "test_artifacts": []
+  }
+}

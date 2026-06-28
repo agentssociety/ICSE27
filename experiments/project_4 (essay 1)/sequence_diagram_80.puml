@@ -1,0 +1,183 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+    participant "WithdrawalController" as Controller
+end box
+
+box "Application Layer" #LightGreen
+    participant "WithdrawalService" as Service
+end box
+
+box "Domain Layer" #LightYellow
+    participant "Account" as Account
+    participant "Transaction" as Transaction
+    participant "Operation" as Operation
+    participant "State" as State
+    participant "Permission" as Permission
+end box
+
+box "Infrastructure Layer" #LightCoral
+    participant "UserBalanceAndLimitDB" as DB
+    participant "User_Balance_and_Limit_Database" as DBInterface
+end box
+
+box "External" #LightGray
+    participant "User" as User
+end box
+
+== Flow: Submit Withdrawal Request ==
+
+User -> Controller : POST /withdrawals\n(amount: float)
+activate Controller
+
+Controller -> Controller : validateInput(amount: float)
+alt Invalid amount (<= 0)
+    Controller --> User : 400 Bad Request\n{"error": "Amount must be positive"}
+    deactivate Controller
+else Valid amount
+    Controller -> Service : processWithdrawal(userId: String, amount: float)
+    activate Service
+end
+
+== Flow: Authorization Check ==
+
+Service -> Service : checkAuthorization(userId: String, permission: Permission)
+alt User not authorized
+    Service --> Controller : AuthorizationException
+    Controller --> User : 403 Forbidden\n{"error": "Access denied"}
+    deactivate Controller
+    deactivate Service
+else Authorized
+    Service -> Service : createTransaction(amount: float) : Transaction
+    activate Transaction
+    note right: Transaction invariant:\namount > 0
+    deactivate Transaction
+end
+
+== Flow: Balance Check (Pre1) ==
+
+Service -> DBInterface : getBalance(userId: String) : float
+activate DBInterface
+DBInterface -> DB : [TLS][encrypted at rest]\ngetBalance(userId)
+activate DB
+DB --> DBInterface : balance: float
+deactivate DB
+DBInterface --> Service : balance: float
+deactivate DBInterface
+
+Service -> Account : checkBalance(transaction: Transaction, balance: float) : boolean
+activate Account
+
+alt amount > balance
+    Account --> Service : false
+    deactivate Account
+    Service -> Operation : createOperation(pre: Pre1, post: Post2)
+    activate Operation
+    note right: State transition:\nPre1 -> Post2
+    deactivate Operation
+    Service --> Controller : InsufficientBalanceException
+    Controller --> User : 422 Unprocessable Entity\n{"error": "Insufficient balance"}
+    deactivate Controller
+    deactivate Service
+else amount <= balance
+    Account --> Service : true
+    deactivate Account
+end
+
+== Flow: Daily Limit Check (Pre2) ==
+
+Service -> DBInterface : getDailyLimit(userId: String) : float
+activate DBInterface
+DBInterface -> DB : [TLS][encrypted at rest]\ngetDailyLimit(userId)
+activate DB
+DB --> DBInterface : dailyLimit: float
+deactivate DB
+DBInterface --> Service : dailyLimit: float
+deactivate DBInterface
+
+Service -> DBInterface : getCumulativeWithdrawals(userId: String) : float
+activate DBInterface
+DBInterface -> DB : [TLS][encrypted at rest]\ngetCumulativeWithdrawals(userId)
+activate DB
+DB --> DBInterface : cumulativeWithdrawals: float
+deactivate DB
+DBInterface --> Service : cumulativeWithdrawals: float
+deactivate DBInterface
+
+Service -> Account : checkDailyLimit(transaction: Transaction, cumulativeWithdrawals: float, dailyLimit: float) : boolean
+activate Account
+
+alt cumulativeWithdrawals + amount > dailyLimit
+    Account --> Service : false
+    deactivate Account
+    Service -> Operation : createOperation(pre: Pre2, post: Post2)
+    activate Operation
+    note right: State transition:\nPre2 -> Post2
+    deactivate Operation
+    Service --> Controller : DailyLimitExceededException
+    Controller --> User : 422 Unprocessable Entity\n{"error": "Daily limit exceeded"}
+    deactivate Controller
+    deactivate Service
+else cumulativeWithdrawals + amount <= dailyLimit
+    Account --> Service : true
+    deactivate Account
+end
+
+== Flow: Process Transaction (Post1) ==
+
+Service -> Account : deductBalance(amount: float) : float
+activate Account
+Account -> Account : availableBalance -= amount
+note right: Invariant:\navailableBalance >= 0
+Account --> Service : newBalance: float
+deactivate Account
+
+Service -> Account : updateCumulativeWithdrawals(amount: float) : float
+activate Account
+Account -> Account : cumulativeDailyWithdrawals += amount
+note right: Invariant:\ncumulativeDailyWithdrawals\n<= dailyWithdrawalLimit
+Account --> Service : newCumulative: float
+deactivate Account
+
+Service -> DBInterface : updateAccount(userId: String, newBalance: float, newCumulative: float)
+activate DBInterface
+note right: [TLS][encrypted at rest]\nRequired for write operations
+DBInterface -> DB : updateAccount(userId, newBalance, newCumulative)
+activate DB
+DB --> DBInterface : void
+deactivate DB
+DBInterface --> Service : void
+deactivate DBInterface
+
+Service -> Operation : createOperation(pre: Pre1, post: Post1)
+activate Operation
+note right: State transition:\nPre1 -> Post1
+deactivate Operation
+
+Service --> Controller : WithdrawalResult(success: true)
+Controller --> User : 200 OK\n{"status": "approved", "amount": amount}
+deactivate Controller
+deactivate Service
+
+== Flow: Database Unavailable Error ==
+
+User -> Controller : POST /withdrawals\n(amount: float)
+activate Controller
+Controller -> Service : processWithdrawal(userId: String, amount: float)
+activate Service
+Service -> DBInterface : getBalance(userId: String) : float
+activate DBInterface
+DBInterface -> DB : [TLS][encrypted at rest]\ngetBalance(userId)
+activate DB
+DB --> DBInterface : ConnectionException
+deactivate DB
+DBInterface --> Service : DatabaseException
+deactivate DBInterface
+
+Service --> Controller : DatabaseUnavailableException
+Controller --> User : 503 Service Unavailable\n{"error": "Service temporarily unavailable"}
+deactivate Controller
+deactivate Service
+
+@enduml

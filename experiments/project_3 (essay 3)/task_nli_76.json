@@ -1,0 +1,51 @@
+{
+  "task_id": 76,
+  "confidence": 0.9806,
+  "evidence": [
+    {
+      "claim": "The system allows closing a runway.",
+      "fact": "The system allows a runway to be closed.",
+      "score": 0.9991,
+      "user_story_span": "close a runway",
+      "fact_span": "The system allows a runway to be closed."
+    },
+    {
+      "claim": "The system reassigns flights to other runways when a runway is closed.",
+      "fact": "When a runway is closed, the system automatically reassigns its future flights to the other runway.",
+      "score": 0.9991,
+      "user_story_span": "close a runway and reassign flights",
+      "fact_span": "When a runway is closed, the system automatically reassigns its future flights to the other runway."
+    },
+    {
+      "claim": "The system manages flight schedules.",
+      "fact": "This scheduling platform coordinates the movement of aircraft on and off two parallel runways.",
+      "score": 0.9986,
+      "user_story_span": "manages runway assignments and flight schedules",
+      "fact_span": "scheduling platform"
+    },
+    {
+      "claim": "The system manages runway assignments.",
+      "fact": "The system prevents overlapping assignments on the same runway.",
+      "score": 0.9982,
+      "user_story_span": "manages runway assignments",
+      "fact_span": "The system prevents overlapping assignments on the same runway."
+    },
+    {
+      "claim": "The system marks flights as delayed if the delay exceeds 60 minutes.",
+      "fact": "The system marks flights as delayed if they cannot be placed within 60 minutes of their estimated time.",
+      "score": 0.9834,
+      "user_story_span": "mark flights as delayed if the delay exceeds 60 minutes",
+      "fact_span": "The system marks flights as delayed if they cannot be placed within 60 minutes of their estimated time."
+    },
+    {
+      "claim": "Delay is calculated from original scheduled departure or arrival time.",
+      "fact": "The system allocates slots at or after the flight's estimated time.",
+      "score": 0.9052,
+      "user_story_span": "Delay is calculated from original scheduled departure or arrival time.",
+      "fact_span": "The system allocates slots at or after the flight's estimated time."
+    }
+  ],
+  "total_claims": 9,
+  "supported_claims": 6,
+  "threshold": 0.6
+}

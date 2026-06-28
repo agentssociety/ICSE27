@@ -1,0 +1,95 @@
+{
+  "id": "REQ-TRIAGE-01",
+  "title": "Assign Urgency Level to Patient",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow a triage nurse to assign an urgency level from 1 (most urgent) to 5 (least urgent) to each patient based on their symptoms.",
+  "rationale": "This requirement exists to ensure that patients are prioritized correctly in the queue, improving the efficiency and effectiveness of the healthcare service.",
+  "business_value": "By assigning urgency levels, the system will help streamline patient flow, reduce wait times for critical cases, and enhance overall patient satisfaction.",
+  "source": {
+    "type": "User Story",
+    "id": 8,
+    "description": "As a triage nurse I need to assign an urgency level from 1 (most urgent) to 5 (least urgent) to each patient based on their symptoms So that the queue can be prioritized correctly"
+  },
+  "stakeholders": [
+    "Triage Nurses",
+    "Hospital Management",
+    "Patient Care Team"
+  ],
+  "acceptance_criteria": [
+    "Given a patient has been registered with symptoms",
+    "When the triage nurse assigns an urgency level from 1 to 5",
+    "Then the patient's priority in the queue is updated according to the assigned level"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "The system updates the patient's urgency level in the database",
+    "The system recalculates and updates the patient's position in the queue based on the new urgency level"
+  ],
+  "functional_constraints": [
+    "Urgency levels must be between 1 (most urgent) and 5 (least urgent)",
+    "The system must store and retrieve urgency levels for each patient",
+    "The system must update the queue in real-time when a new urgency level is assigned"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The system should respond within 2 seconds to an urgency level assignment request",
+    "availability": "The system should be available 99.9% of the time",
+    "scalability": "The system must handle up to 100 patients simultaneously without degradation in performance",
+    "usability": "Error messages should be clear and actionable, providing instructions for correcting input errors"
+  },
+  "edge_cases": [
+    "What happens if a triage nurse assigns an urgency level outside the range of 1 to 5?",
+    "How does the system handle multiple simultaneous urgency level assignments?",
+    "What are the implications if the queue is temporarily unavailable during an urgency level assignment?"
+  ],
+  "dependencies": [
+    "The patient registration system must be functioning correctly and have up-to-date patient information.",
+    "The queue management system must be able to accept and process updated urgency levels."
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Patient Database",
+      "description": "The requirement interacts with the database to retrieve patient information, store urgency levels, and update queue positions."
+    },
+    {
+      "type": "API",
+      "name": "Queue Management API",
+      "description": "The requirement uses an API to communicate with the queue management system for updating patient priorities based on assigned urgency levels."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-TRIAGE-01",
+      "description": "Assigning a valid urgency level (3) to a registered patient.",
+      "expected_result": "The patient's priority is updated to 3 in the queue."
+    },
+    {
+      "id": "TC-TRIAGE-02",
+      "description": "Attempting to assign an invalid urgency level (<1 or >5).",
+      "expected_result": "An error message is displayed, instructing the triage nurse to enter a valid urgency level."
+    },
+    {
+      "id": "TC-TRIAGE-03",
+      "description": "Simultaneous assignment of urgency levels by multiple triage nurses.",
+      "expected_result": "All patients' priorities are updated correctly in the queue, and there is no conflict or data inconsistency."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-12T21:58:18.789550",
+  "last_updated": "2026-06-12T22:03:39.205759",
+  "traceability": {
+    "related_requirements": [
+      "REQ-TRIAGE-01"
+    ],
+    "design_components": [
+      "Patient"
+    ],
+    "test_artifacts": []
+  }
+}

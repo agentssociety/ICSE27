@@ -1,0 +1,151 @@
+@startuml
+skinparam defaultFontName Courier
+skinparam sequenceMessageAlign center
+
+box "External" #LightBlue
+    participant Actor
+end box
+
+box "Controller" #LightGreen
+    participant TransactionReviewInterface
+    participant FlaggedTransactionsAPI
+end box
+
+box "Application" #LightYellow
+    participant AuthenticationService
+    participant AuthorizationService
+end box
+
+box "Domain" #LightCoral
+    participant FlaggedTransaction
+    participant AuditEntry
+end box
+
+box "Infrastructure" #LightGray
+    participant Database
+end box
+
+== FLOW-ADMIN-REVIEW (Happy Path) ==
+
+Actor -> TransactionReviewInterface : login(username: String, password: String) : SessionToken
+TransactionReviewInterface -> AuthenticationService : authenticate(credentials) : SessionToken
+AuthenticationService -> TransactionReviewInterface : sessionToken
+TransactionReviewInterface -> Actor : session established
+
+Actor -> TransactionReviewInterface : requestFlaggedTransactions()
+TransactionReviewInterface -> FlaggedTransactionsAPI : GET /flagged-transactions [TLS]
+FlaggedTransactionsAPI -> AuthorizationService : checkPermission(actor: Actor, required: Permission.Admin) : Boolean
+AuthorizationService -> FlaggedTransactionsAPI : true
+FlaggedTransactionsAPI -> Database : SELECT * FROM flagged_transactions [encrypted at rest]
+Database -> FlaggedTransactionsAPI : list<FlaggedTransaction>
+FlaggedTransactionsAPI -> TransactionReviewInterface : 200 OK (JSON list)
+TransactionReviewInterface -> Actor : displayFlaggedTransactions(list)
+
+Actor -> TransactionReviewInterface : selectAction(transactionId: String, action: String)
+TransactionReviewInterface -> FlaggedTransactionsAPI : POST /flagged-transactions/{id}/action [TLS] {action: "approve"}
+FlaggedTransactionsAPI -> AuthorizationService : checkPermission(actor: Actor, required: Permission.Admin) : Boolean
+AuthorizationService -> FlaggedTransactionsAPI : true
+FlaggedTransactionsAPI -> FlaggedTransaction : getById(id: String) : FlaggedTransaction
+FlaggedTransactionsAPI -> FlaggedTransaction : validateState(transaction: FlaggedTransaction) : Boolean
+alt validation passes
+    FlaggedTransactionsAPI -> FlaggedTransaction : updateStatus(transaction: FlaggedTransaction, newStatus: Status.Approved) : void
+    note right of FlaggedTransaction: status = Approved (state transition)
+    FlaggedTransactionsAPI -> AuditEntry : create(operation: "REQ_ADMIN_01", timestamp: DateTime, transactionId: String) : AuditEntry
+    AuditEntry -> Database : INSERT INTO audit_entry [encrypted at rest]
+    FlaggedTransactionsAPI -> Database : UPDATE flagged_transactions SET status = 'Approved' [encrypted at rest]
+    FlaggedTransactionsAPI -> TransactionReviewInterface : 200 OK {status: "Approved"}
+    TransactionReviewInterface -> Actor : showConfirmation("Transaction approved")
+else validation fails (already escalated)
+    FlaggedTransactionsAPI -> TransactionReviewInterface : 409 Conflict {error: "Transaction already escalated"}
+    TransactionReviewInterface -> Actor : showError("Cannot act on escalated transaction")
+end
+
+== FLOW-ADMIN-REVIEW (No Flagged Transactions) ==
+
+Actor -> TransactionReviewInterface : requestFlaggedTransactions()
+TransactionReviewInterface -> FlaggedTransactionsAPI : GET /flagged-transactions [TLS]
+FlaggedTransactionsAPI -> AuthorizationService : checkPermission(actor: Actor, required: Permission.Admin) : Boolean
+AuthorizationService -> FlaggedTransactionsAPI : true
+FlaggedTransactionsAPI -> Database : SELECT * FROM flagged_transactions [encrypted at rest]
+Database -> FlaggedTransactionsAPI : empty list
+FlaggedTransactionsAPI -> TransactionReviewInterface : 200 OK (empty list)
+TransactionReviewInterface -> Actor : showEmptyList("No flagged transactions")
+note right of TransactionReviewInterface : Implementation constraint: Do not call API if no transactions exist (edge case)
+
+== FLOW-ADMIN-REVIEW (Concurrent Action Conflict) ==
+
+Actor -> TransactionReviewInterface : selectAction(transactionId: String, action: String)
+TransactionReviewInterface -> FlaggedTransactionsAPI : POST /flagged-transactions/{id}/action [TLS] {action: "reject"}
+FlaggedTransactionsAPI -> AuthorizationService : checkPermission(actor: Actor, required: Permission.Admin) : Boolean
+AuthorizationService -> FlaggedTransactionsAPI : true
+FlaggedTransactionsAPI -> FlaggedTransaction : getById(id: String) : FlaggedTransaction
+FlaggedTransactionsAPI -> FlaggedTransaction : validateState(transaction: FlaggedTransaction) : Boolean
+alt validation passes
+    FlaggedTransactionsAPI -> FlaggedTransaction : updateStatus(transaction: FlaggedTransaction, newStatus: Status.Rejected) : void
+    note right of FlaggedTransaction: status = Rejected (state transition)
+    FlaggedTransactionsAPI -> AuditEntry : create(operation: "REQ_ADMIN_01", timestamp: DateTime, transactionId: String) : AuditEntry
+    AuditEntry -> Database : INSERT INTO audit_entry [encrypted at rest]
+    FlaggedTransactionsAPI -> Database : UPDATE flagged_transactions SET status = 'Rejected' [encrypted at rest]
+    alt update succeeds
+        FlaggedTransactionsAPI -> TransactionReviewInterface : 200 OK {status: "Rejected"}
+        TransactionReviewInterface -> Actor : showConfirmation("Transaction rejected")
+    else update fails (concurrent modification)
+        FlaggedTransactionsAPI -> TransactionReviewInterface : 409 Conflict {error: "Concurrent action conflict, please refresh"}
+        TransactionReviewInterface -> Actor : showError("Another admin already acted on this transaction")
+    end
+else validation fails (already escalated)
+    FlaggedTransactionsAPI -> TransactionReviewInterface : 409 Conflict {error: "Transaction already escalated"}
+    TransactionReviewInterface -> Actor : showError("Cannot act on escalated transaction")
+end
+
+== FLOW-ADMIN-REVIEW (Transaction Already Escalated) ==
+
+Actor -> TransactionReviewInterface : selectAction(transactionId: String, action: String)
+TransactionReviewInterface -> FlaggedTransactionsAPI : POST /flagged-transactions/{id}/action [TLS] {action: "escalate"}
+FlaggedTransactionsAPI -> AuthorizationService : checkPermission(actor: Actor, required: Permission.Admin) : Boolean
+AuthorizationService -> FlaggedTransactionsAPI : true
+FlaggedTransactionsAPI -> FlaggedTransaction : getById(id: String) : FlaggedTransaction
+FlaggedTransactionsAPI -> FlaggedTransaction : validateState(transaction: FlaggedTransaction) : Boolean
+alt validation fails (already escalated)
+    FlaggedTransactionsAPI -> TransactionReviewInterface : 409 Conflict {error: "Transaction already escalated"}
+    TransactionReviewInterface -> Actor : showError("Cannot escalate an already escalated transaction")
+else validation passes
+    FlaggedTransactionsAPI -> FlaggedTransaction : updateStatus(transaction: FlaggedTransaction, newStatus: Status.Escalated) : void
+    note right of FlaggedTransaction: status = Escalated (state transition)
+    FlaggedTransactionsAPI -> AuditEntry : create(operation: "REQ_ADMIN_01", timestamp: DateTime, transactionId: String) : AuditEntry
+    AuditEntry -> Database : INSERT INTO audit_entry [encrypted at rest]
+    FlaggedTransactionsAPI -> Database : UPDATE flagged_transactions SET status = 'Escalated' [encrypted at rest]
+    FlaggedTransactionsAPI -> TransactionReviewInterface : 200 OK {status: "Escalated"}
+    TransactionReviewInterface -> Actor : showConfirmation("Transaction escalated")
+end
+
+== FLOW-ADMIN-REVIEW (Update Failure) ==
+
+Actor -> TransactionReviewInterface : selectAction(transactionId: String, action: String)
+TransactionReviewInterface -> FlaggedTransactionsAPI : POST /flagged-transactions/{id}/action [TLS] {action: "approve"}
+FlaggedTransactionsAPI -> AuthorizationService : checkPermission(actor: Actor, required: Permission.Admin) : Boolean
+AuthorizationService -> FlaggedTransactionsAPI : true
+FlaggedTransactionsAPI -> FlaggedTransaction : getById(id: String) : FlaggedTransaction
+FlaggedTransactionsAPI -> FlaggedTransaction : validateState(transaction: FlaggedTransaction) : Boolean
+alt validation passes
+    FlaggedTransactionsAPI -> FlaggedTransaction : updateStatus(transaction: FlaggedTransaction, newStatus: Status.Approved) : void
+    note right of FlaggedTransaction: status = Approved (state transition)
+    FlaggedTransactionsAPI -> AuditEntry : create(operation: "REQ_ADMIN_01", timestamp: DateTime, transactionId: String) : AuditEntry
+    AuditEntry -> Database : INSERT INTO audit_entry [encrypted at rest]
+    FlaggedTransactionsAPI -> Database : UPDATE flagged_transactions SET status = 'Approved' [encrypted at rest]
+    alt update fails (state inconsistency)
+        FlaggedTransactionsAPI -> Database : ROLLBACK [encrypted at rest]
+        FlaggedTransactionsAPI -> AuditEntry : logFailure(operation: "REQ_ADMIN_01", reason: "State inconsistency") : void
+        AuditEntry -> Database : INSERT INTO audit_entry (failure) [encrypted at rest]
+        FlaggedTransactionsAPI -> TransactionReviewInterface : 500 Internal Server Error {error: "Update failed, rolled back"}
+        TransactionReviewInterface -> Actor : showError("System error, please try again")
+    else update succeeds
+        FlaggedTransactionsAPI -> TransactionReviewInterface : 200 OK {status: "Approved"}
+        TransactionReviewInterface -> Actor : showConfirmation("Transaction approved")
+    end
+else validation fails (already escalated)
+    FlaggedTransactionsAPI -> TransactionReviewInterface : 409 Conflict {error: "Transaction already escalated"}
+    TransactionReviewInterface -> Actor : showError("Cannot act on escalated transaction")
+end
+
+@enduml

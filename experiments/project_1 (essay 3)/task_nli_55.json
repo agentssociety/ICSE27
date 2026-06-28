@@ -1,0 +1,37 @@
+{
+  "task_id": 55,
+  "confidence": 0.9919,
+  "evidence": [
+    {
+      "claim": "The user has a queue.",
+      "fact": "When a patient's urgency level changes, the queue automatically re-sorts to maintain correct ordering.",
+      "score": 0.9989,
+      "user_story_span": "the system to order the queue",
+      "fact_span": "the queue automatically re-sorts"
+    },
+    {
+      "claim": "Queue items have an urgency level.",
+      "fact": "The system can retrieve the patient with the highest urgency and earliest arrival from the queue.",
+      "score": 0.9951,
+      "user_story_span": "items, each with an urgency level",
+      "fact_span": "the patient with the highest urgency"
+    },
+    {
+      "claim": "Queue items have a timestamp.",
+      "fact": "The waiting list is organized using descending severity and ascending check-in timestamp.",
+      "score": 0.9939,
+      "user_story_span": "items, each with an urgency level and a timestamp",
+      "fact_span": "ascending check-in timestamp"
+    },
+    {
+      "claim": "When the interaction occurs, the system orders the queue first by urgency (descending), then by time (ascending).",
+      "fact": "The waiting list is organized using descending severity and ascending check-in timestamp.",
+      "score": 0.9797,
+      "user_story_span": "order the queue by urgency then time",
+      "fact_span": "organized using descending severity and ascending check-in timestamp"
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

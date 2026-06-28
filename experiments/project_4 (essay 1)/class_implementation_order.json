@@ -1,0 +1,9 @@
+[
+  "User",
+  "Account",
+  "Card",
+  "PIN",
+  "Transaction",
+  "AuditLogEntry",
+  "AccountFlag"
+]

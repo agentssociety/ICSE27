@@ -1,0 +1,106 @@
+{
+  "project_id": 3,
+  "project_name": "airport_runway_scheduling",
+  "spec_path": "experiments/project_3 (metagpt)/docs/requirement.txt",
+  "prd_path": "experiments/project_3 (metagpt)/docs/prd/20260623141944.json",
+  "n_facts": 7,
+  "facts": [
+    "The system register incoming and outgoing flights with their estimated times.",
+    "The system allocate each flight the earliest available 5-minute slot on either runway at or after its estimated time, with a 3-minute separation gap between consecutive slots on the same runway.",
+    "The system give arrivals priority over departures when competing for the same slot.",
+    "The system detect and prevent any overlapping or gap-violating assignments on the same runway.",
+    "The system allow a runway to be closed, automatically reassigning its future flights to the other runway and marking flights as delayed if they cannot be placed within 60 minutes of their estimated time.",
+    "The system immediately give a declared emergency flight the earliest possible slot and re-queue displaced flights by the normal rules.",
+    "The system show a slot timetable per runway with delayed flights and emergency events."
+  ],
+  "n_stories": 5,
+  "stories": [
+    {
+      "task_id": 1,
+      "confidence": 0.9988,
+      "evidence": [
+        {
+          "claim": "The system enables users to register flights with their estimated times.",
+          "fact": "The system register incoming and outgoing flights with their estimated times.",
+          "score": 0.9988,
+          "user_story_span": "",
+          "fact_span": ""
+        }
+      ],
+      "total_claims": 3,
+      "supported_claims": 1,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 2,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 3,
+      "confidence": 0.9964,
+      "evidence": [
+        {
+          "claim": "The system enables users to close a runway and have the system automatically reassign flights to the other runway, marking delayed flights clearly.",
+          "fact": "The system allow a runway to be closed, automatically reassigning its future flights to the other runway and marking flights as delayed if they cannot be placed within 60 minutes of their estimated time.",
+          "score": 0.9964,
+          "user_story_span": "",
+          "fact_span": ""
+        }
+      ],
+      "total_claims": 2,
+      "supported_claims": 1,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 4,
+      "confidence": 0.9964,
+      "evidence": [
+        {
+          "claim": "The system enables users to declare an emergency and have the system immediately assign the earliest slot, displacing other flights as needed.",
+          "fact": "The system immediately give a declared emergency flight the earliest possible slot and re-queue displaced flights by the normal rules.",
+          "score": 0.9964,
+          "user_story_span": "",
+          "fact_span": ""
+        }
+      ],
+      "total_claims": 2,
+      "supported_claims": 1,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 5,
+      "confidence": 0.9865,
+      "evidence": [
+        {
+          "claim": "The system enables users to view a clear timetable per runway showing all slots, delayed flights, and emergency events.",
+          "fact": "The system show a slot timetable per runway with delayed flights and emergency events.",
+          "score": 0.9865,
+          "user_story_span": "",
+          "fact_span": ""
+        }
+      ],
+      "total_claims": 2,
+      "supported_claims": 1,
+      "threshold": 0.6
+    }
+  ],
+  "summary": {
+    "mean_nli_alignment_score": 0.9945,
+    "median_nli_alignment_score": 0.9964,
+    "std_nli_alignment_score": 0.0055,
+    "q1": 0.9939,
+    "q3": 0.997,
+    "iqr": 0.0031,
+    "n_outliers": 1,
+    "n_zero_alignment": 0,
+    "total_claims": 11,
+    "supported_claims": 4,
+    "spec_coverage_rate": 0.3636,
+    "spec_extrapolation_rate": 0.6364,
+    "overall_hallucination_rate": 0.6364
+  }
+}

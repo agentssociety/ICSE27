@@ -1,0 +1,134 @@
+@startuml TransfusionRequestSystem
+
+skinparam backgroundColor #FEFEFE
+skinparam classFontName Arial
+skinparam classFontSize 12
+skinparam packageStyle rectangle
+
+package "Domain Model" as Domain {
+  class TransfusionRequest {
+    + uniqueID : UniqueID
+    + patientDetails : PatientDetails
+    + bloodType : BloodType
+    + quantity : Quantity
+    + urgency : Urgency
+    + state : StateEnum
+    + duplicateFlag : boolean
+    note top of TransfusionRequest
+      **Invariants:**
+      - uniqueID globally unique
+      - patientDetails, bloodType, quantity, urgency required
+      - duplicate request accepted with warning
+    end note
+  }
+
+  class PatientDetails {
+    + name : String
+    + dateOfBirth : Date
+    + medicalRecordNumber : String
+  }
+
+  class BloodType {
+    + type : String
+  }
+
+  class Quantity {
+    + units : Integer
+  }
+
+  class Urgency {
+    + level : String
+  }
+
+  class UniqueID {
+    + id : UUID
+  + generate()
+  }
+
+  enum StateEnum {
+    Pre1
+    Post1
+    Post2
+    Post3
+  + setState(Pre1)
+  + setState(Post1)
+  + setState(Post2)
+  + setState(Post3)
+  }
+
+  enum Permission {
+    Read
+    Write
+    Admin
+  }
+}
+
+package "Application" as App {
+  class HealthcareProvider {
+    + name : String
+    + credentials : String
+  }
+
+  class BloodBankTechnician {
+    + name : String
+    + credentials : String
+  }
+
+  class IT_Team {
+    + teamName : String
+  }
+}
+
+package "Infrastructure — Ports" as Ports {
+  interface TransfusionRequestAPI {
+    <<interface>>
+    note: Encrypted, Authenticated channel
+  }
+
+  interface TransfusionRequestDB {
+    <<interface>>
+    note: Encrypted, Authenticated storage
+  + checkExisting(patientDetails, bloodType)
+  + store(requestData)
+  + assignUniqueID(requestID)
+  }
+}
+
+package "Exceptions" as Exceptions {
+  class IncompleteRequestException <<exception>> {
+    + message : String
+  }
+
+  class DuplicateRequestException <<exception>> {
+    + message : String
+    + warning : String
+  }
+
+  class DatabaseUnavailableException <<exception>> {
+    + message : String
+  }
+}
+
+' Relationships
+HealthcareProvider "1" --> "*" TransfusionRequest : creates
+BloodBankTechnician "1" --> "*" TransfusionRequest : accepts
+IT_Team "1" --> "*" TransfusionRequest : assignsUniqueID
+
+TransfusionRequest "1" --> "1" PatientDetails : has
+TransfusionRequest "1" --> "1" BloodType : requires
+TransfusionRequest "1" --> "1" Quantity : requires
+TransfusionRequest "1" --> "1" Urgency : has
+
+TransfusionRequest ..> TransfusionRequestDB : storedIn
+
+TransfusionRequest --> StateEnum : state
+
+HealthcareProvider --> Permission : has
+BloodBankTechnician --> Permission : has
+IT_Team --> Permission : has
+
+TransfusionRequest ..> IncompleteRequestException : raises
+TransfusionRequest ..> DuplicateRequestException : raises
+TransfusionRequest ..> DatabaseUnavailableException : raises
+
+@enduml

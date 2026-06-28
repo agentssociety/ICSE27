@@ -1,0 +1,150 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 2
+skinparam roundCorner 5
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+box "Controller" #LightBlue
+    participant "Blood Bank Technician" as Technician
+end box
+
+box "Application" #LightGreen
+    participant "MatchingProcess" as MatchingProcess
+    participant "MatchingResult" as MatchingResult
+end box
+
+box "Domain" #LightYellow
+    participant "BloodUnit" as BloodUnit
+    participant "CrossMatchStatus" as CrossMatchStatus
+    participant "ABORhType" as ABORhType
+    participant "ExactMatchFirstStrategy" as ExactMatchFirstStrategy
+    participant "CompatibleMatchStrategy" as CompatibleMatchStrategy
+end box
+
+box "Infrastructure" #LightCoral
+    participant "BloodUnitInventoryAPI" as InventoryAPI
+    participant "TransfusionRequestDB" as TransfusionDB
+end box
+
+== Main Flow: Match Transfusion Request ==
+
+Technician -> MatchingProcess : initiateMatching(request: TransfusionRequest) : void
+note over MatchingProcess : [TLS encrypted] Requires authentication
+
+MatchingProcess -> TransfusionDB : queryRequest(requestId: String) : TransfusionRequest
+activate TransfusionDB
+TransfusionDB --> MatchingProcess : return request(ABORhType: String)
+deactivate TransfusionDB
+
+MatchingProcess -> InventoryAPI : queryAvailableUnits() : List<BloodUnit>
+activate InventoryAPI
+InventoryAPI --> MatchingProcess : return unitsList(units: List<BloodUnit>)
+deactivate InventoryAPI
+
+alt Valid inventory data received
+    MatchingProcess -> BloodUnit : filterByCrossMatchStatus(units: List<BloodUnit>, status: CrossMatchStatus.VALID) : List<BloodUnit>
+    note over BloodUnit : Must have valid cross-match status before being considered
+    
+    alt Exact ABO/Rh match exists
+        MatchingProcess -> ExactMatchFirstStrategy : execute(units: List<BloodUnit>, requestType: ABORhType) : List<BloodUnit>
+        activate ExactMatchFirstStrategy
+        ExactMatchFirstStrategy -> BloodUnit : sortByExactMatch(units: List<BloodUnit>) : List<BloodUnit>
+        ExactMatchFirstStrategy --> MatchingProcess : return exactMatches(matchedUnits: List<BloodUnit>)
+        deactivate ExactMatchFirstStrategy
+        
+        MatchingProcess -> BloodUnit : sortByClosestExpiryDate(units: List<BloodUnit>) : List<BloodUnit>
+        note over BloodUnit : Units sorted by closest expiry date after exact match
+        
+        MatchingProcess -> MatchingResult : createResult(matchedUnits: List<BloodUnit>, strategy: String) : MatchingResult
+        activate MatchingResult
+        MatchingResult --> MatchingProcess : return result(result: MatchingResult)
+        deactivate MatchingResult
+        
+        MatchingProcess --> Technician : returnPrioritizedList(result: MatchingResult)
+        note over MatchingProcess : [TLS encrypted] Post-state: Post1 - Only valid cross-matched units considered
+        
+    else No exact match exists
+        MatchingProcess -> CompatibleMatchStrategy : execute(units: List<BloodUnit>, requestType: ABORhType) : List<BloodUnit>
+        activate CompatibleMatchStrategy
+        CompatibleMatchStrategy -> BloodUnit : findCompatibleTypes(units: List<BloodUnit>) : List<BloodUnit>
+        CompatibleMatchStrategy --> MatchingProcess : return compatibleUnits(compatibleUnits: List<BloodUnit>)
+        deactivate CompatibleMatchStrategy
+        
+        MatchingProcess -> BloodUnit : sortByClosestExpiryDate(units: List<BloodUnit>) : List<BloodUnit>
+        
+        MatchingProcess -> MatchingResult : createResult(matchedUnits: List<BloodUnit>, strategy: String) : MatchingResult
+        activate MatchingResult
+        MatchingResult --> MatchingProcess : return result(result: MatchingResult)
+        deactivate MatchingResult
+        
+        MatchingProcess --> Technician : returnPrioritizedList(result: MatchingResult)
+        note over MatchingProcess : [TLS encrypted] Post-state: Post2 - Units prioritized by closest expiry date
+    end
+    
+else No compatible units available
+    MatchingProcess -> MatchingResult : createEmptyResult() : MatchingResult
+    activate MatchingResult
+    MatchingResult --> MatchingProcess : return emptyResult(result: MatchingResult)
+    deactivate MatchingResult
+    
+    MatchingProcess --> Technician : returnEmptyList(emptyResult: MatchingResult)
+    note over MatchingProcess : [TLS encrypted] No compatible units found
+end
+
+== Error Path: Invalid Cross-Match Status ==
+
+alt Invalid cross-match status detected
+    MatchingProcess -> BloodUnit : validateCrossMatchStatus(unit: BloodUnit) : Boolean
+    activate BloodUnit
+    BloodUnit --> MatchingProcess : return false(invalidStatus: Boolean)
+    deactivate BloodUnit
+    
+    MatchingProcess -> MatchingResult : createErrorResult(error: String, code: Integer) : MatchingResult
+    activate MatchingResult
+    MatchingResult --> MatchingProcess : return errorResult(result: MatchingResult)
+    deactivate MatchingResult
+    
+    MatchingProcess --> Technician : returnError(errorResult: MatchingResult)
+    note over MatchingProcess : [TLS encrypted] Cross-match validation failed - unit not considered
+end
+
+== Error Path: Inventory API Failure ==
+
+alt Inventory API unavailable
+    MatchingProcess -> InventoryAPI : queryAvailableUnits() : List<BloodUnit>
+    activate InventoryAPI
+    InventoryAPI --> MatchingProcess : return error(connectionFailed: Exception)
+    deactivate InventoryAPI
+    
+    MatchingProcess -> MatchingResult : createErrorResult(error: String, code: Integer) : MatchingResult
+    activate MatchingResult
+    MatchingResult --> MatchingProcess : return errorResult(result: MatchingResult)
+    deactivate MatchingResult
+    
+    MatchingProcess --> Technician : returnError(errorResult: MatchingResult)
+    note over MatchingProcess : [TLS encrypted] Inventory data unavailable - operation cannot proceed
+end
+
+== Error Path: Unauthorized Access ==
+
+alt Unauthorized actor attempts operation
+    Technician -> MatchingProcess : initiateMatching(request: TransfusionRequest) : void
+    MatchingProcess -> MatchingProcess : checkAuthorization(actor: String) : Boolean
+    activate MatchingProcess
+    MatchingProcess --> MatchingProcess : return false(unauthorized: Boolean)
+    deactivate MatchingProcess
+    
+    MatchingProcess --> Technician : returnUnauthorizedError()
+    note over MatchingProcess : [TLS encrypted] Actor lacks required permissions - operation denied
+end
+
+== State Transitions ==
+
+MatchingProcess -> BloodUnit : updateCrossMatchStatus(unit: BloodUnit, status: CrossMatchStatus) : void
+note over BloodUnit : State transition: Pre1 -> Post1 (cross-match status validated)
+
+MatchingProcess -> BloodUnit : updateExpiryDateSorting(unit: BloodUnit) : void
+note over BloodUnit : State transition: Pre2 -> Post2 (units sorted by closest expiry date)
+
+@enduml

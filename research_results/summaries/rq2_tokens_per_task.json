@@ -1,0 +1,1879 @@
+{
+  "metric": "tokens_per_task",
+  "description": "Per-task token consumption per SDLC phase. Computed as total phase tokens / task count per run, then mean ± std across 3 essay seeds per project.",
+  "unit": "tokens",
+  "projects": [
+    {
+      "project_id": 1,
+      "n_essays": 3,
+      "phases": [
+        {
+          "phase": "INIT",
+          "label": "Project Init",
+          "per_task_tokens": {
+            "mean": 1245.1,
+            "std": 2156.5,
+            "max": 3735.2,
+            "values": [
+              0.0,
+              0.0,
+              3735.2
+            ]
+          },
+          "per_task_input": {
+            "mean": 1204.8,
+            "std": 2086.8,
+            "max": 3614.5,
+            "values": [
+              0.0,
+              0.0,
+              3614.5
+            ]
+          },
+          "per_task_output": {
+            "mean": 40.2,
+            "std": 69.7,
+            "max": 120.7,
+            "values": [
+              0.0,
+              0.0,
+              120.7
+            ]
+          }
+        },
+        {
+          "phase": "USER_STORIES",
+          "label": "User Stories",
+          "per_task_tokens": {
+            "mean": 7569.3,
+            "std": 4949.6,
+            "max": 13268.2,
+            "values": [
+              5095.7,
+              4344.2,
+              13268.2
+            ]
+          },
+          "per_task_input": {
+            "mean": 4149.5,
+            "std": 2764.6,
+            "max": 7341.7,
+            "values": [
+              2570.7,
+              2536.2,
+              7341.7
+            ]
+          },
+          "per_task_output": {
+            "mean": 3419.8,
+            "std": 2200.2,
+            "max": 5926.5,
+            "values": [
+              2525.0,
+              1808.0,
+              5926.5
+            ]
+          }
+        },
+        {
+          "phase": "PLANNING",
+          "label": "Planning",
+          "per_task_tokens": {
+            "mean": 9999.2,
+            "std": 8058.4,
+            "max": 17898.0,
+            "values": [
+              1790.2,
+              17898.0,
+              10309.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 9760.3,
+            "std": 7859.7,
+            "max": 17471.3,
+            "values": [
+              1760.0,
+              17471.3,
+              10049.5
+            ]
+          },
+          "per_task_output": {
+            "mean": 238.9,
+            "std": 199.1,
+            "max": 426.7,
+            "values": [
+              30.2,
+              426.7,
+              259.8
+            ]
+          }
+        },
+        {
+          "phase": "REQUIREMENTS",
+          "label": "Requirements",
+          "per_task_tokens": {
+            "mean": 10674.6,
+            "std": 3010.7,
+            "max": 12950.7,
+            "values": [
+              11812.3,
+              7260.8,
+              12950.7
+            ]
+          },
+          "per_task_input": {
+            "mean": 7425.4,
+            "std": 3174.0,
+            "max": 10058.3,
+            "values": [
+              10058.3,
+              3901.0,
+              8317.0
+            ]
+          },
+          "per_task_output": {
+            "mean": 3249.2,
+            "std": 1443.0,
+            "max": 4633.7,
+            "values": [
+              1754.0,
+              3359.8,
+              4633.7
+            ]
+          }
+        },
+        {
+          "phase": "FORMAL_SPEC",
+          "label": "Formal Spec",
+          "per_task_tokens": {
+            "mean": 41429.2,
+            "std": 5364.7,
+            "max": 47218.3,
+            "values": [
+              47218.3,
+              36625.5,
+              40443.7
+            ]
+          },
+          "per_task_input": {
+            "mean": 20885.0,
+            "std": 2863.3,
+            "max": 22975.2,
+            "values": [
+              22058.5,
+              17621.3,
+              22975.2
+            ]
+          },
+          "per_task_output": {
+            "mean": 20544.2,
+            "std": 4070.4,
+            "max": 25159.8,
+            "values": [
+              25159.8,
+              19004.2,
+              17468.5
+            ]
+          }
+        },
+        {
+          "phase": "DESIGN_UML",
+          "label": "UML Design",
+          "per_task_tokens": {
+            "mean": 18537.0,
+            "std": 3701.3,
+            "max": 22742.8,
+            "values": [
+              22742.8,
+              17091.8,
+              15776.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 10830.8,
+            "std": 1569.7,
+            "max": 12611.3,
+            "values": [
+              12611.3,
+              10234.5,
+              9646.7
+            ]
+          },
+          "per_task_output": {
+            "mean": 7706.2,
+            "std": 2131.7,
+            "max": 10131.5,
+            "values": [
+              10131.5,
+              6857.3,
+              6129.7
+            ]
+          }
+        },
+        {
+          "phase": "ARCHITECTURE",
+          "label": "Architecture",
+          "per_task_tokens": {
+            "mean": 26355.9,
+            "std": 15965.2,
+            "max": 44791.0,
+            "values": [
+              17159.0,
+              17117.8,
+              44791.0
+            ]
+          },
+          "per_task_input": {
+            "mean": 24887.0,
+            "std": 16503.0,
+            "max": 43916.7,
+            "values": [
+              14503.8,
+              16240.5,
+              43916.7
+            ]
+          },
+          "per_task_output": {
+            "mean": 1468.9,
+            "std": 1027.3,
+            "max": 2655.2,
+            "values": [
+              2655.2,
+              877.3,
+              874.3
+            ]
+          }
+        },
+        {
+          "phase": "IMPLEMENTATION",
+          "label": "Implementation",
+          "per_task_tokens": {
+            "mean": 621369.3,
+            "std": 258803.7,
+            "max": 821385.7,
+            "values": [
+              713648.5,
+              821385.7,
+              329073.7
+            ]
+          },
+          "per_task_input": {
+            "mean": 612124.4,
+            "std": 260107.9,
+            "max": 813328.3,
+            "values": [
+              704638.7,
+              813328.3,
+              318406.3
+            ]
+          },
+          "per_task_output": {
+            "mean": 9244.8,
+            "std": 1320.8,
+            "max": 10667.3,
+            "values": [
+              9009.8,
+              8057.3,
+              10667.3
+            ]
+          }
+        },
+        {
+          "phase": "TESTING",
+          "label": "Testing",
+          "per_task_tokens": {
+            "mean": 238700.8,
+            "std": 49688.7,
+            "max": 276965.7,
+            "values": [
+              276965.7,
+              256593.0,
+              182543.8
+            ]
+          },
+          "per_task_input": {
+            "mean": 237752.2,
+            "std": 50382.5,
+            "max": 276432.0,
+            "values": [
+              276432.0,
+              256046.0,
+              180778.5
+            ]
+          },
+          "per_task_output": {
+            "mean": 948.7,
+            "std": 707.3,
+            "max": 1765.3,
+            "values": [
+              533.7,
+              547.0,
+              1765.3
+            ]
+          }
+        },
+        {
+          "phase": "FRONTEND",
+          "label": "Frontend",
+          "per_task_tokens": {
+            "mean": 161799.8,
+            "std": 66587.2,
+            "max": 224648.3,
+            "values": [
+              92016.7,
+              168734.3,
+              224648.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 156679.4,
+            "std": 63202.1,
+            "max": 214953.8,
+            "values": [
+              89495.2,
+              165589.3,
+              214953.8
+            ]
+          },
+          "per_task_output": {
+            "mean": 5120.3,
+            "std": 3973.6,
+            "max": 9694.5,
+            "values": [
+              2521.5,
+              3145.0,
+              9694.5
+            ]
+          }
+        },
+        {
+          "phase": "DEVOPS",
+          "label": "DevOps",
+          "per_task_tokens": {
+            "mean": 25246.4,
+            "std": 12242.8,
+            "max": 38423.7,
+            "values": [
+              23091.3,
+              38423.7,
+              14224.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 23687.7,
+            "std": 11844.4,
+            "max": 36858.8,
+            "values": [
+              20292.7,
+              36858.8,
+              13911.5
+            ]
+          },
+          "per_task_output": {
+            "mean": 1558.8,
+            "std": 1242.9,
+            "max": 2798.7,
+            "values": [
+              2798.7,
+              1564.8,
+              312.8
+            ]
+          }
+        },
+        {
+          "phase": "VERIFICATION",
+          "label": "Verification",
+          "per_task_tokens": {
+            "mean": 37223.3,
+            "std": 20373.9,
+            "max": 60622.5,
+            "values": [
+              27634.2,
+              60622.5,
+              23413.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 30516.4,
+            "std": 19723.5,
+            "max": 53271.3,
+            "values": [
+              18316.5,
+              53271.3,
+              19961.5
+            ]
+          },
+          "per_task_output": {
+            "mean": 6706.9,
+            "std": 2985.5,
+            "max": 9317.7,
+            "values": [
+              9317.7,
+              7351.2,
+              3451.8
+            ]
+          }
+        },
+        {
+          "phase": "ORCHESTRATION",
+          "label": "Orchestration",
+          "per_task_tokens": {
+            "mean": 293034.4,
+            "std": 212509.9,
+            "max": 450209.2,
+            "values": [
+              51252.3,
+              377641.8,
+              450209.2
+            ]
+          },
+          "per_task_input": {
+            "mean": 285149.7,
+            "std": 210775.2,
+            "max": 439938.8,
+            "values": [
+              45100.8,
+              370409.3,
+              439938.8
+            ]
+          },
+          "per_task_output": {
+            "mean": 7884.8,
+            "std": 2135.5,
+            "max": 10270.3,
+            "values": [
+              6151.5,
+              7232.5,
+              10270.3
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "project_id": 2,
+      "n_essays": 3,
+      "phases": [
+        {
+          "phase": "INIT",
+          "label": "Project Init",
+          "per_task_tokens": {
+            "mean": 2077.3,
+            "std": 2828.8,
+            "max": 5299.0,
+            "values": [
+              5299.0,
+              0.0,
+              932.9
+            ]
+          },
+          "per_task_input": {
+            "mean": 2017.1,
+            "std": 2763.6,
+            "max": 5167.1,
+            "values": [
+              5167.1,
+              0.0,
+              884.3
+            ]
+          },
+          "per_task_output": {
+            "mean": 60.1,
+            "std": 66.7,
+            "max": 131.9,
+            "values": [
+              131.9,
+              0.0,
+              48.6
+            ]
+          }
+        },
+        {
+          "phase": "USER_STORIES",
+          "label": "User Stories",
+          "per_task_tokens": {
+            "mean": 5671.5,
+            "std": 1553.5,
+            "max": 7209.3,
+            "values": [
+              4102.7,
+              7209.3,
+              5702.6
+            ]
+          },
+          "per_task_input": {
+            "mean": 2550.5,
+            "std": 268.5,
+            "max": 2859.3,
+            "values": [
+              2420.9,
+              2859.3,
+              2371.4
+            ]
+          },
+          "per_task_output": {
+            "mean": 3121.0,
+            "std": 1346.4,
+            "max": 4350.0,
+            "values": [
+              1681.9,
+              4350.0,
+              3331.1
+            ]
+          }
+        },
+        {
+          "phase": "PLANNING",
+          "label": "Planning",
+          "per_task_tokens": {
+            "mean": 13197.0,
+            "std": 13517.3,
+            "max": 28252.9,
+            "values": [
+              28252.9,
+              9233.9,
+              2104.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 12586.1,
+            "std": 13038.8,
+            "max": 27171.1,
+            "values": [
+              27171.1,
+              8529.0,
+              2058.3
+            ]
+          },
+          "per_task_output": {
+            "mean": 610.9,
+            "std": 524.2,
+            "max": 1081.7,
+            "values": [
+              1081.7,
+              704.9,
+              46.0
+            ]
+          }
+        },
+        {
+          "phase": "REQUIREMENTS",
+          "label": "Requirements",
+          "per_task_tokens": {
+            "mean": 8846.4,
+            "std": 5701.0,
+            "max": 15113.0,
+            "values": [
+              3967.0,
+              15113.0,
+              7459.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 6053.9,
+            "std": 4763.8,
+            "max": 11540.7,
+            "values": [
+              2971.9,
+              11540.7,
+              3649.0
+            ]
+          },
+          "per_task_output": {
+            "mean": 2792.6,
+            "std": 1561.2,
+            "max": 3810.3,
+            "values": [
+              995.1,
+              3572.3,
+              3810.3
+            ]
+          }
+        },
+        {
+          "phase": "FORMAL_SPEC",
+          "label": "Formal Spec",
+          "per_task_tokens": {
+            "mean": 38699.1,
+            "std": 4422.6,
+            "max": 42405.0,
+            "values": [
+              39889.0,
+              42405.0,
+              33803.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 18125.1,
+            "std": 2195.3,
+            "max": 20097.0,
+            "values": [
+              20097.0,
+              18518.6,
+              15759.7
+            ]
+          },
+          "per_task_output": {
+            "mean": 20574.0,
+            "std": 2998.9,
+            "max": 23886.4,
+            "values": [
+              19792.0,
+              23886.4,
+              18043.6
+            ]
+          }
+        },
+        {
+          "phase": "DESIGN_UML",
+          "label": "UML Design",
+          "per_task_tokens": {
+            "mean": 20933.1,
+            "std": 3830.5,
+            "max": 25281.4,
+            "values": [
+              18057.7,
+              19460.1,
+              25281.4
+            ]
+          },
+          "per_task_input": {
+            "mean": 12446.6,
+            "std": 3001.4,
+            "max": 15912.1,
+            "values": [
+              10748.3,
+              10679.4,
+              15912.1
+            ]
+          },
+          "per_task_output": {
+            "mean": 8486.5,
+            "std": 1061.0,
+            "max": 9369.3,
+            "values": [
+              7309.4,
+              8780.7,
+              9369.3
+            ]
+          }
+        },
+        {
+          "phase": "ARCHITECTURE",
+          "label": "Architecture",
+          "per_task_tokens": {
+            "mean": 19939.3,
+            "std": 9100.0,
+            "max": 25944.3,
+            "values": [
+              24404.4,
+              25944.3,
+              9469.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 18205.1,
+            "std": 8640.0,
+            "max": 24966.1,
+            "values": [
+              21178.0,
+              24966.1,
+              8471.1
+            ]
+          },
+          "per_task_output": {
+            "mean": 1734.2,
+            "std": 1292.3,
+            "max": 3226.4,
+            "values": [
+              3226.4,
+              978.1,
+              998.1
+            ]
+          }
+        },
+        {
+          "phase": "IMPLEMENTATION",
+          "label": "Implementation",
+          "per_task_tokens": {
+            "mean": 1047304.9,
+            "std": 709649.2,
+            "max": 1848803.4,
+            "values": [
+              1848803.4,
+              498900.7,
+              794210.4
+            ]
+          },
+          "per_task_input": {
+            "mean": 1036348.9,
+            "std": 702070.0,
+            "max": 1828762.7,
+            "values": [
+              1828762.7,
+              491944.1,
+              788339.9
+            ]
+          },
+          "per_task_output": {
+            "mean": 10955.9,
+            "std": 7886.3,
+            "max": 20040.7,
+            "values": [
+              20040.7,
+              6956.6,
+              5870.6
+            ]
+          }
+        },
+        {
+          "phase": "TESTING",
+          "label": "Testing",
+          "per_task_tokens": {
+            "mean": 276378.7,
+            "std": 152277.5,
+            "max": 431445.7,
+            "values": [
+              270637.4,
+              127053.0,
+              431445.7
+            ]
+          },
+          "per_task_input": {
+            "mean": 274846.4,
+            "std": 150444.2,
+            "max": 427572.3,
+            "values": [
+              270174.3,
+              126792.7,
+              427572.3
+            ]
+          },
+          "per_task_output": {
+            "mean": 1532.3,
+            "std": 2030.0,
+            "max": 3873.4,
+            "values": [
+              463.1,
+              260.3,
+              3873.4
+            ]
+          }
+        },
+        {
+          "phase": "FRONTEND",
+          "label": "Frontend",
+          "per_task_tokens": {
+            "mean": 269681.2,
+            "std": 90000.8,
+            "max": 371541.7,
+            "values": [
+              236597.1,
+              371541.7,
+              200904.9
+            ]
+          },
+          "per_task_input": {
+            "mean": 264393.6,
+            "std": 91023.6,
+            "max": 367081.4,
+            "values": [
+              232458.4,
+              367081.4,
+              193640.9
+            ]
+          },
+          "per_task_output": {
+            "mean": 5287.7,
+            "std": 1719.1,
+            "max": 7264.0,
+            "values": [
+              4138.7,
+              4460.3,
+              7264.0
+            ]
+          }
+        },
+        {
+          "phase": "DEVOPS",
+          "label": "DevOps",
+          "per_task_tokens": {
+            "mean": 20615.1,
+            "std": 10247.6,
+            "max": 32442.7,
+            "values": [
+              32442.7,
+              15008.3,
+              14394.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 19231.5,
+            "std": 9289.9,
+            "max": 29956.3,
+            "values": [
+              29956.3,
+              13679.7,
+              14058.4
+            ]
+          },
+          "per_task_output": {
+            "mean": 1383.6,
+            "std": 1076.3,
+            "max": 2486.4,
+            "values": [
+              2486.4,
+              1328.6,
+              335.9
+            ]
+          }
+        },
+        {
+          "phase": "VERIFICATION",
+          "label": "Verification",
+          "per_task_tokens": {
+            "mean": 22214.9,
+            "std": 10554.1,
+            "max": 33247.6,
+            "values": [
+              33247.6,
+              21181.7,
+              12215.4
+            ]
+          },
+          "per_task_input": {
+            "mean": 18628.7,
+            "std": 7530.9,
+            "max": 26395.4,
+            "values": [
+              26395.4,
+              18132.4,
+              11358.1
+            ]
+          },
+          "per_task_output": {
+            "mean": 3586.2,
+            "std": 3033.3,
+            "max": 6852.1,
+            "values": [
+              6852.1,
+              3049.3,
+              857.3
+            ]
+          }
+        },
+        {
+          "phase": "ORCHESTRATION",
+          "label": "Orchestration",
+          "per_task_tokens": {
+            "mean": 556771.7,
+            "std": 158117.7,
+            "max": 730837.0,
+            "values": [
+              730837.0,
+              517458.9,
+              422019.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 550336.5,
+            "std": 156215.1,
+            "max": 721809.9,
+            "values": [
+              721809.9,
+              513085.1,
+              416114.4
+            ]
+          },
+          "per_task_output": {
+            "mean": 6435.2,
+            "std": 2371.6,
+            "max": 9027.1,
+            "values": [
+              9027.1,
+              4373.7,
+              5904.9
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "project_id": 3,
+      "n_essays": 3,
+      "phases": [
+        {
+          "phase": "INIT",
+          "label": "Project Init",
+          "per_task_tokens": {
+            "mean": 1063.7,
+            "std": 112.5,
+            "max": 1161.9,
+            "values": [
+              1088.3,
+              940.9,
+              1161.9
+            ]
+          },
+          "per_task_input": {
+            "mean": 1024.0,
+            "std": 115.2,
+            "max": 1123.4,
+            "values": [
+              1051.0,
+              897.7,
+              1123.4
+            ]
+          },
+          "per_task_output": {
+            "mean": 39.6,
+            "std": 3.1,
+            "max": 43.1,
+            "values": [
+              37.3,
+              43.1,
+              38.4
+            ]
+          }
+        },
+        {
+          "phase": "USER_STORIES",
+          "label": "User Stories",
+          "per_task_tokens": {
+            "mean": 5724.9,
+            "std": 813.3,
+            "max": 6641.1,
+            "values": [
+              6641.1,
+              5088.3,
+              5445.1
+            ]
+          },
+          "per_task_input": {
+            "mean": 2552.7,
+            "std": 97.2,
+            "max": 2653.1,
+            "values": [
+              2653.1,
+              2459.1,
+              2545.9
+            ]
+          },
+          "per_task_output": {
+            "mean": 3172.1,
+            "std": 719.3,
+            "max": 3988.0,
+            "values": [
+              3988.0,
+              2629.1,
+              2899.3
+            ]
+          }
+        },
+        {
+          "phase": "PLANNING",
+          "label": "Planning",
+          "per_task_tokens": {
+            "mean": 16220.0,
+            "std": 18785.4,
+            "max": 37881.4,
+            "values": [
+              37881.4,
+              6380.0,
+              4398.7
+            ]
+          },
+          "per_task_input": {
+            "mean": 15662.1,
+            "std": 18217.4,
+            "max": 36658.4,
+            "values": [
+              36658.4,
+              6278.0,
+              4050.0
+            ]
+          },
+          "per_task_output": {
+            "mean": 557.9,
+            "std": 589.1,
+            "max": 1223.0,
+            "values": [
+              1223.0,
+              102.0,
+              348.7
+            ]
+          }
+        },
+        {
+          "phase": "REQUIREMENTS",
+          "label": "Requirements",
+          "per_task_tokens": {
+            "mean": 9579.6,
+            "std": 4568.3,
+            "max": 12351.3,
+            "values": [
+              12351.3,
+              4306.9,
+              12080.6
+            ]
+          },
+          "per_task_input": {
+            "mean": 6105.1,
+            "std": 2630.4,
+            "max": 8092.4,
+            "values": [
+              8092.4,
+              3122.3,
+              7100.6
+            ]
+          },
+          "per_task_output": {
+            "mean": 3474.5,
+            "std": 2015.6,
+            "max": 4980.0,
+            "values": [
+              4258.9,
+              1184.6,
+              4980.0
+            ]
+          }
+        },
+        {
+          "phase": "FORMAL_SPEC",
+          "label": "Formal Spec",
+          "per_task_tokens": {
+            "mean": 39218.0,
+            "std": 2859.1,
+            "max": 42125.3,
+            "values": [
+              39119.1,
+              36409.7,
+              42125.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 17892.0,
+            "std": 409.6,
+            "max": 18232.7,
+            "values": [
+              18005.6,
+              18232.7,
+              17437.6
+            ]
+          },
+          "per_task_output": {
+            "mean": 21326.1,
+            "std": 3260.6,
+            "max": 24687.7,
+            "values": [
+              21113.6,
+              18177.0,
+              24687.7
+            ]
+          }
+        },
+        {
+          "phase": "DESIGN_UML",
+          "label": "UML Design",
+          "per_task_tokens": {
+            "mean": 21696.9,
+            "std": 1361.8,
+            "max": 23262.6,
+            "values": [
+              20787.7,
+              21040.4,
+              23262.6
+            ]
+          },
+          "per_task_input": {
+            "mean": 12124.1,
+            "std": 333.4,
+            "max": 12361.4,
+            "values": [
+              12361.4,
+              11743.0,
+              12268.0
+            ]
+          },
+          "per_task_output": {
+            "mean": 9572.8,
+            "std": 1306.1,
+            "max": 10994.6,
+            "values": [
+              8426.3,
+              9297.4,
+              10994.6
+            ]
+          }
+        },
+        {
+          "phase": "ARCHITECTURE",
+          "label": "Architecture",
+          "per_task_tokens": {
+            "mean": 78942.1,
+            "std": 24206.0,
+            "max": 100911.0,
+            "values": [
+              52992.4,
+              100911.0,
+              82923.0
+            ]
+          },
+          "per_task_input": {
+            "mean": 76108.4,
+            "std": 22563.1,
+            "max": 95224.3,
+            "values": [
+              51219.7,
+              95224.3,
+              81881.1
+            ]
+          },
+          "per_task_output": {
+            "mean": 2833.8,
+            "std": 2497.6,
+            "max": 5686.7,
+            "values": [
+              1772.7,
+              5686.7,
+              1041.9
+            ]
+          }
+        },
+        {
+          "phase": "IMPLEMENTATION",
+          "label": "Implementation",
+          "per_task_tokens": {
+            "mean": 763066.1,
+            "std": 87310.8,
+            "max": 841638.0,
+            "values": [
+              778488.7,
+              841638.0,
+              669071.7
+            ]
+          },
+          "per_task_input": {
+            "mean": 750792.3,
+            "std": 81247.7,
+            "max": 824218.4,
+            "values": [
+              764652.3,
+              824218.4,
+              663506.1
+            ]
+          },
+          "per_task_output": {
+            "mean": 12273.9,
+            "std": 6079.5,
+            "max": 17419.6,
+            "values": [
+              13836.4,
+              17419.6,
+              5565.6
+            ]
+          }
+        },
+        {
+          "phase": "TESTING",
+          "label": "Testing",
+          "per_task_tokens": {
+            "mean": 255588.3,
+            "std": 35686.8,
+            "max": 287363.3,
+            "values": [
+              287363.3,
+              216978.3,
+              262423.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 252866.0,
+            "std": 36026.8,
+            "max": 283583.1,
+            "values": [
+              283583.1,
+              213211.9,
+              261803.0
+            ]
+          },
+          "per_task_output": {
+            "mean": 2722.3,
+            "std": 1820.4,
+            "max": 3780.1,
+            "values": [
+              3780.1,
+              3766.4,
+              620.3
+            ]
+          }
+        },
+        {
+          "phase": "FRONTEND",
+          "label": "Frontend",
+          "per_task_tokens": {
+            "mean": 183425.1,
+            "std": 47939.2,
+            "max": 237655.7,
+            "values": [
+              146695.0,
+              165924.6,
+              237655.7
+            ]
+          },
+          "per_task_input": {
+            "mean": 177329.0,
+            "std": 41874.1,
+            "max": 224272.9,
+            "values": [
+              143825.0,
+              163889.1,
+              224272.9
+            ]
+          },
+          "per_task_output": {
+            "mean": 6096.1,
+            "std": 6324.3,
+            "max": 13382.9,
+            "values": [
+              2870.0,
+              2035.4,
+              13382.9
+            ]
+          }
+        },
+        {
+          "phase": "DEVOPS",
+          "label": "DevOps",
+          "per_task_tokens": {
+            "mean": 18546.3,
+            "std": 5622.9,
+            "max": 24055.6,
+            "values": [
+              24055.6,
+              12816.3,
+              18767.0
+            ]
+          },
+          "per_task_input": {
+            "mean": 17758.4,
+            "std": 5071.4,
+            "max": 22728.3,
+            "values": [
+              22728.3,
+              12591.3,
+              17955.6
+            ]
+          },
+          "per_task_output": {
+            "mean": 787.9,
+            "std": 551.5,
+            "max": 1327.3,
+            "values": [
+              1327.3,
+              225.0,
+              811.4
+            ]
+          }
+        },
+        {
+          "phase": "VERIFICATION",
+          "label": "Verification",
+          "per_task_tokens": {
+            "mean": 33537.3,
+            "std": 29166.3,
+            "max": 67059.9,
+            "values": [
+              67059.9,
+              19578.4,
+              13973.6
+            ]
+          },
+          "per_task_input": {
+            "mean": 28718.8,
+            "std": 23492.1,
+            "max": 55488.4,
+            "values": [
+              55488.4,
+              19130.7,
+              11537.1
+            ]
+          },
+          "per_task_output": {
+            "mean": 4818.5,
+            "std": 5932.1,
+            "max": 11571.4,
+            "values": [
+              11571.4,
+              447.7,
+              2436.4
+            ]
+          }
+        },
+        {
+          "phase": "ORCHESTRATION",
+          "label": "Orchestration",
+          "per_task_tokens": {
+            "mean": 402867.8,
+            "std": 176592.1,
+            "max": 594490.0,
+            "values": [
+              594490.0,
+              246679.1,
+              367434.1
+            ]
+          },
+          "per_task_input": {
+            "mean": 394929.8,
+            "std": 174678.7,
+            "max": 584863.9,
+            "values": [
+              584863.9,
+              241171.4,
+              358754.1
+            ]
+          },
+          "per_task_output": {
+            "mean": 7937.9,
+            "std": 2157.2,
+            "max": 9626.1,
+            "values": [
+              9626.1,
+              5507.7,
+              8680.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "project_id": 4,
+      "n_essays": 3,
+      "phases": [
+        {
+          "phase": "INIT",
+          "label": "Project Init",
+          "per_task_tokens": {
+            "mean": 731.1,
+            "std": 637.8,
+            "max": 1173.2,
+            "values": [
+              1020.2,
+              0.0,
+              1173.2
+            ]
+          },
+          "per_task_input": {
+            "mean": 705.8,
+            "std": 615.7,
+            "max": 1132.3,
+            "values": [
+              985.1,
+              0.0,
+              1132.3
+            ]
+          },
+          "per_task_output": {
+            "mean": 25.3,
+            "std": 22.1,
+            "max": 40.8,
+            "values": [
+              35.1,
+              0.0,
+              40.8
+            ]
+          }
+        },
+        {
+          "phase": "USER_STORIES",
+          "label": "User Stories",
+          "per_task_tokens": {
+            "mean": 8383.5,
+            "std": 5591.2,
+            "max": 14620.7,
+            "values": [
+              6708.5,
+              3821.2,
+              14620.7
+            ]
+          },
+          "per_task_input": {
+            "mean": 4683.9,
+            "std": 4020.0,
+            "max": 9130.8,
+            "values": [
+              3613.0,
+              1307.8,
+              9130.8
+            ]
+          },
+          "per_task_output": {
+            "mean": 3699.6,
+            "std": 1577.4,
+            "max": 5489.8,
+            "values": [
+              3095.5,
+              2513.5,
+              5489.8
+            ]
+          }
+        },
+        {
+          "phase": "PLANNING",
+          "label": "Planning",
+          "per_task_tokens": {
+            "mean": 43809.7,
+            "std": 7689.8,
+            "max": 50020.4,
+            "values": [
+              50020.4,
+              35208.5,
+              46200.2
+            ]
+          },
+          "per_task_input": {
+            "mean": 43243.0,
+            "std": 7310.7,
+            "max": 49312.9,
+            "values": [
+              49312.9,
+              35127.4,
+              45288.8
+            ]
+          },
+          "per_task_output": {
+            "mean": 566.6,
+            "std": 432.7,
+            "max": 911.3,
+            "values": [
+              707.5,
+              81.1,
+              911.3
+            ]
+          }
+        },
+        {
+          "phase": "REQUIREMENTS",
+          "label": "Requirements",
+          "per_task_tokens": {
+            "mean": 11687.8,
+            "std": 5479.0,
+            "max": 17966.2,
+            "values": [
+              9224.5,
+              7872.9,
+              17966.2
+            ]
+          },
+          "per_task_input": {
+            "mean": 8551.6,
+            "std": 6184.7,
+            "max": 15442.8,
+            "values": [
+              6729.1,
+              3483.0,
+              15442.8
+            ]
+          },
+          "per_task_output": {
+            "mean": 3136.2,
+            "std": 1085.8,
+            "max": 4389.9,
+            "values": [
+              2495.4,
+              4389.9,
+              2523.3
+            ]
+          }
+        },
+        {
+          "phase": "FORMAL_SPEC",
+          "label": "Formal Spec",
+          "per_task_tokens": {
+            "mean": 42952.9,
+            "std": 5999.7,
+            "max": 49726.8,
+            "values": [
+              38307.9,
+              49726.8,
+              40824.2
+            ]
+          },
+          "per_task_input": {
+            "mean": 19878.8,
+            "std": 1364.9,
+            "max": 21346.6,
+            "values": [
+              18647.9,
+              21346.6,
+              19641.8
+            ]
+          },
+          "per_task_output": {
+            "mean": 23074.1,
+            "std": 4657.7,
+            "max": 28380.1,
+            "values": [
+              19660.0,
+              28380.1,
+              21182.3
+            ]
+          }
+        },
+        {
+          "phase": "DESIGN_UML",
+          "label": "UML Design",
+          "per_task_tokens": {
+            "mean": 21441.1,
+            "std": 2448.8,
+            "max": 22907.2,
+            "values": [
+              22907.2,
+              22802.0,
+              18614.2
+            ]
+          },
+          "per_task_input": {
+            "mean": 11758.3,
+            "std": 597.4,
+            "max": 12364.9,
+            "values": [
+              12364.9,
+              11739.5,
+              11170.5
+            ]
+          },
+          "per_task_output": {
+            "mean": 9682.9,
+            "std": 1956.5,
+            "max": 11062.5,
+            "values": [
+              10542.4,
+              11062.5,
+              7443.7
+            ]
+          }
+        },
+        {
+          "phase": "ARCHITECTURE",
+          "label": "Architecture",
+          "per_task_tokens": {
+            "mean": 34588.2,
+            "std": 15022.0,
+            "max": 46343.1,
+            "values": [
+              17664.2,
+              46343.1,
+              39757.3
+            ]
+          },
+          "per_task_input": {
+            "mean": 33738.7,
+            "std": 15285.7,
+            "max": 46146.6,
+            "values": [
+              16663.4,
+              46146.6,
+              38406.0
+            ]
+          },
+          "per_task_output": {
+            "mean": 849.6,
+            "std": 592.1,
+            "max": 1351.3,
+            "values": [
+              1000.9,
+              196.5,
+              1351.3
+            ]
+          }
+        },
+        {
+          "phase": "IMPLEMENTATION",
+          "label": "Implementation",
+          "per_task_tokens": {
+            "mean": 1140139.0,
+            "std": 287370.3,
+            "max": 1466803.9,
+            "values": [
+              1466803.9,
+              926316.4,
+              1027296.8
+            ]
+          },
+          "per_task_input": {
+            "mean": 1117705.6,
+            "std": 276128.6,
+            "max": 1433239.2,
+            "values": [
+              1433239.2,
+              920241.0,
+              999636.7
+            ]
+          },
+          "per_task_output": {
+            "mean": 22433.4,
+            "std": 14470.8,
+            "max": 33564.6,
+            "values": [
+              33564.6,
+              6075.4,
+              27660.2
+            ]
+          }
+        },
+        {
+          "phase": "TESTING",
+          "label": "Testing",
+          "per_task_tokens": {
+            "mean": 368176.6,
+            "std": 107261.5,
+            "max": 465038.0,
+            "values": [
+              386592.2,
+              252899.5,
+              465038.0
+            ]
+          },
+          "per_task_input": {
+            "mean": 365260.6,
+            "std": 104821.8,
+            "max": 459185.5,
+            "values": [
+              384413.1,
+              252183.1,
+              459185.5
+            ]
+          },
+          "per_task_output": {
+            "mean": 2916.0,
+            "std": 2646.2,
+            "max": 5852.5,
+            "values": [
+              2179.1,
+              716.4,
+              5852.5
+            ]
+          }
+        },
+        {
+          "phase": "FRONTEND",
+          "label": "Frontend",
+          "per_task_tokens": {
+            "mean": 218287.2,
+            "std": 113813.1,
+            "max": 318061.8,
+            "values": [
+              318061.8,
+              94324.2,
+              242475.7
+            ]
+          },
+          "per_task_input": {
+            "mean": 215158.2,
+            "std": 113117.6,
+            "max": 314820.4,
+            "values": [
+              314820.4,
+              92209.6,
+              238444.7
+            ]
+          },
+          "per_task_output": {
+            "mean": 3129.0,
+            "std": 963.1,
+            "max": 4031.0,
+            "values": [
+              3241.4,
+              2114.6,
+              4031.0
+            ]
+          }
+        },
+        {
+          "phase": "DEVOPS",
+          "label": "DevOps",
+          "per_task_tokens": {
+            "mean": 22599.9,
+            "std": 20665.8,
+            "max": 46459.5,
+            "values": [
+              11009.9,
+              10330.4,
+              46459.5
+            ]
+          },
+          "per_task_input": {
+            "mean": 21971.0,
+            "std": 20245.5,
+            "max": 45340.8,
+            "values": [
+              10805.4,
+              9766.9,
+              45340.8
+            ]
+          },
+          "per_task_output": {
+            "mean": 628.9,
+            "std": 460.6,
+            "max": 1118.7,
+            "values": [
+              204.5,
+              563.5,
+              1118.7
+            ]
+          }
+        },
+        {
+          "phase": "VERIFICATION",
+          "label": "Verification",
+          "per_task_tokens": {
+            "mean": 88366.3,
+            "std": 62915.2,
+            "max": 158971.8,
+            "values": [
+              158971.8,
+              38249.0,
+              67878.2
+            ]
+          },
+          "per_task_input": {
+            "mean": 62792.1,
+            "std": 31119.4,
+            "max": 94408.2,
+            "values": [
+              94408.2,
+              32194.4,
+              61773.7
+            ]
+          },
+          "per_task_output": {
+            "mean": 25574.2,
+            "std": 33765.7,
+            "max": 64563.5,
+            "values": [
+              64563.5,
+              6054.6,
+              6104.5
+            ]
+          }
+        },
+        {
+          "phase": "ORCHESTRATION",
+          "label": "Orchestration",
+          "per_task_tokens": {
+            "mean": 783646.1,
+            "std": 172747.0,
+            "max": 982974.5,
+            "values": [
+              690513.4,
+              677450.5,
+              982974.5
+            ]
+          },
+          "per_task_input": {
+            "mean": 770480.2,
+            "std": 162115.4,
+            "max": 957649.5,
+            "values": [
+              679569.5,
+              674221.8,
+              957649.5
+            ]
+          },
+          "per_task_output": {
+            "mean": 13165.9,
+            "std": 11214.5,
+            "max": 25325.0,
+            "values": [
+              10943.9,
+              3228.8,
+              25325.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "cross_project_total_tokens": [
+    {
+      "phase": "INIT",
+      "label": "Project Init",
+      "cross_project_mean": 1279.3,
+      "cross_project_std": 1433.9
+    },
+    {
+      "phase": "USER_STORIES",
+      "label": "User Stories",
+      "cross_project_mean": 6837.3,
+      "cross_project_std": 3226.9
+    },
+    {
+      "phase": "PLANNING",
+      "label": "Planning",
+      "cross_project_mean": 20806.5,
+      "cross_project_std": 12012.7
+    },
+    {
+      "phase": "REQUIREMENTS",
+      "label": "Requirements",
+      "cross_project_mean": 10197.1,
+      "cross_project_std": 4689.8
+    },
+    {
+      "phase": "FORMAL_SPEC",
+      "label": "Formal Spec",
+      "cross_project_mean": 40574.8,
+      "cross_project_std": 4661.5
+    },
+    {
+      "phase": "DESIGN_UML",
+      "label": "UML Design",
+      "cross_project_mean": 20652.0,
+      "cross_project_std": 2835.6
+    },
+    {
+      "phase": "ARCHITECTURE",
+      "label": "Architecture",
+      "cross_project_mean": 39956.4,
+      "cross_project_std": 16073.3
+    },
+    {
+      "phase": "IMPLEMENTATION",
+      "label": "Implementation",
+      "cross_project_mean": 892969.8,
+      "cross_project_std": 335783.5
+    },
+    {
+      "phase": "TESTING",
+      "label": "Testing",
+      "cross_project_mean": 284711.1,
+      "cross_project_std": 86228.6
+    },
+    {
+      "phase": "FRONTEND",
+      "label": "Frontend",
+      "cross_project_mean": 208298.3,
+      "cross_project_std": 79585.1
+    },
+    {
+      "phase": "DEVOPS",
+      "label": "DevOps",
+      "cross_project_mean": 21751.9,
+      "cross_project_std": 12194.8
+    },
+    {
+      "phase": "VERIFICATION",
+      "label": "Verification",
+      "cross_project_mean": 45335.5,
+      "cross_project_std": 30752.4
+    },
+    {
+      "phase": "ORCHESTRATION",
+      "label": "Orchestration",
+      "cross_project_mean": 509080.0,
+      "cross_project_std": 179991.7
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "task_id": 30,
+  "confidence": 0.9811,
+  "evidence": [
+    {
+      "claim": "The system raises an alert when stock of any blood type drops below 5 units",
+      "fact": "When a blood type's inventory drops below five units, the platform generates a shortage notification.",
+      "score": 0.9985,
+      "user_story_span": "the system to raise an alert when stock of any blood type drops below 5 units",
+      "fact_span": "When a blood type's inventory drops below five units, the platform generates a shortage notification."
+    },
+    {
+      "claim": "The system tracks inventory levels for each blood type",
+      "fact": "The application tracks blood units by ABO type.",
+      "score": 0.9912,
+      "user_story_span": "The system tracks inventory levels for each blood type",
+      "fact_span": "The application tracks blood units by ABO type."
+    },
+    {
+      "claim": "The threshold for triggering an alert is 5 units",
+      "fact": "When a blood type's inventory drops below five units, the platform generates a shortage notification.",
+      "score": 0.9911,
+      "user_story_span": "The threshold for triggering an alert is 5 units",
+      "fact_span": "When a blood type's inventory drops below five units, the platform generates a shortage notification."
+    },
+    {
+      "claim": "Alerts can be sent via in-app notification",
+      "fact": "The application raises alerts during shortages.",
+      "score": 0.9435,
+      "user_story_span": "",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

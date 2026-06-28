@@ -1,0 +1,37 @@
+{
+  "task_id": 8,
+  "confidence": 0.9947,
+  "evidence": [
+    {
+      "claim": "A patient is registered with symptoms.",
+      "fact": "Clinical urgency is determined automatically from the symptoms entered during registration.",
+      "score": 0.9989,
+      "user_story_span": "a patient has been registered with symptoms",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system supports urgency levels 1 through 5.",
+      "fact": "The system assigns each patient an urgency level from 1 to 5.",
+      "score": 0.9977,
+      "user_story_span": "The system supports urgency levels 1 through 5.",
+      "fact_span": "The system assigns each patient an urgency level from 1 to 5."
+    },
+    {
+      "claim": "The system allows assigning an urgency level from 1 to 5 to each patient based on their symptoms.",
+      "fact": "It assigns a triage level between one and five according to the severity of the patient's condition.",
+      "score": 0.9951,
+      "user_story_span": "assign an urgency level from 1 (most urgent) to 5 (least urgent) to each patient based on their symptoms",
+      "fact_span": "assigns a triage level between one and five according to the severity of the patient's condition"
+    },
+    {
+      "claim": "The patient's priority in the queue is updated according to the assigned level.",
+      "fact": "The queue sorts patients primarily by their urgency level, and secondarily by arrival time within that level.",
+      "score": 0.9871,
+      "user_story_span": "the patient's priority in the queue is updated according to the assigned level",
+      "fact_span": "The queue sorts patients primarily by their urgency level, and secondarily by arrival time within that level."
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

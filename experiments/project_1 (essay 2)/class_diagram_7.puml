@@ -1,0 +1,146 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+  class Actor {
+    - mayPerform: Set<Permission>
+  + checkPermission(actorId: String, requiredPermission: Permission) : Boolean
+  }
+
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+    + stronger(p: Permission): Boolean
+  }
+
+  enum State {
+    Pre1
+    Pre2
+    Post1
+    Post2
+  + verifyPrecondition(Pre1: "nurse logged in") : Boolean
+  + verifyPrecondition(Pre2: "available queue slots") : Boolean
+  + transitionTo(Post1: "symptom information stored") : void
+  + transitionTo(Post2: "patient listed as pending evaluation") : void
+  }
+
+  class PatientRecord {
+    + owner: Actor
+    + accessible: Set<Actor>
+  + createPatientRecord(patientData: PatientDTO) : PatientRecord
+  }
+
+  class SymptomData {
+    + owner: Actor
+    + accessible: Set<Actor>
+  + createSymptomData(symptoms: SymptomDTO, patientId: String) : SymptomData
+  }
+
+  class QueueEntry {
+    + owner: Actor
+    + accessible: Set<Actor>
+  + createQueueEntry(patientId: String, status: String) : QueueEntry
+  }
+
+  class DataAtRestEncryption {
+    + resource: Resource
+    + encrypted: Boolean
+  + encryptResource(resource: Resource) : void
+  }
+
+  class Resource <<abstract>> {
+    + owner: Actor
+    + accessible: Set<Actor>
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface Symptom_Validation_API {
+    + {abstract} validate(input: SymptomData): Boolean
+  }
+
+  interface Patient_Database {
+    + {abstract} store(record: PatientRecord): void
+    + {abstract} store(symptom: SymptomData): void
+  + storePatientRecord(record: PatientRecord) : void
+  + storeSymptomData(data: SymptomData) : void
+  + lockPatientRecord(patientId: String) : LockResult
+  + unlockPatientRecord(patientId: String) : void
+  + rollbackPatientRecord(patientId: String) : void
+  + rollbackSymptomData(patientId: String) : void
+  }
+
+  interface Evaluation_Queue_System {
+    + {abstract} addEntry(entry: QueueEntry): void
+  + addToEvaluationQueue(entry: QueueEntry) : void
+  + checkQueueAvailability() : QueueStatus
+  }
+}
+
+package "Exceptions" {
+  class InvalidSymptomException <<exception>> {
+    + message: String
+  }
+
+  class QueueFullException <<exception>> {
+    + message: String
+  }
+
+  class UnauthorizedAccessException <<exception>> {
+    + message: String
+  }
+}
+
+' Relationships
+PatientRecord --|> Resource
+SymptomData --|> Resource
+QueueEntry --|> Resource
+
+Actor "1" -- "1..*" Resource : owns
+Actor "1" -- "0..*" Resource : accessible
+
+DataAtRestEncryption "1" -- "1" Resource : encrypts
+
+' Interface implementations (ports)
+Patient_Database ..> PatientRecord : stores
+Patient_Database ..> SymptomData : stores
+Evaluation_Queue_System ..> QueueEntry : manages
+
+' Exceptions usage
+Symptom_Validation_API ..> InvalidSymptomException : throws
+Evaluation_Queue_System ..> QueueFullException : throws
+
+note top of PatientRecord
+  Invariant: owner must be an Actor
+  Invariant: accessible must include owner
+end note
+
+note top of SymptomData
+  Invariant: owner must be an Actor
+  Invariant: accessible must include owner
+end note
+
+note top of QueueEntry
+  Invariant: owner must be an Actor
+  Invariant: accessible must include owner
+end note
+
+note top of Permission
+  Read, Write, Execute, Admin are singleton permissions
+  stronger(p) defines permission hierarchy
+end note
+
+note top of State
+  Pre1: triage nurse logged in with permissions
+  Pre2: available slots in evaluation queue
+  Post1: symptom information stored
+  Post2: patient listed as pending evaluation
+end note
+
+@enduml

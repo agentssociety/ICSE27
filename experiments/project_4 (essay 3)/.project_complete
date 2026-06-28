@@ -1,0 +1,1 @@
+Full application dockerized and operational. Backend (FastAPI + PostgreSQL), frontend (React/Vite + nginx), all services communicating correctly. Docker compose builds and runs healthily.

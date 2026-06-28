@@ -1,0 +1,44 @@
+{
+  "task_id": 31,
+  "confidence": 0.9799,
+  "evidence": [
+    {
+      "claim": "The user sees a list of units approaching expiration",
+      "fact": "The dashboard shows units expiring within 7 days.",
+      "score": 0.998,
+      "user_story_span": "a list of units approaching expiration",
+      "fact_span": "units expiring within 7 days"
+    },
+    {
+      "claim": "The user sees a count of pending requests",
+      "fact": "The dashboard shows open requests.",
+      "score": 0.9952,
+      "user_story_span": "a count of pending requests",
+      "fact_span": "open requests"
+    },
+    {
+      "claim": "The user sees current stock levels for each item",
+      "fact": "The application shows a dashboard of stock per type.",
+      "score": 0.9949,
+      "user_story_span": "current stock levels for each item",
+      "fact_span": "dashboard of stock per type"
+    },
+    {
+      "claim": "The user is on the inventory dashboard",
+      "fact": "The application shows a dashboard of stock per type.",
+      "score": 0.9636,
+      "user_story_span": "on the inventory dashboard",
+      "fact_span": "dashboard of stock per type"
+    },
+    {
+      "claim": "The user views the summary section during interaction",
+      "fact": "The application shows a dashboard of stock per type.",
+      "score": 0.9476,
+      "user_story_span": "",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 9,
+  "supported_claims": 5,
+  "threshold": 0.6
+}

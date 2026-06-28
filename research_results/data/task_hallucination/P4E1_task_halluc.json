@@ -1,0 +1,27 @@
+{
+  "run_id": "P4E1",
+  "project": 4,
+  "essay": 1,
+  "n_created": 9,
+  "n_kept": 8,
+  "n_deleted": 1,
+  "task_deletion_rate": 0.1111,
+  "n_duplicate_deleted": 1,
+  "deleted_tasks": [
+    {
+      "task_id": 81,
+      "title": "Atomic Withdrawal with Rollback",
+      "is_duplicate": true
+    }
+  ],
+  "kept_tasks": [
+    79,
+    80,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87
+  ]
+}

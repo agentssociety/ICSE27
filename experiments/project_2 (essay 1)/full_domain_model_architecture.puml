@@ -1,0 +1,267 @@
+@startuml
+title Project 5 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+note as RelationshipCorrections
+  <b>Relationship cardinalities corrected by LLM review</b>
+  Actor "1" -- "0..*" Permission → Actor "1" --> "0..*" Permission
+    Reason: Undirected association is redundant; directed association reflects Actor owning Permissions.
+  Actor <|-- Blood_Bank_Administrators → Blood_Bank_Administrators <|-- Actor
+    Reason: Inheritance reversed: Blood_Bank_Administrators is a subclass of Actor, not the reverse.
+  Actor <|-- Blood_Bank_Manager → Blood_Bank_Manager <|-- Actor
+    Reason: Inheritance reversed: Blood_Bank_Manager is a subclass of Actor.
+  Actor <|-- Clinical_Team → Clinical_Team <|-- Actor
+    Reason: Inheritance reversed: Clinical_Team is a subclass of Actor.
+  Actor <|-- FinanceTeam → FinanceTeam <|-- Actor
+    Reason: Inheritance reversed: FinanceTeam is a subclass of Actor.
+  Actor <|-- IT_Support → IT_Support <|-- Actor
+    Reason: Inheritance reversed: IT_Support is a subclass of Actor.
+  Actor <|-- InventoryManagementTeam → InventoryManagementTeam <|-- Actor
+    Reason: Inheritance reversed: InventoryManagementTeam is a subclass of Actor.
+  Actor <|-- Medical_Staff → Medical_Staff <|-- Actor
+    Reason: Inheritance reversed: Medical_Staff is a subclass of Actor.
+  Actor <|-- OperationsTeam → OperationsTeam <|-- Actor
+    Reason: Inheritance reversed: OperationsTeam is a subclass of Actor.
+  Actor <|-- Regulatory_Authorities → Regulatory_Authorities <|-- Actor
+    Reason: Inheritance reversed: Regulatory_Authorities is a subclass of Actor.
+  BloodUnit --> ABO → BloodUnit "*" --> "1" ABO
+    Reason: Many BloodUnits can share the same ABO type; missing multiplicity on BloodUnit side.
+  BloodUnit --> Rh → BloodUnit "*" --> "1" Rh
+    Reason: Many BloodUnits can share the same Rh factor; missing multiplicity on BloodUnit side.
+  Interface <|-- Blood_Inventory_Database → Blood_Inventory_Database <|.. Interface
+    Reason: Interface should be realized by the database, not inherited; corrected to realization.
+  Interface <|-- InventoryDashboard → InventoryDashboard <|.. Interface
+    Reason: Dashboard should realize the Interface, not inherit from it; corrected to realization.
+  OutageRecord "1" --> "1" Boolean → OutageRecord "1" --> "1" State
+    Reason: Association to primitive type Boolean is invalid; likely should relate to State like other records.
+  Resource <|-- BloodUnit → BloodUnit <|-- Resource
+    Reason: BloodUnit is a subtype of Resource; inheritance was reversed.
+  State <|-- Post1 → Post1 <|-- State
+    Reason: Post1 is a specific state, should inherit from State; inheritance was reversed.
+  State <|-- PreIdle → PreIdle <|-- State
+    Reason: PreIdle is a specific state, should inherit from State; inheritance was reversed.
+end note
+
+note as ArchitectureCorrections
+  <b>Architecture mistakes corrected automatically</b>
+  [other_correction] Missing class 'TransfusionRequest' which is owned by Task #26 (Transfusion Request Acceptance) and required for Task #27 (Compatibility Matching).
+    Fix applied: other
+  [other_correction] Missing class 'Reservation' which is owned by Task #28 (Reservation and Auto-Release).
+    Fix applied: other
+  [other_correction] Missing class 'Alert' which is owned by Task #30 (Shortage Alert).
+    Fix applied: other
+  [missing_relationship] Missing association between TransfusionRequest and BloodUnit: a transfusion request can involve multiple blood units.
+    Fix applied: add_relation
+  [missing_relationship] Missing association between Reservation and BloodUnit: a reservation reserves one or more blood units.
+    Fix applied: add_relation
+  [missing_relationship] Missing association between Reservation and TransfusionRequest: a reservation corresponds to a scheduled transfusion request.
+    Fix applied: add_relation
+end note
+
+package "Task #25\nBlood Unit Tracking" {
+  class BloodUnit <<main>> <<level0>>
+  enum ABO
+  enum Rh
+}
+
+package "Task #26\nTransfusion Request\nAcceptance" {
+  class TransfusionRequest <<main>> <<level1>>
+  interface TransfusionRequestDB
+}
+
+package "Task #28\nReservation and\nAuto-Release" {
+  class Reservation <<main>> <<level2>>
+  class Actor
+  class Blood_Bank_Manager
+  class Blood_Inventory_Database
+  class Boolean
+  class CancellationRecord
+  class Clinical_Team
+  class IT_Support
+  enum IfaceKind
+  class Interface
+  class OutageRecord
+  class OverlapRecord
+  enum Permission
+  class REQ_BB_01
+  class Resource
+  class State
+}
+
+package "Task #29\nAutomatic Expiration" {
+  note as TaskSummary29
+    No new domain model classes
+    Uses: BloodUnit
+  end note
+}
+
+package "Task #30\nShortage Alert" {
+  class Alert <<main>> <<level0>>
+  class BloodTypeAlertOperation
+  class BloodTypeResource
+  interface Channel
+  interface InventoryPort
+  interface NotificationPort
+  class Operation
+  class User
+}
+
+package "Task #27\nCompatibility Matching" {
+  note as TaskSummary27
+    No new domain model classes
+    Uses: TransfusionRequest, BloodUnit
+  end note
+}
+
+package "Task #31\nDashboard" {
+  note as TaskSummary31
+    No new domain model classes
+    Uses: BloodUnit, TransfusionRequest
+  end note
+}
+
+package "Shared / Cross-Task Classes\n[not owned by a single task]" <<Rectangle>> {
+  enum BloodUnitStatus <<shared>>
+  note right of BloodUnitStatus : "appears only in relations; not owned by any task"
+  class Blood_Bank_Administrators <<shared>>
+  note right of Blood_Bank_Administrators : "appears only in relations; not owned by any task"
+  interface Blood_Units_Database <<shared>>
+  note right of Blood_Units_Database : "appears only in relations; not owned by any task"
+  class FinanceTeam <<shared>>
+  note right of FinanceTeam : "appears only in relations; not owned by any task"
+  class InventoryDashboard <<shared>>
+  note right of InventoryDashboard : "appears only in relations; not owned by any task"
+  class InventoryManagementTeam <<shared>>
+  note right of InventoryManagementTeam : "appears only in relations; not owned by any task"
+  class Medical_Staff <<shared>>
+  note right of Medical_Staff : "appears only in relations; not owned by any task"
+  class OperationsTeam <<shared>>
+  note right of OperationsTeam : "appears only in relations; not owned by any task"
+  enum PermissionInstance <<shared>>
+  note right of PermissionInstance : "appears only in relations; not owned by any task"
+  class Post1 <<shared>>
+  note right of Post1 : "appears only in relations; not owned by any task"
+  class PreIdle <<shared>>
+  note right of PreIdle : "appears only in relations; not owned by any task"
+  class REQ_INV_MAN_01 <<shared>>
+  note right of REQ_INV_MAN_01 : "appears only in relations; not owned by any task"
+  class Regulatory_Authorities <<shared>>
+  note right of Regulatory_Authorities : "appears only in relations; not owned by any task"
+}
+
+Actor "1" --> "*" Permission
+Actor "1" --> "0..*" Permission
+BloodTypeAlertOperation "1" -- "*" Channel
+BloodTypeAlertOperation "1" -- "1" InventoryPort
+BloodTypeAlertOperation "1" -- "1" NotificationPort
+BloodTypeAlertOperation --|> Operation
+BloodTypeResource --|> Resource
+BloodUnit "*" --> "1" ABO
+BloodUnit "*" --> "1" Rh
+BloodUnit "1" --> "1" BloodUnitStatus
+BloodUnit ..> Blood_Units_Database
+BloodUnit <|-- Resource
+Blood_Bank_Administrators "1" --> "*" PermissionInstance
+Blood_Bank_Administrators <|-- Actor
+Blood_Bank_Manager <|-- Actor
+Blood_Inventory_Database <|.. Interface
+CancellationRecord "1" --> "1" REQ_BB_01
+CancellationRecord "1" --> "1" Resource
+CancellationRecord "1" --> "1" State
+Clinical_Team <|-- Actor
+FinanceTeam <|-- Actor
+IT_Support <|-- Actor
+InventoryDashboard <|.. Interface
+InventoryManagementTeam <|-- Actor
+Medical_Staff "1" --> "*" PermissionInstance
+Medical_Staff <|-- Actor
+Operation "1" -- "*" Resource
+Operation "1" -- "1" User
+OperationsTeam <|-- Actor
+OutageRecord "1" --> "1" REQ_BB_01
+OutageRecord "1" --> "1" State
+OverlapRecord "1" --> "1" REQ_BB_01
+OverlapRecord "1" --> "1" Resource
+Permission <|.. PermissionInstance
+Post1 <|-- State
+PreIdle <|-- State
+REQ_BB_01 "1" --> "*" Interface
+REQ_BB_01 "1" --> "*" Resource
+REQ_BB_01 "1" --> "1" Actor
+REQ_BB_01 "1" --> "1" Permission
+REQ_BB_01 "1" --> "1" State
+REQ_INV_MAN_01 "1" -- "1" Actor
+REQ_INV_MAN_01 "1" -- "1" Interface
+REQ_INV_MAN_01 "1" -- "1" Permission
+REQ_INV_MAN_01 "1" -- "1" State
+Regulatory_Authorities "1" --> "*" PermissionInstance
+Regulatory_Authorities <|-- Actor
+Resource "1" -- "*" User
+Resource "1" -- "0..1" User
+Resource "1" --> "*" Actor
+Resource "1" --> "1" Actor
+note right of BloodUnit #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [introduce_value_object] Consider introducing a\nvalue object 'BloodType' that encapsulates ABO\nand Rh, as these two attributes always appear\ntogether in matching and inventory tracking.
+end note
+
+note right of TransfusionRequest #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [introduce_value_object] Consider introducing a\nvalue object 'BloodType' that encapsulates ABO\nand Rh, as these two attributes always appear\ntogether in matching and inventory tracking.
+end note
+
+note right of Resource #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [introduce_value_object] Consider introducing a\nvalue object 'BloodType' that encapsulates ABO\nand Rh, as these two attributes always appear\ntogether in matching and inventory tracking.
+end note
+
+note right of BloodUnit #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [add_aggregate_root] Consider designating\n'BloodUnit' as an aggregate root to enforce\nconsistency around its lifecycle (e.g., status\nchanges, expiration, reservation).
+end note
+
+note right of BloodUnitStatus #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [rename_for_clarity] Rename 'BloodUnitStatus' to\n'UnitStatus' for brevity and consistency, as the\ncontext already implies blood units.
+end note
+
+@enduml

@@ -1,0 +1,44 @@
+{
+  "task_id": 10,
+  "confidence": 0.9593,
+  "evidence": [
+    {
+      "claim": "The user has a queue with existing patients sorted by urgency level.",
+      "fact": "It orders the waiting list so that higher-priority cases appear before lower-priority ones, with ties broken by time of entry.",
+      "score": 0.9983,
+      "user_story_span": "a queue with existing patients sorted by urgency level",
+      "fact_span": "It orders the waiting list so that higher-priority cases appear before lower-priority ones, with ties broken by time of entry."
+    },
+    {
+      "claim": "When the interaction occurs, a new patient is added with a specific urgency level.",
+      "fact": "When a new patient arrives or a condition changes, the queue updates in real time to reflect current urgency.",
+      "score": 0.9968,
+      "user_story_span": "a new patient is added with a specific urgency level",
+      "fact_span": "When a new patient arrives or a condition changes, the queue updates in real time to reflect current urgency."
+    },
+    {
+      "claim": "The queue reorders to move that patient to the front of the queue.",
+      "fact": "It orders the waiting list so that higher-priority cases appear before lower-priority ones, with ties broken by time of entry.",
+      "score": 0.9958,
+      "user_story_span": "the queue reorders to move that patient to the front of the queue",
+      "fact_span": "It orders the waiting list so that higher-priority cases appear before lower-priority ones, with ties broken by time of entry."
+    },
+    {
+      "claim": "The queue reorders to place the new patient in the correct position based on priority.",
+      "fact": "It continuously monitors and rearranges the waiting list so the most critical cases are seen first.",
+      "score": 0.9902,
+      "user_story_span": "the queue reorders to place the new patient in the correct position based on priority",
+      "fact_span": "It continuously monitors and rearranges the waiting list so the most critical cases are seen first."
+    },
+    {
+      "claim": "The user has a queue with a patient whose urgency level is 'non-urgent'.",
+      "fact": "If a patient's condition worsens and their level is updated, the system re-sorts the queue without delay.",
+      "score": 0.8153,
+      "user_story_span": "",
+      "fact_span": "If a patient's condition worsens and their level is updated, the system re-sorts the queue without delay."
+    }
+  ],
+  "total_claims": 11,
+  "supported_claims": 5,
+  "threshold": 0.6
+}

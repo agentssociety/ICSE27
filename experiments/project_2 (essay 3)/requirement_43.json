@@ -1,0 +1,88 @@
+{
+  "id": "REQ-INV-MAN-01",
+  "title": "Automatically mark blood units as expired based on shelf life",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall automatically mark a blood unit as expired when its shelf life, calculated from the collection date, is exceeded.",
+  "rationale": "To ensure that expired blood units are not used for patients and maintain inventory accuracy.",
+  "business_value": "Prevents the use of potentially harmful or outdated blood units, improving patient safety and reducing waste.",
+  "source": {
+    "type": "User Story",
+    "id": 43,
+    "description": "As an inventory manager I need the system to automatically mark blood units as expired when their shelf life (based on collection date) is exceeded so that expired units are removed from available inventory and not used for patients."
+  },
+  "stakeholders": [
+    "Inventory Manager",
+    "Clinical Team",
+    "Quality Assurance"
+  ],
+  "acceptance_criteria": [
+    "A blood unit is marked as expired when its shelf life, calculated from the collection date, is exceeded.",
+    "The system removes the expired blood unit from the available inventory."
+  ],
+  "preconditions": [
+    "The system has accurate collection dates for all blood units.",
+    "The shelf life duration is predefined and consistent across all blood units."
+  ],
+  "postconditions": [
+    "The specified blood unit is marked as expired in the system's database.",
+    "The specified blood unit is no longer available for use in patient treatments."
+  ],
+  "functional_constraints": [],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "No significant performance degradation during expiration check operations.",
+    "availability": "99.9% uptime of the system during scheduled expiration checks.",
+    "scalability": "The system should be able to handle up to 10,000 blood units per day without noticeable delays.",
+    "usability": "Error messages and notifications for expired units are clear and easy to understand."
+  },
+  "edge_cases": [
+    "What happens if there is a discrepancy between the collection date and the system's clock?",
+    "How should the system handle blood units that have an indefinite shelf life?",
+    "What if the shelf life duration changes dynamically based on regulatory updates?"
+  ],
+  "dependencies": [
+    "Blood unit database with accurate collection dates",
+    "Scheduling system to trigger expiration checks"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Blood Unit Database",
+      "description": "Reads from and writes to the blood unit database to retrieve collection dates, update expiration status, and remove expired units."
+    },
+    {
+      "type": "API",
+      "name": "Scheduling API",
+      "description": "Interacts with a scheduling system to trigger the periodic or scheduled expiration check operations."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-INV-MAN-01",
+      "description": "Verify that a blood unit marked as expired is removed from available inventory.",
+      "expected_result": "The expired blood unit is no longer listed in the available inventory and is not selectable for patient treatments."
+    },
+    {
+      "id": "TC-INV-MAN-02",
+      "description": "Check system behavior when a scheduled expiration check is triggered without any expired units.",
+      "expected_result": "No changes are made to the blood unit inventory, and no error messages are logged."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T23:33:45.917627",
+  "last_updated": "2026-06-14T23:47:03.597738",
+  "traceability": {
+    "related_requirements": [
+      "REQ-BLOOD-01"
+    ],
+    "design_components": [
+      "BloodUnit"
+    ],
+    "test_artifacts": []
+  }
+}

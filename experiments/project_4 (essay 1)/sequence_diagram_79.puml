@@ -1,0 +1,203 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+participant "Authentication API" as API
+end box
+
+box "Application Layer" #LightGreen
+participant "AuthenticationFlow" as AuthFlow
+end box
+
+box "Domain Layer" #LightYellow
+participant "Card" as Card
+participant "PIN" as PIN
+participant "Account" as Account
+participant "AccountState" as AccountState
+end box
+
+box "Infrastructure Layer" #LightCoral
+participant "UserAuthenticationDatabase" as DB
+end box
+
+== Successful Authentication ==
+
+Actor -> API : POST /authenticate(cardData, pinData)
+activate API
+
+API -> AuthFlow : authenticate(cardData: String, pinData: String) : Result
+activate AuthFlow
+
+AuthFlow -> Card : validate(cardData: String) : Boolean
+activate Card
+Card --> AuthFlow : true
+deactivate Card
+
+AuthFlow -> PIN : validate(pinData: String) : Boolean
+activate PIN
+PIN --> AuthFlow : true
+deactivate PIN
+
+AuthFlow -> DB : findAccountByCardAndPIN(cardData: String, pinData: String) : Account [TLS]
+activate DB
+DB --> AuthFlow : account: Account
+deactivate DB
+
+AuthFlow -> Account : authenticate()
+activate Account
+
+alt AccountState == ACTIVE
+    Account -> AccountState : transitionTo(AUTHENTICATED)
+    activate AccountState
+    AccountState --> Account : void
+    deactivate AccountState
+    Account --> AuthFlow : Success
+    deactivate Account
+    
+    AuthFlow --> API : 200 OK (accessToken: String)
+    API --> Actor : 200 OK (accessToken: String)
+    
+else AccountState == LOCKED
+    Account --> AuthFlow : Failure("Account locked")
+    deactivate Account
+    AuthFlow --> API : 403 Forbidden (error: "Account locked")
+    API --> Actor : 403 Forbidden (error: "Account locked")
+end
+
+deactivate AuthFlow
+deactivate API
+
+== Failed Authentication - Invalid Card/PIN ==
+
+Actor -> API : POST /authenticate(cardData, pinData)
+activate API
+
+API -> AuthFlow : authenticate(cardData: String, pinData: String) : Result
+activate AuthFlow
+
+AuthFlow -> Card : validate(cardData: String) : Boolean
+activate Card
+Card --> AuthFlow : false
+deactivate Card
+
+AuthFlow -> DB : findAccountByCard(cardData: String) : Account [TLS]
+activate DB
+
+alt Account found
+    DB --> AuthFlow : account: Account
+    deactivate DB
+    
+    AuthFlow -> Account : recordFailedAttempt()
+    activate Account
+    Account -> Account : failedAttempts++
+    
+    alt failedAttempts >= 3
+        Account -> AccountState : transitionTo(LOCKED)
+        activate AccountState
+        AccountState --> Account : void
+        deactivate AccountState
+        Account --> AuthFlow : Failure("Account locked after 3 failed attempts")
+        deactivate Account
+        
+        AuthFlow --> API : 423 Locked (error: "Account locked after 3 failed attempts")
+        API --> Actor : 423 Locked (error: "Account locked after 3 failed attempts")
+        
+    else failedAttempts < 3
+        Account --> AuthFlow : Failure("Invalid credentials")
+        deactivate Account
+        
+        AuthFlow --> API : 401 Unauthorized (error: "Invalid card or PIN", remainingAttempts: Int)
+        API --> Actor : 401 Unauthorized (error: "Invalid card or PIN", remainingAttempts: Int)
+    end
+    
+else Account not found
+    DB --> AuthFlow : null
+    deactivate DB
+    
+    AuthFlow --> API : 401 Unauthorized (error: "Invalid card or PIN")
+    API --> Actor : 401 Unauthorized (error: "Invalid card or PIN")
+end
+
+deactivate AuthFlow
+deactivate API
+
+== Expired Card Error ==
+
+Actor -> API : POST /authenticate(cardData, pinData)
+activate API
+
+API -> AuthFlow : authenticate(cardData: String, pinData: String) : Result
+activate AuthFlow
+
+AuthFlow -> Card : validate(cardData: String) : Boolean
+activate Card
+
+alt Card expired
+    Card --> AuthFlow : false (expired)
+    deactivate Card
+    
+    AuthFlow -> DB : findAccountByCard(cardData: String) : Account [TLS]
+    activate DB
+    DB --> AuthFlow : account: Account
+    deactivate DB
+    
+    AuthFlow -> Account : recordFailedAttempt()
+    activate Account
+    Account -> Account : failedAttempts++
+    Account --> AuthFlow : Failure("Card expired")
+    deactivate Account
+    
+    AuthFlow --> API : 400 Bad Request (error: "Card has expired. Please contact support.")
+    API --> Actor : 400 Bad Request (error: "Card has expired. Please contact support.")
+    
+else Card valid
+    Card --> AuthFlow : true
+    deactivate Card
+    note right: Continue with PIN validation (handled in other flows)
+end
+
+deactivate AuthFlow
+deactivate API
+
+== Account Lockout After 3 Failures ==
+
+Actor -> API : POST /authenticate(cardData, pinData)
+activate API
+
+API -> AuthFlow : authenticate(cardData: String, pinData: String) : Result
+activate AuthFlow
+
+AuthFlow -> Card : validate(cardData: String) : Boolean
+activate Card
+Card --> AuthFlow : true
+deactivate Card
+
+AuthFlow -> PIN : validate(pinData: String) : Boolean
+activate PIN
+PIN --> AuthFlow : false
+deactivate PIN
+
+AuthFlow -> DB : findAccountByCard(cardData: String) : Account [TLS]
+activate DB
+DB --> AuthFlow : account: Account
+deactivate DB
+
+AuthFlow -> Account : recordFailedAttempt()
+activate Account
+Account -> Account : failedAttempts = 3
+
+Account -> AccountState : transitionTo(LOCKED)
+activate AccountState
+AccountState --> Account : void
+deactivate AccountState
+
+Account --> AuthFlow : Failure("Account locked")
+deactivate Account
+
+AuthFlow --> API : 423 Locked (error: "Account has been locked due to 3 failed attempts. Contact support.")
+API --> Actor : 423 Locked (error: "Account has been locked due to 3 failed attempts. Contact support.")
+
+deactivate AuthFlow
+deactivate API
+
+@enduml

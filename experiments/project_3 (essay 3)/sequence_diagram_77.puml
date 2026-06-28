@@ -1,0 +1,221 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+    participant "AirTrafficControlInterface" as ATC_UI
+end box
+
+box "Application Layer" #LightGreen
+    participant "SlotReassignmentService" as SRS
+end box
+
+box "Domain Layer" #LightYellow
+    participant "Flight" as FL
+    participant "Slot" as SL
+    participant "Queue" as Q
+    participant "Actor" as ACT
+    participant "Permission" as PERM
+    participant "Channel" as CH
+    participant "Resource" as RES
+end box
+
+box "Infrastructure Layer" #LightCoral
+    participant "SchedulingDatabase" as DB
+    participant "FlightInformationAPI" as API
+end box
+
+== Main Flow: Emergency Slot Reassignment ==
+
+ACT -> ATC_UI : initiateSlotReassignment(flightId: String, actorId: String)
+note right: ATC team member triggers operation
+
+ATC_UI -> ATC_UI : authenticateChannel()
+note right: INV-6: At least one channel requires authentication
+
+ATC_UI -> SRS : requestSlotReassignment(flightId, actorId)
+
+SRS -> ACT : checkPermission(actorId, Permission.WRITE)
+ACT --> SRS : permissionGranted: Boolean
+alt Permission denied
+    SRS --> ATC_UI : error("Initiator lacks Write permission")
+    ATC_UI --> ACT : displayError("Access Denied - Insufficient Permissions")
+else Permission granted
+    SRS -> API : getFlightInfo(flightId) [TLS]
+    API --> SRS : flightData: Flight
+    note right: Authenticated channel used
+    
+    SRS -> FL : isEmergency(): Boolean
+    FL --> SRS : true
+    
+    alt Ambiguous classification
+        SRS -> FL : checkClassification(): Classification
+        FL --> SRS : AMBIGUOUS
+        SRS --> ATC_UI : error("Ambiguous flight classification")
+        ATC_UI --> ACT : displayError("Flight classification unclear - manual intervention required")
+    else Emergency confirmed
+        SRS -> DB : getAvailableSlots() [encrypted at rest]
+        DB --> SRS : slots: List<Slot>
+        
+        SRS -> SL : assignFlight(flight: Flight)
+        note right: State transition: Slot.assignedFlight = flight
+        SL --> SRS : success
+        
+        SRS -> DB : updateSlotAssignment(slotId, flightId) [encrypted at rest]
+        DB --> SRS : success
+        
+        SRS -> Q : getNonEmergencyFlights(): List<Flight>
+        Q --> SRS : nonEmergencyFlights: List<Flight>
+        
+        alt No non-emergency flights exist
+            note right: Edge case: skip re-queuing
+            SRS -> FL : assignSlot(slot: Slot)
+            FL --> SRS : success
+            note right: State transition: Flight.assignedSlot = slot
+        else Non-emergency flights exist
+            SRS -> Q : reQueue(nonEmergencyFlights)
+            note right: Maintains original ordering invariant
+            Q --> SRS : success
+            
+            SRS -> DB : updateQueueState(flights) [encrypted at rest]
+            DB --> SRS : success
+            
+            SRS -> FL : assignSlot(slot: Slot)
+            FL --> SRS : success
+            note right: State transition: Flight.assignedSlot = slot
+        end
+        
+        SRS -> ATC_UI : updateDisplay(slotAssignments, queueState)
+        ATC_UI --> ACT : displayUpdatedSchedule()
+        
+        note right #LightGreen: Post1 reached: Emergency flight prioritized,\nnon-emergency order preserved
+    end
+end
+
+== Multiple Emergency Flights Flow ==
+
+ACT -> ATC_UI : initiateSlotReassignment(flightId1: String, actorId: String)
+note right: First emergency flight
+
+ATC_UI -> SRS : requestSlotReassignment(flightId1, actorId)
+
+SRS -> ACT : checkPermission(actorId, Permission.WRITE)
+ACT --> SRS : permissionGranted: Boolean
+alt Permission denied
+    SRS --> ATC_UI : error("Initiator lacks Write permission")
+else Permission granted
+    SRS -> API : getFlightInfo(flightId1) [TLS]
+    API --> SRS : flightData: Flight
+    
+    SRS -> FL : isEmergency(): Boolean
+    FL --> SRS : true
+    
+    SRS -> DB : getAvailableSlots() [encrypted at rest]
+    DB --> SRS : slots: List<Slot>
+    
+    SRS -> SL : assignFlight(flight: Flight)
+    SL --> SRS : success
+    
+    SRS -> DB : updateSlotAssignment(slotId1, flightId1) [encrypted at rest]
+    DB --> SRS : success
+    
+    SRS -> Q : getNonEmergencyFlights(): List<Flight>
+    Q --> SRS : nonEmergencyFlights: List<Flight>
+    
+    SRS -> Q : reQueue(nonEmergencyFlights)
+    Q --> SRS : success
+    
+    SRS -> DB : updateQueueState(flights) [encrypted at rest]
+    DB --> SRS : success
+    
+    SRS -> ATC_UI : updateDisplay(slotAssignments, queueState)
+    ATC_UI --> ACT : displayUpdatedSchedule()
+end
+
+== Second Emergency Flight (simultaneous) ==
+
+ACT -> ATC_UI : initiateSlotReassignment(flightId2: String, actorId: String)
+note right: Second emergency flight processed
+
+ATC_UI -> SRS : requestSlotReassignment(flightId2, actorId)
+
+SRS -> ACT : checkPermission(actorId, Permission.WRITE)
+ACT --> SRS : permissionGranted: Boolean
+alt Permission denied
+    SRS --> ATC_UI : error("Initiator lacks Write permission")
+else Permission granted
+    SRS -> API : getFlightInfo(flightId2) [TLS]
+    API --> SRS : flightData: Flight
+    
+    SRS -> FL : isEmergency(): Boolean
+    FL --> SRS : true
+    
+    alt Resource conflict detected
+        SRS -> RES : checkAccessible(actorId): Boolean
+        RES --> SRS : true
+        note right: INV-4: Initiator must be in resource's accessible set
+        
+        SRS -> DB : getAvailableSlots() [encrypted at rest]
+        DB --> SRS : slots: List<Slot>
+        
+        SRS -> SL : assignFlight(flight: Flight)
+        SL --> SRS : success
+        
+        SRS -> DB : updateSlotAssignment(slotId2, flightId2) [encrypted at rest]
+        DB --> SRS : success
+        
+        SRS -> Q : getNonEmergencyFlights(): List<Flight>
+        Q --> SRS : nonEmergencyFlights: List<Flight>
+        
+        SRS -> Q : reQueue(nonEmergencyFlights)
+        Q --> SRS : success
+        
+        SRS -> DB : updateQueueState(flights) [encrypted at rest]
+        DB --> SRS : success
+        
+        SRS -> ATC_UI : updateDisplay(slotAssignments, queueState)
+        ATC_UI --> ACT : displayUpdatedSchedule()
+    else Resource not accessible
+        SRS --> ATC_UI : error("Resource not accessible by initiator")
+        ATC_UI --> ACT : displayError("Access Denied - Resource not in accessible set")
+    end
+end
+
+== Error Path: Authentication Failure ==
+
+ACT -> ATC_UI : initiateSlotReassignment(flightId: String, actorId: String)
+
+ATC_UI -> ATC_UI : authenticateChannel()
+alt Authentication failed
+    ATC_UI --> ACT : displayError("No authenticated channel available")
+    note right: INV-6 violation: Operation denied
+else Authentication successful
+    note right: Continue with main flow
+end
+
+== Error Path: Resource Access Denied ==
+
+ACT -> ATC_UI : initiateSlotReassignment(flightId: String, actorId: String)
+
+ATC_UI -> SRS : requestSlotReassignment(flightId, actorId)
+
+SRS -> ACT : checkPermission(actorId, Permission.WRITE)
+ACT --> SRS : permissionGranted: Boolean
+alt Permission denied
+    SRS --> ATC_UI : error("Initiator lacks Write permission")
+    ATC_UI --> ACT : displayError("Access Denied - Insufficient Permissions")
+else Permission granted
+    SRS -> API : getFlightInfo(flightId) [TLS]
+    API --> SRS : flightData: Flight
+    
+    SRS -> FL : isEmergency(): Boolean
+    FL --> SRS : true
+    
+    SRS -> RES : checkAccessible(actorId): Boolean
+    RES --> SRS : false
+    note right: INV-4 violation: Initiator not in accessible set
+    
+    SRS --> ATC_UI : error("Resource not accessible by initiator")
+    ATC_UI --> ACT : displayError("Access Denied - Resource not in accessible set")
+end
+
+@enduml

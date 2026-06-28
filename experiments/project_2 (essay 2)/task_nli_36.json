@@ -1,0 +1,44 @@
+{
+  "task_id": 36,
+  "confidence": 0.9931,
+  "evidence": [
+    {
+      "claim": "The unit's status is updated to 'expired'.",
+      "fact": "Units past their expiration date are automatically marked as expired and removed from all matching searches.",
+      "score": 0.9986,
+      "user_story_span": "the unit's status is updated to \"expired\"",
+      "fact_span": "automatically marked as expired and removed from all matching searches"
+    },
+    {
+      "claim": "The blood unit is removed from available inventory.",
+      "fact": "Expired blood is automatically excluded from inventory counts and cannot be matched to any request.",
+      "score": 0.9984,
+      "user_story_span": "",
+      "fact_span": "Expired blood is automatically excluded from inventory counts"
+    },
+    {
+      "claim": "The blood unit is marked as expired.",
+      "fact": "Expired blood is automatically excluded from inventory counts and cannot be matched to any request.",
+      "score": 0.9982,
+      "user_story_span": "",
+      "fact_span": "Expired blood is automatically excluded from inventory counts"
+    },
+    {
+      "claim": "Expired units are removed from the available inventory pool.",
+      "fact": "The software automatically invalidates outdated units and removes them from the active supply pool.",
+      "score": 0.9979,
+      "user_story_span": "",
+      "fact_span": "removes them from the active supply pool"
+    },
+    {
+      "claim": "When the interaction occurs, the system checks the inventory status.",
+      "fact": "It automatically logs incoming blood units and updates available stock counts based on type and Rh factor.",
+      "score": 0.9723,
+      "user_story_span": "the system checks the inventory status",
+      "fact_span": "updates available stock counts based on type and Rh factor"
+    }
+  ],
+  "total_claims": 9,
+  "supported_claims": 5,
+  "threshold": 0.6
+}

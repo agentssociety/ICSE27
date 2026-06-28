@@ -1,0 +1,144 @@
+{
+  "detected_cycles": [],
+  "removed_edges_to_break_cycles": [],
+  "relationship_corrections": [
+    {
+      "original": {
+        "left": "AuditEntry",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "REQ_FRAUD_01"
+      },
+      "corrected": {
+        "left": "AuditEntry",
+        "arrow": "\"*\" -- \"1\"",
+        "right": "REQ_FRAUD_01"
+      },
+      "reason": "Multiple audit entries can belong to one fraud requirement, not a one-to-one association. Many suspicious transactions can be linked to the same fraud detection rule."
+    },
+    {
+      "original": {
+        "left": "REQ_FRAUD_01",
+        "arrow": "\"1\" -- \"*\"",
+        "right": "Interface"
+      },
+      "corrected": {
+        "left": "REQ_FRAUD_01",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "Interface"
+      },
+      "reason": "A fraud detection requirement typically involves a single interface (the fraud detection system), not many. The multiplicity should be 1 for the interface."
+    },
+    {
+      "original": {
+        "left": "User",
+        "arrow": "\"1\" *-- \"1\"",
+        "right": "Card"
+      },
+      "corrected": {
+        "left": "User",
+        "arrow": "\"1\" o-- \"1\"",
+        "right": "Card"
+      },
+      "reason": "A user owns a card via composition, but the cardinality should be one-to-one (each user has one card, each card belongs to one user). The arrow should be 'o--' (aggregation) since the card can exist without the user, but *-- implies many users share one card, which is incorrect."
+    },
+    {
+      "original": {
+        "left": "User",
+        "arrow": "\"1\" *-- \"1\"",
+        "right": "PIN"
+      },
+      "corrected": {
+        "left": "User",
+        "arrow": "\"1\" o-- \"1\"",
+        "right": "PIN"
+      },
+      "reason": "Similarly, a user has one PIN, and a PIN belongs to one user. Use aggregation (o--) rather than composition with reversed multiplicity."
+    }
+  ],
+  "architecture_corrections": [
+    {
+      "kind": "wrong_inheritance",
+      "description": "User inherits from Resource via association arrow --|>, but Resource represents a generic concept and User should be a specific Actor, not a Resource.",
+      "fix": {
+        "action": "change_class_type",
+        "details": {
+          "from": "\"User\" --|> \"Resource\"",
+          "to": "\"User\" --|> \"Actor\"",
+          "reason": "User is a type of actor, not a resource."
+        }
+      }
+    },
+    {
+      "kind": "wrong_class_type",
+      "description": "FinancialDatabase is an interface but is used as a concrete class in composition with Account.",
+      "fix": {
+        "action": "change_class_type",
+        "details": {
+          "class": "FinancialDatabase",
+          "new_kind": "interface",
+          "reason": "It should be a port/interface, not a concrete class."
+        }
+      }
+    },
+    {
+      "kind": "duplicate_concept",
+      "description": "AuditEntry, AuditLog, AuditLogEntry likely represent the same concept; tasks #87 and #84 refer to audit logs.",
+      "fix": {
+        "action": "merge_classes",
+        "details": {
+          "classes_to_merge": [
+            "AuditEntry",
+            "AuditLog",
+            "AuditLogEntry"
+          ],
+          "merged_name": "AuditLogEntry"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Account should have a composition or aggregation relationship with Card and PIN to reflect card-and-PIN authentication.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "left": "Account",
+          "right": "Card",
+          "arrow": "\"1\" o-- \"1\"",
+          "meaning": "aggregation"
+        }
+      }
+    }
+  ],
+  "architecture_suggestions": [
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "UserBalanceAndLimitDB",
+        "User_Balance_and_Limit_Database"
+      ],
+      "suggestion": "Rename to BalanceAndLimitPort for consistency with hexagonal architecture and to avoid mixing database implementation with port."
+    },
+    {
+      "kind": "split_class",
+      "affected_classes": [
+        "Operation"
+      ],
+      "suggestion": "Operation appears to be a catch-all for user actions; consider splitting into WithdrawalOperation, AuthenticationOperation, etc., for clarity."
+    },
+    {
+      "kind": "introduce_value_object",
+      "affected_classes": [
+        "Card",
+        "PIN"
+      ],
+      "suggestion": "Consider making Card and PIN value objects within the Account aggregate to simplify identity and lifecycle management."
+    },
+    {
+      "kind": "add_aggregate_root",
+      "affected_classes": [
+        "Transaction"
+      ],
+      "suggestion": "Introduce an Account aggregate root with Transaction as an entity inside it to enforce invariants like balance checks and daily limits."
+    }
+  ]
+}

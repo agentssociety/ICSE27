@@ -1,0 +1,65 @@
+{
+  "task_id": 38,
+  "confidence": 0.9838,
+  "evidence": [
+    {
+      "claim": "The system allows a dashboard displaying units nearing expiration.",
+      "fact": "The system shows a dashboard of units expiring within 7 days.",
+      "score": 0.999,
+      "user_story_span": "units nearing expiration",
+      "fact_span": "units expiring within 7 days"
+    },
+    {
+      "claim": "The dashboard highlights units nearing expiration.",
+      "fact": "The system shows a dashboard of units expiring within 7 days.",
+      "score": 0.9986,
+      "user_story_span": "units nearing expiration",
+      "fact_span": "units expiring within 7 days"
+    },
+    {
+      "claim": "Data sources include the inventory system for stock levels and expiration dates.",
+      "fact": "The interface presents a combined overview of blood counts, soon-to-expire stock, and active requisitions.",
+      "score": 0.9943,
+      "user_story_span": "inventory system (stock levels, expiration dates)",
+      "fact_span": ""
+    },
+    {
+      "claim": "The blood bank has current inventory data.",
+      "fact": "The system tracks blood unit stock in a hospital blood bank.",
+      "score": 0.9921,
+      "user_story_span": "current stock levels",
+      "fact_span": "blood unit stock"
+    },
+    {
+      "claim": "The blood bank has units nearing expiration.",
+      "fact": "The interface presents a combined overview of blood counts, soon-to-expire stock, and active requisitions.",
+      "score": 0.9912,
+      "user_story_span": "units nearing expiration",
+      "fact_span": "soon-to-expire stock"
+    },
+    {
+      "claim": "Data sources include the transfusion request system.",
+      "fact": "The system reserves a unit for a request and releases it back if the transfusion is not finalized in a day.",
+      "score": 0.9724,
+      "user_story_span": "transfusion request system",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system allows a dashboard displaying open transfusion requests.",
+      "fact": "The interface presents a combined overview of blood counts, soon-to-expire stock, and active requisitions.",
+      "score": 0.9685,
+      "user_story_span": "open transfusion requests",
+      "fact_span": "active requisitions"
+    },
+    {
+      "claim": "The blood bank has open transfusion requests.",
+      "fact": "The interface presents a combined overview of blood counts, soon-to-expire stock, and active requisitions.",
+      "score": 0.954,
+      "user_story_span": "open transfusion requests",
+      "fact_span": "active requisitions"
+    }
+  ],
+  "total_claims": 17,
+  "supported_claims": 8,
+  "threshold": 0.6
+}

@@ -1,0 +1,136 @@
+@startuml
+!theme plain
+
+' Participants
+actor "Triage_Nurse_Team" as TNT
+box "Controller" #LightCyan
+  participant "SortController" as SC
+end box
+box "Application" #LightGreen
+  participant "PatientQueueSortService" as PQS
+end box
+box "Domain" #LightYellow
+  participant "PatientQueueSortOperation" as PQSO
+  participant "PatientQueueData" as PQD
+  participant "State" as STATE
+  participant "Permission" as PERM
+end box
+box "Infrastructure" #LightPink
+  participant "Patient_Queue_Database" as DB
+end box
+
+' Shared notes
+note right of TNT : Initiates sorting operation\nREQ_NURS_01
+
+== Main Flow: Sort Patient Queue ==
+
+TNT -> SC : POST /queue/sort()
+activate SC
+
+SC -> PQS : sort()
+activate PQS
+
+' Permission check
+PQS -> PQS : verifyPermission(TNT, Permission.WRITE)
+note right of PQS : Must enforce Write permission\nas per access control
+
+alt Permission check fails
+  PQS -> SC : return 403 Forbidden
+  SC -> TNT : 403 Forbidden
+  deactivate SC
+  deactivate PQS
+else Permission granted
+  ' Retrieve queue data via authenticated channel
+  PQS -> DB : getPatientQueueData() [TLS, authentication required]
+  activate DB
+  DB --> PQS : PatientQueueData (patients list)
+  deactivate DB
+
+  ' Create operation and start sorting
+  PQS -> PQSO : new PatientQueueSortOperation(patientQueueData)
+  activate PQSO
+
+  PQSO -> PQSO : state = State.PreIdle
+  note right of PQSO : Initial state before sorting
+
+  ' Check for empty queue
+  alt No patients in queue
+    PQSO -> PQSO : transitionTo(State.Post1)
+    note right of PQSO : State changes even if empty\n(meets pre != post)
+    PQSO --> PQS : success (empty sorted)
+  else Patients present
+    ' Validate urgency levels
+    loop for each patient in queue
+      alt Patient.urgencyLevel is null or undefined
+        PQSO -> PQSO : logWarning("Invalid urgency, skipping patient")
+        note right of PQSO : Graceful handling,\nno crash per requirement
+      else
+        ' Continue
+      end
+    end
+
+    ' Perform sorting
+    PQSO -> PQSO : sortByUrgencyAscThenArrivalAsc()
+    note right of PQSO : Sorted by urgency (lowest first)\nthen arrival time (earliest first)
+    note right of PQSO : For ties, original order preserved\n(duplicate urgency+arrival)
+
+    ' Update state
+    PQSO -> PQSO : transitionTo(State.Post1)
+    note right of PQSO : State change from PreIdle to Post1
+
+    ' Write sorted data back to database
+    PQSO -> DB : updateQueue(sortedPatientQueueData) [TLS, authentication required]
+    activate DB
+    DB --> PQSO : success
+    deactivate DB
+
+    PQSO --> PQS : success
+  end
+  deactivate PQSO
+
+  PQS --> SC : 200 OK (sorted queue)
+  SC --> TNT : 200 OK
+  deactivate SC
+  deactivate PQS
+end
+
+== Error Path: Database Unavailable ==
+
+TNT -> SC : POST /queue/sort()
+activate SC
+SC -> PQS : sort()
+activate PQS
+PQS -> PQS : verifyPermission(TNT, Permission.WRITE)
+alt Permission fails
+  ' handled above
+else granted
+  PQS -> DB : getPatientQueueData() [TLS, authentication required]
+  activate DB
+  note right of DB #LightPink : Failure: connection timeout / unavailable
+  DB --> PQS : error (database unavailable)
+  deactivate DB
+  PQS --> SC : 500 Internal Server Error
+  SC --> TNT : 500 Internal Server Error
+  deactivate SC
+  deactivate PQS
+end
+
+== Constraint: Performance & Scalability ==
+
+note over PQS, DB
+  Sorting must complete within 10 seconds
+  for up to 500 patients.
+  System must support 50% volume increase
+  without degradation.
+end note
+
+== Constraint: Availability & Channels ==
+
+note over TNT, DB
+  At least 2 channels per operation.
+  At most 1 authenticated channel.
+  Here: database is authenticated,
+  HTTP request is the second channel.
+end note
+
+@enduml

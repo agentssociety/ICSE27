@@ -1,0 +1,142 @@
+{
+  "metric": "rq2_test_passrate",
+  "description": "Automated test pass rates measuring implementation-level confidence. Backend: pytest unit + integration tests. Frontend: jest/vitest component tests. Pass rate = passed / (passed + failed); skipped tests are excluded. Values reported as mean ± std across 3 essay seeds per project.",
+  "projects": [
+    {
+      "project_id": 1,
+      "n_essays": 3,
+      "backend_pass_rate": {
+        "mean": 0.9892,
+        "std": 0.0186,
+        "values": [
+          1.0,
+          1.0,
+          0.9677
+        ]
+      },
+      "frontend_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "combined_pass_rate": {
+        "mean": 0.9905,
+        "std": 0.0165,
+        "values": [
+          1.0,
+          1.0,
+          0.9714
+        ]
+      },
+      "backend_passed_mean": 44.0,
+      "backend_failed_mean": 0.7,
+      "backend_skipped_mean": 3.7
+    },
+    {
+      "project_id": 2,
+      "n_essays": 3,
+      "backend_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "frontend_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "combined_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "backend_passed_mean": 67.7,
+      "backend_failed_mean": 0.0,
+      "backend_skipped_mean": 7.3
+    },
+    {
+      "project_id": 3,
+      "n_essays": 3,
+      "backend_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "frontend_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "combined_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "backend_passed_mean": 47.0,
+      "backend_failed_mean": 0.0,
+      "backend_skipped_mean": 9.0
+    },
+    {
+      "project_id": 4,
+      "n_essays": 3,
+      "backend_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "frontend_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "combined_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "backend_passed_mean": 64.3,
+      "backend_failed_mean": 0.0,
+      "backend_skipped_mean": 19.3
+    }
+  ]
+}

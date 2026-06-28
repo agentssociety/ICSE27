@@ -1,0 +1,65 @@
+{
+  "task_id": 32,
+  "confidence": 0.9764,
+  "evidence": [
+    {
+      "claim": "The system tracks blood units by ABO type.",
+      "fact": "The system tracks blood units by ABO type.",
+      "score": 0.999,
+      "user_story_span": "track blood units by ABO type",
+      "fact_span": "The system tracks blood units by ABO type."
+    },
+    {
+      "claim": "The system tracks blood units by Rh factor.",
+      "fact": "The system tracks blood units by Rh factor.",
+      "score": 0.999,
+      "user_story_span": "",
+      "fact_span": "The system tracks blood units by Rh factor."
+    },
+    {
+      "claim": "The system tracks blood units by collection date.",
+      "fact": "The system tracks blood units by collection date.",
+      "score": 0.999,
+      "user_story_span": "",
+      "fact_span": "The system tracks blood units by collection date."
+    },
+    {
+      "claim": "The system automatically removes expired units.",
+      "fact": "The software automatically invalidates outdated units and removes them from the active supply pool.",
+      "score": 0.999,
+      "user_story_span": "automatically flag or remove expired units",
+      "fact_span": "automatically invalidates outdated units and removes them from the active supply pool"
+    },
+    {
+      "claim": "The status of a blood unit can be collected, tested, available, issued, or expired.",
+      "fact": "The interface presents a combined overview of blood counts, soon-to-expire stock, and active requisitions.",
+      "score": 0.9981,
+      "user_story_span": "Status includes stages such as collected, tested, available, issued, or expired",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system automatically flags expired units.",
+      "fact": "The software automatically invalidates outdated units and removes them from the active supply pool.",
+      "score": 0.9979,
+      "user_story_span": "automatically flag or remove expired units",
+      "fact_span": "automatically invalidates outdated units and removes them from the active supply pool"
+    },
+    {
+      "claim": "Rh factor is recorded at collection.",
+      "fact": "The system records each blood donation's type and Rh factor along with the collection timestamp.",
+      "score": 0.9968,
+      "user_story_span": "Rh factor are recorded at collection",
+      "fact_span": "records each blood donation's type and Rh factor along with the collection timestamp"
+    },
+    {
+      "claim": "Expired units are no longer available for use.",
+      "fact": "The system ages out blood that is no longer viable and prevents it from being considered for transfusion.",
+      "score": 0.9968,
+      "user_story_span": "",
+      "fact_span": "prevents it from being considered for transfusion"
+    }
+  ],
+  "total_claims": 18,
+  "supported_claims": 8,
+  "threshold": 0.6
+}

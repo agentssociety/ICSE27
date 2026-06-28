@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Blood Bank Management{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="display-5">Blood Bank Dashboard</h1>
+        <p class="text-muted">Overview of inventory, requests, and alerts</p>
+    </div>
+</div>
+
+<!-- Stock Summary Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-droplet"></i> Current Stock Summary
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if stock_summary %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Blood Type</th>
+                                <th>Rh Factor</th>
+                                <th>Available Units</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in stock_summary %}
+                            <tr>
+                                <td><strong>{{ item.abo_type }}</strong></td>
+                                <td>{{ item.rh_factor | capitalize }}</td>
+                                <td>{{ item.count }}</td>
+                                <td>
+                                    {% if item.count < 5 %}
+                                    <span class="badge bg-danger">Low Stock</span>
+                                    {% elif item.count < 10 %}
+                                    <span class="badge bg-warning text-dark">Moderate</span>
+                                    {% else %}
+                                    <span class="badge bg-success">Adequate</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info mb-0">
+                    <i class="bi bi-info-circle"></i> No blood units currently available in inventory.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Expiring Soon Section -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-clock-history"></i> Units Expiring Soon (7 days)
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if expiring_soon %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Rh</th>
+                                <th>Expiry Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for unit in expiring_soon %}
+                            <tr>
+                                <td>{{ unit.id }}</td>
+                                <td>{{ unit.abo_type }}</td>
+                                <td>{{ unit.rh_factor | capitalize }}</td>
+                                <td>{{ unit.expiry_date.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    {% if unit.status == 'available' %}
+                                    <span class="badge bg-success">Available</span>
+                                    {% elif unit.status == 'reserved' %}
+                                    <span class="badge bg-info">Reserved</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-success mb-0">
+                    <i class="bi bi-check-circle"></i> No units expiring within the next 7 days.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Open Requests Section -->
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-file-text"></i> Open Transfusion Requests
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if open_requests %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Rh</th>
+                                <th>Qty</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in open_requests %}
+                            <tr>
+                                <td>{{ req.id }}</td>
+                                <td>{{ req.abo_type }}</td>
+                                <td>{{ req.rh_factor | capitalize }}</td>
+                                <td>{{ req.quantity }}</td>
+                                <td>{{ req.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-success mb-0">
+                    <i class="bi bi-check-circle"></i> No pending transfusion requests.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Active Alerts Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-danger text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Active Stock Alerts
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if active_alerts %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Alert ID</th>
+                                <th>Blood Type</th>
+                                <th>Rh Factor</th>
+                                <th>Current Stock</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for alert in active_alerts %}
+                            <tr>
+                                <td>{{ alert.id }}</td>
+                                <td><strong>{{ alert.abo_type }}</strong></td>
+                                <td>{{ alert.rh_factor | capitalize }}</td>
+                                <td>
+                                    <span class="badge bg-danger">{{ alert.current_stock }}</span>
+                                </td>
+                                <td>{{ alert.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    <form action="{{ url_for('main.resolve_alert', alert_id=alert.id) }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-check-lg"></i> Resolve
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-success mb-0">
+                    <i class="bi bi-check-circle"></i> No active stock alerts. All blood types are adequately stocked.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-lightning"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <a href="{{ url_for('main.inventory') }}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-plus-circle"></i> Add Blood Unit
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ url_for('main.requests') }}" class="btn btn-outline-info w-100">
+                            <i class="bi bi-send"></i> New Transfusion Request
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ url_for('main.alerts') }}" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-bell"></i> View All Alerts
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Auto-refresh dashboard every 60 seconds (optional)
+    setTimeout(function() {
+        location.reload();
+    }, 60000);
+</script>
+{% endblock %}

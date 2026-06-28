@@ -1,0 +1,51 @@
+{
+  "task_id": 81,
+  "confidence": 0.9924,
+  "evidence": [
+    {
+      "claim": "The system allows withdrawal operations to be atomic.",
+      "fact": "The system processes each withdrawal atomically.",
+      "score": 0.9985,
+      "user_story_span": "withdrawal operations to be atomic",
+      "fact_span": "processes each withdrawal atomically"
+    },
+    {
+      "claim": "A failure occurs during the transaction.",
+      "fact": "If a requested cash amount is larger than the available funds or surpasses the twenty-four-hour spending ceiling, the transaction is rejected.",
+      "score": 0.9967,
+      "user_story_span": "",
+      "fact_span": "If a requested cash amount is larger than the available funds or surpasses the twenty-four-hour spending ceiling, the transaction is rejected"
+    },
+    {
+      "claim": "The user's account balance remains unchanged.",
+      "fact": "A user's money is never lost or duplicated due to partial failures, because the system reverts every alteration when an error occurs.",
+      "score": 0.9961,
+      "user_story_span": "the user's account balance remains unchanged",
+      "fact_span": "A user's money is never lost or duplicated due to partial failures, because the system reverts every alteration when an error occurs"
+    },
+    {
+      "claim": "The transaction is fully rolled back.",
+      "fact": "The system rolls back all steps completely if any step fails.",
+      "score": 0.989,
+      "user_story_span": "the transaction is fully rolled back",
+      "fact_span": "rolls back all steps completely if any step fails"
+    },
+    {
+      "claim": "Atomicity ensures that a withdrawal either completes entirely or has no effect.",
+      "fact": "The transaction is processed in an all-or-nothing fashion, guaranteeing full rollback of any partial work on failure.",
+      "score": 0.9875,
+      "user_story_span": "Atomicity ensures that a withdrawal either completes entirely or has no effect",
+      "fact_span": "The transaction is processed in an all-or-nothing fashion, guaranteeing full rollback of any partial work on failure"
+    },
+    {
+      "claim": "A user initiates a withdrawal.",
+      "fact": "A user must present their bank card and enter their secret code to begin any cash withdrawal operation.",
+      "score": 0.9866,
+      "user_story_span": "",
+      "fact_span": "A user must present their bank card and enter their secret code to begin any cash withdrawal operation"
+    }
+  ],
+  "total_claims": 9,
+  "supported_claims": 6,
+  "threshold": 0.6
+}

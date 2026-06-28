@@ -1,0 +1,240 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam BoxPadding 10
+skinparam ParticipantPadding 15
+
+box "Controller Layer" #LightBlue
+participant "InventoryDashboard" as DashboardUI
+participant "InventoryAPI" as InvAPI
+participant "RequestAPI" as ReqAPI
+end box
+
+box "Application Layer" #LightGreen
+participant "REQ_INV_MAN_01" as Operation
+end box
+
+box "Domain Layer" #LightYellow
+participant "Actor" as Actor
+participant "InventoryManagementTeam" as InvMgr
+participant "Resource" as Resource
+participant "Permission" as Permission
+participant "State" as State
+participant "PreIdle" as PreIdle
+participant "Post1" as Post1
+end box
+
+box "Infrastructure Layer" #LightCoral
+participant "Interface" as Channel
+end box
+
+== Flow: View Inventory Dashboard (Happy Path) ==
+
+InvMgr -> DashboardUI : viewDashboard()
+activate DashboardUI
+
+DashboardUI -> Operation : initiateREQ_INV_MAN_01(initiator: InventoryManagementTeam, target: Resource[], channel: Interface[], grant: Permission)
+activate Operation
+
+Operation -> Channel : validateAuthentication(channel: Interface) : Bool
+activate Channel
+Channel --> Operation : authenticated = True
+deactivate Channel
+
+alt Authentication Valid
+    Operation -> Actor : checkPermission(initiator: InventoryManagementTeam, grant: Permission) : Bool
+    activate Actor
+    Actor --> Operation : grant in mayPerform = True
+    deactivate Actor
+
+    alt Permission Granted
+        Operation -> Resource : checkAccess(initiator: InventoryManagementTeam, target: Resource[]) : Bool
+        activate Resource
+        Resource --> Operation : initiator in accessible = True
+        deactivate Resource
+
+        alt Access Granted
+            Operation -> PreIdle : getState()
+            activate PreIdle
+            PreIdle --> Operation : state = PreIdle
+            deactivate PreIdle
+
+            Operation -> InvAPI : fetchStockLevels()
+            activate InvAPI
+            InvAPI --> Operation : stockLevels
+            deactivate InvAPI
+
+            Operation -> ReqAPI : fetchPendingRequests()
+            activate ReqAPI
+            ReqAPI --> Operation : pendingRequests
+            deactivate ReqAPI
+
+            Operation -> Post1 : transitionState(from: PreIdle, to: Post1)
+            activate Post1
+            Post1 --> Operation : stateChanged = True
+            deactivate Post1
+
+            Operation -> DashboardUI : displayDashboard(stockLevels, pendingRequests)
+            deactivate Operation
+            DashboardUI --> InvMgr : dashboardSummaryVisible
+        else Access Denied
+            Operation --> DashboardUI : error("Unauthorized resource access")
+            deactivate Operation
+            DashboardUI --> InvMgr : showError("Access Denied")
+        end
+    else Permission Denied
+        Operation --> DashboardUI : error("Operation denied")
+        deactivate Operation
+        DashboardUI --> InvMgr : showError("Permission Denied")
+    end
+else Authentication Invalid
+    Operation --> DashboardUI : error("No authenticated channel")
+    deactivate Operation
+    DashboardUI --> InvMgr : showError("Authentication Required")
+end
+
+deactivate DashboardUI
+
+== Flow: Edge Case - Resource with No Accessible Actors ==
+
+InvMgr -> DashboardUI : viewDashboard()
+activate DashboardUI
+
+DashboardUI -> Operation : initiateREQ_INV_MAN_01(initiator: InventoryManagementTeam, target: Resource[], channel: Interface[], grant: Permission)
+activate Operation
+
+Operation -> Channel : validateAuthentication(channel: Interface) : Bool
+activate Channel
+Channel --> Operation : authenticated = True
+deactivate Channel
+
+alt Authentication Valid
+    Operation -> Actor : checkPermission(initiator: InventoryManagementTeam, grant: Permission) : Bool
+    activate Actor
+    Actor --> Operation : grant in mayPerform = True
+    deactivate Actor
+
+    alt Permission Granted
+        Operation -> Resource : checkAccess(initiator: InventoryManagementTeam, target: Resource[]) : Bool
+        activate Resource
+        Resource --> Operation : accessible = empty
+        deactivate Resource
+
+        alt No Accessible Actors
+            Operation -> Permission : validateGrant(grant: Permission) : Bool
+            activate Permission
+            Permission --> Operation : grant is Write or Execute = False
+            deactivate Permission
+
+            alt Grant Not Write/Execute
+                Operation -> PreIdle : getState()
+                activate PreIdle
+                PreIdle --> Operation : state = PreIdle
+                deactivate PreIdle
+
+                Operation -> Post1 : transitionState(from: PreIdle, to: Post1)
+                activate Post1
+                Post1 --> Operation : stateChanged = False (post = pre)
+                deactivate Post1
+
+                Operation -> DashboardUI : displayDashboard(limitedData)
+                deactivate Operation
+                DashboardUI --> InvMgr : dashboardSummaryVisible (no state change)
+            else Grant Is Write/Execute
+                Operation --> DashboardUI : error("Operation denied - incompatible grant")
+                deactivate Operation
+                DashboardUI --> InvMgr : showError("Grant Not Allowed")
+            end
+        end
+    else Permission Denied
+        Operation --> DashboardUI : error("Operation denied")
+        deactivate Operation
+        DashboardUI --> InvMgr : showError("Permission Denied")
+    end
+else Authentication Invalid
+    Operation --> DashboardUI : error("No authenticated channel")
+    deactivate Operation
+    DashboardUI --> InvMgr : showError("Authentication Required")
+end
+
+deactivate DashboardUI
+
+== Flow: Multiple Operations on Same Target (Grant Compatibility) ==
+
+InvMgr -> DashboardUI : viewDashboard()
+activate DashboardUI
+
+DashboardUI -> Operation : initiateREQ_INV_MAN_01(initiator: InventoryManagementTeam, target: Resource[], channel: Interface[], grant: Permission)
+activate Operation
+
+Operation -> Channel : validateAuthentication(channel: Interface) : Bool
+activate Channel
+Channel --> Operation : authenticated = True
+deactivate Channel
+
+alt Authentication Valid
+    Operation -> Actor : checkPermission(initiator: InventoryManagementTeam, grant: Permission) : Bool
+    activate Actor
+    Actor --> Operation : grant in mayPerform = True
+    deactivate Actor
+
+    alt Permission Granted
+        Operation -> Resource : checkAccess(initiator: InventoryManagementTeam, target: Resource[]) : Bool
+        activate Resource
+        Resource --> Operation : initiator in accessible = True
+        deactivate Resource
+
+        alt Access Granted
+            Operation -> Permission : checkGrantCompatibility(existingGrant: Permission, newGrant: Permission) : Bool
+            activate Permission
+            Permission --> Operation : grantsCompatible = True
+            deactivate Permission
+
+            alt Grants Compatible
+                Operation -> PreIdle : getState()
+                activate PreIdle
+                PreIdle --> Operation : state = PreIdle
+                deactivate PreIdle
+
+                Operation -> InvAPI : fetchStockLevels()
+                activate InvAPI
+                InvAPI --> Operation : stockLevels
+                deactivate InvAPI
+
+                Operation -> ReqAPI : fetchPendingRequests()
+                activate ReqAPI
+                ReqAPI --> Operation : pendingRequests
+                deactivate ReqAPI
+
+                Operation -> Post1 : transitionState(from: PreIdle, to: Post1)
+                activate Post1
+                Post1 --> Operation : stateChanged = True
+                deactivate Post1
+
+                Operation -> DashboardUI : displayDashboard(stockLevels, pendingRequests)
+                deactivate Operation
+                DashboardUI --> InvMgr : dashboardSummaryVisible
+            else Grants Incompatible
+                Operation --> DashboardUI : error("Incompatible grants on same target")
+                deactivate Operation
+                DashboardUI --> InvMgr : showError("Grant Conflict")
+            end
+        else Access Denied
+            Operation --> DashboardUI : error("Unauthorized resource access")
+            deactivate Operation
+            DashboardUI --> InvMgr : showError("Access Denied")
+        end
+    else Permission Denied
+        Operation --> DashboardUI : error("Operation denied")
+        deactivate Operation
+        DashboardUI --> InvMgr : showError("Permission Denied")
+    end
+else Authentication Invalid
+    Operation --> DashboardUI : error("No authenticated channel")
+    deactivate Operation
+    DashboardUI --> InvMgr : showError("Authentication Required")
+end
+
+deactivate DashboardUI
+
+@enduml

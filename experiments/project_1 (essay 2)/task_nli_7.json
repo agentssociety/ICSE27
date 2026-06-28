@@ -1,0 +1,23 @@
+{
+  "task_id": 7,
+  "confidence": 0.9989,
+  "evidence": [
+    {
+      "claim": "The system allows registering a new patient with their symptoms.",
+      "fact": "The system supports registering incoming patients with their presenting symptoms.",
+      "score": 0.999,
+      "user_story_span": "register a new patient with their symptoms",
+      "fact_span": "registering incoming patients with their presenting symptoms"
+    },
+    {
+      "claim": "Symptoms are collected during registration.",
+      "fact": "Clinical urgency is determined automatically from the symptoms entered during registration.",
+      "score": 0.9987,
+      "user_story_span": "Symptoms are collected during registration.",
+      "fact_span": "symptoms entered during registration"
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

@@ -1,0 +1,104 @@
+{
+  "id": "REQ-BBA-01",
+  "title": "Automate Expiration of Blood Units Older than 42 Days",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall automatically flag or deactivate blood units that have a collection date more than 42 days ago.",
+  "rationale": "To ensure the safety and efficacy of blood transfusions by preventing the use of outdated blood.",
+  "business_value": "Reduces manual checking and human error, enhances patient safety, and ensures compliance with regulatory standards.",
+  "source": {
+    "type": "User Story",
+    "id": 29,
+    "description": "As a blood bank administrator I need blood units older than 42 days to be automatically expired So that outdated blood is not mistakenly used for transfusions"
+  },
+  "stakeholders": [
+    "Blood Bank Administrators",
+    "Medical Staff",
+    "Regulatory Authorities"
+  ],
+  "acceptance_criteria": [
+    "Given a blood unit has a collection date",
+    "When the current date is more than 42 days after the collection date",
+    "Then the blood unit is automatically marked as expired"
+  ],
+  "preconditions": [
+    "The system must have access to the current date and time.",
+    "The system must store the collection date of each blood unit."
+  ],
+  "postconditions": [
+    "The status of the blood unit is updated to 'expired'.",
+    "The unit should no longer be available for transfusion or use."
+  ],
+  "functional_constraints": [
+    "The system must be able to calculate the difference between the current date and the collection date.",
+    "The system must update the status of the blood unit within a specified time frame (e.g., 10 minutes)."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": {
+      "response_time": "<= 5 seconds",
+      "throughput": "At least 10,000 units processed per hour during peak hours."
+    },
+    "availability": {
+      "uptime": "99.9%",
+      "downtime": "Less than 1 minute per month"
+    },
+    "scalability": {
+      "concurrency": "Supports at least 50 concurrent users during peak usage times.",
+      "growth": "Can scale to handle an increase of 50% in the number of blood units within a year."
+    },
+    "usability": {
+      "error_handling": "Should provide clear and concise error messages.",
+      "interface_behavior": "The system should automatically refresh the status of units daily at midnight."
+    }
+  },
+  "edge_cases": [
+    "What happens if there is a system clock failure?",
+    "How does the system handle blood units that were collected on exactly 42 days ago?",
+    "What if the collection date is not recorded for a blood unit?"
+  ],
+  "dependencies": [
+    "A reliable method to obtain the current date and time.",
+    "Storage of all blood units with their respective collection dates."
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Blood Units Database",
+      "description": "The system will interact with this database to retrieve and update the collection dates and statuses of blood units."
+    },
+    {
+      "type": "API",
+      "name": "System Clock API",
+      "description": "This API provides real-time date and time, which is used by the system to calculate the age of blood units."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-BBA-01",
+      "description": "Verify that a blood unit with a collection date exactly 42 days ago is automatically marked as expired.",
+      "expected_result": "The system marks the blood unit as expired and updates its status accordingly."
+    },
+    {
+      "id": "TC-BBA-02",
+      "description": "Simulate a system clock failure to ensure the system can handle such an edge case without crashing.",
+      "expected_result": "The system continues to operate normally and logs an error message for further investigation."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T14:49:33.865724",
+  "last_updated": "2026-06-14T14:50:55.644328",
+  "traceability": {
+    "related_requirements": [
+      "REQ-INV-01"
+    ],
+    "design_components": [
+      "BloodUnit"
+    ],
+    "test_artifacts": []
+  }
+}

@@ -1,0 +1,169 @@
+@startuml
+skinparam classFontSize 12
+skinparam packageFontSize 14
+skinparam packageBorderColor #333333
+skinparam classBorderColor #333333
+skinparam classBackgroundColor #FEFEFE
+skinparam interfaceBackgroundColor #E8F0FE
+skinparam enumBackgroundColor #E8F8E8
+skinparam exceptionBackgroundColor #FFE8E8
+
+package "Domain Model" {
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+  + isGrantInMayPerform(initiator: Actor, grant: Permission) : Boolean
+    }
+
+    enum State {
+        Pre1
+        Post1
+        Post2
+    }
+
+    class Actor {
+        mayPerform: Set<Permission>
+    }
+
+    class Security_Auditors <<extends Actor>> {
+    }
+
+    class System_Administrators <<extends Actor>> {
+    }
+
+    class Compliance_Team <<extends Actor>> {
+    }
+
+    class Resource {
+        owner: Actor
+        accessible: Set<Actor>
+        // invariant: owner always in accessible
+  + isInitiatorInAccessible(initiator: Actor, target: Resource) : Boolean
+  + isOwner(initiator: Security_Auditors, target: Resource) : Boolean
+  + isOwner(initiator: System_Administrators, target: Resource) : Boolean
+    }
+
+    class Interface {
+        kind: IfaceKind
+        encrypted: Bool
+        authenticated: Bool
+    }
+
+    class IfaceKind <<enum>> {
+        Database
+        External_System
+    }
+
+    class Logging_Database <<interface>> {
+        // kind = Database
+        // encrypted = True
+        // authenticated = True
+    }
+
+    class Central_Logging_Service <<interface>> {
+        // kind = External_System
+        // encrypted = True
+        // authenticated = True
+    }
+
+    class REQ_AUTH_01 {
+        initiator: Actor
+        target: Set<Resource>
+        channel: Set<Interface>
+        grant: Permission
+        pre: State
+        post: State
+        // invariants:
+        // - some channel
+        // - some target
+        // - grant in initiator.mayPerform
+        // - initiator in target.accessible
+        // - pre != post
+        // - some c: channel | c.authenticated = True
+        // - post in {Post1, Post2}
+  + initiateOperation(initiator: Actor, target: Resource, channel: Interface, grant: Permission, pre: State, post: State) : REQ_AUTH_01
+  + validateAuthenticatedChannel(channel: Interface) : Boolean
+  + checkHeavyLoadCondition() : Boolean
+  + transitionState(pre: Pre1, post: Post1) : State
+  + rollbackStateTransition() : void
+  + initiateOperation(initiator: Actor, target: Resource, channel: Interface, grant: Admin, pre: Pre1, post: State) : REQ_AUTH_01
+  + validateInitiatorRole(initiator: Actor) : Boolean
+  + transitionState(pre: Pre1, post: Post2) : State
+  + initiateOperation(...)
+    }
+
+    class AuditLogEntry {
+        operation: REQ_AUTH_01
+        loggedBy: Security_Auditors
+        timestamp: Int
+        // invariant: all op: REQ_AUTH_01 | one entry: AuditLogEntry | entry.operation = op
+  + createAuditLogEntry(operation: REQ_AUTH_01, loggedBy: Security_Auditors, timestamp: Int) : AuditLogEntry
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface LoggingDatabasePort {
+  + storeLogEntry(operation: REQ_AUTH_01, loggedBy: Security_Auditors, timestamp: Int) : Boolean
+  + storeSecureLogEntry(operation: REQ_AUTH_01, loggedBy: Security_Auditors, timestamp: Int) : Boolean
+  + storePendingSyncEntry(entry: AuditLogEntry) : Boolean
+    }
+
+    interface CentralLoggingServicePort {
+  + sendAuditLogEntry(entry: AuditLogEntry) : Boolean
+    }
+}
+
+package "Exceptions" {
+    class UnauthorizedOperationException <<exception>> {
+    }
+
+    class UnauthenticatedChannelException <<exception>> {
+    }
+
+    class LogStorageFailureException <<exception>> {
+    }
+}
+
+package "DTOs" {
+    class OperationRequestDTO <<dto>> {
+        initiatorId: String
+        targetIds: List<String>
+        channelIds: List<String>
+        requiredPermission: Permission
+    }
+
+    class AuditLogEntryDTO <<dto>> {
+        operationId: String
+        loggedBy: String
+        timestamp: Long
+        details: String
+    }
+}
+
+' Relationships
+Security_Auditors --|> Actor
+System_Administrators --|> Actor
+Compliance_Team --|> Actor
+
+Logging_Database --|> Interface
+Central_Logging_Service --|> Interface
+
+REQ_AUTH_01 "1" --> "1" Actor : initiator
+REQ_AUTH_01 "1" --> "*" Resource : target
+REQ_AUTH_01 "1" --> "*" Interface : channel
+REQ_AUTH_01 "1" --> "1" Permission : grant
+REQ_AUTH_01 "1" --> "1" State : pre
+REQ_AUTH_01 "1" --> "1" State : post
+
+AuditLogEntry "1" --> "1" REQ_AUTH_01 : operation
+AuditLogEntry "1" --> "1" Security_Auditors : loggedBy
+
+Resource "*" --> "1" Actor : owner
+Resource "*" --> "*" Actor : accessible
+
+LoggingDatabasePort <|.. Logging_Database
+CentralLoggingServicePort <|.. Central_Logging_Service
+
+@enduml

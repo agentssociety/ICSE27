@@ -1,0 +1,199 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "Flight Information API" as API
+end box
+
+box "Application Layer" #LightGreen
+  participant "System" as System
+  participant "Operation" as Operation
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Flight" as Flight
+  participant "FlightStatus" as FlightStatus
+  participant "TimeSlot" as TimeSlot
+  participant "SlotAllocation" as SlotAllocation
+  participant "State" as State
+  participant "Permission" as Permission
+  participant "PermissionLevel" as PermissionLevel
+  participant "Actor" as Actor
+  participant "Resource" as Resource
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "FlightScheduleDatabase" as Database
+end box
+
+== Slot Allocation Flow ==
+
+Actor -> API : POST /api/slots/allocate [TLS encrypted]
+note right: Authentication required
+API -> System : allocateSlot(flightId: String) : SlotAllocation
+System -> Actor : checkAuthentication(token: String) : Boolean
+
+alt Authentication fails
+    System -> API : return 401 Unauthorized
+    API -> Actor : HTTP 401 Unauthorized
+else Authentication succeeds
+    System -> Actor : checkPermission(actor: Actor, requiredLevel: PermissionLevel) : Boolean
+    
+    alt Insufficient permissions
+        System -> API : return 403 Forbidden
+        API -> Actor : HTTP 403 Forbidden
+    else Permission granted
+        System -> Database : getFlightSchedule(flightId: String) : Flight [TLS encrypted]
+        
+        alt Flight not found
+            System -> API : return 404 Not Found
+            API -> Actor : HTTP 404 Not Found
+        else Flight found
+            System -> Flight : getStatus() : FlightStatus
+            
+            alt Flight is canceled
+                System -> API : return 409 Conflict - Flight canceled
+                API -> Actor : HTTP 409 Conflict
+            else Flight is delayed
+                alt Actor has Write permission
+                    System -> Flight : updateStatus(status: FlightStatus) : void
+                    System -> TimeSlot : createSlot(startTime: DateTime) : TimeSlot
+                    note right: Duration = 5 minutes
+                    System -> SlotAllocation : createAllocation(flightId: String, slot: TimeSlot) : SlotAllocation
+                    System -> SlotAllocation : enforceGap(allocation: SlotAllocation) : Boolean
+                    note right: Gap = 3 minutes
+                    
+                    alt Gap violation detected
+                        System -> API : return 422 Unprocessable Entity
+                        API -> Actor : HTTP 422 Unprocessable Entity
+                    else Gap enforced
+                        System -> Database : saveAllocation(allocation: SlotAllocation) : void [TLS encrypted]
+                        
+                        alt Database error
+                            System -> API : return 500 Internal Server Error
+                            API -> Actor : HTTP 500 Internal Server Error
+                        else Success
+                            System -> State : transitionTo("Post1") : void
+                            System -> API : return 200 OK
+                            API -> Actor : HTTP 200 OK
+                        end
+                    end
+                else No Write permission
+                    System -> API : return 403 Forbidden - Cannot modify delayed flight
+                    API -> Actor : HTTP 403 Forbidden
+                end
+            else Flight is scheduled
+                System -> TimeSlot : createSlot(startTime: DateTime) : TimeSlot
+                note right: Duration = 5 minutes
+                System -> SlotAllocation : createAllocation(flightId: String, slot: TimeSlot) : SlotAllocation
+                System -> SlotAllocation : enforceGap(allocation: SlotAllocation) : Boolean
+                note right: Gap = 3 minutes
+                
+                alt Gap violation detected
+                    System -> API : return 422 Unprocessable Entity
+                    API -> Actor : HTTP 422 Unprocessable Entity
+                else Gap enforced
+                    System -> Database : saveAllocation(allocation: SlotAllocation) : void [TLS encrypted]
+                    
+                    alt Database error
+                        System -> API : return 500 Internal Server Error
+                        API -> Actor : HTTP 500 Internal Server Error
+                    else Success
+                        System -> State : transitionTo("Post1") : void
+                        System -> API : return 200 OK
+                        API -> Actor : HTTP 200 OK
+                    end
+                end
+            end
+        end
+    end
+end
+
+== Safety Compliance Verification Flow ==
+
+Actor -> API : POST /api/slots/verify [TLS encrypted]
+note right: Admin permission required
+API -> System : verifySafetyCompliance() : Boolean
+System -> Actor : checkAuthentication(token: String) : Boolean
+
+alt Authentication fails
+    System -> API : return 401 Unauthorized
+    API -> Actor : HTTP 401 Unauthorized
+else Authentication succeeds
+    System -> Actor : checkPermission(actor: Actor, requiredLevel: PermissionLevel) : Boolean
+    
+    alt Insufficient permissions (requires Admin)
+        System -> API : return 403 Forbidden
+        API -> Actor : HTTP 403 Forbidden
+    else Permission granted
+        System -> Database : getAllAllocations() : List<SlotAllocation> [TLS encrypted]
+        
+        alt Database error
+            System -> API : return 500 Internal Server Error
+            API -> Actor : HTTP 500 Internal Server Error
+        else Data retrieved
+            System -> SlotAllocation : verifyGaps(allocations: List<SlotAllocation>) : Boolean
+            note right: Check 3-minute gaps between consecutive slots
+            
+            alt Gap violation detected
+                System -> API : return 409 Conflict - Safety violation
+                API -> Actor : HTTP 409 Conflict
+            else Gaps verified
+                System -> SlotAllocation : verifyNoOverlaps(allocations: List<SlotAllocation>) : Boolean
+                note right: Check no overlapping slots
+                
+                alt Overlap detected
+                    System -> API : return 409 Conflict - Safety violation
+                    API -> Actor : HTTP 409 Conflict
+                else No overlaps
+                    System -> State : transitionTo("Post2") : void
+                    System -> API : return 200 OK
+                    API -> Actor : HTTP 200 OK
+                end
+            end
+        end
+    end
+end
+
+== Resource Access Error Path ==
+
+Actor -> API : POST /api/slots/allocate [TLS encrypted]
+API -> System : allocateSlot(flightId: String) : SlotAllocation
+System -> Actor : checkAuthentication(token: String) : Boolean
+
+alt Authentication succeeds
+    System -> Actor : checkPermission(actor: Actor, requiredLevel: PermissionLevel) : Boolean
+    
+    alt Permission granted
+        System -> Resource : checkAccessibility(actor: Actor) : Boolean
+        
+        alt Resource inaccessible
+            System -> API : return 403 Forbidden - Resource inaccessible
+            API -> Actor : HTTP 403 Forbidden
+        else Resource accessible
+            System -> Database : getFlightSchedule(flightId: String) : Flight [TLS encrypted]
+            
+            alt Flight found
+                System -> Flight : getStatus() : FlightStatus
+                
+                alt Flight is scheduled
+                    System -> TimeSlot : createSlot(startTime: DateTime) : TimeSlot
+                    System -> SlotAllocation : createAllocation(flightId: String, slot: TimeSlot) : SlotAllocation
+                    System -> SlotAllocation : enforceGap(allocation: SlotAllocation) : Boolean
+                    
+                    alt Gap enforced
+                        System -> Database : saveAllocation(allocation: SlotAllocation) : void [TLS encrypted]
+                        
+                        alt Success
+                            System -> State : transitionTo("Post1") : void
+                            System -> API : return 200 OK
+                            API -> Actor : HTTP 200 OK
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+@enduml

@@ -1,0 +1,109 @@
+{
+  "id": "REQ-FUNC-01",
+  "title": "Atomic Withdrawal Operations",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "High",
+  "version": "1.0",
+  "description": "The system shall ensure that withdrawal operations are atomic, meaning if any part of the transaction fails, the entire operation is rolled back to maintain consistency.",
+  "rationale": "To prevent partial transactions that could leave the user's account balance in an inconsistent state and avoid financial data corruption.",
+  "business_value": "Maintains user trust by ensuring reliable financial transactions, reducing fraud, and preventing potential legal issues related to inconsistent account balances.",
+  "source": {
+    "type": "User Story",
+    "id": 82,
+    "description": "As a user, I need withdrawal operations to be atomic so that in case of failure (e.g., network outage, system crash) the transaction is fully rolled back to maintain consistency."
+  },
+  "stakeholders": [
+    "Account Management Team",
+    "Security Team",
+    "Finance Department"
+  ],
+  "acceptance_criteria": [
+    "Given a user has a balance of $100",
+    "When the user initiates a withdrawal of $50",
+    "And a network failure occurs during the transaction",
+    "Then the user's balance should remain $100",
+    "And the withdrawal should not be recorded"
+  ],
+  "preconditions": [
+    "The system is operational and connected to the necessary financial backend systems.",
+    "The user has an active account with sufficient funds."
+  ],
+  "postconditions": [
+    "The user's balance remains unchanged from its initial state before the transaction attempt.",
+    "No withdrawal record should be created due to the failure of the transaction."
+  ],
+  "functional_constraints": [
+    "Withdrawal operations must be executed atomically, ensuring all components of the transaction either complete successfully or fail together.",
+    "Failure in any part of the transaction process requires a full rollback to maintain data consistency."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": [
+      "The system should handle withdrawal transactions within a predefined time frame to avoid user frustration."
+    ],
+    "availability": [
+      "The system must be available 99.9% of the time to ensure reliability in critical operations."
+    ],
+    "scalability": [
+      "The system should be able to scale horizontally to accommodate an increase in transaction volume during peak usage times."
+    ],
+    "usability": [
+      "Error messages should be clear and user-friendly, guiding users on how to resolve issues or retry transactions."
+    ]
+  },
+  "edge_cases": [
+    "Network outage during transaction processing",
+    "System crash mid-transaction",
+    "Insufficient funds in user's account before initiating withdrawal"
+  ],
+  "dependencies": [
+    "Financial backend systems for account balance updates",
+    "Error handling and logging system to record failures",
+    "User interface for initiating transactions"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Financial Database",
+      "description": "The requirement interacts with the financial database to update user balances and store transaction records."
+    },
+    {
+      "type": "API",
+      "name": "Transaction API",
+      "description": "The requirement uses an internal API to initiate and manage withdrawal transactions."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-01",
+      "description": "User initiates withdrawal with sufficient funds; network outage during transaction processing.",
+      "expected_result": "Transaction is rolled back, user balance remains unchanged, no withdrawal record created."
+    },
+    {
+      "id": "TC-02",
+      "description": "User initiates withdrawal with insufficient funds; system crash mid-transaction.",
+      "expected_result": "Transaction is rolled back, user balance remains unchanged, no withdrawal record created."
+    },
+    {
+      "id": "TC-03",
+      "description": "User attempts to withdraw more than their available balance.",
+      "expected_result": "Transaction fails, user balance remains unchanged, no withdrawal record created."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-16T09:56:23.567293",
+  "last_updated": "2026-06-16T10:13:37.842746",
+  "traceability": {
+    "related_requirements": [
+      "REQ-AUTH-01"
+    ],
+    "design_components": [
+      "Transaction",
+      "Account"
+    ],
+    "test_artifacts": []
+  }
+}

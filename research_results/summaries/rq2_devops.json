@@ -1,0 +1,99 @@
+{
+  "metric": "rq2_devops",
+  "description": "Deployment success rate measuring DevOps-level confidence. A run is considered successful if mark_project_complete was called or Docker containers started with no health-check failures. docker-compose.yml generation rate measures DevOps artifact production. Values reported as mean ± std across 3 essay seeds per project.",
+  "projects": [
+    {
+      "project_id": 1,
+      "n_essays": 3,
+      "deployment_success_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "docker_compose_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "project_id": 2,
+      "n_essays": 3,
+      "deployment_success_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "docker_compose_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "project_id": 3,
+      "n_essays": 3,
+      "deployment_success_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "docker_compose_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "project_id": 4,
+      "n_essays": 3,
+      "deployment_success_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "docker_compose_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    }
+  ],
+  "cross_run_aggregate": {
+    "total_runs": 12,
+    "successful_runs": 12,
+    "overall_rate": 1.0
+  }
+}

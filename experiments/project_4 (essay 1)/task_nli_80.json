@@ -1,0 +1,51 @@
+{
+  "task_id": 80,
+  "confidence": 0.9904,
+  "evidence": [
+    {
+      "claim": "The user has an available balance and a daily withdrawal limit.",
+      "fact": "Users cannot take out more money than they have in the account or more than the prescribed one-thousand daily withdrawal limit.",
+      "score": 0.9987,
+      "user_story_span": "available balance and daily withdrawal limit",
+      "fact_span": "take out more money than they have in the account or more than the prescribed one-thousand daily withdrawal limit"
+    },
+    {
+      "claim": "The system validates that the transaction amount does not exceed the available balance.",
+      "fact": "The system ensures the balance is unchanged after a failed withdrawal.",
+      "score": 0.9962,
+      "user_story_span": "validates that the transaction amount does not exceed the available balance",
+      "fact_span": "ensures the balance is unchanged after a failed withdrawal"
+    },
+    {
+      "claim": "The system respects daily withdrawal limits for transactions.",
+      "fact": "The system declines withdrawals exceeding the daily limit of 1000 per calendar day.",
+      "score": 0.9961,
+      "user_story_span": "tracks daily withdrawal totals per user",
+      "fact_span": "declines withdrawals exceeding the daily limit of 1000 per calendar day"
+    },
+    {
+      "claim": "The system respects the available balance for transactions.",
+      "fact": "The system declines withdrawals exceeding the account balance.",
+      "score": 0.9951,
+      "user_story_span": "",
+      "fact_span": "declines withdrawals exceeding the account balance"
+    },
+    {
+      "claim": "If either check fails, the transaction is denied.",
+      "fact": "When a withdrawal request would violate either the account balance constraint or the daily quota, the operation is denied entirely.",
+      "score": 0.9788,
+      "user_story_span": "if either check fails, the transaction is denied",
+      "fact_span": "would violate either the account balance constraint or the daily quota, the operation is denied entirely"
+    },
+    {
+      "claim": "The user initiates a transaction.",
+      "fact": "A user must present their bank card and enter their secret code to begin any cash withdrawal operation.",
+      "score": 0.9774,
+      "user_story_span": "the user initiates a transaction",
+      "fact_span": "user must present their bank card and enter their secret code to begin any cash withdrawal operation"
+    }
+  ],
+  "total_claims": 11,
+  "supported_claims": 6,
+  "threshold": 0.6
+}

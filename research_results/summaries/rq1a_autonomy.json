@@ -1,0 +1,589 @@
+{
+  "metric": "rq1a_autonomy",
+  "description": "Error incident analysis across all 12 runs (4 projects × 3 seeds). SR = fixed / total incidents. Values reported as mean ± std across 3 essay seeds per project.",
+  "projects": [
+    {
+      "project_id": 1,
+      "n_essays": 3,
+      "pipeline_steps": {
+        "mean": 192.67,
+        "std": 56.77,
+        "values": [
+          133.0,
+          246.0,
+          199.0
+        ]
+      },
+      "total_incidents": {
+        "mean": 11.33,
+        "std": 8.02,
+        "values": [
+          3.0,
+          19.0,
+          12.0
+        ]
+      },
+      "fixed_incidents": {
+        "mean": 7.67,
+        "std": 6.43,
+        "values": [
+          3.0,
+          15.0,
+          5.0
+        ]
+      },
+      "escalated_incidents": {
+        "mean": 3.67,
+        "std": 3.51,
+        "values": [
+          0.0,
+          4.0,
+          7.0
+        ]
+      },
+      "self_fix_rate_pct": {
+        "mean": 73.53,
+        "std": 29.52,
+        "values": [
+          100.0,
+          78.9,
+          41.7
+        ]
+      },
+      "wall_clock_s": {
+        "mean": 7419.2,
+        "std": 1697.35,
+        "values": [
+          9315.37,
+          6041.7,
+          6900.52
+        ]
+      },
+      "by_phase": {
+        "FORMAL_SPEC": {
+          "label": "Formal Spec",
+          "fixed": {
+            "mean": 0.33,
+            "std": 0.58,
+            "values": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "escalated": {
+            "mean": 0.0,
+            "std": 0.0,
+            "values": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "DESIGN_UML": {
+          "label": "UML Design",
+          "fixed": {
+            "mean": 0.67,
+            "std": 1.15,
+            "values": [
+              2.0,
+              0.0,
+              0.0
+            ]
+          },
+          "escalated": {
+            "mean": 0.0,
+            "std": 0.0,
+            "values": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "ARCHITECTURE": {
+          "label": "Architecture",
+          "fixed": {
+            "mean": 0.33,
+            "std": 0.58,
+            "values": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "escalated": {
+            "mean": 1.67,
+            "std": 1.53,
+            "values": [
+              0.0,
+              2.0,
+              3.0
+            ]
+          }
+        },
+        "TESTING": {
+          "label": "Testing",
+          "fixed": {
+            "mean": 6.33,
+            "std": 7.77,
+            "values": [
+              0.0,
+              15.0,
+              4.0
+            ]
+          },
+          "escalated": {
+            "mean": 2.0,
+            "std": 2.0,
+            "values": [
+              0.0,
+              2.0,
+              4.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "project_id": 2,
+      "n_essays": 3,
+      "pipeline_steps": {
+        "mean": 274.67,
+        "std": 104.62,
+        "values": [
+          387.0,
+          257.0,
+          180.0
+        ]
+      },
+      "total_incidents": {
+        "mean": 21.33,
+        "std": 13.05,
+        "values": [
+          36.0,
+          11.0,
+          17.0
+        ]
+      },
+      "fixed_incidents": {
+        "mean": 16.67,
+        "std": 11.24,
+        "values": [
+          29.0,
+          7.0,
+          14.0
+        ]
+      },
+      "escalated_incidents": {
+        "mean": 4.67,
+        "std": 2.08,
+        "values": [
+          7.0,
+          4.0,
+          3.0
+        ]
+      },
+      "self_fix_rate_pct": {
+        "mean": 75.53,
+        "std": 10.37,
+        "values": [
+          80.6,
+          63.6,
+          82.4
+        ]
+      },
+      "wall_clock_s": {
+        "mean": 20585.74,
+        "std": 16937.27,
+        "values": [
+          14247.01,
+          7732.11,
+          39778.11
+        ]
+      },
+      "by_phase": {
+        "DESIGN_UML": {
+          "label": "UML Design",
+          "fixed": {
+            "mean": 2.67,
+            "std": 0.58,
+            "values": [
+              2.0,
+              3.0,
+              3.0
+            ]
+          },
+          "escalated": {
+            "mean": 0.33,
+            "std": 0.58,
+            "values": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        "ARCHITECTURE": {
+          "label": "Architecture",
+          "fixed": {
+            "mean": 0.0,
+            "std": 0.0,
+            "values": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "escalated": {
+            "mean": 2.33,
+            "std": 2.08,
+            "values": [
+              3.0,
+              4.0,
+              0.0
+            ]
+          }
+        },
+        "TESTING": {
+          "label": "Testing",
+          "fixed": {
+            "mean": 14.0,
+            "std": 11.79,
+            "values": [
+              27.0,
+              4.0,
+              11.0
+            ]
+          },
+          "escalated": {
+            "mean": 2.0,
+            "std": 2.0,
+            "values": [
+              4.0,
+              0.0,
+              2.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "project_id": 3,
+      "n_essays": 3,
+      "pipeline_steps": {
+        "mean": 229.67,
+        "std": 79.46,
+        "values": [
+          318.0,
+          207.0,
+          164.0
+        ]
+      },
+      "total_incidents": {
+        "mean": 33.33,
+        "std": 11.02,
+        "values": [
+          26.0,
+          46.0,
+          28.0
+        ]
+      },
+      "fixed_incidents": {
+        "mean": 23.0,
+        "std": 16.09,
+        "values": [
+          6.0,
+          38.0,
+          25.0
+        ]
+      },
+      "escalated_incidents": {
+        "mean": 10.33,
+        "std": 8.74,
+        "values": [
+          20.0,
+          8.0,
+          3.0
+        ]
+      },
+      "self_fix_rate_pct": {
+        "mean": 65.0,
+        "std": 36.44,
+        "values": [
+          23.1,
+          82.6,
+          89.3
+        ]
+      },
+      "wall_clock_s": {
+        "mean": 8294.4,
+        "std": 936.08,
+        "values": [
+          9288.11,
+          8165.84,
+          7429.24
+        ]
+      },
+      "by_phase": {
+        "DESIGN_UML": {
+          "label": "UML Design",
+          "fixed": {
+            "mean": 2.67,
+            "std": 0.58,
+            "values": [
+              2.0,
+              3.0,
+              3.0
+            ]
+          },
+          "escalated": {
+            "mean": 0.0,
+            "std": 0.0,
+            "values": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "ARCHITECTURE": {
+          "label": "Architecture",
+          "fixed": {
+            "mean": 1.0,
+            "std": 0.0,
+            "values": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "escalated": {
+            "mean": 1.0,
+            "std": 1.73,
+            "values": [
+              0.0,
+              0.0,
+              3.0
+            ]
+          }
+        },
+        "IMPLEMENTATION": {
+          "label": "Implementation",
+          "fixed": {
+            "mean": 0.33,
+            "std": 0.58,
+            "values": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "escalated": {
+            "mean": 0.33,
+            "std": 0.58,
+            "values": [
+              0.0,
+              1.0,
+              0.0
+            ]
+          }
+        },
+        "TESTING": {
+          "label": "Testing",
+          "fixed": {
+            "mean": 19.0,
+            "std": 16.09,
+            "values": [
+              2.0,
+              34.0,
+              21.0
+            ]
+          },
+          "escalated": {
+            "mean": 9.0,
+            "std": 10.15,
+            "values": [
+              20.0,
+              7.0,
+              0.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "project_id": 4,
+      "n_essays": 3,
+      "pipeline_steps": {
+        "mean": 341.33,
+        "std": 132.1,
+        "values": [
+          460.0,
+          199.0,
+          365.0
+        ]
+      },
+      "total_incidents": {
+        "mean": 18.0,
+        "std": 13.0,
+        "values": [
+          33.0,
+          10.0,
+          11.0
+        ]
+      },
+      "fixed_incidents": {
+        "mean": 13.33,
+        "std": 8.39,
+        "values": [
+          23.0,
+          9.0,
+          8.0
+        ]
+      },
+      "escalated_incidents": {
+        "mean": 4.67,
+        "std": 4.73,
+        "values": [
+          10.0,
+          1.0,
+          3.0
+        ]
+      },
+      "self_fix_rate_pct": {
+        "mean": 77.47,
+        "std": 10.96,
+        "values": [
+          69.7,
+          90.0,
+          72.7
+        ]
+      },
+      "wall_clock_s": {
+        "mean": 12956.14,
+        "std": 5218.69,
+        "values": [
+          18933.96,
+          9308.45,
+          10626.02
+        ]
+      },
+      "by_phase": {
+        "USER_STORIES": {
+          "label": "User Stories",
+          "fixed": {
+            "mean": 0.0,
+            "std": 0.0,
+            "values": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "escalated": {
+            "mean": 0.33,
+            "std": 0.58,
+            "values": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "DESIGN_UML": {
+          "label": "UML Design",
+          "fixed": {
+            "mean": 3.33,
+            "std": 2.89,
+            "values": [
+              5.0,
+              5.0,
+              0.0
+            ]
+          },
+          "escalated": {
+            "mean": 0.0,
+            "std": 0.0,
+            "values": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "ARCHITECTURE": {
+          "label": "Architecture",
+          "fixed": {
+            "mean": 0.0,
+            "std": 0.0,
+            "values": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "escalated": {
+            "mean": 1.33,
+            "std": 0.58,
+            "values": [
+              1.0,
+              1.0,
+              2.0
+            ]
+          }
+        },
+        "IMPLEMENTATION": {
+          "label": "Implementation",
+          "fixed": {
+            "mean": 0.0,
+            "std": 0.0,
+            "values": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "escalated": {
+            "mean": 0.33,
+            "std": 0.58,
+            "values": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        "TESTING": {
+          "label": "Testing",
+          "fixed": {
+            "mean": 10.0,
+            "std": 7.21,
+            "values": [
+              18.0,
+              4.0,
+              8.0
+            ]
+          },
+          "escalated": {
+            "mean": 2.67,
+            "std": 4.62,
+            "values": [
+              8.0,
+              0.0,
+              0.0
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "cross_run_aggregate": {
+    "total_runs": 12,
+    "total_incidents": 252,
+    "total_fixed": 182,
+    "total_escalated": 70,
+    "overall_sr_pct": 72.2
+  }
+}

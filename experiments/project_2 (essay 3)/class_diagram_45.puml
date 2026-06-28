@@ -1,0 +1,149 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam interfaceBorderColor #0066CC
+skinparam enumBorderColor #009933
+skinparam dtoBorderColor #993300
+skinparam exceptionBorderColor #CC0000
+skinparam classAttributeIconSize 0
+
+package "Domain Model" {
+  class BloodUnit {
+    - bloodType : BloodType
+    - expirationDate : Date
+    - daysUntilExpiry : int
+    - quantity : int
+  }
+  class TransfusionRequest {
+    - patientID : String
+    - bloodType : BloodType
+    - urgency : Urgency
+    - requestDate : Date
+  }
+  enum BloodType {
+    A_POS
+    A_NEG
+    B_POS
+    B_NEG
+    AB_POS
+    AB_NEG
+    O_POS
+    O_NEG
+  }
+  enum Urgency {
+    LOW
+    MEDIUM
+    HIGH
+    CRITICAL
+  }
+}
+
+package "DTOs" {
+  class StockLevels <<dto>> {
+    + bloodType : BloodType
+    + quantity : int
+  }
+  note right of StockLevels : Invariant: accessible only to authorized actors
+
+  class ExpirationData <<dto>> {
+    + bloodType : BloodType
+    + expirationDate : Date
+    + daysUntilExpiry : int
+  }
+  note right of ExpirationData : Invariant: threshold configurable (e.g., 5 days)
+
+  class TransfusionRequestData <<dto>> {
+    + patientID : String
+    + bloodType : BloodType
+    + urgency : Urgency
+    + requestDate : Date
+  }
+}
+
+package "Enums" {
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+  enum Role {
+    BLOOD_BANK_MANAGER
+    INVENTORY_TEAM
+  }
+  enum OperationState {
+    PRE1
+    POST_DONE
+  }
+}
+
+package "Exceptions" {
+  class UnauthorizedAccessException <<exception>> {
+    - message : String
+    - requiredPermission : Permission
+  }
+  class AuthenticationRequiredException <<exception>> {
+    - message : String
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface InventoryDatabase {
+  }
+  note top of InventoryDatabase : Provides current stock levels,\nexpiration dates, transfusion requests
+
+  interface BloodUnitDataApi {
+  }
+  note top of BloodUnitDataApi : Fetches real-time data\nabout blood units in inventory
+
+  interface DashboardView {
+  }
+  note top of DashboardView : Dashboard display via web browser\nor internal system (Authenticated)
+  note right of DashboardView : Constraint: At least one channel\nmust require authentication
+}
+
+package "Application" {
+  class AuthorizationService {
+  }
+  note top of AuthorizationService : Constraint: Initiator must hold required permission
+
+  class DashboardService {
+  }
+  note top of DashboardService : Constraint: No unauthorized resource access
+}
+
+package "Controllers" {
+  class DashboardController {
+  }
+  note top of DashboardController : Handles UI events / HTTP requests\nfor dashboard operations
+}
+
+' Relationships
+DashboardController --> DashboardService
+DashboardController --> DashboardView
+
+DashboardService --> InventoryDatabase
+DashboardService --> BloodUnitDataApi
+DashboardService --> AuthorizationService
+
+DashboardService ..> UnauthorizedAccessException : throws
+DashboardService ..> AuthenticationRequiredException : throws
+
+AuthorizationService --> Permission
+AuthorizationService --> Role
+AuthorizationService --> StockLevels : controls access to
+AuthorizationService --> ExpirationData : controls access to
+AuthorizationService --> TransfusionRequestData : controls access to
+
+StockLevels --> BloodType
+ExpirationData --> BloodType
+TransfusionRequestData --> BloodType
+TransfusionRequestData --> Urgency
+
+BloodUnit --> BloodType
+TransfusionRequest --> BloodType
+TransfusionRequest --> Urgency
+
+@enduml

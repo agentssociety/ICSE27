@@ -1,0 +1,244 @@
+@startuml
+title Project 11 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+note as RelationshipCorrections
+  <b>Relationship cardinalities corrected by LLM review</b>
+  AuditEntry "1" -- "1" REQ_FRAUD_01 → AuditEntry "*" -- "1" REQ_FRAUD_01
+    Reason: Multiple audit entries can belong to one fraud requirement, not a one-to-one association. Many suspicious transactions can be linked to the same fraud detection rule.
+  REQ_FRAUD_01 "1" -- "*" Interface → REQ_FRAUD_01 "1" -- "1" Interface
+    Reason: A fraud detection requirement typically involves a single interface (the fraud detection system), not many. The multiplicity should be 1 for the interface.
+  User "1" *-- "1" Card → User "1" o-- "1" Card
+    Reason: A user owns a card via composition, but the cardinality should be one-to-one (each user has one card, each card belongs to one user). The arrow should be 'o--' (aggregation) since the card can exist without the user, but *-- implies many users share one card, which is incorrect.
+  User "1" *-- "1" PIN → User "1" o-- "1" PIN
+    Reason: Similarly, a user has one PIN, and a PIN belongs to one user. Use aggregation (o--) rather than composition with reversed multiplicity.
+end note
+
+note as ArchitectureCorrections
+  <b>Architecture mistakes corrected automatically</b>
+  [wrong_inheritance] User inherits from Resource via association arrow --|>, but Resource represents a generic concept and User should be a specific Actor, not a Resource.
+    Fix applied: change_class_type
+  [wrong_class_type] FinancialDatabase is an interface but is used as a concrete class in composition with Account.
+    Fix applied: change_class_type
+  [duplicate_concept] AuditEntry, AuditLog, AuditLogEntry likely represent the same concept; tasks #87 and #84 refer to audit logs.
+    Fix applied: merge_classes
+  [missing_relationship] Account should have a composition or aggregation relationship with Card and PIN to reflect card-and-PIN authentication.
+    Fix applied: add_relation
+end note
+
+package "Task #79\nCard + PIN\nAuthentication with\nLockout" {
+  class User <<main>> <<level0>>
+  class Account <<main>> <<level1>>
+  class Card <<main>> <<level2>>
+  class PIN <<main>> <<level0>>
+  class AuthenticationFlow
+}
+
+package "Task #82\nAtomic Withdrawal with\nRollback" {
+  class Transaction <<main>> <<level1>>
+  enum FailureReason
+  interface FinancialDatabase
+  enum Permission
+  enum Role
+  enum State
+  class WithdrawalRecord
+}
+
+package "Task #87\nAudit Log of Auth\nAttempts and State\nChanges" {
+  class AuditLogEntry <<main>> <<level2>>
+  class Actor
+  class AuditLog
+  class Compliance_Team
+  class Interface
+  interface LoggingDatabasePort
+  class Logging_Database
+  class REQ_AUTH_01
+  class Resource
+  class Security_Auditors
+  class System_Administrators
+}
+
+package "Task #80\nBalance and Daily Limit\nEnforcement" {
+  note as TaskSummary80
+    No new domain model classes
+    Uses: Account
+  end note
+}
+
+package "Task #85\nAdmin Lock/Unlock\nAccounts" {
+  note as TaskSummary85
+    No new domain model classes
+    Uses: Account, User
+  end note
+}
+
+package "Task #84\nAdmin Review of Flagged\nTransactions" {
+  note as TaskSummary84
+    No new domain model classes
+    Uses: Transaction, User
+  end note
+}
+
+package "Task #86\nAdmin View Transaction\nHistory" {
+  note as TaskSummary86
+    No new domain model classes
+    Uses: Transaction, User
+  end note
+}
+
+package "Task #83\nSuspicious Pattern\nDetection and Flagging" {
+  class AccountFlag <<main>> <<level0>>
+  class REQ_FRAUD_01
+}
+
+package "Shared / Cross-Task Classes\n[not owned by a single task]" <<Rectangle>> {
+  class Admin <<shared>>
+  note right of Admin : "appears only in relations; not owned by any task"
+  class AuditEntry <<shared>>
+  note right of AuditEntry : "appears only in relations; not owned by any task"
+  enum LockStatus <<shared>>
+  note right of LockStatus : "appears only in relations; not owned by any task"
+  class Operation <<shared>>
+  note right of Operation : "appears only in relations; not owned by any task"
+  class REQ_SEC_01 <<shared>>
+  note right of REQ_SEC_01 : "appears only in relations; not owned by any task"
+  class UserAccount <<shared>>
+  note right of UserAccount : "appears only in relations; not owned by any task"
+  class UserBalanceAndLimitDB <<shared>>
+  note right of UserBalanceAndLimitDB : "appears only in relations; not owned by any task"
+  interface User_Balance_and_Limit_Database <<shared>>
+  note right of User_Balance_and_Limit_Database : "appears only in relations; not owned by any task"
+}
+
+Account "1" --> "0..*" Transaction
+Account "1" o-- "1" Card
+Account *-- "1" FinancialDatabase
+Actor "0..*" -- "0..*" Resource
+Actor "1" -- "0..*" Resource
+Actor --> "mayPerform" Permission
+Admin --> Permission
+AuditEntry "*" -- "1" REQ_FRAUD_01
+AuditEntry "1" -- "1" Actor
+AuditLog --> REQ_SEC_01
+AuditLogEntry "1" --> "1" REQ_AUTH_01
+AuditLogEntry "1" --> "1" Security_Auditors
+AuthenticationFlow ..> Card
+AuthenticationFlow ..> PIN
+Compliance_Team --|> Actor
+LoggingDatabasePort <|.. Logging_Database
+Logging_Database --|> Interface
+Operation "1" --> "1" State
+Operation "1" --> "1" User_Balance_and_Limit_Database
+REQ_AUTH_01 "1" --> "*" Interface
+REQ_AUTH_01 "1" --> "*" Resource
+REQ_AUTH_01 "1" --> "1" Actor
+REQ_AUTH_01 "1" --> "1" Permission
+REQ_AUTH_01 "1" --> "1" State
+REQ_FRAUD_01 "1" -- "*" Resource
+REQ_FRAUD_01 "1" -- "1" Actor
+REQ_FRAUD_01 "1" -- "1" Interface
+REQ_FRAUD_01 "1" -- "1" Permission
+REQ_FRAUD_01 "1" -- "1" State
+REQ_SEC_01 --> Actor
+REQ_SEC_01 --> Admin
+REQ_SEC_01 --> Interface
+REQ_SEC_01 --> Permission
+REQ_SEC_01 --> Resource
+REQ_SEC_01 --> State
+REQ_SEC_01 --> UserAccount
+Resource "*" -- "*" Actor
+Resource "*" --> "*" Actor
+Resource "*" --> "1" Actor
+Resource "1" -- "0..*" Transaction
+Resource "1" -- "1" Actor
+Security_Auditors --|> Actor
+System_Administrators --|> Actor
+Transaction --> FailureReason
+Transaction --> Permission
+Transaction --> State
+Transaction --> "1..*" Account
+Transaction ..> FinancialDatabase
+User "1" --> "0..*" Operation
+User "1" --> "1" Account
+User "1" o-- "1" Card
+User "1" o-- "1" PIN
+User --> Permission
+User --> Role
+User --> "0..*" WithdrawalRecord
+User --> "1" Transaction
+User --|> Resource
+UserAccount --> Actor
+UserAccount --> Admin
+UserAccount --> LockStatus
+UserAccount --> User
+UserBalanceAndLimitDB ..|> User_Balance_and_Limit_Database
+note right of UserBalanceAndLimitDB #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [rename_for_clarity] Rename to\nBalanceAndLimitPort for consistency with\nhexagonal architecture and to avoid mixing\ndatabase implementation with port.
+end note
+
+note right of User_Balance_and_Limit_Database #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [rename_for_clarity] Rename to\nBalanceAndLimitPort for consistency with\nhexagonal architecture and to avoid mixing\ndatabase implementation with port.
+end note
+
+note right of Operation #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [split_class] Operation appears to be a catch-\nall for user actions; consider splitting into\nWithdrawalOperation, AuthenticationOperation,\netc., for clarity.
+end note
+
+note right of Card #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [introduce_value_object] Consider making Card\nand PIN value objects within the Account\naggregate to simplify identity and lifecycle\nmanagement.
+end note
+
+note right of PIN #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [introduce_value_object] Consider making Card\nand PIN value objects within the Account\naggregate to simplify identity and lifecycle\nmanagement.
+end note
+
+note right of Transaction #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [add_aggregate_root] Introduce an Account\naggregate root with Transaction as an entity\ninside it to enforce invariants like balance\nchecks and daily limits.
+end note
+
+@enduml

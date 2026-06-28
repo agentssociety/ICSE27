@@ -1,0 +1,112 @@
+@startuml
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam packageBackgroundColor #FEFEFE
+skinparam classBackgroundColor #F0F8FF
+skinparam interfaceBackgroundColor #E6E6FA
+skinparam enumBackgroundColor #FFFACD
+skinparam noteBackgroundColor #FFFFE0
+
+package "Domain Model" {
+
+  ' ---------------------------------------------------------------
+  ' ENUMS
+  ' ---------------------------------------------------------------
+  enum Permission {
+    Admin
+    Write
+    Read
+  }
+
+  enum Bool {
+    True
+    False
+  }
+
+  enum IfaceKind {
+    Database
+    API
+  }
+
+  ' ---------------------------------------------------------------
+  ' CLASSES
+  ' ---------------------------------------------------------------
+  class Actor {
+    + mayPerform : Set<Permission>
+  }
+
+  class Resource {
+    + owner : Actor
+    + accessible : Set<Actor>
+  + getAccessibleAccounts(FDT)
+  + checkAccessible(User, accountId)
+  + getResources()
+  }
+  note top of Resource : invar: owner in accessible
+
+  class Interface {
+    + kind : IfaceKind
+    + encrypted : Bool
+    + authenticated : Bool
+  + getChannel(Withdrawal_API)
+  + isAuthenticated(Withdrawal_API)
+  + getChannels()
+  }
+
+  class State {
+    '' no attributes shown, but identity is key
+  + checkPreState(Pre1)
+  + lockState(accountId)
+  + unlockState(accountId)
+  }
+
+  class REQ_FRAUD_01 {
+    + initiator : Actor
+    + target : Resource[*]  ' at least one
+    + channel : Interface[*] ' at least one
+    + grant : Permission
+    + pre : State
+    + post : State
+  + create(initiator=FDT, grant=Write)
+  + validatePreCondition()
+  + setPostState(Post1)
+  + transitionState(pre: Pre1 -> post: Post1)
+  + create(initiator=User, grant=Read)
+  + validateTransition(pre: Pre1, post: Post1)
+  }
+  note top of REQ_FRAUD_01
+    invar: pre != post
+    invar: some channel → #channel >= 1
+    invar: some target → #target >= 1
+    invar: grant in initiator.mayPerform
+    invar: initiator in target.accessible
+    invar: ∃c in channel : c.authenticated = True
+  end note
+
+  class AuditEntry {
+    + operation : REQ_FRAUD_01
+    + recordedBy : Actor
+  + new(operation, FDT)
+  + new(Op, FDT)
+  + validateRecordedBy(FDT)
+  }
+  note top of AuditEntry : invar: recordedBy in Fraud_Detection_Team
+
+  ' ---------------------------------------------------------------
+  ' ASSOCIATIONS (with multiplicities)
+  ' ---------------------------------------------------------------
+  Resource "1" -- "1" Actor : owner
+  Resource "*" -- "*" Actor : accessible
+
+  REQ_FRAUD_01 "1" -- "1" Actor : initiator
+  REQ_FRAUD_01 "1" -- "*" Resource : target
+  REQ_FRAUD_01 "1" -- "*" Interface : channel
+  REQ_FRAUD_01 "1" -- "1" Permission : grant
+  REQ_FRAUD_01 "1" -- "1" State : pre
+  REQ_FRAUD_01 "1" -- "1" State : post
+
+  AuditEntry "1" -- "1" REQ_FRAUD_01 : operation
+  AuditEntry "1" -- "1" Actor : recordedBy
+}
+
+@enduml

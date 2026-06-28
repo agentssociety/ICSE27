@@ -1,0 +1,170 @@
+@startuml
+title Project 6 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+note as ArchitectureCorrections
+  <b>Architecture mistakes corrected automatically</b>
+  [wrong_class_type] BloodUnitDatabase is an interface but is also listed as implementing Interface and Resource; it should be a concrete repository, not an interface implementing other interfaces.
+    Fix applied: change_class_type
+  [wrong_class_type] InventoryManagementUI is an interface but is listed as implementing Interface; it should be a concrete UI class, not an interface.
+    Fix applied: change_class_type
+  [misplaced_class] BloodTypeCompatibilityAlgorithm is a dependency of Reservation but should be owned by the matching algorithm in Task #34; it belongs in BloodUnit matching context, not Reservation.
+    Fix applied: move_class
+  [duplicate_concept] Interface class appears twice as a generic interface, but BloodUnitDatabase and InventoryManagementUI both implement it; this is a duplicate of the concept 'Interface' that should be merged or removed.
+    Fix applied: merge_classes
+  [missing_relationship] TransfusionRequestDatabase is missing a relationship to TransfusionRequest; it should store requests, but no association exists.
+    Fix applied: add_relation
+end note
+
+package "Task #32\nBlood Unit Tracking\nSystem" {
+  class BloodUnit <<main>> <<level0>>
+  class Actor
+  interface BloodUnitDatabase
+  interface Interface
+  interface InventoryManagementUI
+  enum Permission
+  class Resource
+}
+
+package "Task #33\nTransfusion Request\nIntake" {
+  class TransfusionRequest <<main>> <<level1>>
+  enum RequestState
+  class StorageResult
+  interface TransfusionRequestDatabase
+}
+
+package "Task #36\nAutomatic Unit\nExpiration" {
+  note as TaskSummary36
+    No new domain model classes
+    Uses: BloodUnit
+  end note
+}
+
+package "Task #37\nStock Shortage Alert\nSystem" {
+  note as TaskSummary37
+    No new domain model classes
+    Uses: BloodUnit
+  end note
+}
+
+package "Task #35\nUnit Reservation and\nAuto-Release" {
+  class Reservation <<main>> <<level2>>
+  class BloodTypeCompatibilityAlgorithm
+}
+
+package "Task #38\nBlood Bank Dashboard" {
+  note as TaskSummary38
+    No new domain model classes
+    Uses: BloodUnit, TransfusionRequest
+  end note
+}
+
+package "Task #34\nBlood Unit Matching\nAlgorithm" {
+  note as TaskSummary34
+    No new domain model classes
+    Uses: BloodUnit, TransfusionRequest
+  end note
+}
+
+package "Shared / Cross-Task Classes\n[not owned by a single task]" <<Rectangle>> {
+  enum ABORhType <<shared>>
+  note right of ABORhType : "appears only in relations; not owned by any task"
+  enum CrossMatchStatus <<shared>>
+  note right of CrossMatchStatus : "appears only in relations; not owned by any task"
+  class Inventory <<shared>>
+  note right of Inventory : "appears only in relations; not owned by any task"
+  class InventoryState <<shared>>
+  note right of InventoryState : "appears only in relations; not owned by any task"
+  class State <<shared>>
+  note right of State : "appears only in relations; not owned by any task"
+}
+
+Actor "1" -- "0..*" Permission
+BloodUnit "0..*" -- "1" BloodUnitDatabase
+BloodUnit --> ABORhType
+BloodUnit --> CrossMatchStatus
+BloodUnitDatabase ..|> Interface
+BloodUnitDatabase ..|> Resource
+Inventory *-- BloodUnit
+InventoryManagementUI ..|> Interface
+InventoryState "1" --> "1" State
+Reservation "*" -- "1" BloodUnit
+Reservation ..> BloodTypeCompatibilityAlgorithm
+Resource "1" --> "*" Actor
+Resource "1" --> "1" Actor
+TransfusionRequestDatabase ..> StorageResult
+note right of BloodUnit #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [introduce_value_object] Extract collection date\nand expiry date into a value object\n'ExpirationPeriod' to encapsulate 42-day\ncalculation logic and avoid primitive obsession.
+end note
+
+note right of BloodUnit #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [add_aggregate_root] Consider making 'Inventory'\nan aggregate root that manages BloodUnit\nlifecycle and reservations, ensuring consistency\nacross expiration, status, and reservation\nlogic.
+end note
+
+note right of Reservation #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [add_aggregate_root] Consider making 'Inventory'\nan aggregate root that manages BloodUnit\nlifecycle and reservations, ensuring consistency\nacross expiration, status, and reservation\nlogic.
+end note
+
+note right of Inventory #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [add_aggregate_root] Consider making 'Inventory'\nan aggregate root that manages BloodUnit\nlifecycle and reservations, ensuring consistency\nacross expiration, status, and reservation\nlogic.
+end note
+
+note right of InventoryState #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [rename_for_clarity] Rename 'InventoryState' to\n'InventoryStatus' to align with ubiquitous\nlanguage (status vs state) and avoid confusion\nwith State class.
+end note
+
+note right of Actor #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [split_class] Split 'Actor' into\n'BloodBankManager' and 'BloodBankStaff' to\nreflect distinct roles and permissions in the\ndomain, avoiding a generic actor class.
+end note
+
+note right of BloodTypeCompatibilityAlgorithm #FDFDE0
+  <b>SUGGESTION #5 (not applied)</b>
+  [general] Consider making\nBloodTypeCompatibilityAlgorithm a domain service\nrather than a dependency of Reservation, as it\nis used by multiple tasks (matching and\nreservation).
+end note
+
+@enduml

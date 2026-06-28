@@ -1,0 +1,259 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+    participant "Triage_Nurse_UI" as UI
+end box
+
+box "Application Layer" #LightGreen
+    participant "RegistrationService" as Service
+    participant "SymptomValidator" as Validator
+end box
+
+box "Domain Layer" #LightYellow
+    participant "PatientRecord" as PR
+    participant "SymptomData" as SD
+    participant "QueueEntry" as QE
+    participant "Actor" as Actor
+    participant "Permission" as Perm
+    participant "State" as State
+    participant "DataAtRestEncryption" as DARE
+    participant "Resource" as Res
+end box
+
+box "Infrastructure Layer" #LightCoral
+    participant "Patient_Database" as DB
+    participant "Evaluation_Queue_System" as EQS
+    participant "Symptom_Validation_API" as SVA
+end box
+
+== FLOW-REGISTER-PATIENT: Happy Path ==
+
+UI -> Service : registerPatient(patientData: PatientDTO, symptoms: SymptomDTO) : RegistrationResult
+note right: Authenticated channel [TLS]
+
+Service -> Actor : checkPermission(actorId: String, requiredPermission: Permission) : Boolean
+Actor --> Service : return true
+
+Service -> State : verifyPrecondition(Pre1: "nurse logged in") : Boolean
+State --> Service : return true
+
+Service -> State : verifyPrecondition(Pre2: "available queue slots") : Boolean
+State --> Service : return true
+
+Service -> Validator : validateSymptoms(symptoms: SymptomDTO) : ValidationResult
+note right: [TLS] encrypted channel
+
+alt Valid symptoms
+    Validator --> Service : return Valid
+    Validator -> SVA : validateSymptomInput(symptomData: SymptomData) : ValidationResponse
+    note right: [TLS] encrypted at rest
+    SVA --> Validator : return valid
+else Invalid symptoms
+    Validator --> Service : return Invalid(errorMessage)
+    Service --> UI : return Error("Invalid symptoms provided")
+    note right: No state change (post = pre)
+end
+
+Service -> PR : createPatientRecord(patientData: PatientDTO) : PatientRecord
+note right: owner = Triage_Nurse, accessible = [Triage_Nurse]
+PR -> DARE : encryptResource(resource: Resource) : void
+note right: [encrypted at rest]
+DARE --> PR : done
+
+Service -> SD : createSymptomData(symptoms: SymptomDTO, patientId: String) : SymptomData
+note right: owner = Triage_Nurse, accessible = [Triage_Nurse]
+SD -> DARE : encryptResource(resource: Resource) : void
+note right: [encrypted at rest]
+DARE --> SD : done
+
+Service -> DB : storePatientRecord(record: PatientRecord) : void
+note right: [TLS] [encrypted at rest]
+DB --> Service : success
+
+Service -> DB : storeSymptomData(data: SymptomData) : void
+note right: [TLS] [encrypted at rest]
+DB --> Service : success
+
+Service -> State : transitionTo(Post1: "symptom information stored") : void
+State --> Service : done
+
+Service -> QE : createQueueEntry(patientId: String, status: String) : QueueEntry
+note right: owner = Triage_Nurse, accessible = [Triage_Nurse, Medical_Staff]
+
+Service -> EQS : addToEvaluationQueue(entry: QueueEntry) : void
+note right: [TLS] [encrypted at rest]
+EQS --> Service : success
+
+Service -> State : transitionTo(Post2: "patient listed as pending evaluation") : void
+State --> Service : done
+
+Service -> UI : return Success(patientId, queuePosition)
+
+== FLOW-REGISTER-PATIENT: No Symptoms Provided ==
+
+UI -> Service : registerPatient(patientData: PatientDTO, symptoms: null) : RegistrationResult
+
+Service -> Actor : checkPermission(actorId: String, requiredPermission: Permission) : Boolean
+Actor --> Service : return true
+
+Service -> State : verifyPrecondition(Pre1: "nurse logged in") : Boolean
+State --> Service : return true
+
+Service -> State : verifyPrecondition(Pre2: "available queue slots") : Boolean
+State --> Service : return true
+
+Service -> Validator : validateSymptoms(symptoms: null) : ValidationResult
+Validator --> Service : return Invalid("No symptoms provided")
+
+Service --> UI : return Error("No symptoms provided - operation cancelled")
+note right: State preserved (post = pre)
+
+== FLOW-REGISTER-PATIENT: Evaluation Queue Full ==
+
+UI -> Service : registerPatient(patientData: PatientDTO, symptoms: SymptomDTO) : RegistrationResult
+
+Service -> Actor : checkPermission(actorId: String, requiredPermission: Permission) : Boolean
+Actor --> Service : return true
+
+Service -> State : verifyPrecondition(Pre1: "nurse logged in") : Boolean
+State --> Service : return true
+
+Service -> State : verifyPrecondition(Pre2: "available queue slots") : Boolean
+State --> Service : return false
+
+alt Queue full - retry logic
+    Service -> EQS : checkQueueAvailability() : QueueStatus
+    EQS --> Service : return full
+    Service --> UI : return Error("Evaluation queue is full - please try again later")
+else Queue full - block operation
+    Service --> UI : return Error("Evaluation queue is full - operation blocked")
+end
+note right: No state change (post = pre)
+
+== FLOW-REGISTER-PATIENT: Insufficient Permissions ==
+
+UI -> Service : registerPatient(patientData: PatientDTO, symptoms: SymptomDTO) : RegistrationResult
+
+Service -> Actor : checkPermission(actorId: String, requiredPermission: Permission) : Boolean
+Actor --> Service : return false
+
+Service --> UI : return Error("Unauthorized - insufficient permissions")
+note right: No state change (post = pre)
+
+== FLOW-REGISTER-PATIENT: Concurrent Registrations ==
+
+UI -> Service : registerPatient(patientData: PatientDTO, symptoms: SymptomDTO) : RegistrationResult
+
+Service -> Actor : checkPermission(actorId: String, requiredPermission: Permission) : Boolean
+Actor --> Service : return true
+
+Service -> State : verifyPrecondition(Pre1: "nurse logged in") : Boolean
+State --> Service : return true
+
+Service -> State : verifyPrecondition(Pre2: "available queue slots") : Boolean
+State --> Service : return true
+
+Service -> Validator : validateSymptoms(symptoms: SymptomDTO) : ValidationResult
+Validator --> Service : return Valid
+
+Service -> DB : lockPatientRecord(patientId: String) : LockResult
+note right: [TLS] optimistic locking
+
+alt Lock acquired
+    DB --> Service : return locked
+    Service -> PR : createPatientRecord(patientData: PatientDTO) : PatientRecord
+    PR -> DARE : encryptResource(resource: Resource) : void
+    DARE --> PR : done
+    
+    Service -> SD : createSymptomData(symptoms: SymptomDTO, patientId: String) : SymptomData
+    SD -> DARE : encryptResource(resource: Resource) : void
+    DARE --> SD : done
+    
+    Service -> DB : storePatientRecord(record: PatientRecord) : void
+    DB --> Service : success
+    
+    Service -> DB : storeSymptomData(data: SymptomData) : void
+    DB --> Service : success
+    
+    Service -> State : transitionTo(Post1: "symptom information stored") : void
+    State --> Service : done
+    
+    Service -> QE : createQueueEntry(patientId: String, status: String) : QueueEntry
+    
+    Service -> EQS : addToEvaluationQueue(entry: QueueEntry) : void
+    EQS --> Service : success
+    
+    Service -> State : transitionTo(Post2: "patient listed as pending evaluation") : void
+    State --> Service : done
+    
+    Service -> DB : unlockPatientRecord(patientId: String) : void
+    DB --> Service : success
+    
+    Service --> UI : return Success(patientId, queuePosition)
+else Lock conflict
+    DB --> Service : return conflict
+    Service --> UI : return Error("Concurrent registration detected - please retry")
+end
+
+== FLOW-REGISTER-PATIENT: Database Storage Failure ==
+
+UI -> Service : registerPatient(patientData: PatientDTO, symptoms: SymptomDTO) : RegistrationResult
+
+Service -> Actor : checkPermission(actorId: String, requiredPermission: Permission) : Boolean
+Actor --> Service : return true
+
+Service -> State : verifyPrecondition(Pre1: "nurse logged in") : Boolean
+State --> Service : return true
+
+Service -> State : verifyPrecondition(Pre2: "available queue slots") : Boolean
+State --> Service : return true
+
+Service -> Validator : validateSymptoms(symptoms: SymptomDTO) : ValidationResult
+Validator --> Service : return Valid
+
+Service -> PR : createPatientRecord(patientData: PatientDTO) : PatientRecord
+PR -> DARE : encryptResource(resource: Resource) : void
+DARE --> PR : done
+
+Service -> SD : createSymptomData(symptoms: SymptomDTO, patientId: String) : SymptomData
+SD -> DARE : encryptResource(resource: Resource) : void
+DARE --> SD : done
+
+Service -> DB : storePatientRecord(record: PatientRecord) : void
+note right: [TLS] [encrypted at rest]
+
+alt Storage success
+    DB --> Service : success
+    Service -> DB : storeSymptomData(data: SymptomData) : void
+    
+    alt Symptom storage success
+        DB --> Service : success
+        Service -> State : transitionTo(Post1: "symptom information stored") : void
+        State --> Service : done
+        
+        Service -> QE : createQueueEntry(patientId: String, status: String) : QueueEntry
+        Service -> EQS : addToEvaluationQueue(entry: QueueEntry) : void
+        
+        alt Queue success
+            EQS --> Service : success
+            Service -> State : transitionTo(Post2: "patient listed as pending evaluation") : void
+            State --> Service : done
+            Service --> UI : return Success(patientId, queuePosition)
+        else Queue failure
+            EQS --> Service : failure
+            Service -> DB : rollbackPatientRecord(patientId: String) : void
+            Service -> DB : rollbackSymptomData(patientId: String) : void
+            Service --> UI : return Error("Failed to add to evaluation queue - transaction rolled back")
+        end
+    else Symptom storage failure
+        DB --> Service : failure
+        Service -> DB : rollbackPatientRecord(patientId: String) : void
+        Service --> UI : return Error("Failed to store symptom data - transaction rolled back")
+    end
+else Storage failure
+    DB --> Service : failure
+    Service --> UI : return Error("Failed to store patient record - please retry")
+end
+
+@enduml

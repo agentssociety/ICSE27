@@ -1,0 +1,96 @@
+@startuml
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+box "Controller" #LightBlue
+  participant AdminController
+end box
+
+box "Application" #LightGreen
+  participant AdminService
+end box
+
+box "Domain" #LightYellow
+  participant "Actor" as Admin
+  participant "Transaction" as Transaction
+  participant "Permission" as Permission
+  participant "TransactionStatus" as Status
+end box
+
+box "Infrastructure" #LightPink
+  participant "FlaggedTransactionsReviewPage" as UI
+  participant "TransactionsDatabase" as DB
+end box
+
+box "External" #LightGray
+  participant "AuthService" as Auth
+end box
+
+== Login Flow ==
+Admin -> AdminController : POST /login
+note right: [TLS]
+AdminController -> Auth : authenticate(credentials)
+Auth --> AdminController : sessionToken
+AdminController -> Admin : 200 OK, session
+
+== Access Flagged Transactions Page ==
+Admin -> UI : navigate to /flagged-transactions
+UI -> AdminController : GET /flagged-transactions
+note right: Authorization header
+AdminController -> AdminService : listFlaggedTransactions(session: Session) : List<Transaction>
+AdminService -> Auth : checkPermission(session, requiredPermission: "Admin") : boolean
+alt not authenticated
+  Auth --> AdminService : false
+  AdminService --> AdminController : 401 Unauthorized
+  AdminController --> UI : 401 Unauthorized
+  UI -> Admin : "Please log in"
+else authenticated but not admin
+  Auth --> AdminService : false
+  AdminService --> AdminController : 403 Forbidden
+  AdminController --> UI : 403 Forbidden
+  UI -> Admin : "Access denied"
+else authenticated and admin
+  Auth --> AdminService : true
+  AdminService -> DB : queryFlaggedTransactions() : List<Transaction>
+  note right: [encrypted at rest]
+  DB --> AdminService : list of flagged Transaction (with flagReason)
+  alt no flagged transactions
+    AdminService --> AdminController : empty list
+    AdminController --> UI : 200 OK, empty list with message
+    UI -> Admin : "No flagged transactions to review"
+  else flagged transactions exist
+    AdminService --> AdminController : list of Transaction (filtered/sorted)
+    AdminController --> UI : 200 OK, list with filter & sort options
+    UI -> Admin : display flagged transactions
+  end
+end
+
+== Review a Flagged Transaction ==
+Admin -> UI : select transaction & choose action (approve/deny/investigate)
+UI -> AdminController : PUT /flagged-transactions/{id}/status
+note right: body: {action: "approved"|"denied"|"investigating"}
+AdminController -> AdminService : updateTransactionStatus(transactionId: UUID, action: String, session: Session) : void
+AdminService -> Auth : checkPermission(session, requiredPermission: "Write") : boolean
+Auth --> AdminService : true
+AdminService -> Transaction : setStatus(newStatus: TransactionStatus)
+note right: State: Pending -> Approved/Denied/Investigating
+Transaction --> AdminService : statusUpdated
+AdminService -> DB : updateTransactionStatus(transactionId, status)
+note right: [encrypted at rest]
+alt database success
+  DB --> AdminService : OK
+  AdminService --> AdminController : success
+  AdminController --> UI : 200 OK, refresh list
+  alt action is "approved" or "denied"
+    UI -> Admin : transaction removed from pending list
+  else action is "investigating"
+    UI -> Admin : transaction remains in pending list
+  end
+else network error
+  DB --x AdminService : ERROR
+  AdminService --> AdminController : error
+  AdminController --> UI : 500 Internal Server Error
+  UI -> Admin : "Network error, please try again"
+  note right: No state change – transaction unchanged
+end
+@enduml

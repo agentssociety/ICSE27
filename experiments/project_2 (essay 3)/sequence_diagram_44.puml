@@ -1,0 +1,112 @@
+@startuml
+!define LAYER_BOX
+skinparam backgroundColor #FEFEFE
+
+box "Controller Layer" #LightBlue
+    participant "Inventory_API\n[API Boundary]" as API
+end box
+
+box "Application Layer" #LightGreen
+    participant "REQ_MON_01\n[Use Case]" as UC
+end box
+
+box "Domain Layer" #LightYellow
+    participant "Inventory_Manager\n[Actor]" as IM
+    participant "Resource\n[Blood Type]" as Res
+    participant "PreIdle\n[State]" as Pre
+    participant "Post1\n[State]" as Post
+    participant "Read\n[Permission]" as ReadPerm
+end box
+
+box "Infrastructure Layer" #LightCoral
+    participant "AlertNotifier\n[Interface]" as Notifier
+    participant "AlertNotification\n[DTO]" as Notif
+end box
+
+box "External Systems" #LightPink
+    participant "Alert_Notification_System\n[Email/Dashboard]" as AlertSys
+end box
+
+== Main Flow: Inventory Check ==
+
+IM -> API : initiateInventoryCheck(bloodType: String) : Response
+note right IM: Only Inventory_Manager or\nBlood_Bank_Operations_Team may initiate
+
+API -> UC : getInventoryLevel(bloodType: String, actor: Inventory_Manager) : InventoryLevel
+
+== Security: Check Permissions and Access ==
+
+UC -> ReadPerm : hasPermission(actor, Read) : Boolean
+alt Permission denied
+    UC -> API : return error(403, "Forbidden")
+    API -> IM : HTTP 403
+else Permission granted
+    UC -> Res : isAccessible(actor) : Boolean
+    alt Access denied
+        UC -> API : return error(403, "Resource not accessible")
+        API -> IM : HTTP 403
+    else Access granted
+        UC -> UC : validateChannelAuthenticated(channel: Inventory_API)
+        note right UC: Invariant: at least one\nchannel must be authenticated
+        UC -> Res : getCurrentLevel(bloodType: String) : Integer
+        UC -> Pre : getState() : PreIdle
+        note right Pre: Initial state
+
+        == Evaluate Threshold ==
+
+        UC -> UC : evaluateThreshold(level: Integer) : Boolean
+        alt level < 5  (strictly below)
+            UC -> Notif : createAlertNotification(bloodType, level) : AlertNotification
+            UC -> Notifier : sendAlert(notification: AlertNotification) : boolean
+            note right Notifier: Uses [TLS] encrypted channel,\nrequires Write permission internally
+            Notifier -> AlertSys : send(notification) [TLS]
+            alt Alert sent successfully
+                UC -> Post : transitionTo(Post1) : Post1
+                note right Post: State changed from PreIdle
+                UC -> API : return success(alertTriggered=True)
+                API -> IM : HTTP 200 { "alert": true, "newState": "Post1" }
+            else Network outage (unauthenticated/unencrypted) -> error
+                Notifier -> UC : return failure(error)
+                UC -> UC : logError("Network outage - retrying")
+                loop Retry max 3 times
+                    UC -> Notifier : retrySendAlert(notification) : boolean
+                    Notifier -> AlertSys : send(notification) [TLS]
+                    alt Retry success
+                        break
+                    else Retry fails
+                        UC -> UC : logError("Retry failed")
+                    end
+                end
+                UC -> Pre : stayState(PreIdle)
+                UC -> API : return error(503, "Alert service unavailable")
+                API -> IM : HTTP 503
+            end
+        else level >= 5
+            UC -> Pre : stayState(PreIdle)
+            UC -> API : return success(alertTriggered=False)
+            API -> IM : HTTP 200 { "alert": false, "newState": "PreIdle" }
+        end
+    end
+end
+
+== Alternate Flow: Blood_Bank_Operations_Team Initiator ==
+
+box "Domain Layer" #LightYellow
+    participant "Blood_Bank_Operations_Team\n[Actor]" as BBOT
+end box
+
+BBOT -> API : initiateInventoryCheck(bloodType: String) : Response
+note right BBOT: Same flow as above,\nonly permission check differs
+
+== Note on Invariants ==
+
+note right of UC
+    All security invariants enforced:
+    - inv_authenticated_channel_required
+    - inv_initiator_is_authorized
+    - inv_resource_access_control
+    - no_unauthorized_execution
+    - no_unauthorized_resource_access
+end note
+
+@enduml

@@ -1,0 +1,1673 @@
+{
+  "main.lifespan": {
+    "file": "main.py",
+    "line": 35,
+    "end_line": 41,
+    "class": null,
+    "name": "lifespan",
+    "calls": [
+      "src.config.database.create_tables"
+    ],
+    "called_by": []
+  },
+  "main.health": {
+    "file": "main.py",
+    "line": 72,
+    "end_line": 73,
+    "class": null,
+    "name": "health",
+    "calls": [],
+    "called_by": []
+  },
+  "migrations.env.run_migrations_offline": {
+    "file": "migrations/env.py",
+    "line": 35,
+    "end_line": 38,
+    "class": null,
+    "name": "run_migrations_offline",
+    "calls": [],
+    "called_by": []
+  },
+  "migrations.env.run_migrations_online": {
+    "file": "migrations/env.py",
+    "line": 41,
+    "end_line": 50,
+    "class": null,
+    "name": "run_migrations_online",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.healthcare_facility_management.healthcare_facility_management_router._repo": {
+    "file": "src/api/healthcare_facility_management/healthcare_facility_management_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.healthcare_facility_management.healthcare_facility_management_router.list_healthcare_facility_managements": {
+    "file": "src/api/healthcare_facility_management/healthcare_facility_management_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_healthcare_facility_managements",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.healthcare_facility_management.healthcare_facility_management_router.get_healthcare_facility_management": {
+    "file": "src/api/healthcare_facility_management/healthcare_facility_management_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_healthcare_facility_management",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.healthcare_facility_management.healthcare_facility_management_router.create_healthcare_facility_management": {
+    "file": "src/api/healthcare_facility_management/healthcare_facility_management_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_healthcare_facility_management",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.healthcare_facility_management.healthcare_facility_management_router.update_healthcare_facility_management": {
+    "file": "src/api/healthcare_facility_management/healthcare_facility_management_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_healthcare_facility_management",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.healthcare_facility_management.healthcare_facility_management_router.delete_healthcare_facility_management": {
+    "file": "src/api/healthcare_facility_management/healthcare_facility_management_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_healthcare_facility_management",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.medical_staff.medical_staff_router._repo": {
+    "file": "src/api/medical_staff/medical_staff_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.medical_staff.medical_staff_router.list_medical_staffs": {
+    "file": "src/api/medical_staff/medical_staff_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_medical_staffs",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.medical_staff.medical_staff_router.get_medical_staff": {
+    "file": "src/api/medical_staff/medical_staff_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_medical_staff",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.medical_staff.medical_staff_router.create_medical_staff": {
+    "file": "src/api/medical_staff/medical_staff_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_medical_staff",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.medical_staff.medical_staff_router.update_medical_staff": {
+    "file": "src/api/medical_staff/medical_staff_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_medical_staff",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.medical_staff.medical_staff_router.delete_medical_staff": {
+    "file": "src/api/medical_staff/medical_staff_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_medical_staff",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router._repo": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.list_patients": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_patients",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.get_patient": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_patient",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.create_patient": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_patient",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.update_patient": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_patient",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.delete_patient": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_patient",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_care_team.patient_care_team_router._repo": {
+    "file": "src/api/patient_care_team/patient_care_team_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.patient_care_team.patient_care_team_router.list_patient_care_teams": {
+    "file": "src/api/patient_care_team/patient_care_team_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_patient_care_teams",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_care_team.patient_care_team_router.get_patient_care_team": {
+    "file": "src/api/patient_care_team/patient_care_team_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_patient_care_team",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_care_team.patient_care_team_router.create_patient_care_team": {
+    "file": "src/api/patient_care_team/patient_care_team_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_patient_care_team",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_care_team.patient_care_team_router.update_patient_care_team": {
+    "file": "src/api/patient_care_team/patient_care_team_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_patient_care_team",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_care_team.patient_care_team_router.delete_patient_care_team": {
+    "file": "src/api/patient_care_team/patient_care_team_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_patient_care_team",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_queue.patient_queue_router.SortingApiController.__init__": {
+    "file": "src/api/patient_queue/patient_queue_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": "SortingApiController",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.patient_record.patient_record_router._repo": {
+    "file": "src/api/patient_record/patient_record_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.patient_record.patient_record_router.list_patient_records": {
+    "file": "src/api/patient_record/patient_record_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_patient_records",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_record.patient_record_router.get_patient_record": {
+    "file": "src/api/patient_record/patient_record_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_patient_record",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_record.patient_record_router.create_patient_record": {
+    "file": "src/api/patient_record/patient_record_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_patient_record",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_record.patient_record_router.update_patient_record": {
+    "file": "src/api/patient_record/patient_record_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_patient_record",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_record.patient_record_router.delete_patient_record": {
+    "file": "src/api/patient_record/patient_record_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_patient_record",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_resource.symptom_resource_router._repo": {
+    "file": "src/api/symptom_resource/symptom_resource_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.symptom_resource.symptom_resource_router.list_symptom_resources": {
+    "file": "src/api/symptom_resource/symptom_resource_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_symptom_resources",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_resource.symptom_resource_router.get_symptom_resource": {
+    "file": "src/api/symptom_resource/symptom_resource_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_symptom_resource",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_resource.symptom_resource_router.create_symptom_resource": {
+    "file": "src/api/symptom_resource/symptom_resource_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_symptom_resource",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_resource.symptom_resource_router.update_symptom_resource": {
+    "file": "src/api/symptom_resource/symptom_resource_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_symptom_resource",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_resource.symptom_resource_router.delete_symptom_resource": {
+    "file": "src/api/symptom_resource/symptom_resource_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_symptom_resource",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.triage_nurse.triage_nurse_router._repo": {
+    "file": "src/api/triage_nurse/triage_nurse_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.triage_nurse.triage_nurse_router.list_triage_nurses": {
+    "file": "src/api/triage_nurse/triage_nurse_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_triage_nurses",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.triage_nurse.triage_nurse_router.get_triage_nurse": {
+    "file": "src/api/triage_nurse/triage_nurse_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_triage_nurse",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.triage_nurse.triage_nurse_router.create_triage_nurse": {
+    "file": "src/api/triage_nurse/triage_nurse_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_triage_nurse",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.triage_nurse.triage_nurse_router.update_triage_nurse": {
+    "file": "src/api/triage_nurse/triage_nurse_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_triage_nurse",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.triage_nurse.triage_nurse_router.delete_triage_nurse": {
+    "file": "src/api/triage_nurse/triage_nurse_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_triage_nurse",
+    "calls": [
+      "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.urgency_level.urgency_level_router.UrgencyLevelRouter.__init__": {
+    "file": "src/api/urgency_level/urgency_level_router.py",
+    "line": 19,
+    "end_line": 20,
+    "class": "UrgencyLevelRouter",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.database.get_db": {
+    "file": "src/config/database.py",
+    "line": 24,
+    "end_line": 29,
+    "class": null,
+    "name": "get_db",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.database.create_tables": {
+    "file": "src/config/database.py",
+    "line": 32,
+    "end_line": 34,
+    "class": null,
+    "name": "create_tables",
+    "calls": [],
+    "called_by": [
+      "main.lifespan"
+    ]
+  },
+  "src.config.dependencies.get_healthcare_facility_management_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 17,
+    "end_line": 18,
+    "class": null,
+    "name": "get_healthcare_facility_management_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_medical_staff_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "get_medical_staff_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_patient_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 23,
+    "end_line": 24,
+    "class": null,
+    "name": "get_patient_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_patient_care_team_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 26,
+    "end_line": 27,
+    "class": null,
+    "name": "get_patient_care_team_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_patient_queue_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 29,
+    "end_line": 30,
+    "class": null,
+    "name": "get_patient_queue_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_patient_record_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 32,
+    "end_line": 33,
+    "class": null,
+    "name": "get_patient_record_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_symptom_resource_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 35,
+    "end_line": 36,
+    "class": null,
+    "name": "get_symptom_resource_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_triage_nurse_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 38,
+    "end_line": 39,
+    "class": null,
+    "name": "get_triage_nurse_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient.Patient.Patient.createPatient": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 61,
+    "end_line": 62,
+    "class": "Patient",
+    "name": "createPatient",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient_queue.PatientQueue.PatientQueue.readAllPatients": {
+    "file": "src/domain/patient_queue/PatientQueue.py",
+    "line": 39,
+    "end_line": 40,
+    "class": "PatientQueue",
+    "name": "readAllPatients",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient_queue.PatientQueue.PatientQueue.updateOrder": {
+    "file": "src/domain/patient_queue/PatientQueue.py",
+    "line": 36,
+    "end_line": 37,
+    "class": "PatientQueue",
+    "name": "updateOrder",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient_queue.PatientQueue.PatientQueue.checkForUrgencyChange": {
+    "file": "src/domain/patient_queue/PatientQueue.py",
+    "line": 42,
+    "end_line": 43,
+    "class": "PatientQueue",
+    "name": "checkForUrgencyChange",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient_queue.PatientQueue.PatientQueue.failure": {
+    "file": "src/domain/patient_queue/PatientQueue.py",
+    "line": 45,
+    "end_line": 46,
+    "class": "PatientQueue",
+    "name": "failure",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient_queue.PatientQueue.PatientQueue.error": {
+    "file": "src/domain/patient_queue/PatientQueue.py",
+    "line": 48,
+    "end_line": 49,
+    "class": "PatientQueue",
+    "name": "error",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.urgency_level.UrgencyLevel.PatientRecord.updateRecord": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 28,
+    "end_line": 29,
+    "class": "PatientRecord",
+    "name": "updateRecord",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.urgency_level.UrgencyLevel.PatientRecord.failure": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 31,
+    "end_line": 32,
+    "class": "PatientRecord",
+    "name": "failure",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.urgency_level.UrgencyLevel.MedicalStaff.notify": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 46,
+    "end_line": 47,
+    "class": "MedicalStaff",
+    "name": "notify",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.__init__": {
+    "file": "src/infra/healthcare_facility_management/healthcare_facility_management_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyHealthcareFacilityManagementRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_by_id": {
+    "file": "src/infra/healthcare_facility_management/healthcare_facility_management_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyHealthcareFacilityManagementRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": [
+      "src.api.healthcare_facility_management.healthcare_facility_management_router.get_healthcare_facility_management",
+      "src.api.medical_staff.medical_staff_router.get_medical_staff",
+      "src.api.patient.patient_router.get_patient",
+      "src.api.patient_care_team.patient_care_team_router.get_patient_care_team",
+      "src.api.patient_record.patient_record_router.get_patient_record",
+      "src.api.symptom_resource.symptom_resource_router.get_symptom_resource",
+      "src.api.triage_nurse.triage_nurse_router.get_triage_nurse"
+    ]
+  },
+  "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.get_all": {
+    "file": "src/infra/healthcare_facility_management/healthcare_facility_management_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyHealthcareFacilityManagementRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": [
+      "src.api.healthcare_facility_management.healthcare_facility_management_router.list_healthcare_facility_managements",
+      "src.api.medical_staff.medical_staff_router.list_medical_staffs",
+      "src.api.patient.patient_router.list_patients",
+      "src.api.patient_care_team.patient_care_team_router.list_patient_care_teams",
+      "src.api.patient_record.patient_record_router.list_patient_records",
+      "src.api.symptom_resource.symptom_resource_router.list_symptom_resources",
+      "src.api.triage_nurse.triage_nurse_router.list_triage_nurses"
+    ]
+  },
+  "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.create": {
+    "file": "src/infra/healthcare_facility_management/healthcare_facility_management_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyHealthcareFacilityManagementRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": [
+      "src.api.healthcare_facility_management.healthcare_facility_management_router.create_healthcare_facility_management",
+      "src.api.medical_staff.medical_staff_router.create_medical_staff",
+      "src.api.patient.patient_router.create_patient",
+      "src.api.patient_care_team.patient_care_team_router.create_patient_care_team",
+      "src.api.patient_record.patient_record_router.create_patient_record",
+      "src.api.symptom_resource.symptom_resource_router.create_symptom_resource",
+      "src.api.triage_nurse.triage_nurse_router.create_triage_nurse"
+    ]
+  },
+  "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.update": {
+    "file": "src/infra/healthcare_facility_management/healthcare_facility_management_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyHealthcareFacilityManagementRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": [
+      "src.api.healthcare_facility_management.healthcare_facility_management_router.update_healthcare_facility_management",
+      "src.api.medical_staff.medical_staff_router.update_medical_staff",
+      "src.api.patient.patient_router.update_patient",
+      "src.api.patient_care_team.patient_care_team_router.update_patient_care_team",
+      "src.api.patient_record.patient_record_router.update_patient_record",
+      "src.api.symptom_resource.symptom_resource_router.update_symptom_resource",
+      "src.api.triage_nurse.triage_nurse_router.update_triage_nurse"
+    ]
+  },
+  "src.infra.healthcare_facility_management.healthcare_facility_management_repo_impl.SQLAlchemyHealthcareFacilityManagementRepository.delete": {
+    "file": "src/infra/healthcare_facility_management/healthcare_facility_management_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyHealthcareFacilityManagementRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": [
+      "src.api.healthcare_facility_management.healthcare_facility_management_router.delete_healthcare_facility_management",
+      "src.api.medical_staff.medical_staff_router.delete_medical_staff",
+      "src.api.patient.patient_router.delete_patient",
+      "src.api.patient_care_team.patient_care_team_router.delete_patient_care_team",
+      "src.api.patient_record.patient_record_router.delete_patient_record",
+      "src.api.symptom_resource.symptom_resource_router.delete_symptom_resource",
+      "src.api.triage_nurse.triage_nurse_router.delete_triage_nurse"
+    ]
+  },
+  "src.infra.medical_staff.medical_staff_repo_impl.SQLAlchemyMedicalStaffRepository.__init__": {
+    "file": "src/infra/medical_staff/medical_staff_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyMedicalStaffRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.medical_staff.medical_staff_repo_impl.SQLAlchemyMedicalStaffRepository.get_by_id": {
+    "file": "src/infra/medical_staff/medical_staff_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyMedicalStaffRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.medical_staff.medical_staff_repo_impl.SQLAlchemyMedicalStaffRepository.get_all": {
+    "file": "src/infra/medical_staff/medical_staff_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyMedicalStaffRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.medical_staff.medical_staff_repo_impl.SQLAlchemyMedicalStaffRepository.create": {
+    "file": "src/infra/medical_staff/medical_staff_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyMedicalStaffRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.medical_staff.medical_staff_repo_impl.SQLAlchemyMedicalStaffRepository.update": {
+    "file": "src/infra/medical_staff/medical_staff_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyMedicalStaffRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.medical_staff.medical_staff_repo_impl.SQLAlchemyMedicalStaffRepository.delete": {
+    "file": "src/infra/medical_staff/medical_staff_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyMedicalStaffRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.__init__": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.get_by_id": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.get_all": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.create": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.update": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.delete": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_care_team.patient_care_team_repo_impl.SQLAlchemyPatientCareTeamRepository.__init__": {
+    "file": "src/infra/patient_care_team/patient_care_team_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyPatientCareTeamRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_care_team.patient_care_team_repo_impl.SQLAlchemyPatientCareTeamRepository.get_by_id": {
+    "file": "src/infra/patient_care_team/patient_care_team_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyPatientCareTeamRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_care_team.patient_care_team_repo_impl.SQLAlchemyPatientCareTeamRepository.get_all": {
+    "file": "src/infra/patient_care_team/patient_care_team_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyPatientCareTeamRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_care_team.patient_care_team_repo_impl.SQLAlchemyPatientCareTeamRepository.create": {
+    "file": "src/infra/patient_care_team/patient_care_team_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyPatientCareTeamRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_care_team.patient_care_team_repo_impl.SQLAlchemyPatientCareTeamRepository.update": {
+    "file": "src/infra/patient_care_team/patient_care_team_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyPatientCareTeamRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_care_team.patient_care_team_repo_impl.SQLAlchemyPatientCareTeamRepository.delete": {
+    "file": "src/infra/patient_care_team/patient_care_team_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyPatientCareTeamRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_queue.patient_queue_repo_impl.SQLAlchemyPatientQueueRepository.__init__": {
+    "file": "src/infra/patient_queue/patient_queue_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyPatientQueueRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_queue.patient_queue_repo_impl.SQLAlchemyPatientQueueRepository.get_by_id": {
+    "file": "src/infra/patient_queue/patient_queue_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyPatientQueueRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_queue.patient_queue_repo_impl.SQLAlchemyPatientQueueRepository.get_all": {
+    "file": "src/infra/patient_queue/patient_queue_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyPatientQueueRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_queue.patient_queue_repo_impl.SQLAlchemyPatientQueueRepository.create": {
+    "file": "src/infra/patient_queue/patient_queue_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyPatientQueueRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_queue.patient_queue_repo_impl.SQLAlchemyPatientQueueRepository.update": {
+    "file": "src/infra/patient_queue/patient_queue_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyPatientQueueRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_queue.patient_queue_repo_impl.SQLAlchemyPatientQueueRepository.delete": {
+    "file": "src/infra/patient_queue/patient_queue_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyPatientQueueRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_record.patient_record_repo_impl.SQLAlchemyPatientRecordRepository.__init__": {
+    "file": "src/infra/patient_record/patient_record_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyPatientRecordRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_record.patient_record_repo_impl.SQLAlchemyPatientRecordRepository.get_by_id": {
+    "file": "src/infra/patient_record/patient_record_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyPatientRecordRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_record.patient_record_repo_impl.SQLAlchemyPatientRecordRepository.get_all": {
+    "file": "src/infra/patient_record/patient_record_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyPatientRecordRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_record.patient_record_repo_impl.SQLAlchemyPatientRecordRepository.create": {
+    "file": "src/infra/patient_record/patient_record_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyPatientRecordRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_record.patient_record_repo_impl.SQLAlchemyPatientRecordRepository.update": {
+    "file": "src/infra/patient_record/patient_record_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyPatientRecordRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_record.patient_record_repo_impl.SQLAlchemyPatientRecordRepository.delete": {
+    "file": "src/infra/patient_record/patient_record_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyPatientRecordRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_resource.symptom_resource_repo_impl.SQLAlchemySymptomResourceRepository.__init__": {
+    "file": "src/infra/symptom_resource/symptom_resource_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemySymptomResourceRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_resource.symptom_resource_repo_impl.SQLAlchemySymptomResourceRepository.get_by_id": {
+    "file": "src/infra/symptom_resource/symptom_resource_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemySymptomResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_resource.symptom_resource_repo_impl.SQLAlchemySymptomResourceRepository.get_all": {
+    "file": "src/infra/symptom_resource/symptom_resource_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemySymptomResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_resource.symptom_resource_repo_impl.SQLAlchemySymptomResourceRepository.create": {
+    "file": "src/infra/symptom_resource/symptom_resource_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemySymptomResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_resource.symptom_resource_repo_impl.SQLAlchemySymptomResourceRepository.update": {
+    "file": "src/infra/symptom_resource/symptom_resource_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemySymptomResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_resource.symptom_resource_repo_impl.SQLAlchemySymptomResourceRepository.delete": {
+    "file": "src/infra/symptom_resource/symptom_resource_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemySymptomResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.triage_nurse.triage_nurse_repo_impl.SQLAlchemyTriageNurseRepository.__init__": {
+    "file": "src/infra/triage_nurse/triage_nurse_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyTriageNurseRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.triage_nurse.triage_nurse_repo_impl.SQLAlchemyTriageNurseRepository.get_by_id": {
+    "file": "src/infra/triage_nurse/triage_nurse_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyTriageNurseRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.triage_nurse.triage_nurse_repo_impl.SQLAlchemyTriageNurseRepository.get_all": {
+    "file": "src/infra/triage_nurse/triage_nurse_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyTriageNurseRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.triage_nurse.triage_nurse_repo_impl.SQLAlchemyTriageNurseRepository.create": {
+    "file": "src/infra/triage_nurse/triage_nurse_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyTriageNurseRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.triage_nurse.triage_nurse_repo_impl.SQLAlchemyTriageNurseRepository.update": {
+    "file": "src/infra/triage_nurse/triage_nurse_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyTriageNurseRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.triage_nurse.triage_nurse_repo_impl.SQLAlchemyTriageNurseRepository.delete": {
+    "file": "src/infra/triage_nurse/triage_nurse_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyTriageNurseRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.urgency_level.urgency_level_repo_impl.SQLAlchemyUrgencyLevelRepository.__init__": {
+    "file": "src/infra/urgency_level/urgency_level_repo_impl.py",
+    "line": 19,
+    "end_line": 20,
+    "class": "SQLAlchemyUrgencyLevelRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.healthcare_facility_management.healthcare_facility_management_repository.HealthcareFacilityManagementRepository.get_by_id": {
+    "file": "src/repository/healthcare_facility_management/healthcare_facility_management_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "HealthcareFacilityManagementRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.healthcare_facility_management.healthcare_facility_management_repository.HealthcareFacilityManagementRepository.get_all": {
+    "file": "src/repository/healthcare_facility_management/healthcare_facility_management_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "HealthcareFacilityManagementRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.healthcare_facility_management.healthcare_facility_management_repository.HealthcareFacilityManagementRepository.create": {
+    "file": "src/repository/healthcare_facility_management/healthcare_facility_management_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "HealthcareFacilityManagementRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.healthcare_facility_management.healthcare_facility_management_repository.HealthcareFacilityManagementRepository.update": {
+    "file": "src/repository/healthcare_facility_management/healthcare_facility_management_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "HealthcareFacilityManagementRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.healthcare_facility_management.healthcare_facility_management_repository.HealthcareFacilityManagementRepository.delete": {
+    "file": "src/repository/healthcare_facility_management/healthcare_facility_management_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "HealthcareFacilityManagementRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.medical_staff.medical_staff_repository.MedicalStaffRepository.get_by_id": {
+    "file": "src/repository/medical_staff/medical_staff_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "MedicalStaffRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.medical_staff.medical_staff_repository.MedicalStaffRepository.get_all": {
+    "file": "src/repository/medical_staff/medical_staff_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "MedicalStaffRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.medical_staff.medical_staff_repository.MedicalStaffRepository.create": {
+    "file": "src/repository/medical_staff/medical_staff_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "MedicalStaffRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.medical_staff.medical_staff_repository.MedicalStaffRepository.update": {
+    "file": "src/repository/medical_staff/medical_staff_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "MedicalStaffRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.medical_staff.medical_staff_repository.MedicalStaffRepository.delete": {
+    "file": "src/repository/medical_staff/medical_staff_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "MedicalStaffRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.get_by_id": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "PatientRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.get_all": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "PatientRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.create": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "PatientRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.update": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "PatientRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.delete": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "PatientRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_care_team.patient_care_team_repository.PatientCareTeamRepository.get_by_id": {
+    "file": "src/repository/patient_care_team/patient_care_team_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "PatientCareTeamRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_care_team.patient_care_team_repository.PatientCareTeamRepository.get_all": {
+    "file": "src/repository/patient_care_team/patient_care_team_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "PatientCareTeamRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_care_team.patient_care_team_repository.PatientCareTeamRepository.create": {
+    "file": "src/repository/patient_care_team/patient_care_team_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "PatientCareTeamRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_care_team.patient_care_team_repository.PatientCareTeamRepository.update": {
+    "file": "src/repository/patient_care_team/patient_care_team_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "PatientCareTeamRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_care_team.patient_care_team_repository.PatientCareTeamRepository.delete": {
+    "file": "src/repository/patient_care_team/patient_care_team_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "PatientCareTeamRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_queue.patient_queue_repository.PatientQueueRepository.get_by_id": {
+    "file": "src/repository/patient_queue/patient_queue_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "PatientQueueRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_queue.patient_queue_repository.PatientQueueRepository.get_all": {
+    "file": "src/repository/patient_queue/patient_queue_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "PatientQueueRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_queue.patient_queue_repository.PatientQueueRepository.create": {
+    "file": "src/repository/patient_queue/patient_queue_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "PatientQueueRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_queue.patient_queue_repository.PatientQueueRepository.update": {
+    "file": "src/repository/patient_queue/patient_queue_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "PatientQueueRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_queue.patient_queue_repository.PatientQueueRepository.delete": {
+    "file": "src/repository/patient_queue/patient_queue_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "PatientQueueRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_record.patient_record_repository.PatientRecordRepository.get_by_id": {
+    "file": "src/repository/patient_record/patient_record_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "PatientRecordRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_record.patient_record_repository.PatientRecordRepository.get_all": {
+    "file": "src/repository/patient_record/patient_record_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "PatientRecordRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_record.patient_record_repository.PatientRecordRepository.create": {
+    "file": "src/repository/patient_record/patient_record_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "PatientRecordRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_record.patient_record_repository.PatientRecordRepository.update": {
+    "file": "src/repository/patient_record/patient_record_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "PatientRecordRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_record.patient_record_repository.PatientRecordRepository.delete": {
+    "file": "src/repository/patient_record/patient_record_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "PatientRecordRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_resource.symptom_resource_repository.SymptomResourceRepository.get_by_id": {
+    "file": "src/repository/symptom_resource/symptom_resource_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "SymptomResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_resource.symptom_resource_repository.SymptomResourceRepository.get_all": {
+    "file": "src/repository/symptom_resource/symptom_resource_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "SymptomResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_resource.symptom_resource_repository.SymptomResourceRepository.create": {
+    "file": "src/repository/symptom_resource/symptom_resource_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "SymptomResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_resource.symptom_resource_repository.SymptomResourceRepository.update": {
+    "file": "src/repository/symptom_resource/symptom_resource_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "SymptomResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_resource.symptom_resource_repository.SymptomResourceRepository.delete": {
+    "file": "src/repository/symptom_resource/symptom_resource_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "SymptomResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.triage_nurse.triage_nurse_repository.TriageNurseRepository.get_by_id": {
+    "file": "src/repository/triage_nurse/triage_nurse_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "TriageNurseRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.triage_nurse.triage_nurse_repository.TriageNurseRepository.get_all": {
+    "file": "src/repository/triage_nurse/triage_nurse_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "TriageNurseRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.triage_nurse.triage_nurse_repository.TriageNurseRepository.create": {
+    "file": "src/repository/triage_nurse/triage_nurse_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "TriageNurseRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.triage_nurse.triage_nurse_repository.TriageNurseRepository.update": {
+    "file": "src/repository/triage_nurse/triage_nurse_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "TriageNurseRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.triage_nurse.triage_nurse_repository.TriageNurseRepository.delete": {
+    "file": "src/repository/triage_nurse/triage_nurse_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "TriageNurseRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.patient.patient_service.PatientServiceImpl.__init__": {
+    "file": "src/service/patient/patient_service.py",
+    "line": 23,
+    "end_line": 24,
+    "class": "PatientServiceImpl",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.patient_queue.patient_queue_service.PatientQueueServiceImpl.__init__": {
+    "file": "src/service/patient_queue/patient_queue_service.py",
+    "line": 23,
+    "end_line": 24,
+    "class": "PatientQueueServiceImpl",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.urgency_level.urgency_level_service.UrgencyLevelServiceImpl.__init__": {
+    "file": "src/service/urgency_level/urgency_level_service.py",
+    "line": 22,
+    "end_line": 23,
+    "class": "UrgencyLevelServiceImpl",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.conftest.test_conftest_placeholder": {
+    "file": "tests/integration/conftest.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_conftest_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_api_contracts.test_test_api_contracts_placeholder": {
+    "file": "tests/integration/test_api_contracts.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_api_contracts_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_patient_flow.test_test_patient_flow_placeholder": {
+    "file": "tests/integration/test_patient_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_patient_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_patient_queue_flow.test_test_patient_queue_flow_placeholder": {
+    "file": "tests/integration/test_patient_queue_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_patient_queue_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_urgency_level_flow.test_test_urgency_level_flow_placeholder": {
+    "file": "tests/integration/test_urgency_level_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_urgency_level_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_api.test_test_patient_api_placeholder": {
+    "file": "tests/unit/patient/test_patient_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_patient_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_domain.test_test_patient_domain_placeholder": {
+    "file": "tests/unit/patient/test_patient_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_patient_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_service.test_test_patient_service_placeholder": {
+    "file": "tests/unit/patient/test_patient_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_patient_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.patient_queue.test_patient_queue_api.test_test_patient_queue_api_placeholder": {
+    "file": "tests/unit/patient_queue/test_patient_queue_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_patient_queue_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.patient_queue.test_patient_queue_domain.test_test_patient_queue_domain_placeholder": {
+    "file": "tests/unit/patient_queue/test_patient_queue_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_patient_queue_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.patient_queue.test_patient_queue_service.test_test_patient_queue_service_placeholder": {
+    "file": "tests/unit/patient_queue/test_patient_queue_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_patient_queue_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_api.test_test_urgency_level_api_placeholder": {
+    "file": "tests/unit/urgency_level/test_urgency_level_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_urgency_level_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_domain.test_test_urgency_level_domain_placeholder": {
+    "file": "tests/unit/urgency_level/test_urgency_level_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_urgency_level_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_service.test_test_urgency_level_service_placeholder": {
+    "file": "tests/unit/urgency_level/test_urgency_level_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_urgency_level_service_placeholder",
+    "calls": [],
+    "called_by": []
+  }
+}

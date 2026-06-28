@@ -1,0 +1,113 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontName Arial
+skinparam classFontSize 12
+skinparam classAttributeFontSize 10
+skinparam classBorderColor #333333
+skinparam classHeaderBackgroundColor #EEEEEE
+
+package "Domain Model" {
+  enum AccountStatus {
+    active
+    locked
+  }
+
+  class UserAccount {
+    - status: AccountStatus
+    + {abstract} owner: Admin
+    .. invariants ..
+    + owner must be an Admin
+    + accessible only to Admins
+  + load(accountId)
+  + getOwner()
+  + getStatus() : AccountStatus
+  + lock()
+  + unlock()
+  + updateStatus()
+  + success(version becomes 2)
+  }
+
+  class Admin {
+    .. invariants ..
+    + has Admin permission
+  }
+
+  class SecurityTeam {
+    .. invariants ..
+    + has Read permission
+  }
+
+  enum Permission {
+    Admin
+    Read
+  }
+}
+
+package "Application" {
+  interface LockUnlockService {
+    + lockAccount(admin: Admin, account: UserAccount): void
+    + unlockAccount(admin: Admin, account: UserAccount): void
+    + getAccountStatus(team: SecurityTeam, account: UserAccount): AccountStatus
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface LockUnlockAPI {
+    .. RESTful API for lock/unlock operations ..
+    + {abstract} auth: boolean = true
+    + {abstract} encrypted: boolean = true
+  }
+
+  interface UserManagementDatabase {
+    .. Stores user account status ..
+    + {abstract} auth: boolean = false
+    + {abstract} encrypted: boolean = true
+  }
+
+  interface UserManagementPage {
+    .. Frontend page for admins to manage accounts ..
+    + {abstract} auth: boolean = true
+    + {abstract} encrypted: boolean = true
+  }
+}
+
+package "Controllers" {
+  class AccountController {
+    - lockUnlockService: LockUnlockService
+  }
+}
+
+package "Exceptions" {
+  class SelfLockDeniedException <<exception>> {
+    + message: String
+  }
+
+  class SimultaneousOperationForbiddenException <<exception>> {
+    + message: String
+  }
+
+  class UnauthorizedAccessException <<exception>> {
+    + message: String
+  }
+}
+
+' Relationships
+Admin "1" -- "0..*" UserAccount : owns >
+Admin "1" -- "0..*" UserAccount : manages >
+SecurityTeam "1" -- "0..*" UserAccount : reads >
+
+Admin ..|> Permission : has
+SecurityTeam ..|> Permission : has
+
+LockUnlockService ..|> LockUnlockAPI : implements
+LockUnlockService ..|> UserManagementDatabase : uses
+LockUnlockService ..|> UserManagementPage : implements
+
+AccountController --> LockUnlockService : uses
+
+AccountController --> SelfLockDeniedException : throws
+AccountController --> SimultaneousOperationForbiddenException : throws
+AccountController --> UnauthorizedAccessException : throws
+
+@enduml

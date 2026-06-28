@@ -1,0 +1,10 @@
+[project]
+name = "project-11"
+version = "0.1.0"
+description = "Generated scaffold for project 11"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

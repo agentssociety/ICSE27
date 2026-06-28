@@ -1,0 +1,234 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+participant "DispatcherInterface" as UI
+end box
+
+box "Application Layer" #LightGreen
+participant "FlightController" as FC
+participant "AuthService" as AS
+end box
+
+box "Domain Layer" #LightYellow
+participant "Flight" as Flight
+participant "Actor" as Actor
+participant "Resource" as Resource
+participant "Operation" as Op
+participant "State" as State
+end box
+
+box "Infrastructure Layer" #LightCoral
+participant "FlightRepository" as Repo
+participant "FlightDatabase" as DB
+end box
+
+== Register Flight - Success ==
+
+UI -> FC : registerFlight(flightNumber: String, origin: AirportCode, destination: AirportCode, departureTime: String) : Flight
+activate FC
+
+FC -> AS : authenticateDispatcher(credentials: Token) : Actor
+activate AS
+AS --> FC : dispatcher: Actor
+deactivate AS
+
+FC -> AS : checkPermission(actor: Actor, required: Permission.Write) : boolean
+activate AS
+AS --> FC : true
+deactivate AS
+
+FC -> FC : validateFlightNumber(flightNumber: String) : boolean
+FC -> FC : validateAirportCodes(origin: AirportCode, destination: AirportCode) : boolean
+FC -> FC : normalizeTimeFormat(departureTime: String) : String
+
+FC -> Repo : findByFlightNumber(flightNumber: String) : Flight?
+activate Repo
+Repo -> DB : SELECT * FROM flights WHERE flight_number = :fn [TLS][encrypted at rest]
+DB --> Repo : null
+Repo --> FC : null
+deactivate Repo
+
+FC -> Flight : new Flight(flightNumber, origin, destination, normalizedTime)
+activate Flight
+Flight --> FC : flight: Flight
+deactivate Flight
+
+FC -> Repo : save(flight: Flight) : Flight
+activate Repo
+Repo -> DB : INSERT INTO flights ... [TLS][encrypted at rest]
+DB --> Repo : success
+Repo --> FC : flight: Flight
+deactivate Repo
+
+FC -> Op : new Operation("registerFlight", actor, flight, State.Pre1, State.Post1)
+activate Op
+Op --> FC : operation: Operation
+deactivate Op
+
+FC -> State : transition(State.Pre1, State.Post1)
+activate State
+State --> FC : success
+deactivate State
+
+FC --> UI : HTTP 201 Created : flight: Flight
+deactivate FC
+
+== Register Flight - Duplicate Flight Number ==
+
+UI -> FC : registerFlight(flightNumber: String, origin: AirportCode, destination: AirportCode, departureTime: String) : Flight
+activate FC
+
+FC -> AS : authenticateDispatcher(credentials: Token) : Actor
+activate AS
+AS --> FC : dispatcher: Actor
+deactivate AS
+
+FC -> AS : checkPermission(actor: Actor, required: Permission.Write) : boolean
+activate AS
+AS --> FC : true
+deactivate AS
+
+FC -> FC : validateFlightNumber(flightNumber: String) : boolean
+FC -> FC : validateAirportCodes(origin: AirportCode, destination: AirportCode) : boolean
+FC -> FC : normalizeTimeFormat(departureTime: String) : String
+
+FC -> Repo : findByFlightNumber(flightNumber: String) : Flight?
+activate Repo
+Repo -> DB : SELECT * FROM flights WHERE flight_number = :fn [TLS][encrypted at rest]
+DB --> Repo : existingFlight: Flight
+Repo --> FC : existingFlight: Flight
+deactivate Repo
+
+alt Flight number already exists
+FC -> Op : new Operation("registerFlight", actor, existingFlight, State.Pre1, State.Error)
+activate Op
+Op --> FC : operation: Operation
+deactivate Op
+
+FC -> State : transition(State.Pre1, State.Error)
+activate State
+State --> FC : success
+deactivate State
+
+FC --> UI : HTTP 409 Conflict : "Flight number already exists"
+deactivate FC
+end
+
+== Register Flight - Invalid Airport Codes ==
+
+UI -> FC : registerFlight(flightNumber: String, origin: AirportCode, destination: AirportCode, departureTime: String) : Flight
+activate FC
+
+FC -> AS : authenticateDispatcher(credentials: Token) : Actor
+activate AS
+AS --> FC : dispatcher: Actor
+deactivate AS
+
+FC -> AS : checkPermission(actor: Actor, required: Permission.Write) : boolean
+activate AS
+AS --> FC : true
+deactivate AS
+
+FC -> FC : validateFlightNumber(flightNumber: String) : boolean
+FC -> FC : validateAirportCodes(origin: AirportCode, destination: AirportCode) : boolean
+
+alt Invalid airport codes
+FC -> Op : new Operation("registerFlight", actor, null, State.Pre1, State.Error)
+activate Op
+Op --> FC : operation: Operation
+deactivate Op
+
+FC -> State : transition(State.Pre1, State.Error)
+activate State
+State --> FC : success
+deactivate State
+
+FC --> UI : HTTP 400 Bad Request : "Invalid airport codes"
+deactivate FC
+end
+
+== Register Flight - Unauthorized Dispatcher ==
+
+UI -> FC : registerFlight(flightNumber: String, origin: AirportCode, destination: AirportCode, departureTime: String) : Flight
+activate FC
+
+FC -> AS : authenticateDispatcher(credentials: Token) : Actor
+activate AS
+AS --> FC : dispatcher: Actor
+deactivate AS
+
+FC -> AS : checkPermission(actor: Actor, required: Permission.Write) : boolean
+activate AS
+
+alt Unauthorized
+AS --> FC : false
+deactivate AS
+
+FC -> Op : new Operation("registerFlight", actor, null, State.Pre1, State.Error)
+activate Op
+Op --> FC : operation: Operation
+deactivate Op
+
+FC -> State : transition(State.Pre1, State.Error)
+activate State
+State --> FC : success
+deactivate State
+
+FC --> UI : HTTP 403 Forbidden : "Unauthorized"
+deactivate FC
+end
+
+== Register Flight - Non-Standard Time Format ==
+
+UI -> FC : registerFlight(flightNumber: String, origin: AirportCode, destination: AirportCode, departureTime: String) : Flight
+activate FC
+
+FC -> AS : authenticateDispatcher(credentials: Token) : Actor
+activate AS
+AS --> FC : dispatcher: Actor
+deactivate AS
+
+FC -> AS : checkPermission(actor: Actor, required: Permission.Write) : boolean
+activate AS
+AS --> FC : true
+deactivate AS
+
+FC -> FC : validateFlightNumber(flightNumber: String) : boolean
+FC -> FC : validateAirportCodes(origin: AirportCode, destination: AirportCode) : boolean
+FC -> FC : normalizeTimeFormat(departureTime: String) : String
+note right: Converts HHMM to HH:MM format
+
+FC -> Repo : findByFlightNumber(flightNumber: String) : Flight?
+activate Repo
+Repo -> DB : SELECT * FROM flights WHERE flight_number = :fn [TLS][encrypted at rest]
+DB --> Repo : null
+Repo --> FC : null
+deactivate Repo
+
+FC -> Flight : new Flight(flightNumber, origin, destination, normalizedTime)
+activate Flight
+Flight --> FC : flight: Flight
+deactivate Flight
+
+FC -> Repo : save(flight: Flight) : Flight
+activate Repo
+Repo -> DB : INSERT INTO flights ... [TLS][encrypted at rest]
+DB --> Repo : success
+Repo --> FC : flight: Flight
+deactivate Repo
+
+FC -> Op : new Operation("registerFlight", actor, flight, State.Pre1, State.Post1)
+activate Op
+Op --> FC : operation: Operation
+deactivate Op
+
+FC -> State : transition(State.Pre1, State.Post1)
+activate State
+State --> FC : success
+deactivate State
+
+FC --> UI : HTTP 201 Created : flight: Flight
+deactivate FC
+
+@enduml

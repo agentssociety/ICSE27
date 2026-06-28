@@ -1,0 +1,147 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontName Arial
+skinparam classFontSize 12
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+package "Domain Model" {
+  enum UrgencyLevel {
+    LOW
+    MEDIUM
+    HIGH
+    CRITICAL
+  + validateLevel(level: String) : boolean
+  }
+
+  class Patient {
+    + id : String
+    + name : String
+    + urgencyLevel : UrgencyLevel
+  + create(name: String, urgencyLevel: UrgencyLevel) : Patient
+  + getUrgencyLevel() : UrgencyLevel
+  + setUrgencyLevel(newUrgency: UrgencyLevel) : void
+  }
+
+  class Queue {
+    + orderedPatients : List<Patient>
+    .. invariant ..
+    + sorted by urgency (highest first)
+  + addPatient(patient: Patient) : void
+  + sortByUrgency()
+  + reSortByUrgency() : void
+  }
+
+  class Actor {
+    + role : String
+    + permissions : List<Permission>
+  + checkPermission(role: String, permission: Permission) : boolean
+  }
+
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+
+  class Resource {
+    + owner : Actor
+    + accessibleActors : List<Actor>
+    .. invariant ..
+    + owner always in accessible
+  + checkAccess(actor: Actor, resource: Resource) : boolean
+  }
+
+  class REQ_SYS_01_Operation {
+    + initiator : Actor
+    + target : Resource
+    + channel : List<Channel>
+    + grant : String
+    + preState : String
+    + postState : String
+    .. invariant ..
+    + initiator must have required permission
+    + initiator must be in target's accessible
+    + pre != post
+    + at least one authenticated channel
+  + create(initiator: Actor, target: Resource, channel: Channel) : REQ_SYS_01_Operation
+  + recordStateChange(operation: REQ_SYS_01_Operation) : void
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface "PatientRegistrationAPI" <<interface>> {
+    + {abstract} registerPatient()
+  }
+
+  interface "ReTriageAPI" <<interface>> {
+    + {abstract} updateUrgency()
+  }
+
+  interface "PatientQueueDatabase" <<interface>> {
+    + {abstract} storePatient()
+    + {abstract} getPatient()
+    + {abstract} getQueue()
+    + {abstract} updateQueue()
+  + rollback()
+  }
+}
+
+package "Controllers" {
+  class PatientRegistrationController {
+    + patientRegistrationAPI : PatientRegistrationAPI
+    + registerPatient()
+  }
+
+  class ReTriageController {
+    + reTriageAPI : ReTriageAPI
+    + updateUrgency()
+  }
+}
+
+package "DTOs" {
+  class PatientDTO <<dto>> {
+    + id : String
+    + name : String
+    + urgencyLevel : UrgencyLevel
+  }
+
+  class QueueDTO <<dto>> {
+    + orderedPatients : List<PatientDTO>
+  }
+}
+
+' Relationships
+Patient "1" --> "1" UrgencyLevel : has
+Queue "1" *--> "*" Patient : contains
+Queue ..> UrgencyLevel : depends on for sorting
+REQ_SYS_01_Operation ..> Queue : modifies
+
+' Actor - Permission relationship
+Actor "1" --> "*" Permission : has
+
+' Resource - Actor relationships
+Resource "1" --> "1" Actor : owner
+Resource "1" --> "*" Actor : accessibleActors
+
+' REQ_SYS_01_Operation relationships
+REQ_SYS_01_Operation "1" --> "1" Actor : initiator
+REQ_SYS_01_Operation "1" --> "1" Resource : target
+
+' Controller to API relationships
+PatientRegistrationController ..|> PatientRegistrationAPI : implements
+ReTriageController ..|> ReTriageAPI : implements
+
+' Controller dependencies on Database
+PatientRegistrationController ..> PatientQueueDatabase : depends on
+ReTriageController ..> PatientQueueDatabase : depends on
+
+' DTO relationships
+PatientRegistrationController ..> PatientDTO : uses
+ReTriageController ..> PatientDTO : uses
+PatientRegistrationController ..> QueueDTO : uses
+ReTriageController ..> QueueDTO : uses
+QueueDTO "1" --> "*" PatientDTO : contains
+
+@enduml

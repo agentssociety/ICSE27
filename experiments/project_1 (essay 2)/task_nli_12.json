@@ -1,0 +1,44 @@
+{
+  "task_id": 12,
+  "confidence": 0.9895,
+  "evidence": [
+    {
+      "claim": "I see each patient's urgency level.",
+      "fact": "The dashboard shows each patient's urgency.",
+      "score": 0.9986,
+      "user_story_span": "I see each patient's urgency level",
+      "fact_span": "The dashboard shows each patient's urgency."
+    },
+    {
+      "claim": "Patients are already triaged and assigned an urgency level.",
+      "fact": "Each person receives a priority rating that reflects how quickly they need medical intervention.",
+      "score": 0.998,
+      "user_story_span": "Patients are already triaged and assigned an urgency level.",
+      "fact_span": "Each person receives a priority rating that reflects how quickly they need medical intervention."
+    },
+    {
+      "claim": "The system provides a live dashboard that displays each patient's urgency level.",
+      "fact": "Users see a dynamic board that updates automatically with each patient's acuity and the time they have spent in the queue.",
+      "score": 0.9943,
+      "user_story_span": "",
+      "fact_span": "Users see a dynamic board that updates automatically with each patient's acuity"
+    },
+    {
+      "claim": "It requires real-time data updates to reflect changes in patient status.",
+      "fact": "Changes in patient status cause the queue to be refreshed immediately to reflect the latest triage information.",
+      "score": 0.9889,
+      "user_story_span": "It requires real‑time data updates to reflect changes in patient status.",
+      "fact_span": "Changes in patient status cause the queue to be refreshed immediately to reflect the latest triage information."
+    },
+    {
+      "claim": "The system provides a live dashboard that displays each patient's estimated wait time.",
+      "fact": "Users see a dynamic board that updates automatically with each patient's acuity and the time they have spent in the queue.",
+      "score": 0.9676,
+      "user_story_span": "",
+      "fact_span": "the time they have spent in the queue"
+    }
+  ],
+  "total_claims": 10,
+  "supported_claims": 5,
+  "threshold": 0.6
+}

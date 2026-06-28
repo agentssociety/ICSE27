@@ -1,0 +1,30 @@
+{
+  "task_id": 99,
+  "confidence": 0.9943,
+  "evidence": [
+    {
+      "claim": "The system validates credentials.",
+      "fact": "The system authenticates users by card number and PIN before any transaction.",
+      "score": 0.9989,
+      "user_story_span": "validates credentials",
+      "fact_span": "authenticates users by card number and PIN"
+    },
+    {
+      "claim": "The system enforces spending caps.",
+      "fact": "A secure settlement engine for cash disbursements that validates credentials, enforces spending caps, and audits anomalous patterns.",
+      "score": 0.9951,
+      "user_story_span": "enforces spending caps",
+      "fact_span": "enforces spending caps"
+    },
+    {
+      "claim": "The system audits anomalous patterns.",
+      "fact": "A secure settlement engine for cash disbursements that validates credentials, enforces spending caps, and audits anomalous patterns.",
+      "score": 0.9888,
+      "user_story_span": "audits anomalous patterns",
+      "fact_span": "audits anomalous patterns"
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

@@ -1,0 +1,173 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam backgroundColor #FEFEFE
+skinparam class {
+  BorderColor #333333
+  FontColor #333333
+  BackgroundColor #F8F8F8
+}
+skinparam interface {
+  BorderColor #336699
+  FontColor #336699
+  BackgroundColor #E6F0FF
+}
+skinparam enum {
+  BorderColor #669933
+  FontColor #669933
+  BackgroundColor #F0F7E6
+}
+skinparam exception {
+  BorderColor #CC3333
+  FontColor #CC3333
+  BackgroundColor #FFE6E6
+}
+skinparam dto {
+  BorderColor #996633
+  FontColor #996633
+  BackgroundColor #FFF0E6
+}
+skinparam package {
+  BorderColor #666666
+  FontColor #666666
+  BackgroundColor #F0F0F0
+}
+
+package "Domain Model" {
+  class Flight {
+    - flightNumber : String
+    - airline : String
+    - origin : String
+    - destination : String
+    - scheduledTime : DateTime
+    - type : FlightType
+    - status : FlightStatus
+    note: flightNumber must be unique\nscheduledTime in UTC
+  + create(fields: FlightDTO) : Flight
+  + setFlightNumber(fn: String)
+  + setType(type: FlightType)
+  + setStatus(status: FlightStatus)
+  + validateNewSchedule(time: DateTime) : boolean
+  + setScheduledTime(newTime: DateTime)
+  + getStatus() : FlightStatus
+  + setStatus(FlightStatus.CANCELLED)
+  }
+  class Resource {
+    - owner : String
+    - accessible : Set<String>
+    note: owner ∈ accessible
+  }
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+    note: Write includes Read\nExecute includes Read\nAdmin includes all
+  }
+  enum State {
+    Pre1
+    Post1
+    Post2
+    Post3
+  }
+  enum FlightType {
+    ARRIVAL
+    DEPARTURE
+  }
+  enum FlightStatus {
+    ACTIVE
+    CANCELLED
+  }
+}
+
+package "Application" {
+  class FlightService {
+    note: orchestrates flight operations
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface FlightRegistrationAPI {
+    note: endpoints for register/edit/cancel\nencryption & authentication required
+  }
+  interface FlightDataStore {
+    note: persistent storage with owner-based access
+  + findByFlightNumber(fn: String) : Flight
+  + save(flight: Flight) : Flight
+  + update(flight: Flight) : Flight
+  + saveHistory(flight: Flight) : Flight
+  + removeFromActiveListings(fn: String) : boolean
+  + saveWithLock(flight: Flight) : Flight
+  }
+  interface FlightManagementDashboard {
+    note: UI for air traffic controllers
+  }
+}
+
+package "Controllers" {
+  class AirTrafficController {
+    - permissions : Permission[]
+    note: can Read, Write, Execute
+  }
+  class FlightOperationsTeam {
+    - permissions : Permission[]
+    note: can Read, Write
+  }
+}
+
+package "DTOs" {
+  class FlightRegistrationRequest <<dto>> {
+    - flightNumber : String
+    - airline : String
+    - origin : String
+    - destination : String
+    - scheduledTime : DateTime
+    - type : FlightType
+  }
+  class FlightUpdateRequest <<dto>> {
+    - flightNumber : String
+    - scheduledTime : DateTime
+  }
+}
+
+package "Exceptions" {
+  class FlightNotFoundException <<exception>> {
+    - flightNumber : String
+  }
+  class DuplicateFlightNumberException <<exception>> {
+    - flightNumber : String
+  }
+  class InvalidFlightDataException <<exception>> {
+    - message : String
+  }
+}
+
+' Relationships
+AirTrafficController --> FlightRegistrationAPI : calls
+FlightManagementDashboard --> FlightRegistrationAPI : calls
+FlightRegistrationAPI --> FlightDataStore : writes to
+FlightRegistrationAPI --> FlightService : delegates
+FlightService --> FlightDataStore : uses
+FlightService --> Flight : manages
+AirTrafficController --> Flight : creates/edits/cancels
+FlightRegistrationAPI ..> FlightRegistrationRequest : receives
+FlightRegistrationAPI ..> FlightUpdateRequest : receives
+FlightRegistrationAPI ..> FlightNotFoundException : throws
+FlightRegistrationAPI ..> DuplicateFlightNumberException : throws
+FlightRegistrationAPI ..> InvalidFlightDataException : throws
+FlightDataStore --> Flight : persists
+Flight --> Resource : has access control
+Flight --> FlightType : has
+Flight --> FlightStatus : has
+AirTrafficController --> Permission : has
+FlightOperationsTeam --> Permission : has
+
+' Multiplicities
+AirTrafficController "1" --> "*" Flight : creates/edits/cancels
+FlightRegistrationAPI "1" --> "1" FlightDataStore : writes to
+FlightRegistrationAPI "1" --> "1" FlightService : delegates
+FlightService "1" --> "1" FlightDataStore : uses
+FlightService "1" --> "*" Flight : manages
+
+@enduml

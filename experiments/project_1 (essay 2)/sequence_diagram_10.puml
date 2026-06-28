@@ -1,0 +1,300 @@
+@startuml
+!define LAYER_ACTOR actor
+!define LAYER_CONTROLLER boundary
+!define LAYER_APPLICATION control
+!define LAYER_DOMAIN entity
+!define LAYER_INFRASTRUCTURE database
+!define LAYER_EXTERNAL collections
+
+box "Controller Layer" #LightBlue
+  LAYER_CONTROLLER "PatientController" as PatientController
+  LAYER_CONTROLLER "QueueController" as QueueController
+end box
+
+box "Application Layer" #LightGreen
+  LAYER_APPLICATION "PatientService" as PatientService
+  LAYER_APPLICATION "QueueService" as QueueService
+  LAYER_APPLICATION "AuthService" as AuthService
+end box
+
+box "Domain Layer" #LightYellow
+  LAYER_DOMAIN "Patient" as Patient
+  LAYER_DOMAIN "Queue" as Queue
+  LAYER_DOMAIN "UrgencyLevel" as UrgencyLevel
+  LAYER_DOMAIN "Actor" as Actor
+  LAYER_DOMAIN "Role" as Role
+  LAYER_DOMAIN "Permission" as Permission
+end box
+
+box "Infrastructure Layer" #LightCoral
+  LAYER_INFRASTRUCTURE "PatientResource" as PatientResource
+  LAYER_INFRASTRUCTURE "QueueResource" as QueueResource
+  LAYER_INFRASTRUCTURE "QueueDatabase" as QueueDatabase
+end box
+
+box "External Layer" #LightGray
+  LAYER_EXTERNAL "Triage_Nurse" as TriageNurse
+  LAYER_EXTERNAL "Doctor" as Doctor
+  LAYER_EXTERNAL "System_Admin" as SystemAdmin
+end box
+
+== Add Patient Flow ==
+
+TriageNurse -> PatientController : POST /patients (patientData, urgencyLevel) [TLS]
+PatientController -> AuthService : authenticate(token) : Actor
+AuthService --> PatientController : actor : Actor
+
+alt Authentication Failed
+  PatientController --> TriageNurse : 401 Unauthorized
+end
+
+PatientController -> PatientService : addPatient(actor, patientData, urgencyLevel)
+PatientService -> Patient : new Patient(patientData, urgencyLevel)
+Patient -> UrgencyLevel : validate(urgencyLevel) : boolean
+
+alt Invalid Urgency Level
+  Patient --> PatientService : validationFailed : false
+  PatientService --> PatientController : InvalidUrgencyException
+  PatientController --> TriageNurse : 400 Bad Request - Invalid urgency level
+end
+
+PatientService -> AuthService : checkPermission(actor, PatientResource, Write) : boolean
+
+alt Insufficient Permission
+  AuthService --> PatientService : false
+  PatientService --> PatientController : PermissionDeniedException
+  PatientController --> TriageNurse : 403 Forbidden
+end
+
+PatientService -> PatientResource : save(patient) [encrypted]
+PatientResource --> PatientService : savedPatient : Patient
+
+PatientService -> QueueService : addToQueue(patient)
+QueueService -> Queue : addPatient(patient)
+Queue -> Queue : reorderByUrgency()
+note right: State transition: queue reordered\nPost1: Queue correctly ordered
+QueueService -> QueueDatabase : persistQueue(queue) [TLS]
+QueueDatabase --> QueueService : success
+
+alt Concurrent Write Conflict
+  QueueDatabase --> QueueService : ConflictException
+  QueueService -> QueueDatabase : retryWithLock()
+  QueueDatabase --> QueueService : success
+end
+
+QueueService --> PatientService : queueUpdated
+PatientService --> PatientController : patientAdded
+PatientController --> TriageNurse : 201 Created - Patient added to queue
+note right: Post2: Patient visible\nPost3: No errors
+
+== Change Urgency Flow ==
+
+TriageNurse -> PatientController : PUT /patients/{patientId}/urgency (newUrgencyLevel) [TLS]
+PatientController -> AuthService : authenticate(token) : Actor
+AuthService --> PatientController : actor : Actor
+
+alt Authentication Failed
+  PatientController --> TriageNurse : 401 Unauthorized
+end
+
+PatientController -> PatientService : changeUrgency(actor, patientId, newUrgencyLevel)
+PatientService -> PatientResource : findById(patientId) : Patient
+PatientResource --> PatientService : patient : Patient
+
+alt Patient Not Found
+  PatientService --> PatientController : PatientNotFoundException
+  PatientController --> TriageNurse : 404 Not Found
+end
+
+PatientService -> UrgencyLevel : validate(newUrgencyLevel) : boolean
+
+alt Invalid Urgency Level
+  PatientService --> PatientController : InvalidUrgencyException
+  PatientController --> TriageNurse : 400 Bad Request - Invalid urgency level
+end
+
+PatientService -> AuthService : checkPermission(actor, PatientResource, Write) : boolean
+
+alt Insufficient Permission
+  AuthService --> PatientService : false
+  PatientService --> PatientController : PermissionDeniedException
+  PatientController --> TriageNurse : 403 Forbidden
+end
+
+PatientService -> Patient : updateUrgency(newUrgencyLevel)
+note right: State transition: urgency changed\nPre2: Patient had urgency level\nPost: New urgency level assigned
+PatientService -> PatientResource : update(patient) [encrypted]
+PatientResource --> PatientService : updatedPatient : Patient
+
+PatientService -> QueueService : reorderQueue()
+QueueService -> Queue : reorderByUrgency()
+note right: State transition: queue reordered\nPost1: Queue correctly ordered
+QueueService -> QueueDatabase : persistQueue(queue) [TLS]
+QueueDatabase --> QueueService : success
+
+alt Concurrent Update on Same Patient
+  QueueDatabase --> QueueService : ConflictException
+  QueueService -> QueueDatabase : retryWithOptimisticLock(patientId)
+  QueueDatabase --> QueueService : success
+end
+
+QueueService --> PatientService : queueReordered
+PatientService --> PatientController : urgencyChanged
+PatientController --> TriageNurse : 200 OK - Urgency updated
+note right: Post3: No errors
+
+== Concurrent Updates Flow ==
+
+TriageNurse1 -> PatientController : PUT /patients/{patientId1}/urgency (urgent) [TLS]
+TriageNurse2 -> PatientController : PUT /patients/{patientId2}/urgency (critical) [TLS]
+
+PatientController -> AuthService : authenticate(token1) : Actor1
+PatientController -> AuthService : authenticate(token2) : Actor2
+
+AuthService --> PatientController : actor1 : Actor
+AuthService --> PatientController : actor2 : Actor
+
+PatientController -> PatientService : changeUrgency(actor1, patientId1, urgent)
+PatientController -> PatientService : changeUrgency(actor2, patientId2, critical)
+
+PatientService -> PatientResource : findById(patientId1) : Patient
+PatientService -> PatientResource : findById(patientId2) : Patient
+
+PatientResource --> PatientService : patient1 : Patient
+PatientResource --> PatientService : patient2 : Patient
+
+PatientService -> UrgencyLevel : validate(urgent) : boolean
+PatientService -> UrgencyLevel : validate(critical) : boolean
+
+PatientService -> AuthService : checkPermission(actor1, PatientResource, Write) : boolean
+PatientService -> AuthService : checkPermission(actor2, PatientResource, Write) : boolean
+
+AuthService --> PatientService : true
+AuthService --> PatientService : true
+
+PatientService -> Patient : updateUrgency(urgent)
+PatientService -> Patient : updateUrgency(critical)
+
+PatientService -> PatientResource : update(patient1) [encrypted]
+PatientService -> PatientResource : update(patient2) [encrypted]
+
+PatientResource --> PatientService : updatedPatient1 : Patient
+PatientResource --> PatientService : updatedPatient2 : Patient
+
+PatientService -> QueueService : reorderQueue()
+QueueService -> Queue : reorderByUrgency()
+note right: State transition: queue reordered\nPost1: Queue correctly ordered
+QueueService -> QueueDatabase : persistQueue(queue) [TLS]
+QueueDatabase --> QueueService : success
+
+alt Same Patient Updated Concurrently
+  QueueDatabase --> QueueService : ConflictException
+  QueueService -> QueueDatabase : retryWithPessimisticLock(patientId)
+  QueueDatabase --> QueueService : success
+  note right: Last-write-wins strategy applied
+end
+
+QueueService --> PatientService : queueReordered
+PatientService --> PatientController : urgencyChanged
+PatientService --> PatientController : urgencyChanged
+PatientController --> TriageNurse1 : 200 OK - Urgency updated
+PatientController --> TriageNurse2 : 200 OK - Urgency updated
+note right: Post3: No errors\nFinal queue reflects all changes
+
+== View Queue Flow ==
+
+Doctor -> QueueController : GET /queue [TLS]
+QueueController -> AuthService : authenticate(token) : Actor
+AuthService --> QueueController : actor : Actor
+
+alt Authentication Failed
+  QueueController --> Doctor : 401 Unauthorized
+end
+
+QueueController -> QueueService : getQueue(actor)
+QueueService -> AuthService : checkPermission(actor, QueueResource, Read) : boolean
+
+alt Insufficient Permission
+  AuthService --> QueueService : false
+  QueueService --> QueueController : PermissionDeniedException
+  QueueController --> Doctor : 403 Forbidden
+end
+
+QueueService -> QueueDatabase : loadQueue() [TLS]
+QueueDatabase --> QueueService : queue : Queue
+
+QueueService -> Queue : getPatients() : List<Patient>
+Queue --> QueueService : patients : List<Patient>
+
+QueueService --> QueueController : queueData
+QueueController --> Doctor : 200 OK - Queue data
+note right: Queue sorted by urgency:\nCritical first, then Urgent, then Non-Urgent
+
+== Admin Operations Flow ==
+
+SystemAdmin -> QueueController : POST /queue/reorder [TLS]
+QueueController -> AuthService : authenticate(token) : Actor
+AuthService --> QueueController : actor : Actor
+
+alt Authentication Failed
+  QueueController --> SystemAdmin : 401 Unauthorized
+end
+
+QueueController -> QueueService : forceReorder(actor)
+QueueService -> AuthService : checkPermission(actor, QueueResource, Admin) : boolean
+
+alt Insufficient Permission
+  AuthService --> QueueService : false
+  QueueService --> QueueController : PermissionDeniedException
+  QueueController --> SystemAdmin : 403 Forbidden
+end
+
+QueueService -> QueueDatabase : loadQueue() [TLS]
+QueueDatabase --> QueueService : queue : Queue
+
+QueueService -> Queue : reorderByUrgency()
+note right: State transition: queue reordered\nPost1: Queue correctly ordered
+QueueService -> QueueDatabase : persistQueue(queue) [TLS]
+QueueDatabase --> QueueService : success
+
+QueueService --> QueueController : queueReordered
+QueueController --> SystemAdmin : 200 OK - Queue reordered
+note right: Post3: No errors
+
+== Error Handling - Concurrent Write Conflict ==
+
+TriageNurse -> PatientController : PUT /patients/{patientId}/urgency (critical) [TLS]
+PatientController -> AuthService : authenticate(token) : Actor
+AuthService --> PatientController : actor : Actor
+
+PatientController -> PatientService : changeUrgency(actor, patientId, critical)
+PatientService -> PatientResource : findById(patientId) : Patient
+PatientResource --> PatientService : patient : Patient
+
+PatientService -> UrgencyLevel : validate(critical) : boolean
+PatientService -> AuthService : checkPermission(actor, PatientResource, Write) : boolean
+AuthService --> PatientService : true
+
+PatientService -> Patient : updateUrgency(critical)
+PatientService -> PatientResource : update(patient) [encrypted]
+PatientResource --> PatientService : updatedPatient : Patient
+
+PatientService -> QueueService : reorderQueue()
+QueueService -> Queue : reorderByUrgency()
+QueueService -> QueueDatabase : persistQueue(queue) [TLS]
+
+alt Concurrent Write Conflict Detected
+  QueueDatabase --> QueueService : OptimisticLockException
+  QueueService -> QueueDatabase : retryWithPessimisticLock(patientId)
+  QueueDatabase --> QueueService : success
+  QueueService -> Queue : reorderByUrgency()
+  QueueService -> QueueDatabase : persistQueue(queue) [TLS]
+  QueueDatabase --> QueueService : success
+  QueueService --> PatientService : queueReorderedWithRetry
+end
+
+PatientService --> PatientController : urgencyChanged
+PatientController --> TriageNurse : 200 OK - Urgency updated with conflict resolution
+note right: Conflict resolved using\npessimistic locking strategy
+
+@enduml

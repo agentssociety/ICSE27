@@ -1,0 +1,88 @@
+{
+  "id": "REQ-QUEUE-01",
+  "title": "Order Queue by Urgency and Time",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall order the queue items first by urgency (highest to lowest) and then by time (oldest to newest).",
+  "rationale": "To ensure that users address the most urgent items first while maintaining a chronological order within the same urgency level.",
+  "business_value": "Improves efficiency by ensuring that critical issues are addressed promptly, reducing response times for high-priority tasks.",
+  "source": {
+    "type": "User Story",
+    "id": 55,
+    "description": "As a user I need the system to order the queue by urgency then time so that I can address the most urgent items first and maintain chronological order within same urgency."
+  },
+  "stakeholders": [
+    "Product Owner",
+    "Development Team",
+    "QA Team"
+  ],
+  "acceptance_criteria": [
+    "Given there is a queue with items of varying urgencies and timestamps",
+    "When the queue is ordered by urgency then time",
+    "Then the items are sorted first by urgency (highest to lowest) and then by time (oldest to newest)"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "The queue is sorted correctly based on the specified criteria"
+  ],
+  "functional_constraints": [
+    "Sorting algorithm must handle multiple sorting levels (urgency first, then time)",
+    "Urgency levels must be defined and interpretable (e.g., high, medium, low)"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "Response time should be optimized to minimize user wait times",
+    "availability": "System must be available at least 99.9% of the time",
+    "scalability": "The system should be able to handle an increase in queue size by a factor of 10 within 24 hours",
+    "usability": "Error messages should be clear and actionable, providing guidance on how to resolve issues"
+  },
+  "edge_cases": [
+    "What happens when there are no items in the queue?",
+    "How does the system handle ties in urgency and time (e.g., same timestamp, same urgency level)?",
+    "What if an item's urgency or timestamp is updated while it is in the queue?"
+  ],
+  "dependencies": [],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Queue Storage",
+      "description": "The requirement interacts with the database to retrieve and store queue items."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-QUEUE-01",
+      "description": "Verify that an empty queue is returned when there are no items.",
+      "expected_result": "An empty list or array should be returned."
+    },
+    {
+      "id": "TC-QUEUE-02",
+      "description": "Verify the correct sorting of a queue with multiple items of different urgencies and timestamps.",
+      "expected_result": "Items should be sorted first by urgency (highest to lowest) and then by time (oldest to newest)."
+    },
+    {
+      "id": "TC-QUEUE-03",
+      "description": "Verify handling of ties in urgency and time with the same timestamp, same urgency level.",
+      "expected_result": "Items should be sorted based on a secondary criterion if urgencies are equal."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T17:32:49.909300",
+  "last_updated": "2026-06-15T17:39:50.746461",
+  "traceability": {
+    "related_requirements": [
+      "REQ-ITEM-URGENCY-01",
+      "REQ-SYM-01"
+    ],
+    "design_components": [
+      "Queue",
+      "Patient",
+      "UrgencyLevel"
+    ],
+    "test_artifacts": []
+  }
+}

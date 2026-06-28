@@ -1,0 +1,44 @@
+{
+  "task_id": 5,
+  "confidence": 0.9952,
+  "evidence": [
+    {
+      "claim": "There is a queue of patients with different priorities.",
+      "fact": "This platform continuously reorders the waiting list so that the most critical patients are seen first.",
+      "score": 0.9976,
+      "user_story_span": "Given there is a queue of patients with different priorities",
+      "fact_span": "This platform continuously reorders the waiting list so that the most critical patients are seen first."
+    },
+    {
+      "claim": "The system ensures that the highest-priority patient is selected next.",
+      "fact": "This platform continuously reorders the waiting list so that the most critical patients are seen first.",
+      "score": 0.9965,
+      "user_story_span": "The system ensures that the highest-priority patient is selected next.",
+      "fact_span": "This platform continuously reorders the waiting list so that the most critical patients are seen first."
+    },
+    {
+      "claim": "Dequeuing removes the patient from the queue.",
+      "fact": "Taking the patient removes them from the queue.",
+      "score": 0.9954,
+      "user_story_span": "",
+      "fact_span": "Taking the patient removes them from the queue."
+    },
+    {
+      "claim": "The system returns the patient with the highest priority.",
+      "fact": "This platform continuously reorders the waiting list so that the most critical patients are seen first.",
+      "score": 0.9933,
+      "user_story_span": "Then the system returns the patient with the highest priority",
+      "fact_span": "This platform continuously reorders the waiting list so that the most critical patients are seen first."
+    },
+    {
+      "claim": "The patient queue is sorted by priority (e.g., triage level, severity).",
+      "fact": "The system assigns each patient an urgency level from 1 (critical) to 5 (non-urgent) based on symptoms.",
+      "score": 0.993,
+      "user_story_span": "The patient queue is sorted by priority (e.g., triage level, severity).",
+      "fact_span": "The system assigns each patient an urgency level from 1 (critical) to 5 (non-urgent) based on symptoms."
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 5,
+  "threshold": 0.6
+}

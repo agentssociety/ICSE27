@@ -1,0 +1,94 @@
+{
+  "id": "REQ-INV-01",
+  "title": "Track Blood Units by Type, Rh Factor, and Donation Date",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall record the blood type, Rh factor, and donation date of each received blood unit.",
+  "rationale": "To ensure proper matching and expiration management of blood units for safe and timely transfusions.",
+  "business_value": "Improves the efficiency and safety of blood inventory management, reducing waste and ensuring patient care.",
+  "source": {
+    "type": "User Story",
+    "id": 25,
+    "description": "As a inventory manager I need to track blood units by type, Rh factor, and donation date So that I can ensure proper matching and expiration management"
+  },
+  "stakeholders": [
+    "Inventory Manager",
+    "Blood Donation Center",
+    "Hospital Administration"
+  ],
+  "acceptance_criteria": [
+    "Given a blood unit is received\nWhen the unit is logged into the system\nThen its blood type, Rh factor, and donation date are recorded",
+    "Given a blood unit with a known donation date\nWhen the expiration date is calculated\nThen the system can flag units near or past expiration"
+  ],
+  "preconditions": [
+    "The system must be operational and accessible."
+  ],
+  "postconditions": [
+    "All received blood units are recorded with their respective type, Rh factor, and donation date.",
+    "Units nearing or past their expiration date are flagged for attention."
+  ],
+  "functional_constraints": [
+    "The system must accurately calculate the expiration date based on the donation date and predefined shelf life for each blood type and Rh factor combination."
+  ],
+  "security_requirements": [
+    "Data about blood units, including type, Rh factor, and donation date, should be stored securely to prevent unauthorized access."
+  ],
+  "non_functional_requirements": {
+    "performance": "The system must handle the recording of up to 1000 new blood units per day without significant performance degradation.",
+    "availability": "The system must be available at least 99.5% of the time during regular business hours.",
+    "scalability": "The system should be able to scale horizontally to accommodate an increase in the number of blood units being tracked by up to 10 times within a year.",
+    "usability": "Error messages must be clear and user-friendly, guiding users on how to correct input errors."
+  },
+  "edge_cases": [
+    "What happens if the donation date is entered in an incorrect format?",
+    "How should the system handle blood units with missing Rh factor information?",
+    "What if a new type of blood is introduced that was not accounted for in the current system?"
+  ],
+  "dependencies": [
+    "A database to store blood unit data",
+    "A calendar or date calculation module to compute expiration dates"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "BloodUnitDB",
+      "description": "Stores all recorded blood units with their type, Rh factor, and donation date."
+    },
+    {
+      "type": "API",
+      "name": "DateCalculationAPI",
+      "description": "Used to calculate the expiration date based on the donation date and blood unit type/Rh factor."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-INV-01",
+      "description": "Record a new blood unit with all valid information.",
+      "expected_result": "The system records the blood type, Rh factor, and donation date without errors."
+    },
+    {
+      "id": "TC-INV-02",
+      "description": "Attempt to record a blood unit with an invalid donation date format.",
+      "expected_result": "An error message is displayed guiding the user on how to enter the correct donation date format."
+    },
+    {
+      "id": "TC-INV-03",
+      "description": "Calculate the expiration date for a blood unit with a known donation date.",
+      "expected_result": "The system correctly calculates and flags units near or past their expiration date."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T14:47:37.534112",
+  "last_updated": "2026-06-14T14:50:46.929188",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "BloodUnit"
+    ],
+    "test_artifacts": []
+  }
+}

@@ -1,0 +1,136 @@
+@startuml
+title Blood Bank Dashboard - Sequence Diagram
+
+actor "BloodBankManager" as BBM
+actor "UnauthorizedUser" as UU
+participant "DashboardView" as DV
+participant "Inventory API" as IA
+participant "Transfusion Request API" as TRA
+participant "InventoryItem" as II
+participant "TransfusionRequest" as TR
+
+== Authentication & Authorization Flow ==
+
+alt User is BloodBankManager (Admin)
+    BBM -> DV : navigateToDashboard()
+    DV -> DV : authenticateUser(credentials)
+    note right: Must use encrypted channel [HTTPS]
+    DV -> BBM : returnAuthToken()
+    
+    alt Token valid & role = Blood_Bank_Manager
+        DV -> DV : checkPermission(Admin)
+        DV -> BBM : allowAccess()
+    else Token invalid or insufficient role
+        DV -> BBM : return 403 Forbidden
+        note right: UnauthorizedUser denied access
+    end
+    
+else User is UnauthorizedUser
+    UU -> DV : navigateToDashboard()
+    DV -> UU : return 403 Forbidden
+    note right: No permissions, access denied
+end
+
+== Dashboard Load Flow ==
+
+BBM -> DV : requestDashboardLoad()
+
+alt Both APIs available
+    DV -> IA : getStockLevels(aboRhType: ABORhType) : List<StockLevel>
+    note right: [HTTPS] [encrypted at rest]
+    IA --> DV : return stockLevels
+    
+    DV -> IA : getExpiringUnits(dateThreshold: Date) : List<ExpiringUnit>
+    note right: [HTTPS] [encrypted at rest]
+    IA --> DV : return expiringUnits
+    
+    DV -> TRA : getOpenRequests() : List<TransfusionRequest>
+    note right: [HTTPS] [encrypted at rest]
+    TRA --> DV : return openRequests
+    
+    DV -> DV : aggregateData(stockLevels, expiringUnits, openRequests)
+    DV -> DV : renderDashboard()
+    note right: Post1: Dashboard accessible, Post2: Data up-to-date
+    
+else Inventory API unavailable
+    DV -> IA : getStockLevels()
+    IA --> DV : return 503 Service Unavailable
+    DV -> DV : displayError("Inventory API unavailable")
+    DV -> DV : showCachedData()
+    note right: Pre1: Inventory data may be cached
+    
+else Transfusion Request API unavailable
+    DV -> TRA : getOpenRequests()
+    TRA --> DV : return 503 Service Unavailable
+    DV -> DV : displayError("Transfusion Request API unavailable")
+    DV -> DV : showInventoryDataOnly()
+    note right: Pre3: Open requests may be missing
+    
+else Both APIs unavailable
+    DV -> IA : getStockLevels()
+    IA --> DV : return 503
+    DV -> TRA : getOpenRequests()
+    TRA --> DV : return 503
+    DV -> DV : displayError("Unable to load dashboard data")
+    DV -> DV : showCachedData()
+end
+
+== Dashboard Refresh Flow (Every 60 seconds) ==
+
+alt No previous refresh in progress
+    DV -> IA : getStockLevels(aboRhType: ABORhType) : List<StockLevel>
+    note right: [HTTPS] [encrypted at rest]
+    IA --> DV : return updatedStockLevels
+    
+    DV -> IA : getExpiringUnits(dateThreshold: Date) : List<ExpiringUnit>
+    note right: [HTTPS] [encrypted at rest]
+    IA --> DV : return updatedExpiringUnits
+    
+    DV -> TRA : getOpenRequests() : List<TransfusionRequest>
+    note right: [HTTPS] [encrypted at rest]
+    TRA --> DV : return updatedOpenRequests
+    
+    DV -> DV : updateDashboardDisplay()
+    note right: Post2: Dashboard updated in real time
+    
+else Previous refresh still in progress
+    DV -> DV : skipRefreshCycle()
+    note right: Performance constraint: no concurrent refreshes
+end
+
+== Error Handling - Invalid Data ==
+
+alt Stock level negative
+    IA -> II : validateStockLevel(stockLevel: int)
+    note right: Invariant: stockLevel >= 0
+    II --> IA : return false
+    IA -> DV : return error("Invalid stock level")
+    DV -> DV : displayError("Stock level data corrupted")
+    
+else Expiration date in past
+    IA -> II : validateExpirationDate(expirationDate: Date)
+    note right: Invariant: expirationDate in future
+    II --> IA : return false
+    IA -> DV : return error("Invalid expiration date")
+    DV -> DV : displayWarning("Expired units detected")
+    
+else TransfusionRequest status not 'open'
+    TRA -> TR : validateStatus(status: TransfusionStatus)
+    note right: Invariant: status must be 'open'
+    TR --> TRA : return false
+    TRA -> DV : return error("Invalid request status")
+    DV -> DV : filterNonOpenRequests()
+end
+
+== State Transitions ==
+
+DV -> DV : updateState(Pre1 -> Post1)
+note right: Pre1: Inventory data exists -> Post1: Dashboard accessible
+
+DV -> DV : updateState(Pre2 -> Post2)
+note right: Pre2: Expiration warnings computed -> Post2: Data up-to-date
+
+DV -> DV : updateState(Pre3 -> Post2)
+note right: Pre3: Open requests exist -> Post2: Data rendered
+
+@enduml

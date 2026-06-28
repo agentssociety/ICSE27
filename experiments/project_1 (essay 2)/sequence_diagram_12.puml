@@ -1,0 +1,182 @@
+@startuml
+title Live Dashboard Sequence Diagrams
+
+' Participants grouped by layers
+box "Controller" #LightBlue
+participant DashboardController
+end box
+
+box "Application" #LightGreen
+participant DashboardService
+end box
+
+box "Domain" #LightYellow
+participant "REQ_DASH_01" as REQ
+participant "State" as State
+participant "Pre1" as Pre1
+participant "Pre2" as Pre2
+participant "Pre3" as Pre3
+participant "Post1" as Post1
+participant "Post2" as Post2
+participant "Actor" as Actor
+participant "Resource" as Resource
+participant "Interface" as Interface
+participant "Permission" as Permission
+end box
+
+box "Infrastructure" #LightCoral
+participant "AuthService" as Auth
+participant "EncryptionService" as Enc
+participant "Database" as DB
+end box
+
+box "External" #LightGray
+participant "Triage_Nurses" as Nurse
+participant "Physicians" as Doc
+participant "Hospital_Management" as Mgmt
+participant "IT_Team" as IT
+participant "PatientDataAPI" as API
+participant "LiveDashboardUI" as UI
+end box
+
+' =============================================
+== Main Flow - View Live Dashboard ==
+' =============================================
+
+Nurse -> DashboardController : GET /dashboard (200 OK)
+activate DashboardController
+
+DashboardController -> DashboardService : executeOperation(initiator: Actor, target: Resource, channel: Interface, grant: Permission) : REQ_DASH_01
+activate DashboardService
+
+DashboardService -> REQ : create(initiator, target, channel, grant) : REQ_DASH_01
+activate REQ
+return
+
+' Check preconditions
+DashboardService -> Pre1 : isEnabled() : Bool
+activate Pre1
+return True
+
+DashboardService -> Pre2 : isTriaged() : Bool
+activate Pre2
+return True
+
+DashboardService -> Pre3 : isCalculated() : Bool
+activate Pre3
+return True
+
+' Check permissions and access
+DashboardService -> Auth : checkPermission(initiator: Actor, grant: Permission) : Bool
+activate Auth
+return True
+
+DashboardService -> Resource : isAccessible(initiator: Actor) : Bool
+activate Resource
+return True
+
+' Check channel security
+DashboardService -> Interface : isAuthenticated() : Bool
+activate Interface
+return True
+
+DashboardService -> Enc : isEncrypted(channel: Interface) : Bool
+activate Enc
+return True
+
+' Transition to post-state
+DashboardService -> REQ : transitionToPostState()
+activate REQ
+REQ -> REQ : setPostState(Post1)
+note right: State change: pre != post
+REQ -> REQ : setPostState(Post2)
+deactivate REQ
+
+' Update dashboard via UI
+DashboardService -> UI : updateDashboard(urgency: List, waitTimes: List) [TLS][authenticated]
+activate UI
+UI -> UI : displayUrgency()
+UI -> UI : displayWaitTimes()
+deactivate UI
+
+' Loop every 5 seconds
+loop every 5 seconds
+  DashboardService -> API : fetchPatientData() [TLS][authenticated]
+  activate API
+  API --> DashboardService : patientData
+  deactivate API
+  DashboardService -> UI : refreshDashboard(data)
+  activate UI
+  deactivate UI
+end
+
+deactivate DashboardService
+deactivate DashboardController
+
+' Error paths
+alt Permission denied or not accessible
+  DashboardService -> DashboardController : return 403 Forbidden
+  note right: initiator lacks Read permission or not in accessible set
+else Channel not authenticated or encrypted
+  DashboardService -> DashboardController : return 401 Unauthorized
+  note right: channel must be authenticated and encrypted
+else Preconditions not met
+  DashboardService -> DashboardController : return 412 Precondition Failed
+  note right: Pre1, Pre2, Pre3 must be satisfied
+end
+
+' =============================================
+== Flow tc_dash_01 - Patient Status Change Triggers Dashboard Update ==
+' =============================================
+
+Doc -> API : POST /patient/status (changeStatus) [TLS][authenticated]
+activate API
+API -> DB : updatePatientStatus(patientId, newUrgency)
+activate DB
+DB --> API : success
+deactivate DB
+API --> Doc : 200 OK
+deactivate API
+
+API -> DashboardService : notifyStatusChange(patientId)
+activate DashboardService
+DashboardService -> REQ : create(initiator, target, channel, grant)
+activate REQ
+REQ -> REQ : setPreState(Pre1)
+REQ -> REQ : setPostState(Post1)
+REQ -> REQ : setPostState(Post2)
+deactivate REQ
+DashboardService -> UI : updateDashboard(urgency, waitTimes) [TLS][authenticated]
+activate UI
+UI -> UI : refreshDisplay()
+deactivate UI
+deactivate DashboardService
+
+' =============================================
+== Flow tc_dash_02 - High Load (150 patients) ==
+' =============================================
+
+Nurse -> API : GET /patients/batch?count=150 [TLS][authenticated]
+activate API
+API -> DB : queryPatients(limit=150)
+activate DB
+DB --> API : patientList
+deactivate DB
+API --> Nurse : 200 OK (150 patients)
+deactivate API
+
+API -> DashboardService : processHighLoad(patientList)
+activate DashboardService
+DashboardService -> REQ : create(initiator, target, channel, grant)
+activate REQ
+REQ -> REQ : setPreState(Pre2)
+REQ -> REQ : setPostState(Post1)
+REQ -> REQ : setPostState(Post2)
+deactivate REQ
+DashboardService -> UI : updateDashboard(urgency, waitTimes) [TLS][authenticated]
+activate UI
+UI -> UI : displayBatch()
+deactivate UI
+deactivate DashboardService
+
+@enduml

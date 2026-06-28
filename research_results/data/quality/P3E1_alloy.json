@@ -1,0 +1,15 @@
+{
+  "run_id": "P3E1",
+  "project": 3,
+  "essay": 1,
+  "n_tasks": 7,
+  "spec_files": 7,
+  "verified_specs": 6,
+  "failed_specs": 1,
+  "total_specs": 7,
+  "verification_rate": 0.8571,
+  "n_commented_block_specs": 1,
+  "commented_block_specs": [
+    "formal_spec_47.als"
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "detected_cycles": [],
+  "removed_edges_to_break_cycles": [],
+  "relationship_corrections": [
+    {
+      "original": {
+        "left": "PatientQueue",
+        "arrow": "*--",
+        "right": "Patient"
+      },
+      "corrected": {
+        "left": "PatientQueue",
+        "arrow": "--*",
+        "right": "Patient"
+      },
+      "reason": "A PatientQueue contains many patients, so the correct PlantUML arrow is '--*' (one on left, many on right), not '*--'."
+    },
+    {
+      "original": {
+        "left": "Queue",
+        "arrow": "*--",
+        "right": "Patient"
+      },
+      "corrected": {
+        "left": "Queue",
+        "arrow": "--*",
+        "right": "Patient"
+      },
+      "reason": "A Queue contains many patients, so the correct arrow is '--*' (one on left, many on right), not '*--'."
+    }
+  ],
+  "architecture_corrections": [
+    {
+      "kind": "wrong_class_type",
+      "description": "Evaluation_Queue_System is declared as an interface but appears to be a concrete system component.",
+      "fix": {
+        "action": "change_class_type",
+        "details": {
+          "class": "Evaluation_Queue_System",
+          "new_kind": "class"
+        }
+      }
+    },
+    {
+      "kind": "duplicate_concept",
+      "description": "PatientQueue and Queue both represent the same concept (a queue of patients) and should be merged.",
+      "fix": {
+        "action": "merge_classes",
+        "details": {
+          "classes": [
+            "PatientQueue",
+            "Queue"
+          ],
+          "target": "PatientQueue"
+        }
+      }
+    },
+    {
+      "kind": "duplicate_concept",
+      "description": "PatientDatabase and Patient_Database are duplicate interfaces for the same concept.",
+      "fix": {
+        "action": "merge_classes",
+        "details": {
+          "classes": [
+            "PatientDatabase",
+            "Patient_Database"
+          ],
+          "target": "PatientDatabase"
+        }
+      }
+    },
+    {
+      "kind": "duplicate_concept",
+      "description": "Patient_Queue_Database and PatientQueueData are redundant; PatientQueueData should be the data entity, not a separate database interface.",
+      "fix": {
+        "action": "merge_classes",
+        "details": {
+          "classes": [
+            "Patient_Queue_Database",
+            "PatientQueueData"
+          ],
+          "target": "PatientQueueData"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "TriageNurse should have a relationship to UrgencyLevel to assign it to a Patient, but no such relationship exists.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "from": "TriageNurse",
+          "to": "UrgencyLevel",
+          "arrow": "\"1\" --> \"0..*\"",
+          "meaning": "directed association"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Physician should have a relationship to PatientQueue to take the next patient, but currently only has a directed association to PatientQueue (which is fine), but the model lacks a 'take next' operation; consider adding a dependency from Physician to QueueEntry.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "from": "Physician",
+          "to": "QueueEntry",
+          "arrow": "..>",
+          "meaning": "dependency"
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Live_Dashboard_Interface inherits from Interface, but Interface is a generic class; this inheritance is meaningless and should be removed.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "Live_Dashboard_Interface",
+          "to": "Interface",
+          "arrow": "--|>"
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Pre1, Pre2, Pre3, Post1, Post2 inherit from State, but State is an enum; enums cannot be base classes for inheritance.",
+      "fix": {
+        "action": "change_class_type",
+        "details": {
+          "class": "State",
+          "new_kind": "class"
+        }
+      }
+    }
+  ],
+  "architecture_suggestions": [
+    {
+      "kind": "introduce_value_object",
+      "affected_classes": [
+        "UrgencyLevel"
+      ],
+      "suggestion": "Consider making UrgencyLevel a value object with validation (1-5) instead of a plain enum to enforce domain rules."
+    },
+    {
+      "kind": "introduce_value_object",
+      "affected_classes": [
+        "SymptomData"
+      ],
+      "suggestion": "Consider making SymptomData a value object to encapsulate symptom details and ensure immutability."
+    },
+    {
+      "kind": "add_aggregate_root",
+      "affected_classes": [
+        "Patient",
+        "QueueEntry",
+        "UrgencyLevel"
+      ],
+      "suggestion": "Consider making Patient an aggregate root that owns its UrgencyLevel and QueueEntry, ensuring consistency during re-triage."
+    },
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "PatientQueueSortOperation"
+      ],
+      "suggestion": "Rename to 'QueueSortService' to better reflect its role as a domain service that sorts the queue."
+    },
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "Triage_Nurse_Team",
+        "Triage_Nurses"
+      ],
+      "suggestion": "Merge Triage_Nurse_Team and Triage_Nurses into a single class 'TriageNurse' (already exists) to avoid duplication."
+    },
+    {
+      "kind": "extract_base_class",
+      "affected_classes": [
+        "Physician",
+        "TriageNurse"
+      ],
+      "suggestion": "Extract a common base class 'Staff' for Physician and TriageNurse to share common attributes (e.g., name, role)."
+    },
+    {
+      "kind": "general",
+      "affected_classes": [
+        "Live_Dashboard_Interface"
+      ],
+      "suggestion": "Consider renaming to 'LiveDashboard' and making it a concrete class that depends on PatientQueue and WaitTimeCalculator."
+    }
+  ]
+}

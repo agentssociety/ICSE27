@@ -1,0 +1,6 @@
+
+Project 9 fully operational.
+Backend: FastAPI with PostgreSQL, routes at /runways, /channels, /flights, etc.
+Frontend: React/TypeScript + Vite, served by nginx.
+Docker: 3 services (backend, frontend, db) all healthy.
+Ports: backend on 9000:8000, frontend on 1080:80, db on 5432.

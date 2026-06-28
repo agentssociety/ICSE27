@@ -1,0 +1,146 @@
+@startuml
+skinparam defaultFontName sans-serif
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFF
+skinparam class {
+  BackgroundColor #F8F8F8
+  BorderColor #333
+}
+skinparam interface {
+  BackgroundColor #E6F2FF
+  BorderColor #339
+}
+skinparam enum {
+  BackgroundColor #FFF3E0
+  BorderColor #E65C00
+}
+skinparam exception {
+  BackgroundColor #FFE0E0
+  BorderColor #A00
+}
+skinparam package {
+  BackgroundColor #F0F0F0
+  BorderColor #666
+  FontColor #222
+}
+
+package "Domain Model" as DOM {
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  enum ABOType {
+    A
+    B
+    AB
+    O
+  }
+
+  enum RhFactor {
+    Positive
+    Negative
+  }
+
+  enum BloodUnitStatus {
+    available
+    issued
+    expired
+  }
+
+  enum State {
+    Pre1
+    Pre2
+    Post1
+    Post2
+    Post3
+    Post4
+    Post5
+  }
+
+  class Actor {
+    +name: String
+    +mayPerform: Permission[]
+  }
+
+  class BloodUnit {
+    +uniqueID: String
+    +aboType: ABOType
+    +rhFactor: RhFactor
+    +collectionDate: Date
+    +expiryDate: Date
+    +status: BloodUnitStatus
+  }
+
+  class Resource {
+    +owner: Actor
+    +accessible: Actor[]
+  }
+
+  note right of BloodUnit
+    **Invariants:**
+    - expiryDate = collectionDate + 42 days
+    - status ∈ {available, issued, expired}
+    - uniqueID is globally unique
+  end note
+}
+
+package "Infrastructure — Ports" as INFRA {
+  interface Interface {
+    +kind: String
+    +encrypted: Boolean
+    +authenticated: Boolean
+  }
+
+  interface BloodUnitDatabase {
+    +encrypted: Boolean
+    +authenticated: Boolean
+  }
+
+  interface InventoryManagementUI {
+    +encrypted: Boolean
+    +authenticated: Boolean
+  }
+}
+
+package "Exceptions" as EXC {
+  class MissingCollectionDateException <<exception>>
+  class InvalidABOException <<exception>>
+  class DuplicateUniqueIDException <<exception>>
+}
+
+' ---- Subclasses of Actor ----
+class BloodBankManager extends Actor {
+  ' Permissions: Write, Admin (implicit via mayPerform)
+}
+
+class InventoryManagementTeam extends Actor {
+  ' Permissions: Read, Write
+}
+
+class ClinicalStaff extends Actor {
+  ' Permissions: Write
+}
+
+' ---- Relationships ----
+
+'Actor may perform Permission
+Actor "1" -- "0..*" Permission : mayPerform >
+
+'BloodUnit stored in BloodUnitDatabase
+BloodUnit "0..*" -- "1" BloodUnitDatabase : stored in >
+
+'BloodUnitDatabase as a Resource
+BloodUnitDatabase ..|> Resource : is a
+BloodUnitDatabase ..|> Interface : implements
+
+'InventoryManagementUI implements Interface
+InventoryManagementUI ..|> Interface : implements
+
+'Resource ownership
+Resource "1" --> "1" Actor : owner
+Resource "1" --> "*" Actor : accessible
+
+@enduml

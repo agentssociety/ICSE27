@@ -1,0 +1,235 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "RegistrationController" as RC
+end box
+
+box "Application Layer" #LightGreen
+  participant "RegistrationService" as RS
+  participant "NotificationService" as NS
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Patient" as P
+  participant "PatientQueue" as PQ
+  participant "SeverityLevel" as SL
+  participant "RecordState" as RST
+  participant "SymptomResource" as SR
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "PatientDatabase" as DB
+  participant "QueueAPI" as QA
+  participant "RegistrationFormInterface" as RFI
+end box
+
+== Main Flow: Register Patient with Symptoms ==
+
+RC -> RFI : displayRegistrationForm() : void
+note right: [HTTPS] [authenticated] [encrypted in transit]
+
+RFI --> RC : submitPatientData(name: String, symptoms: List<String>) : void
+
+RC -> RS : registerPatient(patientData: PatientDTO) : Patient
+note right: Authorization check: Triage_Nurse_Team must have Write permission
+
+RS -> RS : validatePatientData(patientData: PatientDTO) : boolean
+note right: Must complete within 30 seconds
+
+alt Validation fails
+  RS --> RC : return ValidationError("Invalid patient data")
+  RC -> RFI : displayError("Please correct the input errors")
+else Validation passes
+  RS -> P : createPatient(name: String, symptoms: List<String>) : Patient
+  note right: Patient record created with or without symptoms
+  
+  P -> RST : setState(RecordState.ACTIVE) : void
+  note right: State transition: null -> ACTIVE
+  
+  RS -> DB : savePatient(patient: Patient) : Patient
+  note right: [encrypted at rest] [authenticated]
+  
+  DB --> RS : return savedPatient
+  
+  RS -> SL : evaluateSeverity(symptoms: List<String>) : SeverityLevel
+  note right: Based on symptom severity algorithm
+  
+  RS -> PQ : addToQueue(patient: Patient, severity: SeverityLevel) : int
+  note right: Queue position determined by severity
+  
+  PQ -> PQ : calculatePosition(severity: SeverityLevel) : int
+  
+  RS -> QA : enqueuePatient(queueEntry: QueueEntry) : boolean
+  note right: [TLS] [authenticated]
+  
+  QA --> RS : return success
+  
+  alt Immediate action required (SeverityLevel.CRITICAL or SeverityLevel.EMERGENCY)
+    RS -> NS : sendAlert(patient: Patient, severity: SeverityLevel) : void
+    note right: Notify medical staff of immediate action required
+    
+    NS -> NS : notifyMedicalStaff(patientId: String) : void
+    
+    NS --> RS : return
+  end
+  
+  RS --> RC : return registeredPatient
+  
+  RC -> RFI : displaySuccess("Patient registered successfully")
+  note right: Post1: Patient record visible to medical staff
+  note right: Post2: Queue position updated
+  note right: Post3: Notification sent if critical
+end
+
+== Alternative Flow: Patient Provides No Symptoms ==
+
+RC -> RFI : displayRegistrationForm() : void
+
+RFI --> RC : submitPatientData(name: String, symptoms: []) : void
+
+RC -> RS : registerPatient(patientData: PatientDTO) : Patient
+
+RS -> RS : validatePatientData(patientData: PatientDTO) : boolean
+
+alt Validation passes (no symptoms is valid)
+  RS -> P : createPatient(name: String, symptoms: []) : Patient
+  note right: Patient created without symptoms per invariant
+  
+  P -> RST : setState(RecordState.ACTIVE) : void
+  
+  RS -> DB : savePatient(patient: Patient) : Patient
+  
+  DB --> RS : return savedPatient
+  
+  RS -> SL : evaluateSeverity(symptoms: []) : SeverityLevel
+  note right: Returns SeverityLevel.LOW for no symptoms
+  
+  RS -> PQ : addToQueue(patient: Patient, severity: SeverityLevel.LOW) : int
+  note right: Patient placed at end of queue
+  
+  PQ -> PQ : calculatePosition(SeverityLevel.LOW) : int
+  
+  RS -> QA : enqueuePatient(queueEntry: QueueEntry) : boolean
+  
+  QA --> RS : return success
+  
+  RS --> RC : return registeredPatient
+  
+  RC -> RFI : displaySuccess("Patient registered at end of queue")
+end
+
+== Error Flow: Symptoms Entered Incorrectly ==
+
+RC -> RFI : displayRegistrationForm() : void
+
+RFI --> RC : submitPatientData(name: String, symptoms: List<String>) : void
+
+RC -> RS : registerPatient(patientData: PatientDTO) : Patient
+
+RS -> RS : validatePatientData(patientData: PatientDTO) : boolean
+
+alt Validation fails - incorrect symptoms
+  RS --> RC : return ValidationError("Invalid symptom format")
+  
+  RC -> RFI : displayError("Symptoms entered incorrectly. Please correct before proceeding.")
+  note right: Clear and actionable error message per usability constraint
+  
+  RFI --> RC : submitCorrectedPatientData(name: String, symptoms: List<String>) : void
+  
+  RC -> RS : registerPatient(patientData: PatientDTO) : Patient
+  
+  RS -> RS : validatePatientData(patientData: PatientDTO) : boolean
+  
+  alt Validation passes after correction
+    RS -> P : createPatient(name: String, symptoms: List<String>) : Patient
+    P -> RST : setState(RecordState.ACTIVE) : void
+    RS -> DB : savePatient(patient: Patient) : Patient
+    DB --> RS : return savedPatient
+    RS -> SL : evaluateSeverity(symptoms: List<String>) : SeverityLevel
+    RS -> PQ : addToQueue(patient: Patient, severity: SeverityLevel) : int
+    PQ -> PQ : calculatePosition(severity: SeverityLevel) : int
+    RS -> QA : enqueuePatient(queueEntry: QueueEntry) : boolean
+    QA --> RS : return success
+    RS --> RC : return registeredPatient
+    RC -> RFI : displaySuccess("Patient registered successfully")
+  else Validation still fails
+    RS --> RC : return ValidationError("Persistent validation errors")
+    RC -> RFI : displayError("Unable to register. Contact support.")
+    note right: Manual intervention required
+  end
+end
+
+== Error Flow: System Failure During Registration ==
+
+RC -> RFI : displayRegistrationForm() : void
+
+RFI --> RC : submitPatientData(name: String, symptoms: List<String>) : void
+
+RC -> RS : registerPatient(patientData: PatientDTO) : Patient
+
+RS -> RS : validatePatientData(patientData: PatientDTO) : boolean
+
+alt Validation passes
+  RS -> P : createPatient(name: String, symptoms: List<String>) : Patient
+  P -> RST : setState(RecordState.ACTIVE) : void
+  
+  RS -> DB : savePatient(patient: Patient) : Patient
+  note right: [encrypted at rest] [authenticated]
+  
+  alt Database failure
+    DB --> RS : return DatabaseException("Connection lost")
+    RS --> RC : return SystemError("Registration failed due to system error")
+    RC -> RFI : displayError("System error occurred. Please try again or contact support.")
+    note right: Manual intervention required per error path
+  else Database success
+    DB --> RS : return savedPatient
+    
+    RS -> SL : evaluateSeverity(symptoms: List<String>) : SeverityLevel
+    
+    RS -> QA : enqueuePatient(queueEntry: QueueEntry) : boolean
+    note right: [TLS] [authenticated]
+    
+    alt Queue API failure
+      QA --> RS : return APIException("Queue service unavailable")
+      RS -> DB : rollbackPatientCreation(patientId: String) : void
+      note right: Rollback patient record to maintain consistency
+      RS --> RC : return SystemError("Registration failed due to queue system error")
+      RC -> RFI : displayError("System error occurred. Manual intervention required.")
+    else Queue API success
+      QA --> RS : return success
+      RS --> RC : return registeredPatient
+      RC -> RFI : displaySuccess("Patient registered successfully")
+    end
+  end
+end
+
+== Authorization Error Flow ==
+
+RC -> RFI : displayRegistrationForm() : void
+
+RFI --> RC : submitPatientData(name: String, symptoms: List<String>) : void
+
+RC -> RS : registerPatient(patientData: PatientDTO) : Patient
+
+alt Unauthorized user
+  RS --> RC : return AuthorizationError("Insufficient permissions")
+  RC -> RFI : displayError("Access denied. Only authorized triage nurses can register patients.")
+else Session expired
+  RS --> RC : return AuthenticationError("Session expired")
+  RC -> RFI : displayError("Session expired. Please log in again.")
+  note right: Pre1: Triage nurse must be logged in
+end
+
+== System Unavailable Flow ==
+
+RC -> RFI : displayRegistrationForm() : void
+
+alt System not operational
+  RFI --> RC : return SystemUnavailableError("System is currently unavailable")
+  RC -> RFI : displayError("System is unavailable. Please try again later.")
+  note right: Pre2: System must be operational and accessible
+  note right: 99.9% availability requirement
+end
+
+@enduml

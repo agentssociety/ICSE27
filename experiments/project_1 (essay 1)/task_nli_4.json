@@ -1,0 +1,58 @@
+{
+  "task_id": 4,
+  "confidence": 0.9943,
+  "evidence": [
+    {
+      "claim": "The system maintains a queue of patients.",
+      "fact": "The system ensures the waiting queue always reflects current patient conditions.",
+      "score": 0.9987,
+      "user_story_span": "The system maintains a queue of patients.",
+      "fact_span": "The system ensures the waiting queue always reflects current patient conditions."
+    },
+    {
+      "claim": "The system automatically re-sorts the queue whenever an existing patient's urgency level is updated (re-triage).",
+      "fact": "The system reorders the queue immediately when an existing patient is re-triaged to a different urgency level.",
+      "score": 0.9985,
+      "user_story_span": "an existing patient's urgency level is updated (re-triage)",
+      "fact_span": "immediately when an existing patient is re-triaged to a different urgency level"
+    },
+    {
+      "claim": "Existing patients' urgency levels can be updated (re-triage).",
+      "fact": "The system reorders the queue immediately when an existing patient is re-triaged to a different urgency level.",
+      "score": 0.9985,
+      "user_story_span": "Existing patients' urgency levels can be updated (re-triage).",
+      "fact_span": "an existing patient is re-triaged to a different urgency level"
+    },
+    {
+      "claim": "The user sees a queue containing patients sorted by urgency.",
+      "fact": "The triage queue management tool organizes the care pathway by ranking patients according to their need for immediate attention.",
+      "score": 0.9981,
+      "user_story_span": "a queue containing patients sorted by urgency",
+      "fact_span": "ranking patients according to their need for immediate attention"
+    },
+    {
+      "claim": "The queue sorting order is based on urgency/priority.",
+      "fact": "The triage queue management tool organizes the care pathway by ranking patients according to their need for immediate attention.",
+      "score": 0.9974,
+      "user_story_span": "The queue sorting order is based on urgency/priority.",
+      "fact_span": "ranking patients according to their need for immediate attention"
+    },
+    {
+      "claim": "The re-sort occurs immediately upon the triggering event.",
+      "fact": "When a new patient is registered or an existing patient's condition changes, the queue is instantly updated to reflect the current clinical priorities.",
+      "score": 0.9961,
+      "user_story_span": "The re-sort occurs immediately upon the triggering event.",
+      "fact_span": "the queue is instantly updated to reflect the current clinical priorities"
+    },
+    {
+      "claim": "The system automatically re-sorts the queue whenever a new patient is registered.",
+      "fact": "When a new patient is registered or an existing patient's condition changes, the queue is instantly updated to reflect the current clinical priorities.",
+      "score": 0.9731,
+      "user_story_span": "whenever a new patient is registered",
+      "fact_span": "When a new patient is registered"
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 7,
+  "threshold": 0.6
+}

@@ -1,0 +1,283 @@
+{
+  "metric": "rq2_nli_confidence",
+  "description": "Two INDEPENDENT NLI-based metrics — they are orthogonal, not contradictory. (1) nli_alignment_score / mean_confidence: mean NLI entailment score ONLY for claims that found a matching fact in the source spec. This is the PRECISION of grounded claims. It is structurally high (0.85-0.999) because only matched pairs enter the score. (2) spec_extrapolation_rate (formerly 'hallucination_rate'): fraction of generated claims with NO matching spec fact. In SE, ungrounded != hallucinated — the agent is eliciting implied requirements the spec did not spell out (defaults, error states, UX copy). High extrapolation is expected and desirable in SE tasks where specs are intentionally incomplete. Outliers detected using the 1.5 × IQR criterion.",
+  "projects": [
+    {
+      "project_id": 1,
+      "n_essays": 3,
+      "n_essays_with_data": 3,
+      "mean_confidence": {
+        "mean": 0.9862,
+        "std": 0.009,
+        "median": 0.9877,
+        "values": [
+          0.9944,
+          0.9877,
+          0.9765
+        ]
+      },
+      "mean_nli_alignment_score": {
+        "mean": 0.9862,
+        "std": 0.009,
+        "median": 0.9877,
+        "values": [
+          0.9944,
+          0.9877,
+          0.9765
+        ]
+      },
+      "spec_coverage_rate": {
+        "mean": 0.577,
+        "std": 0.0322,
+        "median": 0.5758,
+        "values": [
+          0.6098,
+          0.5455,
+          0.5758
+        ]
+      },
+      "spec_extrapolation_rate": {
+        "mean": 0.423,
+        "std": 0.0322,
+        "median": 0.4242,
+        "values": [
+          0.3902,
+          0.4545,
+          0.4242
+        ]
+      },
+      "overall_hallucination_rate": {
+        "mean": 0.423,
+        "std": 0.0322,
+        "median": 0.4242,
+        "values": [
+          0.3902,
+          0.4545,
+          0.4242
+        ]
+      },
+      "n_outliers": {
+        "mean": 0.7,
+        "std": 0.6,
+        "median": 1.0,
+        "values": [
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "n_tasks_per_essay": 6
+    },
+    {
+      "project_id": 2,
+      "n_essays": 3,
+      "n_essays_with_data": 3,
+      "mean_confidence": {
+        "mean": 0.9771,
+        "std": 0.0191,
+        "median": 0.9859,
+        "values": [
+          0.9552,
+          0.9859,
+          0.9902
+        ]
+      },
+      "mean_nli_alignment_score": {
+        "mean": 0.9771,
+        "std": 0.0191,
+        "median": 0.9859,
+        "values": [
+          0.9552,
+          0.9859,
+          0.9902
+        ]
+      },
+      "spec_coverage_rate": {
+        "mean": 0.4636,
+        "std": 0.0553,
+        "median": 0.4909,
+        "values": [
+          0.4909,
+          0.5,
+          0.4
+        ]
+      },
+      "spec_extrapolation_rate": {
+        "mean": 0.5364,
+        "std": 0.0553,
+        "median": 0.5091,
+        "values": [
+          0.5091,
+          0.5,
+          0.6
+        ]
+      },
+      "overall_hallucination_rate": {
+        "mean": 0.5364,
+        "std": 0.0553,
+        "median": 0.5091,
+        "values": [
+          0.5091,
+          0.5,
+          0.6
+        ]
+      },
+      "n_outliers": {
+        "mean": 0.3,
+        "std": 0.6,
+        "median": 0.0,
+        "values": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "n_tasks_per_essay": 7
+    },
+    {
+      "project_id": 3,
+      "n_essays": 3,
+      "n_essays_with_data": 3,
+      "mean_confidence": {
+        "mean": 0.9258,
+        "std": 0.0668,
+        "median": 0.9609,
+        "values": [
+          0.9677,
+          0.9609,
+          0.8488
+        ]
+      },
+      "mean_nli_alignment_score": {
+        "mean": 0.9258,
+        "std": 0.0668,
+        "median": 0.9609,
+        "values": [
+          0.9677,
+          0.9609,
+          0.8488
+        ]
+      },
+      "spec_coverage_rate": {
+        "mean": 0.4298,
+        "std": 0.0513,
+        "median": 0.4038,
+        "values": [
+          0.3968,
+          0.4038,
+          0.4889
+        ]
+      },
+      "spec_extrapolation_rate": {
+        "mean": 0.5702,
+        "std": 0.0513,
+        "median": 0.5962,
+        "values": [
+          0.6032,
+          0.5962,
+          0.5111
+        ]
+      },
+      "overall_hallucination_rate": {
+        "mean": 0.5702,
+        "std": 0.0513,
+        "median": 0.5962,
+        "values": [
+          0.6032,
+          0.5962,
+          0.5111
+        ]
+      },
+      "n_outliers": {
+        "mean": 0.7,
+        "std": 0.6,
+        "median": 1.0,
+        "values": [
+          1.0,
+          0.0,
+          1.0
+        ]
+      },
+      "n_tasks_per_essay": 7
+    },
+    {
+      "project_id": 4,
+      "n_essays": 3,
+      "n_essays_with_data": 3,
+      "mean_confidence": {
+        "mean": 0.9861,
+        "std": 0.005,
+        "median": 0.9882,
+        "values": [
+          0.9804,
+          0.9897,
+          0.9882
+        ]
+      },
+      "mean_nli_alignment_score": {
+        "mean": 0.9861,
+        "std": 0.005,
+        "median": 0.9882,
+        "values": [
+          0.9804,
+          0.9897,
+          0.9882
+        ]
+      },
+      "spec_coverage_rate": {
+        "mean": 0.4423,
+        "std": 0.0381,
+        "median": 0.4321,
+        "values": [
+          0.4844,
+          0.4321,
+          0.4103
+        ]
+      },
+      "spec_extrapolation_rate": {
+        "mean": 0.5577,
+        "std": 0.0381,
+        "median": 0.5679,
+        "values": [
+          0.5156,
+          0.5679,
+          0.5897
+        ]
+      },
+      "overall_hallucination_rate": {
+        "mean": 0.5577,
+        "std": 0.0381,
+        "median": 0.5679,
+        "values": [
+          0.5156,
+          0.5679,
+          0.5897
+        ]
+      },
+      "n_outliers": {
+        "mean": 0.3,
+        "std": 0.6,
+        "median": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "n_tasks_per_essay": 7
+    }
+  ],
+  "pooled_all_runs": {
+    "n_scores": 82,
+    "mean": 0.9683,
+    "median": 0.9877,
+    "std": 0.1112,
+    "q1": 0.9775,
+    "q3": 0.9943,
+    "iqr": 0.0168,
+    "outlier_threshold_lo": 0.9523,
+    "outlier_threshold_hi": 1.0195,
+    "n_outliers": 7,
+    "n_zero_confidence": 1
+  }
+}

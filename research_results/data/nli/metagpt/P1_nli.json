@@ -1,0 +1,98 @@
+{
+  "project_id": 1,
+  "project_name": "hospital_triage_queue",
+  "spec_path": "experiments/project_1 (metagpt)/hospital_triage_queue/docs/requirement.txt",
+  "prd_path": "experiments/project_1 (metagpt)/hospital_triage_queue/docs/prd/20260623122709.json",
+  "n_facts": 7,
+  "facts": [
+    "clinical urgency. It ensures critical cases are surfaced to medical.",
+    "The system register incoming patients with their name and presenting symptoms.",
+    "The system assign each patient an urgency level from 1 (critical) to 5 (non-urgent) based on the symptoms.",
+    "The system order the queue by urgency level first, then by arrival time within the same level.",
+    "The system reorder the queue immediately whenever a new patient arrives or an existing patient is re-triaged to a different urgency level.",
+    "The system let a physician take the patient at the head of the queue, removing them from the queue.",
+    "The system show a live dashboard of the queue with each patient's urgency and waiting time."
+  ],
+  "n_stories": 5,
+  "stories": [
+    {
+      "task_id": 1,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 3,
+      "supported_claims": 0,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 2,
+      "confidence": 0.9984,
+      "evidence": [
+        {
+          "claim": "The system enables users to see the queue sorted by urgency and arrival time.",
+          "fact": "The system show a live dashboard of the queue with each patient's urgency and waiting time.",
+          "score": 0.9984,
+          "user_story_span": "",
+          "fact_span": ""
+        }
+      ],
+      "total_claims": 3,
+      "supported_claims": 1,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 3,
+      "confidence": 0.9794,
+      "evidence": [
+        {
+          "claim": "The queue reflects their new priority immediately.",
+          "fact": "The system reorder the queue immediately whenever a new patient arrives or an existing patient is re-triaged to a different urgency level.",
+          "score": 0.9794,
+          "user_story_span": "",
+          "fact_span": ""
+        }
+      ],
+      "total_claims": 3,
+      "supported_claims": 1,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 4,
+      "confidence": 0.9991,
+      "evidence": [
+        {
+          "claim": "The system enables users to view a live dashboard showing each patient's urgency and waiting time.",
+          "fact": "The system show a live dashboard of the queue with each patient's urgency and waiting time.",
+          "score": 0.9991,
+          "user_story_span": "",
+          "fact_span": ""
+        }
+      ],
+      "total_claims": 3,
+      "supported_claims": 1,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 5,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    }
+  ],
+  "summary": {
+    "mean_nli_alignment_score": 0.9923,
+    "median_nli_alignment_score": 0.9984,
+    "std_nli_alignment_score": 0.0112,
+    "q1": 0.9889,
+    "q3": 0.9988,
+    "iqr": 0.0099,
+    "n_outliers": 0,
+    "n_zero_alignment": 0,
+    "total_claims": 14,
+    "supported_claims": 3,
+    "spec_coverage_rate": 0.2143,
+    "spec_extrapolation_rate": 0.7857,
+    "overall_hallucination_rate": 0.7857
+  }
+}

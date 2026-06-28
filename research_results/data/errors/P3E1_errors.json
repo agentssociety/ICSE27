@@ -1,0 +1,240 @@
+{
+  "run_id": "P3E1",
+  "project": 3,
+  "essay": 1,
+  "n_tasks": 7,
+  "wall_clock_s": 9288.11,
+  "pipeline_steps": 318,
+  "total_incidents": 26,
+  "fixed_incidents": 6,
+  "escalated_incidents": 20,
+  "self_fix_rate_pct": 23.1,
+  "by_phase": {
+    "DESIGN_UML": {
+      "fixed": 2,
+      "escalated": 0
+    },
+    "ARCHITECTURE": {
+      "fixed": 1,
+      "escalated": 0
+    },
+    "IMPLEMENTATION": {
+      "fixed": 1,
+      "escalated": 0
+    },
+    "TESTING": {
+      "fixed": 2,
+      "escalated": 20
+    }
+  },
+  "incidents": [
+    {
+      "line_num": 4162,
+      "timestamp": "2026-06-15 10:21:42.780",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Class diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpy69u9pkg/class_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/"
+    },
+    {
+      "line_num": 4405,
+      "timestamp": "2026-06-15 10:32:11.714",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Class diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmplw872_yv/class_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/"
+    },
+    {
+      "line_num": 5708,
+      "timestamp": "2026-06-15 11:29:50.043",
+      "phase": "ARCHITECTURE",
+      "error_type": "SYNTAX",
+      "outcome": "FAIL_FIXED",
+      "message": "5 file(s) still have errors after auto-fix: ['src/api/emergency_flight/emergency_flight_router.py', 'src/domain/emergency_flight/EmergencyFlight.py', 'src/domain/exceptions/shared_exceptions.py', 'src"
+    },
+    {
+      "line_num": 10473,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/flight/test_flight_service.py::TestFlightRegistrationService::test_arrival_gets_slot_when_conflict_with_departure"
+    },
+    {
+      "line_num": 10504,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/flight/test_flight_service.py::TestFlightRegistrationService::test_arrival_gets_slot_when_conflict_with_departure"
+    },
+    {
+      "line_num": 17004,
+      "timestamp": "2026-06-15 12:25:28.484",
+      "phase": "IMPLEMENTATION",
+      "error_type": "GENERAL",
+      "outcome": "FAIL_FIXED",
+      "message": "[tracer] tool write_file failed: TypeError: write_file() takes 2 positional arguments but 3 were given"
+    },
+    {
+      "line_num": 17924,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/runway/test_runway_api.py::TestRunwayTimetableEndpoint::test_get_timetable_success"
+    },
+    {
+      "line_num": 17925,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/runway/test_runway_api.py::TestRunwayTimetableEndpoint::test_get_timetable_runway_not_found"
+    },
+    {
+      "line_num": 17926,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/runway/test_runway_api.py::TestRunwayTimetableEndpoint::test_get_timetable_no_slot"
+    },
+    {
+      "line_num": 17927,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/runway/test_runway_api.py::TestRunwayTimetableEndpoint::test_get_timetable_with_multiple_flights"
+    },
+    {
+      "line_num": 17928,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/runway/test_runway_api.py::TestRunwayTimetableEndpoint::test_get_timetable_response_shape"
+    },
+    {
+      "line_num": 18257,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/runway/test_runway_api.py::TestRunwayTimetableEndpoint::test_get_timetable_success"
+    },
+    {
+      "line_num": 18258,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/runway/test_runway_api.py::TestRunwayTimetableEndpoint::test_get_timetable_runway_not_found"
+    },
+    {
+      "line_num": 18259,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/runway/test_runway_api.py::TestRunwayTimetableEndpoint::test_get_timetable_no_slot"
+    },
+    {
+      "line_num": 18260,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/runway/test_runway_api.py::TestRunwayTimetableEndpoint::test_get_timetable_with_multiple_flights"
+    },
+    {
+      "line_num": 18261,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/runway/test_runway_api.py::TestRunwayTimetableEndpoint::test_get_timetable_response_shape"
+    },
+    {
+      "line_num": 19663,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/runway/test_runway_api.py::test_get_timetable_success"
+    },
+    {
+      "line_num": 19664,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/runway/test_runway_api.py::test_get_timetable_runway_not_found"
+    },
+    {
+      "line_num": 19665,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/runway/test_runway_api.py::test_get_timetable_no_slot"
+    },
+    {
+      "line_num": 19666,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/runway/test_runway_api.py::test_get_timetable_with_multiple_flights"
+    },
+    {
+      "line_num": 19667,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/runway/test_runway_api.py::test_get_timetable_response_shape"
+    },
+    {
+      "line_num": 20273,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/runway/test_runway_api.py::test_get_timetable_success"
+    },
+    {
+      "line_num": 20274,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/runway/test_runway_api.py::test_get_timetable_runway_not_found"
+    },
+    {
+      "line_num": 20274,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/runway/test_runway_api.py::test_get_timetable_no_slot"
+    },
+    {
+      "line_num": 20275,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/runway/test_runway_api.py::test_get_timetable_with_multiple_flights"
+    },
+    {
+      "line_num": 20275,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/runway/test_runway_api.py::test_get_timetable_response_shape"
+    }
+  ]
+}

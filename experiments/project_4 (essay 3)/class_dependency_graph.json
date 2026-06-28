@@ -1,0 +1,22 @@
+{
+  "Account": [
+    "Card",
+    "Pin",
+    "WithdrawalTransaction",
+    "FlaggedTransaction",
+    "SuspiciousPattern"
+  ],
+  "DailyWithdrawalLimit": [
+    "WithdrawalTransaction"
+  ],
+  "AuthenticationAttempt": [],
+  "TransactionState": [],
+  "Card": [],
+  "Pin": [],
+  "WithdrawalTransaction": [
+    "FlaggedTransaction",
+    "SuspiciousPattern"
+  ],
+  "FlaggedTransaction": [],
+  "SuspiciousPattern": []
+}

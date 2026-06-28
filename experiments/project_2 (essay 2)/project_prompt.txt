@@ -1,0 +1,15 @@
+Blood Bank Inventory Manager
+
+A medical inventory system that tracks blood unit stock in a hospital
+blood bank. It manages compatibility between blood types, monitors
+expiration, and raises alerts during shortages to support safe and
+timely transfusions.
+
+Core features:
+- Track blood units by ABO type, Rh factor, and collection date, with expiry fixed at 42 days after collection
+- Accept transfusion requests specifying blood type, Rh factor, and quantity
+- Match requests to compatible units using standard ABO/Rh donor compatibility (exact-type matches first, then closest expiry first)
+- Reserve matched units, and release a reservation back to stock if it is not confirmed as issued within 24 hours
+- Automatically expire units past their expiry date and exclude them from matching
+- Raise a shortage alert whenever available stock of any blood type falls below 5 units
+- Show a dashboard of stock per type, units expiring within 7 days, and open requests

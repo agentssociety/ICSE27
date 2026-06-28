@@ -1,0 +1,104 @@
+@startuml
+skinparam backgroundColor transparent
+skinparam sequenceMessageAlign center
+
+' Box definitions
+box "UI Layer" #LightBlue
+  participant User
+  participant UserInterface
+end box
+
+box "Controller Layer" #LightGreen
+  participant TransactionAPI
+end box
+
+box "Domain Layer" #LightYellow
+  participant Transaction
+  participant Account
+  participant WithdrawalRecord
+end box
+
+box "Infrastructure Layer" #LightPink
+  participant FinancialDatabase
+end box
+
+' Flows
+
+== Main Flow - Successful Withdrawal ==
+User -> UserInterface : initiateWithdrawal(amount: Money)
+UserInterface -> TransactionAPI : POST /withdraw (authenticated)
+note right : Authenticated & Authorized (User has Write permission)
+TransactionAPI -> Transaction : startWithdrawal(user: User, amount: Money, account: Account)
+Transaction -> Account : checkSufficientFunds(amount: Money): boolean
+alt [sufficient funds]
+  Transaction -> Transaction : setState(Processing)
+  note over Transaction : State: Processing
+  Transaction -> FinancialDatabase : beginTransaction() [encrypted]
+  Transaction -> FinancialDatabase : updateBalance(account: Account, amount: Money) [encrypted]
+  Transaction -> WithdrawalRecord : create(id: TransactionId, amount: Money, timestamp: DateTime, status: WithdrawalStatus.Success)
+  Transaction -> FinancialDatabase : saveRecord(record: WithdrawalRecord) [encrypted]
+  Transaction -> FinancialDatabase : commitTransaction()
+  Transaction -> Transaction : setState(Post1)
+  note over Transaction : State: Post1 (balance decreased)
+  Transaction --> TransactionAPI : withdrawalResult(transactionId: TransactionId)
+  TransactionAPI --> UserInterface : 200 OK { id, newBalance }
+  UserInterface --> User : displaySuccess()
+else [insufficient funds]
+  Transaction --> TransactionAPI : withdrawalResult(failureReason: FailureReason.InsufficientFunds)
+  TransactionAPI --> UserInterface : 400 Bad Request "Insufficient funds"
+  note right : No database modification
+  UserInterface --> User : displayError("Insufficient funds")
+end
+
+== Failure Flow - Transaction Rollback ==
+User -> UserInterface : initiateWithdrawal(amount: Money)
+UserInterface -> TransactionAPI : POST /withdraw (authenticated)
+note right : Authenticated & Authorized
+TransactionAPI -> Transaction : startWithdrawal(user: User, amount: Money, account: Account)
+Transaction -> Account : checkSufficientFunds(amount: Money): boolean
+alt [sufficient funds]
+  Transaction -> Transaction : setState(Processing)
+  note over Transaction : State: Processing
+  Transaction -> FinancialDatabase : beginTransaction() [encrypted]
+  Transaction -> FinancialDatabase : updateBalance(account: Account, amount: Money) [encrypted]
+  group Transaction processing
+    alt [NetworkOutage or SystemCrash]
+      Transaction -> Transaction : detectFailure(reason: FailureReason.NetworkOutage)
+      note over Transaction : Failure: NetworkOutage/SystemCrash
+      Transaction -> FinancialDatabase : rollbackTransaction()
+      Transaction -> Transaction : setState(RolledBack)
+      note over Transaction : State: Post2 (rollback, no record)
+      TransactionAPI --> UserInterface : 500 Internal Server Error "Transaction failed, please retry"
+      UserInterface --> User : displayError("Transaction failed due to system issue")
+    else [Insufficient funds during processing]
+      Transaction -> Transaction : detectFailure(reason: FailureReason.InsufficientFunds)
+      note over Transaction : Failure: InsufficientFunds
+      Transaction -> FinancialDatabase : rollbackTransaction()
+      Transaction -> Transaction : setState(RolledBack)
+      note over Transaction : State: Post2 (rollback, no record)
+      TransactionAPI --> UserInterface : 409 Conflict "Insufficient funds during processing"
+      UserInterface --> User : displayError("Insufficient funds during processing")
+    end
+  end
+else [insufficient funds initially]
+  TransactionAPI --> UserInterface : 400 Bad Request "Insufficient funds"
+  note right : No database call
+  UserInterface --> User : displayError("Insufficient funds")
+end
+
+== Precondition Failure - Insufficient Funds (Early Return) ==
+User -> UserInterface : initiateWithdrawal(amount: Money)
+UserInterface -> TransactionAPI : POST /withdraw (authenticated)
+note right : Authenticated & Authorized
+TransactionAPI -> Transaction : checkPreconditions(user: User, amount: Money, account: Account)
+Transaction -> Account : checkSufficientFunds(amount: Money): boolean
+alt [insufficient funds]
+  Transaction --> TransactionAPI : preconditionFailed(failureReason: FailureReason.InsufficientFunds)
+  TransactionAPI --> UserInterface : 400 Bad Request "Insufficient funds"
+  note right : No database interaction, no record created
+  UserInterface --> User : displayError("Insufficient funds")
+else [sufficient funds]
+  note right : Continue to main flow
+end
+
+@enduml

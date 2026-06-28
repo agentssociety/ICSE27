@@ -1,0 +1,104 @@
+{
+  "id": "REQ-ATC-PRI-01",
+  "title": "Priority Slot Allocation for Arrival Flights",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall prioritize slot allocation to arrival flights over departure flights when allocating runway slots.",
+  "rationale": "This requirement ensures that incoming aircraft can land safely and efficiently, reducing the risk of delays and conflicts with separation minima.",
+  "business_value": "Improves operational efficiency by ensuring timely landing of arrival flights, enhancing safety for passengers and crew.",
+  "source": {
+    "type": "User Story",
+    "id": 48,
+    "description": "As a air traffic controller I need arrival flights to be given priority over departure flights when allocating slots So that incoming aircraft can land safely and efficiently."
+  },
+  "stakeholders": [
+    "Air Traffic Control Team",
+    "Passengers",
+    "Aircraft Operators"
+  ],
+  "acceptance_criteria": [
+    "All arrival flights are allocated slots before any departure flights are considered.",
+    "The arrival flight receives the slot when there is a conflict between an arrival and a departure flight requesting the same slot time.",
+    "If an arrival flight requests a slot that has already been allocated to a departure flight, the system reallocates the slot to the arrival flight and reassigns the departure flight to the next available slot."
+  ],
+  "preconditions": [
+    "There is at least one runway slot available for allocation.",
+    "A set of both arrival flights and departure flights are competing for the same slot window."
+  ],
+  "postconditions": [
+    "All arrival flights that requested slots have been allocated slots before any departure flights receive slots.",
+    "Any conflicts between arrival and departure flights have been resolved, with priority given to arrival flights."
+  ],
+  "functional_constraints": [
+    "The system must ensure that safety constraints (e.g., separation minima) are not compromised during slot allocation.",
+    "All flights must have valid schedules, with no other overriding priorities affecting the allocation process."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The system should be able to handle requests for slot allocation efficiently without significant delays.",
+    "availability": "The system should maintain high uptime and reliability to ensure consistent performance under varying load conditions.",
+    "scalability": "The system should be designed to scale horizontally to accommodate an increasing number of flights and runway slots.",
+    "usability": "Error handling mechanisms should be in place to manage unexpected situations gracefully, ensuring the user experience remains smooth."
+  },
+  "edge_cases": [
+    "What if there are no available runway slots for arrival flights?",
+    "How does the system handle multiple conflicting arrival and departure requests simultaneously?",
+    "What happens when a flight is canceled or rescheduled mid-allocation process?"
+  ],
+  "dependencies": [
+    "Runway Management System",
+    "Flight Schedule Database",
+    "Safety Constraints Module"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Runway Slot API",
+      "description": "The system will interact with this API to request and allocate runway slots."
+    },
+    {
+      "type": "Database",
+      "name": "Flight Schedule Database",
+      "description": "This database will be used to retrieve current flight schedules and arrival/departure statuses."
+    },
+    {
+      "type": "External System",
+      "name": "Safety Constraints Module",
+      "description": "The system will interface with this module to ensure all safety constraints are met during slot allocation."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ATC-PRI-01",
+      "description": "Verify that all arrival flights receive slots before any departure flights when there is an equal number of requests.",
+      "expected_result": "All arrival flights are allocated slots, and departure flights are put on a waiting list."
+    },
+    {
+      "id": "TC-ATC-PRI-02",
+      "description": "Verify the system handles conflicts between an arrival and a departure flight requesting the same slot time.",
+      "expected_result": "The arrival flight receives the slot, and the departure flight is put on a waiting list."
+    },
+    {
+      "id": "TC-ATC-PRI-03",
+      "description": "Verify that if an arrival flight requests a slot already allocated to a departure flight, the system reallocates the slot.",
+      "expected_result": "The arrival flight receives the previously occupied slot, and the departure flight is reassigned to the next available slot."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T10:36:34.135173",
+  "last_updated": "2026-06-15T10:43:07.331056",
+  "traceability": {
+    "related_requirements": [
+      "REQ-ATC-01"
+    ],
+    "design_components": [
+      "Flight",
+      "Slot"
+    ],
+    "test_artifacts": []
+  }
+}

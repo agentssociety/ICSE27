@@ -1,0 +1,106 @@
+{
+  "id": "REQ-AUTH-01",
+  "title": "Log Authentication Attempts and Account State Changes",
+  "type": "Security",
+  "status": "Proposed",
+  "priority": "Critical",
+  "risk_level": "High",
+  "version": "1.0",
+  "description": "The system shall log all authentication attempts (success/failure) and account state changes (lock/unlock) with details including timestamp, username, IP address, action type, and outcome.",
+  "rationale": "To enable security auditors to review and audit security events for compliance and threat detection.",
+  "business_value": "Improves the system's ability to detect unauthorized access attempts and account compromises, enhancing overall security posture.",
+  "source": {
+    "type": "User Story",
+    "id": 87,
+    "description": "As a security auditor I need the system to log all authentication attempts (success/failure) and account state changes (lock/unlock) so that I can review and audit security events for compliance and threat detection."
+  },
+  "stakeholders": [
+    "Security Auditors",
+    "System Administrators",
+    "Compliance Team"
+  ],
+  "acceptance_criteria": [
+    "Given the system is operational When a user attempts authentication (success or failure) Then the system records the event with details (timestamp, username, IP, outcome)",
+    "Given the system is operational When an account is locked or unlocked Then the system records the state change with details (timestamp, username, action)"
+  ],
+  "preconditions": [
+    "The system must be operational"
+  ],
+  "postconditions": [
+    "Authentication attempts and account state changes are logged with required details",
+    "Logs are stored in a secure, tamper-evident format"
+  ],
+  "functional_constraints": [
+    "Logs include timestamp, username, IP address, action type, and outcome for authentication attempts and lock/unlock events"
+  ],
+  "security_requirements": [
+    "Logs must be stored in a secure, tamper-evident format",
+    "Access controls are defined elsewhere"
+  ],
+  "non_functional_requirements": {
+    "performance": null,
+    "availability": null,
+    "scalability": null,
+    "usability": null
+  },
+  "edge_cases": [
+    "What happens if the system is under heavy load during authentication attempts?",
+    "How should the system handle failed log storage operations?",
+    "What are the consequences of an attacker attempting to manipulate log data?"
+  ],
+  "dependencies": [
+    "Central Logging Service",
+    "Authentication Module"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Logging Database",
+      "description": "The system interacts with a secure, tamper-evident database to store authentication and account state change logs."
+    },
+    {
+      "type": "External System",
+      "name": "Central Logging Service",
+      "description": "Logs are sent to a central logging service for unified management and analysis of security events."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-LOG-01",
+      "description": "Verify that successful authentication attempts are logged with correct details.",
+      "expected_result": "The system logs the event with timestamp, username, IP address, and outcome as 'Success'."
+    },
+    {
+      "id": "TC-LOG-02",
+      "description": "Verify that failed authentication attempts are logged with correct details.",
+      "expected_result": "The system logs the event with timestamp, username, IP address, and outcome as 'Failure'."
+    },
+    {
+      "id": "TC-LOG-03",
+      "description": "Verify that account lock events are logged with correct details.",
+      "expected_result": "The system logs the state change with timestamp, username, and action as 'Account Locked'."
+    },
+    {
+      "id": "TC-LOG-04",
+      "description": "Verify that account unlock events are logged with correct details.",
+      "expected_result": "The system logs the state change with timestamp, username, and action as 'Account Unlocked'."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-16T10:02:15.043469",
+  "last_updated": "2026-06-16T10:13:41.399224",
+  "traceability": {
+    "related_requirements": [
+      "REQ-AUTH-01"
+    ],
+    "design_components": [
+      "AuditLog",
+      "Account",
+      "User",
+      "Card",
+      "Pin"
+    ],
+    "test_artifacts": []
+  }
+}

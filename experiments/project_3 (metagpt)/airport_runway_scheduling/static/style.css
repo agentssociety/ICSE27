@@ -1,0 +1,219 @@
+/* ============================================================
+   Flight Scheduling System – Dashboard Styles
+   Designed to be clean, modular, and maintainable.
+   Uses CSS custom properties for easy theming.
+   ============================================================ */
+
+/* ---------- Custom Properties (Theme Variables) ---------- */
+:root {
+  --color-primary: #1a73e8;
+  --color-primary-dark: #1557b0;
+  --color-bg: #f4f6f8;
+  --color-surface: #ffffff;
+  --color-text: #202124;
+  --color-text-secondary: #5f6368;
+  --color-border: #dadce0;
+  --color-emergency-bg: #fce8e6;
+  --color-emergency-text: #c5221f;
+  --color-delayed-bg: #fef7e0;
+  --color-delayed-text: #b06000;
+  --color-free-text: #1e8e3e;
+  --color-badge-emergency-bg: #ea4335;
+  --color-badge-emergency-text: #ffffff;
+  --color-badge-delayed-bg: #fbbc04;
+  --color-badge-delayed-text: #202124;
+
+  --font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  --border-radius: 8px;
+  --box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+  --max-width: 1100px;
+  --spacing-unit: 16px;
+}
+
+/* ---------- Reset & Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  padding: var(--spacing-unit);
+}
+
+/* ---------- Container ---------- */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  background: var(--color-surface);
+  padding: calc(var(--spacing-unit) * 2);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+/* ---------- Heading ---------- */
+h1 {
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-unit);
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: calc(var(--spacing-unit) / 2);
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Status Indicator ---------- */
+.status {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: var(--spacing-unit);
+  background-color: var(--color-bg);
+  color: var(--color-text-secondary);
+}
+
+.status.open {
+  background-color: #e6f4ea;
+  color: #1e8e3e;
+}
+
+.status.closed {
+  background-color: var(--color-emergency-bg);
+  color: var(--color-emergency-text);
+}
+
+/* ---------- Timetable Table ---------- */
+.timetable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin-top: var(--spacing-unit);
+}
+
+.timetable thead th {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  text-align: left;
+  padding: 12px 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 2px solid var(--color-primary-dark);
+}
+
+.timetable thead th:first-child {
+  border-radius: var(--border-radius) 0 0 0;
+}
+
+.timetable thead th:last-child {
+  border-radius: 0 var(--border-radius) 0 0;
+}
+
+.timetable tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.15s;
+}
+
+.timetable tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* Emergency row – red background */
+.timetable tbody tr.emergency {
+  background-color: var(--color-emergency-bg);
+}
+
+.timetable tbody tr.emergency:hover {
+  background-color: #fddcd9;
+}
+
+/* Delayed row – yellow background */
+.timetable tbody tr.delayed {
+  background-color: var(--color-delayed-bg);
+}
+
+.timetable tbody tr.delayed:hover {
+  background-color: #fef1c7;
+}
+
+/* Override both for emergency+delayed (shouldn't happen, but handle gracefully) */
+.timetable tbody tr.emergency.delayed {
+  background: linear-gradient(90deg, var(--color-emergency-bg) 50%, var(--color-delayed-bg) 50%);
+}
+
+.timetable tbody td {
+  padding: 10px 12px;
+  vertical-align: middle;
+}
+
+/* Free slot indicator */
+.timetable .free {
+  color: var(--color-free-text);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* ---------- Badges (Emergency / Delayed) ---------- */
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-emergency {
+  background-color: var(--color-badge-emergency-bg);
+  color: var(--color-badge-emergency-text);
+}
+
+.badge-delayed {
+  background-color: var(--color-badge-delayed-bg);
+  color: var(--color-badge-delayed-text);
+}
+
+/* ---------- No Flights Message ---------- */
+.no-flights {
+  font-style: italic;
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: calc(var(--spacing-unit) * 3) 0;
+}
+
+/* ---------- Responsive Adjustments ---------- */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-unit);
+  }
+
+  .timetable {
+    font-size: 0.8rem;
+  }
+
+  .timetable thead th,
+  .timetable tbody td {
+    padding: 8px 6px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .timetable {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}

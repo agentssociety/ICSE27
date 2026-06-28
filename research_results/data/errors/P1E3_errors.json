@@ -1,0 +1,120 @@
+{
+  "run_id": "P1E3",
+  "project": 1,
+  "essay": 3,
+  "n_tasks": 6,
+  "wall_clock_s": 6900.52,
+  "pipeline_steps": 199,
+  "total_incidents": 12,
+  "fixed_incidents": 5,
+  "escalated_incidents": 7,
+  "self_fix_rate_pct": 41.7,
+  "by_phase": {
+    "ARCHITECTURE": {
+      "fixed": 1,
+      "escalated": 3
+    },
+    "TESTING": {
+      "fixed": 4,
+      "escalated": 4
+    }
+  },
+  "incidents": [
+    {
+      "line_num": 5550,
+      "timestamp": "2026-06-15 17:24:52.613",
+      "phase": "ARCHITECTURE",
+      "error_type": "GENERAL",
+      "outcome": "FAIL_ESCALATED",
+      "message": "[tracer] tool generate_full_project_architecture failed: ValueError: Task dependency analysis in agent.md is missing task entries: [59, 60, 61, 62, 63, 64]"
+    },
+    {
+      "line_num": 5600,
+      "timestamp": "2026-06-15 17:25:11.866",
+      "phase": "ARCHITECTURE",
+      "error_type": "GENERAL",
+      "outcome": "FAIL_ESCALATED",
+      "message": "[tracer] tool generate_full_project_architecture failed: ValueError: Task dependency analysis in agent.md is missing task entries: [59, 60, 61, 62, 63, 64]"
+    },
+    {
+      "line_num": 5619,
+      "timestamp": "2026-06-15 17:25:23.019",
+      "phase": "ARCHITECTURE",
+      "error_type": "GENERAL",
+      "outcome": "FAIL_ESCALATED",
+      "message": "[tracer] tool generate_package_design_diagram failed: ValueError: Project 8: full_domain_model_architecture.puml not found at experiments/project_8/full_domain_model_architec"
+    },
+    {
+      "line_num": 6308,
+      "timestamp": "2026-06-15 17:29:44.192",
+      "phase": "ARCHITECTURE",
+      "error_type": "SYNTAX",
+      "outcome": "FAIL_FIXED",
+      "message": "1 file(s) still have errors after auto-fix: ['src/domain/queue/Queue.py']"
+    },
+    {
+      "line_num": 8137,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/patient/test_patient_api.py::TestPatientAPI::test_list_patients"
+    },
+    {
+      "line_num": 8138,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/patient/test_patient_api.py::TestPatientAPI::test_create_patient"
+    },
+    {
+      "line_num": 8456,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/patient/test_patient_api.py::TestPatientAPI::test_list_patients"
+    },
+    {
+      "line_num": 8457,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/patient/test_patient_api.py::TestPatientAPI::test_create_patient"
+    },
+    {
+      "line_num": 9243,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/urgency_level/test_urgency_level_domain.py::TestUrgencyLevel::test_resource_set_urgency"
+    },
+    {
+      "line_num": 9246,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/urgency_level/test_urgency_level_service.py::TestUrgencyAssignmentService::test_assign_urgency"
+    },
+    {
+      "line_num": 9592,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/urgency_level/test_urgency_level_domain.py::TestUrgencyLevel::test_resource_set_urgency"
+    },
+    {
+      "line_num": 9595,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/urgency_level/test_urgency_level_service.py::TestUrgencyAssignmentService::test_assign_urgency"
+    }
+  ]
+}

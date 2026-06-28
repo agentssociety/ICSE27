@@ -1,0 +1,570 @@
+/* static/style.css — Hospital Triage Queue System Dashboard Styles */
+
+/* ===== CSS Variables ===== */
+:root {
+  --color-primary: #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-danger: #dc2626;
+  --color-danger-dark: #b91c1c;
+  --color-secondary: #6b7280;
+  --color-secondary-dark: #4b5563;
+  --color-success: #16a34a;
+  --color-warning: #eab308;
+  --color-info: #0ea5e9;
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb;
+  --color-text: #1f2937;
+  --color-text-muted: #6b7280;
+  --color-text-light: #ffffff;
+  --color-critical: #dc2626;
+  --color-high: #f97316;
+  --color-moderate: #eab308;
+  --color-low: #22c55e;
+  --color-non: #6b7280;
+
+  --font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --border-radius: 8px;
+  --border-radius-sm: 4px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --transition-fast: 200ms ease;
+  --transition-normal: 300ms ease;
+}
+
+/* ===== Reset & Base ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ===== Container ===== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* ===== Header ===== */
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+}
+
+header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+header p {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+}
+
+/* ===== Section Headings ===== */
+section {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: 0.75rem;
+}
+
+h2 .badge {
+  font-size: 0.875rem;
+  font-weight: 500;
+  background-color: var(--color-secondary);
+  color: var(--color-text-light);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  margin-left: auto;
+}
+
+/* ===== Forms ===== */
+#registration-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  background-color: var(--color-surface);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.feedback {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+  display: none;
+}
+
+.feedback.success {
+  display: block;
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.feedback.error {
+  display: block;
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* ===== Buttons ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  text-decoration: none;
+  line-height: 1.4;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.btn-danger {
+  background-color: var(--color-danger);
+  color: var(--color-text-light);
+}
+
+.btn-danger:hover {
+  background-color: var(--color-danger-dark);
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-text-light);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-secondary-dark);
+}
+
+/* ===== Queue Table ===== */
+.queue-controls {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+#queue-table-wrapper {
+  overflow-x: auto;
+}
+
+#queue-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+#queue-table thead {
+  background-color: #f1f5f9;
+}
+
+#queue-table th,
+#queue-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+#queue-table th {
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+#queue-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+#queue-table tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+.text-center {
+  text-align: center !important;
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: 2rem 1rem !important;
+}
+
+/* ===== Urgency Badges ===== */
+.urgency-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-align: center;
+  min-width: 2rem;
+  color: #ffffff;
+}
+
+.urgency-1 { background-color: var(--color-critical); }
+.urgency-2 { background-color: var(--color-high); }
+.urgency-3 { background-color: var(--color-moderate); color: #1f2937; }
+.urgency-4 { background-color: var(--color-low); }
+.urgency-5 { background-color: var(--color-non); }
+
+/* ===== Action Buttons in Table ===== */
+.action-btn {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+.action-btn:hover {
+  background-color: #f1f5f9;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.action-btn.dequeue-btn {
+  background-color: var(--color-danger);
+  color: white;
+  border-color: var(--color-danger);
+}
+
+.action-btn.dequeue-btn:hover {
+  background-color: var(--color-danger-dark);
+}
+
+/* ===== Re-triage Modal ===== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  padding: 2rem;
+  max-width: 450px;
+  width: 100%;
+  position: relative;
+  animation: fadeInScale 0.3s ease;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.close-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: var(--color-text);
+}
+
+.modal-content h3 {
+  margin-bottom: 1rem;
+  color: var(--color-text);
+}
+
+#re-triage-patient-info {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #f1f5f9;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.95rem;
+}
+
+#re-triage-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#re-triage-form label {
+  font-weight: 500;
+}
+
+#re-triage-form input[type="number"] {
+  padding: 0.625rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  font-size: 1rem;
+  width: 100%;
+}
+
+#re-triage-form input[type="number"]:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* ===== Statistics Section ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.stat-card {
+  background-color: #f1f5f9;
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast);
+}
+
+.stat-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.stat-value.badge-critical { color: var(--color-critical); }
+.stat-value.badge-high { color: var(--color-high); }
+.stat-value.badge-moderate { color: var(--color-moderate); }
+.stat-value.badge-low { color: var(--color-low); }
+.stat-value.badge-non { color: var(--color-non); }
+
+/* ===== Queue Count Badge ===== */
+#queue-count {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-left: auto;
+}
+
+/* ===== Waiting Time Display ===== */
+.waiting-time {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.waiting-time.long {
+  color: var(--color-danger);
+}
+
+.waiting-time.medium {
+  color: var(--color-warning);
+}
+
+.waiting-time.short {
+  color: var(--color-success);
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  #queue-table {
+    font-size: 0.875rem;
+  }
+
+  #queue-table th,
+  #queue-table td {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .queue-controls {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  header p {
+    font-size: 0.95rem;
+  }
+}
+
+/* ===== Utility Classes ===== */
+.hidden {
+  display: none !important;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.gap-1 {
+  gap: 0.25rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}

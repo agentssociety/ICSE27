@@ -1,0 +1,1 @@
+Full-stack queue management application with FastAPI backend, React/Vite frontend, PostgreSQL database. All checks passed: backend direct run OK, frontend build OK, API integration tests passed, DevOps config fixed (host port conflicts), Docker build successful, all containers healthy (backend, db, frontend).

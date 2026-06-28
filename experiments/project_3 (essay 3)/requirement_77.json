@@ -1,0 +1,105 @@
+{
+  "id": "REQ-ATC-01",
+  "title": "Prioritize Emergency Flights and Re-queue Non-Emergency Flights",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "Critical",
+  "risk_level": "High",
+  "version": "1.0",
+  "description": "The system shall reassign dynamic slots to emergency flights and re-queue other flights in their original order.",
+  "rationale": "To ensure the safety and priority of emergency flights without disrupting overall scheduling, as per user story requirements.",
+  "business_value": "Improves operational readiness and ensures timely response during emergencies by prioritizing critical flights.",
+  "source": {
+    "type": "User Story",
+    "id": 77,
+    "description": "As a air traffic controller I need to assign an immediate slot to emergency flights and re-queue other flights So that emergency flights are prioritized without disrupting overall scheduling"
+  },
+  "stakeholders": [
+    "Air Traffic Control Team",
+    "Flight Operations Department",
+    "Safety Compliance Office"
+  ],
+  "acceptance_criteria": [
+    "The emergency flight is moved to the front of the queue.",
+    "All other flights are re-queued in their original order."
+  ],
+  "preconditions": [
+    "An emergency flight is detected."
+  ],
+  "postconditions": [
+    "Emergency flights are prioritized without disrupting overall scheduling."
+  ],
+  "functional_constraints": [
+    "The system must support dynamic slot reassignment.",
+    "Re-queuing should maintain order for non-emergency flights."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": {},
+    "availability": {},
+    "scalability": {},
+    "usability": {}
+  },
+  "edge_cases": [
+    "What happens if there are no non-emergency flights in the queue?",
+    "How will the system handle multiple emergency flights detected simultaneously?",
+    "What if a flight is flagged as both emergency and non-emergency?"
+  ],
+  "dependencies": [
+    "Flight Management System",
+    "Communication Network for Air Traffic Control"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Flight Information API",
+      "description": "The system will interact with the Flight Information API to detect and retrieve flight information, including priority status."
+    },
+    {
+      "type": "Database",
+      "name": "Scheduling Database",
+      "description": "The system will use the Scheduling Database to store and update flight slot assignments."
+    },
+    {
+      "type": "UI",
+      "name": "Air Traffic Control Interface",
+      "description": "The requirement interacts with the Air Traffic Control interface to display updated slot assignments."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ATC-01",
+      "description": "Verify that an emergency flight is moved to the front of the queue when detected.",
+      "expected_result": "The emergency flight should be re-assigned to an immediate slot and placed at the front of the queue."
+    },
+    {
+      "id": "TC-ATC-02",
+      "description": "Verify that non-emergency flights are re-queued in their original order after an emergency flight is assigned a slot.",
+      "expected_result": "All other flights should maintain their original order and be re-assigned to available slots."
+    },
+    {
+      "id": "TC-ATC-03",
+      "description": "Verify system behavior when no non-emergency flights are in the queue.",
+      "expected_result": "The emergency flight should still be assigned an immediate slot, but there should be no re-queuing of other flights."
+    },
+    {
+      "id": "TC-ATC-04",
+      "description": "Verify system behavior when multiple emergency flights are detected simultaneously.",
+      "expected_result": "All emergency flights should be assigned slots in a manner that does not disrupt the order of non-emergency flights."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T22:43:20.780815",
+  "last_updated": "2026-06-15T22:48:18.361517",
+  "traceability": {
+    "related_requirements": [
+      "REQ-FLIGHT-DISPATCHER-01"
+    ],
+    "design_components": [
+      "Flight",
+      "Slot"
+    ],
+    "test_artifacts": []
+  }
+}

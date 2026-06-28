@@ -1,0 +1,265 @@
+@startuml
+' Domain model classes as participants
+participant "Bank_Users" as BU <<Actor>>
+participant "Customer_Support" as CS <<Actor>>
+participant "IT_Team" as IT <<Actor>>
+participant "REQ_BAL_01" as OP <<Operation>>
+participant "Resource" as R <<Resource>>
+participant "Account_Balance_Database" as DB <<Interface>>
+participant "Daily_Withdrawal_Tracking_Service" as DWS <<Interface>>
+participant "Permission" as P <<enum>>
+participant "State" as S <<abstract>>
+participant "Pre1" as PRE1 <<State>>
+participant "Pre2" as PRE2 <<State>>
+participant "Post1" as POST1 <<State>>
+
+' Group by layer
+box "Controller" #LightBlue
+    participant "Controller" as CTRL
+end box
+
+box "Application" #LightGreen
+    participant "Application" as APP
+end box
+
+box "Domain" #LightYellow
+    participant "Domain" as DOM
+end box
+
+box "Infrastructure" #LightPink
+    participant "Infrastructure" as INF
+end box
+
+box "External" #LightCoral
+    participant "External" as EXT
+end box
+
+== Main Flow: Withdraw Exceeds Balance (TC-1) ==
+
+BU -> CTRL : initiateWithdrawal(amount: Decimal)
+activate BU
+CTRL -> APP : handleWithdrawalRequest(amount: Decimal)
+activate CTRL
+
+APP -> DOM : validateInitiatorPermissions(BU, Permission.Read)
+note right: inv_initiator_is_authorized: grant in initiator.mayPerform
+DOM -> P : checkPermission(BU, "Read") : Boolean
+return true
+
+APP -> INF : queryAccountBalance(BU, DB)
+note right: inv_authenticated_channel_required: some c | c.authenticated = True
+INF -> DB : getBalance(accountId: String) : Decimal [TLS]
+return 100.00
+
+APP -> INF : queryDailyWithdrawalTotal(BU, DWS)
+INF -> DWS : getCumulativeTotal(userId: String) : Decimal [TLS]
+return 50.00
+
+APP -> DOM : compareAmounts(amount, balance, dailyTotal)
+alt amount > balance
+    DOM -> PRE2 : state remains Pre2
+    note right: post = Pre2 (no state change)
+    DOM -> POST1 : generateDeclineMessage("Amount exceeds balance")
+    return POST1
+    APP -> CTRL : returnDeclineResponse("Insufficient balance")
+    CTRL -> BU : showDeclineMessage("Amount exceeds balance")
+else amount <= balance
+    ' Continue to next check
+end
+
+== Main Flow: Withdraw Exceeds Daily Limit (TC-2) ==
+
+BU -> CTRL : initiateWithdrawal(amount: Decimal)
+CTRL -> APP : handleWithdrawalRequest(amount: Decimal)
+
+APP -> DOM : validateInitiatorPermissions(BU, Permission.Write)
+DOM -> P : checkPermission(BU, "Write") : Boolean
+return true
+
+APP -> INF : queryAccountBalance(BU, DB)
+INF -> DB : getBalance(accountId: String) : Decimal [TLS]
+return 200.00
+
+APP -> INF : queryDailyWithdrawalTotal(BU, DWS)
+INF -> DWS : getCumulativeTotal(userId: String) : Decimal [TLS]
+return 80.00
+
+APP -> DOM : compareAmounts(amount, balance, dailyTotal, dailyLimit)
+alt amount + dailyTotal > dailyLimit
+    DOM -> PRE2 : state remains Pre2
+    note right: post = Pre2 (no state change)
+    DOM -> POST1 : generateDeclineMessage("Amount exceeds daily limit")
+    return POST1
+    APP -> CTRL : returnDeclineResponse("Daily limit exceeded")
+    CTRL -> BU : showDeclineMessage("Amount exceeds daily limit")
+else amount + dailyTotal <= dailyLimit
+    ' Continue to next flow
+end
+
+== Main Flow: Withdraw Exactly Daily Limit (TC-3) ==
+
+BU -> CTRL : initiateWithdrawal(amount: Decimal)
+CTRL -> APP : handleWithdrawalRequest(amount: Decimal)
+
+APP -> DOM : validateInitiatorPermissions(BU, Permission.Execute)
+note right: inv_initiator_is_authorized: grant in initiator.mayPerform
+DOM -> P : checkPermission(BU, "Execute") : Boolean
+return true
+
+APP -> INF : queryAccountBalance(BU, DB)
+INF -> DB : getBalance(accountId: String) : Decimal [TLS]
+return 500.00
+
+APP -> INF : queryDailyWithdrawalTotal(BU, DWS)
+INF -> DWS : getCumulativeTotal(userId: String) : Decimal [TLS]
+return 0.00
+
+APP -> DOM : compareAmounts(amount, balance, dailyTotal, dailyLimit)
+alt amount <= balance AND amount + dailyTotal <= dailyLimit
+    DOM -> PRE1 : state transitions from Pre1
+    note right: pre = Pre1 (user has active account with positive balance)
+    DOM -> POST1 : state transitions to Post1
+    note right: post = Post1 (state change, user receives approval/update)
+    DOM -> DWS : updateCumulativeTotal(userId: String, newTotal: Decimal) : Boolean
+    DWS -> INF : updateDailyWithdrawalTotal(newTotal)
+    return true
+    APP -> CTRL : returnApprovalResponse("Withdrawal approved")
+    CTRL -> BU : showApprovalMessage("Withdrawal successful")
+else amount > balance OR amount + dailyTotal > dailyLimit
+    DOM -> PRE2 : state remains Pre2
+    note right: post = Pre2 (no state change)
+    DOM -> POST1 : generateDeclineMessage("Amount exceeds balance or daily limit")
+    return POST1
+    APP -> CTRL : returnDeclineResponse("Withdrawal declined")
+    CTRL -> BU : showDeclineMessage("Withdrawal declined")
+end
+
+== Error Path: Both Balance and Daily Limit Zero ==
+
+BU -> CTRL : initiateWithdrawal(amount: Decimal)
+CTRL -> APP : handleWithdrawalRequest(amount: Decimal)
+
+APP -> INF : queryAccountBalance(BU, DB)
+INF -> DB : getBalance(accountId: String) : Decimal [TLS]
+return 0.00
+
+APP -> INF : queryDailyWithdrawalTotal(BU, DWS)
+INF -> DWS : getCumulativeTotal(userId: String) : Decimal [TLS]
+return 0.00
+
+APP -> DOM : compareAmounts(amount, balance, dailyTotal)
+alt amount > 0 AND balance == 0 AND dailyTotal == 0
+    DOM -> PRE2 : state remains Pre2
+    note right: post = Pre2 (no state change)
+    DOM -> POST1 : generateDeclineMessage("Both balance and daily limit are zero")
+    return POST1
+    APP -> CTRL : returnDeclineResponse("No funds available")
+    CTRL -> BU : showDeclineMessage("Withdrawal cannot be processed")
+else amount <= 0
+    ' Invalid amount, return error
+end
+
+== Error Path: Cumulative Daily Calculation Error ==
+
+BU -> CTRL : initiateWithdrawal(amount: Decimal)
+CTRL -> APP : handleWithdrawalRequest(amount: Decimal)
+
+APP -> INF : queryAccountBalance(BU, DB)
+INF -> DB : getBalance(accountId: String) : Decimal [TLS]
+return 100.00
+
+APP -> INF : queryDailyWithdrawalTotal(BU, DWS)
+alt DWS returns error
+    INF -> DWS : getCumulativeTotal(userId: String) : Decimal [TLS]
+    return error
+    DWS -> INF : returnError("Calculation failure")
+    INF -> APP : handleError("Daily withdrawal calculation error")
+    APP -> DOM : processErrorState()
+    DOM -> POST1 : generateDeclineMessage("Error in daily withdrawal calculation")
+    note right: post = Post1 (defined valid post-state)
+    return POST1
+    APP -> CTRL : returnDeclineResponse("System error")
+    CTRL -> BU : showDeclineMessage("Withdrawal cannot be processed due to system error")
+else DWS returns valid total
+    ' Continue normal flow
+end
+
+== Security Validation: Unauthorized Actor Attempt ==
+
+CS -> CTRL : initiateWithdrawal(amount: Decimal)
+CTRL -> APP : handleWithdrawalRequest(amount: Decimal)
+
+APP -> DOM : validateInitiatorPermissions(CS, Permission.Read)
+note right: inv_initiator_is_authorized: grant in initiator.mayPerform
+DOM -> P : checkPermission(CS, "Read") : Boolean
+alt permission not granted
+    DOM -> P : checkPermission(CS, "Read") : Boolean
+    return false
+    DOM -> CTRL : returnUnauthorizedError("Permission denied")
+    CTRL -> CS : showUnauthorizedMessage("You do not have permission to perform this operation")
+else permission granted
+    ' Continue with operation
+end
+
+== Security Validation: Resource Access Control ==
+
+IT -> CTRL : initiateWithdrawal(amount: Decimal)
+CTRL -> APP : handleWithdrawalRequest(amount: Decimal)
+
+APP -> DOM : validateResourceAccess(IT, R)
+note right: inv_resource_access_control: initiator in target.accessible
+DOM -> R : checkAccessibility(IT) : Boolean
+alt IT not in accessible set
+    DOM -> R : checkAccessibility(IT) : Boolean
+    return false
+    DOM -> CTRL : returnAccessDeniedError("Resource not accessible")
+    CTRL -> IT : showAccessDeniedMessage("You cannot access this resource")
+else IT in accessible set
+    ' Continue with operation
+end
+
+== State Transition: Pre1 to Post1 ==
+
+BU -> CTRL : initiateWithdrawal(amount: Decimal)
+CTRL -> APP : handleWithdrawalRequest(amount: Decimal)
+
+APP -> DOM : validateStateTransition(PRE1, POST1)
+note right: inv_state_must_change: pre != post
+DOM -> PRE1 : checkState(activeAccount, positiveBalance)
+return true
+DOM -> POST1 : transitionToPostState(approvedMessage)
+return true
+APP -> CTRL : returnSuccessResponse("State transition successful")
+CTRL -> BU : showSuccessMessage("Withdrawal processed")
+
+== Usability Constraint: Single Initiator ==
+
+BU -> CTRL : initiateWithdrawal(amount: Decimal)
+CTRL -> APP : handleWithdrawalRequest(amount: Decimal)
+
+APP -> DOM : validateSingleInitiator(BU)
+note right: nfr_fact_usability_single_initiator: one initiator
+alt multiple initiators detected
+    DOM -> APP : returnError("Multiple initiators not allowed")
+    APP -> CTRL : returnErrorResponse("Only one initiator per operation")
+    CTRL -> BU : showErrorMessage("Operation must have single initiator")
+else single initiator
+    ' Continue with operation
+end
+
+== Usability Constraint: Distinct Channel Kinds ==
+
+BU -> CTRL : initiateWithdrawal(amount: Decimal)
+CTRL -> APP : handleWithdrawalRequest(amount: Decimal)
+
+APP -> DOM : validateDistinctChannelKinds(DB, DWS)
+note right: nfr_fact_usability_distinct_channel_kinds: all disj c1, c2 | c1.kind != c2.kind
+alt channel kinds are same
+    DOM -> APP : returnError("Channel kinds must be distinct")
+    APP -> CTRL : returnErrorResponse("Duplicate channel kinds")
+    CTRL -> BU : showErrorMessage("Each channel must have different kind")
+else channel kinds are distinct
+    ' Continue with operation
+end
+
+@enduml

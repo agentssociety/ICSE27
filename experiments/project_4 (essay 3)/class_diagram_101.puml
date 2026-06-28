@@ -1,0 +1,153 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classBackgroundColor #FEFEFE
+skinparam classBorderColor #333333
+skinparam interfaceBackgroundColor #F0F8FF
+skinparam enumBackgroundColor #FFF0F5
+skinparam noteBackgroundColor #FFFFF0
+
+package "Domain Model" {
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+
+  enum ActorRole {
+    SYSTEM_ADMINISTRATOR
+    SECURITY_TEAM
+  }
+
+  enum TransactionState {
+    PENDING
+    COMPLETED
+    FAILED
+  }
+
+  enum AuthenticationOutcome {
+    SUCCESS
+    FAILURE
+  }
+
+  abstract class Actor {
+    - actorId: UUID
+    - role: ActorRole
+    # permissions: Set<Permission>
+  }
+  note right of Actor::class
+    System_Administrator: {READ, WRITE, EXECUTE, ADMIN}
+    Security_Team: {READ}
+  end note
+
+  class SystemAdministrator {
+  }
+
+  class SecurityTeamMember {
+  }
+
+  abstract class AuditEvent {
+    - eventId: UUID
+    - operationRef: String
+    - timestamp: ZonedDateTime
+  + createAuthenticationAttempt(outcome, timestamp) : AuthenticationAttempt
+  + createTransactionStateChange(oldState, newState, timestamp) : TransactionStateChange
+  }
+  note right of AuditEvent::class
+    Invariant: Every operation has exactly one event
+    Invariant: Timestamps are unique
+  end note
+
+  class AuthenticationAttempt {
+    - outcome: AuthenticationOutcome
+  }
+  note right of AuthenticationAttempt::class
+    Both success and failure outcomes must be recorded
+  end note
+
+  class TransactionStateChange {
+    - oldState: TransactionState
+    - newState: TransactionState
+  }
+  note right of TransactionStateChange::class
+    All state transitions (pending, completed, failed) must be recorded
+  end note
+
+  class AuditLogResource {
+    - resourceId: UUID
+  + recordAuthenticationAttempt(attempt: AuthenticationAttempt)
+  + recordAuthenticationAttempt(attempt)
+  + recordStateChange(change: TransactionStateChange)
+  + checkPermissions(actor)
+  }
+  note right of AuditLogResource::class
+    Stored in tamper-proof / append-only format
+    Owned and accessible by System_Administrator
+  end note
+
+  SystemAdministrator -up-|> Actor
+  SecurityTeamMember -up-|> Actor
+  AuthenticationAttempt -up-|> AuditEvent
+  TransactionStateChange -up-|> AuditEvent
+
+  AuditLogResource *-- AuditEvent : contains >
+  SystemAdministrator --> AuditLogResource : owns >
+  AuditEvent --> Actor : logged by >
+}
+
+package "Application" {
+  class AuditService {
+    - db: AuditLogDatabase
+    - authAPI: AuthenticationAPI
+  }
+  note right of AuditService::class
+    Constraints:
+    - Logging must succeed under heavy load
+    - On network failure, security must be maintained
+    - Uses at least one authenticated channel per operation
+  end note
+
+  class AccessControlService {
+  }
+  note right of AccessControlService::class
+    Validates Actor permissions against resource
+    Concurrent writes must have compatible permissions
+  end note
+}
+
+package "Infrastructure — Ports" {
+  interface AuthenticationAPI {
+  }
+  note right of AuthenticationAPI::class
+    authenticated=True required
+  end note
+
+  interface AuditLogDatabase {
+  }
+  note right of AuditLogDatabase::class
+    encrypted=True required
+    Append-only / tamper-proof storage
+  end note
+
+  AuditService --> AuthenticationAPI : uses >
+  AuditService --> AuditLogDatabase : stores events >
+  AccessControlService --> Actor : checks permissions >
+  AccessControlService --> AuditLogResource : targets >
+}
+
+package "Exceptions" {
+  class AuditLogException {
+    - reason: String
+  }
+  class AccessDeniedException {
+    - actorId: UUID
+    - requiredPermission: Permission
+  }
+  class TamperDetectedException {
+    - resourceId: UUID
+  }
+  AuditLogException <|-- AccessDeniedException
+  AuditLogException <|-- TamperDetectedException
+}
+
+@enduml

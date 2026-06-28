@@ -1,0 +1,95 @@
+{
+  "id": "REQ-FLIGHT-DISPATCHER-01",
+  "title": "Register Flights with Estimated Times",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow a logged-in flight dispatcher to enter a flight number, origin, destination, and estimated departure time, registering the flight in the system with the provided estimated times.",
+  "rationale": "This requirement enables accurate scheduling and coordination of airline operations by providing a means for dispatchers to input essential flight details promptly.",
+  "business_value": "Accurate and timely registration of flights ensures that the airline can maintain efficient schedules, allocate resources effectively, and manage operations smoothly.",
+  "source": {
+    "type": "User Story",
+    "id": 72,
+    "description": "As a flight dispatcher I need to register flights with estimated times so that the airline can maintain accurate schedules and coordinate operations."
+  },
+  "stakeholders": [
+    "Flight Dispatchers",
+    "Airline Operations Team",
+    "Scheduling Department"
+  ],
+  "acceptance_criteria": [
+    "The flight is registered in the system with the provided estimated times."
+  ],
+  "preconditions": [
+    "I am a logged-in flight dispatcher."
+  ],
+  "postconditions": [
+    "The system contains the newly registered flight with accurate estimated departure time."
+  ],
+  "functional_constraints": [],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "Flight number already exists in the system",
+    "Incorrect origin or destination codes",
+    "Non-standard time formats (e.g., HHMM instead of HH:MM)",
+    "Dispatcher without proper authorization"
+  ],
+  "dependencies": [
+    "Airline database for storing flight information",
+    "Authentication and authorization system to ensure dispatcher access",
+    "Scheduling system to update schedules based on registered flights"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Flight Database",
+      "description": "The requirement interacts with the Flight Database to store flight information."
+    },
+    {
+      "type": "UI",
+      "name": "Dispatcher Interface",
+      "description": "The requirement interacts with the Dispatcher UI for inputting flight details."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-FLIGHT-DISPATCHER-01",
+      "description": "Register a new flight with valid details.",
+      "expected_result": "Flight is registered in the system with accurate estimated departure time."
+    },
+    {
+      "id": "TC-FLIGHT-DISPATCHER-02",
+      "description": "Attempt to register a flight with an already existing number.",
+      "expected_result": "System displays error message and prevents duplicate entry."
+    },
+    {
+      "id": "TC-FLIGHT-DISPATCHER-03",
+      "description": "Input incorrect origin or destination codes.",
+      "expected_result": "System rejects the input and prompts for correct codes."
+    },
+    {
+      "id": "TC-FLIGHT-DISPATCHER-04",
+      "description": "Use non-standard time format.",
+      "expected_result": "System converts the time to a standard format before registration."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T22:40:25.887179",
+  "last_updated": "2026-06-15T22:48:04.104186",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Flight"
+    ],
+    "test_artifacts": []
+  }
+}

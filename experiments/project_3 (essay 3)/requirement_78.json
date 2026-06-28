@@ -1,0 +1,103 @@
+{
+  "id": "REQ-CTR-01",
+  "title": "Runway Slot Timetable View",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall display a slot timetable per runway that includes delays and emergency flights.",
+  "rationale": "This requirement ensures air traffic controllers can efficiently manage runway scheduling by providing real-time visibility of flight statuses, including delays and emergencies.",
+  "business_value": "Improves operational efficiency through better management of runway slots and prioritization of emergency operations.",
+  "source": {
+    "type": "User Story",
+    "id": 78,
+    "description": "As a air traffic controller I need to view a slot timetable per runway that includes delays and emergency flights So that I can manage runway scheduling efficiently and prioritize emergency operations"
+  },
+  "stakeholders": [
+    "Air Traffic Controllers",
+    "Operations Management Team",
+    "Emergency Services"
+  ],
+  "acceptance_criteria": [
+    "Given I am on the runway slot timetable view",
+    "When I select a specific runway",
+    "Then I see a list of scheduled slots for that runway",
+    "And each slot shows the flight ID, scheduled time, and current status (on-time, delayed, or emergency)"
+  ],
+  "preconditions": [
+    "The runway slot timetable view is accessible to authorized air traffic controllers"
+  ],
+  "postconditions": [
+    "The selected runway's slot timetable is displayed",
+    "Each slot's status is accurately updated based on real-time data"
+  ],
+  "functional_constraints": [
+    "Delays are shown as updated departure/arrival times",
+    "Emergency flights are clearly marked (e.g., with a flag or color)"
+  ],
+  "security_requirements": [
+    "Access to the runway slot timetable view is restricted to authorized personnel only"
+  ],
+  "non_functional_requirements": {
+    "performance": "The system shall respond within 2 seconds for each query",
+    "availability": "The system must be available 99.9% of the time",
+    "scalability": "The system should handle up to 10,000 runway slots per minute during peak times",
+    "usability": "Error messages are clear and informative; the interface is intuitive and easy to navigate"
+  },
+  "edge_cases": [
+    "What happens when there are no scheduled slots for a runway?",
+    "How should the system handle delays that extend beyond the runway's operating hours?",
+    "What if an emergency flight is added while the controller is viewing another runway?"
+  ],
+  "dependencies": [
+    "Flight Management System",
+    "Air Traffic Control Communication Network",
+    "Real-Time Data Feed"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Flight Information API",
+      "description": "The requirement interacts with an external system to retrieve real-time flight data, including delays and emergency statuses."
+    },
+    {
+      "type": "Database",
+      "name": "Runway Schedule Database",
+      "description": "The requirement accesses a database to fetch the current schedule of runway slots and update their statuses in real-time."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-CTR-01",
+      "description": "Verify display of scheduled slots for a specific runway.",
+      "expected_result": "A list of scheduled slots for the selected runway is displayed, showing flight IDs and current statuses."
+    },
+    {
+      "id": "TC-CTR-02",
+      "description": "Test delay updates in slot timetable.",
+      "expected_result": "Delays are correctly reflected as updated departure/arrival times in the slot timetable."
+    },
+    {
+      "id": "TC-CTR-03",
+      "description": "Validate emergency flight marking.",
+      "expected_result": "Emergency flights are clearly flagged or colored differently from regular flights."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T22:43:56.361286",
+  "last_updated": "2026-06-15T22:48:21.583497",
+  "traceability": {
+    "related_requirements": [
+      "REQ-OPM-01",
+      "REQ-FLIGHT-DISPATCHER-01"
+    ],
+    "design_components": [
+      "Runway",
+      "Slot",
+      "Flight"
+    ],
+    "test_artifacts": []
+  }
+}

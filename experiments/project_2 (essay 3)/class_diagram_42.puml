@@ -1,0 +1,122 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+skinparam backgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam classBackgroundColor #F5F5F5
+skinparam interfaceBorderColor #6666FF
+skinparam interfaceBackgroundColor #E8E8FF
+skinparam enumBorderColor #33AA33
+skinparam enumBackgroundColor #E0FFE0
+
+package "Domain Model" {
+  enum ComponentType {
+    RED_CELLS
+    PLASMA
+    PLATELETS
+    CRYOPRECIPITATE
+  }
+
+  enum BloodUnitStatus {
+    Available
+    Reserved
+  }
+
+  enum TransfusionRequestStatus {
+    Pending
+    Cancelled
+    Fulfilled
+  }
+
+  class BloodUnit {
+    + id: String
+    + bloodType: String
+    + components: List<ComponentType>
+    + status: BloodUnitStatus
+    + reservedFor: TransfusionRequest? (optional)
+  + setStatus(status: BloodUnitStatus.RESERVED)
+  + setReservedFor(requestId: String)
+  + setStatus(status: BloodUnitStatus.AVAILABLE)
+  + clearReservedFor()
+  }
+  note top of BloodUnit : invariants:\nstatus ∈ {Available, Reserved}\nif Reserved then reservedFor ≠ null
+
+  class TransfusionRequest {
+    + id: String
+    + bloodType: String
+    + components: List<ComponentType>
+    + status: TransfusionRequestStatus
+    + reservationTimeout: Duration
+    + reservedUnits: List<BloodUnit>
+  }
+  note top of TransfusionRequest : invariants:\nstatus transitions: Pending→Cancelled or Pending→Fulfilled\nif Cancelled then all reservedUnits released
+
+  class Reservation {
+    + id: String
+    + request: TransfusionRequest
+    + unit: BloodUnit
+    + reservedAt: DateTime
+    + timeoutDuration: Duration
+  + create(request: TransfusionRequest, unit: BloodUnit, reservedAt: Timestamp, timeoutDuration: 0)
+  + create(request: TransfusionRequest, unit: BloodUnit, reservedAt: Timestamp, timeoutDuration: Duration)
+  }
+  note top of Reservation : invariants:\nlinks one unit to one request\ntimeoutDuration ≥ 0
+
+  ' Relationships
+  TransfusionRequest "1" -- "*" Reservation : has >
+  Reservation "*" -- "1" BloodUnit : corresponds to >
+}
+
+package "Infrastructure — Ports" {
+  interface BloodInventoryDatabase {
+    + read()
+    + write()
+    + updateStatus()
+  + beginTransaction()
+  + rollback()
+  + deleteReservation(reservationId: String)
+  + commit()
+  + saveReservation(reservation: Reservation)
+  + updateBloodUnitStatus(unitId: String, status: BloodUnitStatus.RESERVED)
+  + loadReservation(reservationId: String) : Reservation
+  + loadBloodUnit(unitId: String) : BloodUnit
+  + updateBloodUnitStatus(unitId: String, status: BloodUnitStatus.AVAILABLE)
+  + loadTransfusionRequest(requestId: String) : TransfusionRequest
+  + loadReservationsByRequest(requestId: String) : List<Reservation>
+  + updateRequestStatus(requestId: String, status: TransfusionRequestStatus.CANCELLED)
+  }
+
+  interface InventoryManagementAPI {
+    {abstract} checkAvailability()
+    {abstract} reserveUnit()
+    {abstract} releaseUnit()
+  }
+  note right of InventoryManagementAPI : Requires authentication and encryption
+
+  interface BloodBankManagerUI {
+    {abstract} viewPendingRequests()
+    {abstract} manageReservations()
+    {abstract} receiveNotifications()
+  }
+  note right of BloodBankManagerUI : Requires authentication and encryption
+
+  interface SystemClock {
+    + now(): DateTime
+    + scheduleTimeout(id: String, duration: Duration)
+  + getCurrentTimestamp() : Timestamp
+  }
+}
+
+package "Enums" {
+  enum Permission {
+    READ
+    WRITE
+  }
+}
+
+' Dependencies
+Reservation ..> SystemClock : relies on timeout detection
+
+@enduml

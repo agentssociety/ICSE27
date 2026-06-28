@@ -1,0 +1,68 @@
+@startuml
+skinparam participantPadding 20
+skinparam boxPadding 10
+skinparam defaultFontSize 12
+
+actor "AirTrafficController" as Actor
+participant Interface as API <<Interface>>
+participant Operation as Op
+participant Flight as Flight
+participant AircraftMovementLog as Log
+participant AircraftMovementLogDatabase as DB
+
+box "External" #LightBlue
+    participant Actor
+end box
+box "Controller" #LightGreen
+    participant API
+end box
+box "Application" #LightYellow
+    participant Op
+end box
+box "Domain" #LightCoral
+    participant Flight
+    participant Log
+end box
+box "Infrastructure" #LightGray
+    participant DB
+end box
+
+== Register Incoming Flight ==
+
+Actor -> API : POST /register-incoming [TLS, Auth] \n(flightNumber, aircraftType, scheduledTime, direction=incoming)
+note right of Actor : AirTrafficController (instance of Actor) has Write permission
+
+API -> Op : registerFlight(details)
+
+Op -> Op : validateRequiredFields(details)
+alt fields valid
+  Op -> Op : checkAuthorization(actor, Write, resource=AircraftMovementLogDatabase)
+  alt authorized
+    Op -> DB : findFlightByNumber(flightNumber) [TLS, encrypted at rest]
+    alt flightNumber exists
+      Op -> Op : reject duplicate
+      Op --> API : 409 Conflict (Duplicate flightNumber)
+      API --> Actor : 409 Conflict (Duplicate flightNumber)
+    else flightNumber unique
+      Op -> Flight : create(details)
+      note right of Flight : state: Pre1 -> Post1 (stored)
+      Op -> Log : addFlight(flight)
+      note right of Log : state: Post3 (log updated)
+      Op -> DB : storeFlight(flight) [TLS, encrypted, authenticated]
+      Op -> DB : updateLog(log)
+      Op --> API : 201 Created (Success)
+      API --> Actor : 201 Created (Flight registered)
+    end
+  else not authorized
+    Op --> API : 403 Forbidden (Insufficient permission)
+    API --> Actor : 403 Forbidden
+  end
+else fields missing
+  Op -> Op : logError(validation failure) \nstate: Pre1 -> Post2 (failure)
+  Op --> API : 400 Bad Request (Missing required fields)
+  API --> Actor : 400 Bad Request
+end
+
+note right of Op : Each operation produces a state change (Pre1 ≠ Post1/Pre2).\nPost states: Post1 (stored), Post2 (failure), Post3 (log updated).
+
+@enduml

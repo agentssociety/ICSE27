@@ -1,0 +1,21 @@
+{
+  "run_id": "P4E2",
+  "project": 4,
+  "essay": 2,
+  "n_created": 8,
+  "n_kept": 8,
+  "n_deleted": 0,
+  "task_deletion_rate": 0.0,
+  "n_duplicate_deleted": 0,
+  "deleted_tasks": [],
+  "kept_tasks": [
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95
+  ]
+}

@@ -1,0 +1,266 @@
+@startuml
+!theme plain
+skinparam participantpadding 20
+skinparam boxpadding 10
+
+box "Actors" #LightBlue
+  actor "ClinicalStaff" as CS
+  actor "BloodBankManagement" as BBM
+  actor "ITTeam" as IT
+  actor "Scheduler" as SCH
+end box
+
+box "Controller" #LightGreen
+  participant "ReservationAPI" as API
+end box
+
+box "Application" #LightYellow
+  participant "ReservationService" as SVC
+end box
+
+box "Domain" #LightCoral
+  participant "BloodUnit" as BU
+  participant "Reservation" as RES
+  participant "BloodTypeCompatibilityAlgorithm" as ALGO
+end box
+
+box "Infrastructure" #LightGray
+  participant "BloodInventoryDatabase" as DB
+  participant "ReservationReleaseScheduler" as RRS
+  participant "AdminDashboard" as DASH
+end box
+
+== Reserve Blood Unit ==
+
+CS -> API : POST /reservations (transfusionRequestId)
+activate API
+
+API -> SVC : initiateReservation(transfusionRequestId)
+activate SVC
+
+SVC -> SVC : authenticate(CS, "Write")
+note right: JWT token validation
+
+alt Authentication fails
+  SVC --> API : error 401 Unauthorized
+  API --> CS : HTTP 401 Unauthorized
+  deactivate SVC
+  deactivate API
+else Authorized
+  SVC -> ALGO : isCompatible(patientBloodType, candidateBloodType)
+  activate ALGO
+  ALGO --> SVC : boolean
+  deactivate ALGO
+
+  alt Incompatible
+    SVC --> API : error 400 Bad Request (incompatible blood type)
+    API --> CS : HTTP 400 Bad Request
+    deactivate SVC
+    deactivate API
+  else Compatible
+    SVC -> DB : findAvailableUnit(compatibleBloodTypes) [SQL]
+    activate DB
+    DB --> SVC : BloodUnit or null
+    deactivate DB
+
+    alt No available unit
+      SVC --> API : error 404 Not Found (no compatible units)
+      API --> CS : HTTP 404 Not Found
+      deactivate SVC
+      deactivate API
+    else Unit found
+      SVC -> BU : reserve()
+      activate BU
+      note over BU : state: available -> reserved
+      BU --> SVC : success
+      deactivate BU
+
+      SVC -> DB : createReservation(bloodUnitId, transfusionRequestId, timestamp) [SQL]
+      activate DB
+      DB --> SVC : reservationId
+      deactivate DB
+
+      SVC -> RES : new Reservation(...)
+      activate RES
+      note over RES : state: active, expiry = now + 24h
+      RES --> SVC : reservationId
+      deactivate RES
+
+      SVC --> API : reservationId
+      API --> CS : HTTP 201 Created (reservationId)
+      deactivate SVC
+      deactivate API
+    end
+  end
+end
+
+== Automatic Release After 24h ==
+
+SCH -> RRS : triggerRelease()
+activate RRS
+
+RRS -> DB : findExpiredReservations() [SQL]
+activate DB
+DB --> RRS : list of Reservation (active, expiry <= now)
+deactivate DB
+
+loop for each expired reservation
+  RRS -> RES : release()
+  activate RES
+  note over RES : state: active -> released
+  RES --> RRS : success
+  deactivate RES
+
+  RRS -> BU : makeAvailable()
+  activate BU
+  note over BU : state: reserved -> available
+  BU --> RRS : success
+  deactivate BU
+
+  RRS -> DB : updateReservationStatus(reservationId, "released") [SQL]
+  activate DB
+  DB --> RRS : ok
+  deactivate DB
+
+  RRS -> DB : updateBloodUnitStatus(bloodUnitId, "available") [SQL]
+  activate DB
+  DB --> RRS : ok
+  deactivate DB
+
+  RRS -> DASH : logReleaseEvent(reservationId)
+  activate DASH
+  DASH --> RRS : logged
+  deactivate DASH
+end
+
+RRS --> SCH : release completed
+deactivate RRS
+
+== Issue Transfusion (within 24h) ==
+
+CS -> API : PUT /reservations/{id}/issue
+activate API
+
+API -> SVC : issueReservation(reservationId)
+activate SVC
+
+SVC -> SVC : authenticate(CS, "Write")
+alt Authentication fails
+  SVC --> API : error 401
+  API --> CS : HTTP 401
+  deactivate SVC
+  deactivate API
+else Authorized
+  SVC -> DB : getReservation(reservationId) [SQL]
+  activate DB
+  DB --> SVC : Reservation (with status)
+  deactivate DB
+
+  alt Reservation status != "active"
+    SVC --> API : error 400 Bad Request (reservation not active)
+    API --> CS : HTTP 400 Bad Request
+    deactivate SVC
+    deactivate API
+  else Reservation active
+    SVC -> RES : isExpired()
+    activate RES
+    RES --> SVC : boolean
+    deactivate RES
+
+    alt Expired
+      SVC --> API : error 409 Conflict (reservation expired, already released)
+      API --> CS : HTTP 409 Conflict
+      deactivate SVC
+      deactivate API
+    else Not expired
+      SVC -> RES : issue()
+      activate RES
+      note over RES : state: active -> issued
+      RES --> SVC : success
+      deactivate RES
+
+      SVC -> BU : issue()
+      activate BU
+      note over BU : state: reserved -> issued
+      BU --> SVC : success
+      deactivate BU
+
+      SVC -> DB : updateReservationStatus(reservationId, "issued") [SQL]
+      activate DB
+      DB --> SVC : ok
+      deactivate DB
+
+      SVC -> DB : updateBloodUnitStatus(bloodUnitId, "issued") [SQL]
+      activate DB
+      DB --> SVC : ok
+      deactivate DB
+
+      SVC --> API : success
+      API --> CS : HTTP 200 OK
+      deactivate SVC
+      deactivate API
+    end
+  end
+end
+
+== Manual Release (Admin) ==
+
+BBM -> API : DELETE /reservations/{id}
+activate API
+
+API -> SVC : manualRelease(reservationId, user)
+activate SVC
+
+SVC -> SVC : authenticate(BBM, "Execute")
+alt Authentication fails
+  SVC --> API : error 403 Forbidden
+  API --> BBM : HTTP 403 Forbidden
+  deactivate SVC
+  deactivate API
+else Authorized
+  SVC -> DB : getReservation(reservationId) [SQL]
+  activate DB
+  DB --> SVC : Reservation (with status)
+  deactivate DB
+
+  alt Reservation status == "released" or "issued"
+    SVC --> API : error 400 Bad Request (already finalized)
+    API --> BBM : HTTP 400 Bad Request
+    deactivate SVC
+    deactivate API
+  else Reservation active
+    SVC -> RES : release()
+    activate RES
+    note over RES : state: active -> released
+    RES --> SVC : success
+    deactivate RES
+
+    SVC -> BU : makeAvailable()
+    activate BU
+    note over BU : state: reserved -> available
+    BU --> SVC : success
+    deactivate BU
+
+    SVC -> DB : updateReservationStatus(reservationId, "released") [SQL]
+    activate DB
+    DB --> SVC : ok
+    deactivate DB
+
+    SVC -> DB : updateBloodUnitStatus(bloodUnitId, "available") [SQL]
+    activate DB
+    DB --> SVC : ok
+    deactivate DB
+
+    SVC -> DASH : logManualRelease(reservationId, user)
+    activate DASH
+    DASH --> SVC : logged
+    deactivate DASH
+
+    SVC --> API : success
+    API --> BBM : HTTP 200 OK
+    deactivate SVC
+    deactivate API
+  end
+end
+
+@enduml

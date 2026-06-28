@@ -1,0 +1,44 @@
+{
+  "task_id": 88,
+  "confidence": 0.9977,
+  "evidence": [
+    {
+      "claim": "The system allows card authentication.",
+      "fact": "The application authenticates users by card number before any transaction.",
+      "score": 0.9989,
+      "user_story_span": "card and PIN authentication",
+      "fact_span": "authenticates users by card number"
+    },
+    {
+      "claim": "The system allows PIN authentication.",
+      "fact": "The application authenticates users by PIN before any transaction.",
+      "score": 0.9988,
+      "user_story_span": "card and PIN authentication",
+      "fact_span": "authenticates users by PIN"
+    },
+    {
+      "claim": "The system authenticates the user.",
+      "fact": "The system verifies a user's identity through a combination of a card number and a personal identification code.",
+      "score": 0.9988,
+      "user_story_span": "authenticates the user",
+      "fact_span": "verifies a user's identity through a combination of a card number and a personal identification code"
+    },
+    {
+      "claim": "The system grants access.",
+      "fact": "The application lets administrators unlock accounts.",
+      "score": 0.9969,
+      "user_story_span": "grants access",
+      "fact_span": "lets administrators unlock accounts"
+    },
+    {
+      "claim": "The system requires both a physical card and a PIN for authentication.",
+      "fact": "Identity validation is performed using a plastic card identifier and a confidential numeric password.",
+      "score": 0.995,
+      "user_story_span": "",
+      "fact_span": "using a plastic card identifier and a confidential numeric password"
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 5,
+  "threshold": 0.6
+}

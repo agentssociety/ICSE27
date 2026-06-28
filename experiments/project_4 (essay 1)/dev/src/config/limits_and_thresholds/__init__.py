@@ -1,0 +1,1 @@
+"""Configuration for lockout attempts, daily withdrawal limits, suspicious pattern thresholds (e.g., rapid withdrawals, unusual amounts) is required by multiple services but not explicitly captured."""

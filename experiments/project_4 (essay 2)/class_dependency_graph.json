@@ -1,0 +1,14 @@
+{
+  "User": [
+    "AuditLogEntry",
+    "Transaction",
+    "Account"
+  ],
+  "Card": [],
+  "Pin": [],
+  "Transaction": [
+    "Account"
+  ],
+  "AuditLogEntry": [],
+  "Account": []
+}

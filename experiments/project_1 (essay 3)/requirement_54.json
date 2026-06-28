@@ -1,0 +1,85 @@
+{
+  "id": "REQ-ITEM-URGENCY-01",
+  "title": "Assign Item Urgency Level",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall allow a user to assign an urgency level (1-5) to an item, where 1 is the lowest urgency and 5 is the highest.",
+  "rationale": "This requirement enables users to prioritize items based on their urgency, enhancing workflow efficiency by allowing quick identification of critical tasks.",
+  "business_value": "Improves task management and productivity by ensuring that high-priority tasks are addressed promptly, leading to better resource utilization and faster project completion.",
+  "source": {
+    "type": "User Story",
+    "id": 54,
+    "description": "As a user I need to assign an urgency level (1-5) so that I can prioritize items based on urgency."
+  },
+  "stakeholders": [
+    "Product Owners",
+    "Project Managers",
+    "Team Leaders"
+  ],
+  "acceptance_criteria": [
+    "Given an item exists with no urgency level assigned",
+    "When I assign urgency level 3 to that item",
+    "Then the item's urgency level is set to 3"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "The item's urgency level is updated to the specified value"
+  ],
+  "functional_constraints": [
+    "Urgency levels must be numeric values between 1 and 5 inclusive",
+    "Items can have their urgency level set or changed as needed"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": null,
+    "availability": null,
+    "scalability": null,
+    "usability": null
+  },
+  "edge_cases": [
+    "Assigning an urgency level outside the range of 1 to 5",
+    "Attempting to assign a non-numeric value as an urgency level"
+  ],
+  "dependencies": [],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Item Management API",
+      "description": "The requirement interacts with the Item Management API to update the urgency level of items."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ITEM-URGENCY-01",
+      "description": "Assigning a valid urgency level (3) to an item",
+      "expected_result": "The item's urgency level is successfully set to 3"
+    },
+    {
+      "id": "TC-ITEM-URGENCY-02",
+      "description": "Attempting to assign an invalid urgency level (6)",
+      "expected_result": "Error message indicating that the urgency level must be between 1 and 5"
+    },
+    {
+      "id": "TC-ITEM-URGENCY-03",
+      "description": "Attempting to assign a non-numeric value as an urgency level ('three')",
+      "expected_result": "Error message indicating that the urgency level must be a numeric value"
+    }
+  ],
+  "verification_method": "Unit Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T17:32:26.053619",
+  "last_updated": "2026-06-15T17:39:48.365734",
+  "traceability": {
+    "related_requirements": [
+      "REQ-SYM-01"
+    ],
+    "design_components": [
+      "UrgencyLevel",
+      "Patient"
+    ],
+    "test_artifacts": []
+  }
+}

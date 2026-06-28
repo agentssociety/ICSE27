@@ -1,0 +1,108 @@
+{
+  "run_id": "P4E2",
+  "project": 4,
+  "essay": 2,
+  "n_tasks": 8,
+  "wall_clock_s": 9308.45,
+  "pipeline_steps": 199,
+  "total_incidents": 10,
+  "fixed_incidents": 9,
+  "escalated_incidents": 1,
+  "self_fix_rate_pct": 90.0,
+  "by_phase": {
+    "DESIGN_UML": {
+      "fixed": 5,
+      "escalated": 0
+    },
+    "ARCHITECTURE": {
+      "fixed": 0,
+      "escalated": 1
+    },
+    "TESTING": {
+      "fixed": 4,
+      "escalated": 0
+    }
+  },
+  "incidents": [
+    {
+      "line_num": 3977,
+      "timestamp": "2026-06-16 21:56:26.649",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpyfb3i9cj/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 4026,
+      "timestamp": "2026-06-16 21:58:40.373",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmplu5_tfhs/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 4076,
+      "timestamp": "2026-06-16 22:01:02.501",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpiy2tj_yu/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 4116,
+      "timestamp": "2026-06-16 22:02:50.446",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Class diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmp1hhsdavt/class_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/"
+    },
+    {
+      "line_num": 4172,
+      "timestamp": "2026-06-16 22:05:43.492",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmp5rkyqnbl/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 5015,
+      "timestamp": "2026-06-16 22:55:37.388",
+      "phase": "ARCHITECTURE",
+      "error_type": "SYNTAX",
+      "outcome": "FAIL_ESCALATED",
+      "message": "5 file(s) still have errors after auto-fix: ['src/domain/account/Account.py', 'src/domain/card/Card.py', 'src/domain/pin/Pin.py', 'src/domain/transaction/Transaction.py', 'src/domain/user/User.py']"
+    },
+    {
+      "line_num": 10223,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/user/test_user_domain.py::test_actor_may_perform_with_admin"
+    },
+    {
+      "line_num": 10224,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/user/test_user_domain.py::test_actor_may_perform_without_admin"
+    },
+    {
+      "line_num": 10256,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/user/test_user_domain.py::test_actor_may_perform_with_admin"
+    },
+    {
+      "line_num": 10256,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/user/test_user_domain.py::test_actor_may_perform_without_admin"
+    }
+  ]
+}

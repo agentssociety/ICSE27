@@ -1,0 +1,58 @@
+{
+  "task_id": 51,
+  "confidence": 0.9897,
+  "evidence": [
+    {
+      "claim": "The system allocates the next available slot for an emergency flight.",
+      "fact": "The system immediately gives a declared emergency flight the earliest possible slot.",
+      "score": 0.9964,
+      "user_story_span": "the system to handle emergency flights by immediately allocating the next available slot",
+      "fact_span": "The system immediately gives a declared emergency flight the earliest possible slot."
+    },
+    {
+      "claim": "The emergency flight is placed at the front of the queue in the next available slot.",
+      "fact": "The system immediately gives a declared emergency flight the earliest possible slot.",
+      "score": 0.9963,
+      "user_story_span": "the emergency flight is placed at the front of the queue (in the next available slot)",
+      "fact_span": "The system immediately gives a declared emergency flight the earliest possible slot."
+    },
+    {
+      "claim": "Slot allocation for emergencies happens automatically.",
+      "fact": "When an emergency is declared, the system instantly frees up a slot and reorders other flights to accommodate it.",
+      "score": 0.9955,
+      "user_story_span": "it happens automatically",
+      "fact_span": "the system instantly frees up a slot and reorders other flights to accommodate it."
+    },
+    {
+      "claim": "The system maintains a queue of scheduled flights with assigned slots.",
+      "fact": "This system assigns departure and arrival slots while enforcing a minimum separation interval between consecutive uses of the same runway.",
+      "score": 0.994,
+      "user_story_span": "The system maintains a queue of scheduled flights with assigned slots.",
+      "fact_span": "This system assigns departure and arrival slots while enforcing a minimum separation interval between consecutive uses of the same runway."
+    },
+    {
+      "claim": "The system re-queues all other affected flights in order with adjusted slots.",
+      "fact": "When an emergency is declared, the system instantly frees up a slot and reorders other flights to accommodate it.",
+      "score": 0.9906,
+      "user_story_span": "all other previously queued flights are re-queued in order with adjusted slots",
+      "fact_span": "the system instantly frees up a slot and reorders other flights to accommodate it."
+    },
+    {
+      "claim": "Emergency flights are flagged.",
+      "fact": "The system immediately gives a declared emergency flight the earliest possible slot.",
+      "score": 0.9797,
+      "user_story_span": "Emergency flights are flagged",
+      "fact_span": "The system immediately gives a declared emergency flight the earliest possible slot."
+    },
+    {
+      "claim": "Re-queuing affected flights may shift their departure or arrival times.",
+      "fact": "When an emergency is declared, the system instantly frees up a slot and reorders other flights to accommodate it.",
+      "score": 0.9751,
+      "user_story_span": "Re-queuing affected flights may shift their departure/arrival times",
+      "fact_span": "the system instantly frees up a slot and reorders other flights to accommodate it."
+    }
+  ],
+  "total_claims": 10,
+  "supported_claims": 7,
+  "threshold": 0.6
+}

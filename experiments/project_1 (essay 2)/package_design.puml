@@ -1,0 +1,127 @@
+@startuml PackageArchitecture
+!pragma layout smetana
+scale 0.75
+
+title Package Architecture — Project 2
+
+skinparam {
+  BackgroundColor transparent
+  ComponentBorderColor #AAAAAA
+  ComponentFontSize 11
+  PackageFontSize 12
+  PackageFontStyle bold
+  ArrowColor #666666
+  ArrowThickness 1
+  Shadowing false
+}
+
+skinparam package<<Domain>> {
+  BackgroundColor #E1F5E1
+}
+skinparam package<<DTO>> {
+  BackgroundColor #E3F2FD
+}
+skinparam package<<Repository>> {
+  BackgroundColor #FCE4EC
+}
+skinparam package<<ORM>> {
+  BackgroundColor #FFF3E0
+}
+skinparam package<<Infra>> {
+  BackgroundColor #F3E5F5
+}
+skinparam package<<Service>> {
+  BackgroundColor #E0F2F1
+}
+skinparam package<<API>> {
+  BackgroundColor #FFF9C4
+}
+skinparam package<<UI>> {
+  BackgroundColor #F1F8E9
+}
+skinparam package<<Tests>> {
+  BackgroundColor #EEEEEE
+}
+skinparam package<<Config>> {
+  BackgroundColor #C8E6C9
+}
+skinparam package<<Docs>> {
+  BackgroundColor #BBDEFB
+}
+skinparam package<<Shared>> {
+  BackgroundColor #F5F5F5
+}
+
+package "Domain layer" <<Domain>> {
+  [domain.patient] as domain_patient
+}
+
+package "DTO layer" <<DTO>> {
+  [dto.patient] as dto_patient
+}
+
+package "Repository layer" <<Repository>> {
+  [repository.patient] as repository_patient
+}
+
+package "ORM layer" <<ORM>> {
+  [orm.patient] as orm_patient
+}
+
+package "Infra layer" <<Infra>> {
+  [infra.patient] as infra_patient
+}
+
+package "Service layer" <<Service>> {
+  [service.patient] as service_patient
+}
+
+package "API layer" <<API>> {
+  [api.patient] as api_patient
+}
+
+package "Config layer" <<Config>> {
+  [config.settings] as config_settings
+}
+
+package "Docs layer" <<Docs>> {
+  [docs.api_and_deployment] as docs_api_and_deployment
+}
+
+package "Tests layer" <<Tests>> {
+  [tests.integration] as tests_integration
+  [tests.unit.patient] as tests_unit_patient
+}
+
+' ── Dependencies ──
+dto_patient --> domain_patient
+repository_patient --> domain_patient
+orm_patient --> domain_patient
+infra_patient --> domain_patient
+infra_patient --> repository_patient
+infra_patient --> orm_patient
+service_patient --> domain_patient
+service_patient --> repository_patient
+service_patient --> dto_patient
+api_patient --> service_patient
+api_patient --> dto_patient
+tests_unit_patient --> domain_patient
+tests_unit_patient --> service_patient
+tests_unit_patient --> api_patient
+tests_integration --> api_patient
+
+legend right
+  **Layers (top → bottom)**
+  Domain → DTO → Repository → ORM → Infra
+  → Service → API → UI
+  Shared: cross-cutting utilities
+  Tests: mirrors every layer
+  Config / Docs: support concerns
+  ----
+  Packages: 11
+  Tasks: 6
+  Domain classes: 1
+  Generated: 2026-06-12 22:01 UTC
+end legend
+
+@enduml

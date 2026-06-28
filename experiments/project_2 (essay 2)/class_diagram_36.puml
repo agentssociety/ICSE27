@@ -1,0 +1,144 @@
+@startuml
+
+skinparam defaultFontName Arial
+skinparam backgroundColor #FEFEFE
+skinparam packageStyle rectangle
+skinparam class {
+    BorderColor #333333
+    FontColor #333333
+    AttributeFontSize 11
+}
+skinparam enum {
+    BorderColor #333333
+    FontColor #333333
+}
+skinparam interface {
+    BorderColor #333333
+    FontColor #333333
+    FontStyle italic
+}
+skinparam note {
+    FontColor #555555
+    BorderColor #999999
+}
+
+' --- Domain Model ---
+package "Domain Model" {
+    enum BloodUnitStatus {
+        valid
+        expired
+    }
+    note left of BloodUnitStatus
+        status must be valid for 42 days from collectionDate, then changed to expired
+    end note
+
+    class BloodUnit {
+        collectionDate : Date
+        status : BloodUnitStatus
+  + isExpired(collectionDate, currentDate) : boolean
+  + setStatus(BloodUnitStatus.EXPIRED)
+    }
+
+    class Inventory {
+  + removeBloodUnit(unit)
+    }
+    note left of Inventory
+        contains only BloodUnits with status valid
+    end note
+
+    enum PermissionType {
+        Read
+        Write
+        Execute
+        Admin
+    }
+    note right of PermissionType
+        partial order: Admin > Execute > Write > Read
+    end note
+
+    class Permission {
+        name : PermissionType
+        strength : int
+  + checkPermission(actor, PermissionType.ADMIN)
+  + checkPermission(actor, PermissionType.WRITE)
+    }
+    note bottom of Permission
+        invariants: see PermissionType order
+    end note
+
+    class Actor {
+  + getActor(token)
+    }
+    note right of Actor
+        has set of permissions (Read, Write, Execute, Admin)
+    end note
+
+    class Resource {
+        owner : Actor
+        accessible : List<Actor>
+  + checkAccess(actor, Inventory)
+    }
+    note right of Resource
+        owner always in accessible
+    end note
+
+    class Interface {
+        kind : String
+        encrypted : boolean
+        authenticated : boolean
+    }
+
+    enum State {
+        PRE1
+        PRE2
+        POST1
+        POST2
+        BLOOD_UNIT_ACTIVE
+        BLOOD_UNIT_EXPIRED
+    }
+    note left of State
+        precondition states (Pre1, Pre2)
+        postcondition states (Post1, Post2)
+    end note
+
+    class Operation {
+        initiator : Actor
+        target : Resource[]
+        channel : Interface[]
+        grant : Permission
+        pre : State
+        post : State
+  + create(pre: State.Pre1|Pre2, post: State.Post1|Post2) : Operation
+  + complete()
+    }
+    note right of Operation
+        must have at least one target
+        must have at least one channel
+        initiator must have grant permission
+        initiator in target.accessible
+        pre != post
+        at least one channel authenticated
+    end note
+
+    ' Relationships
+    Inventory *-- BloodUnit : contains
+    Operation *-- Actor : initiator
+    Operation *-- Resource : target
+    Operation *-- Interface : channel
+    Operation *-- Permission : grant
+
+    Actor "mayPerform" *-- Permission : many-to-many
+    Resource "owner" --> Actor
+    Resource "accessible" --> Actor : list
+}
+
+' --- Infrastructure — Ports ---
+package "Infrastructure — Ports" {
+    interface "InventoryDatabase" as InventoryDatabase
+    note top of InventoryDatabase
+        Retrieves and updates blood unit data.
+        Encrypted and authenticated channel.
+    end note
+}
+
+@enduml

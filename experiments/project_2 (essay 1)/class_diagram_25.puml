@@ -1,0 +1,163 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+  enum ABO {
+    A
+    B
+    AB
+    O
+  }
+
+  enum Rh {
+    Positive
+    Negative
+  }
+
+  class BloodUnit {
+    - bloodType: ABO
+    - rhFactor: Rh
+    - donationDate: Date
+    - expirationDate: Date
+    + {abstract} calculateExpirationDate(): Date
+  + getBloodType() : ABO
+  + getRhFactor() : Rh
+  + getDonationDate() : Date
+  + setExpirationDate(expirationDate: Date)
+  }
+
+  note right of BloodUnit::expirationDate
+    derived: donationDate + shelfLife(bloodType, rhFactor)
+  end note
+
+  note right of BloodUnit
+    invariants:
+    - donationDate must be valid ISO format
+    - bloodType and rhFactor required
+    - expirationDate computed correctly
+  end note
+}
+
+package "Infrastructure — Ports" {
+  interface BloodUnitDB <<interface>> {
+    + store(unit: BloodUnit): void
+    + retrieve(id: String): BloodUnit
+    + retrieveAll(): List<BloodUnit>
+    + update(unit: BloodUnit): void
+  }
+
+  note right of BloodUnitDB
+    must support encryption and authentication
+  end note
+
+  interface DateCalculationAPI <<interface>> {
+    + calculateExpirationDate(donationDate: Date, bloodType: ABO, rhFactor: Rh): Date
+  }
+
+  note right of DateCalculationAPI
+    requires caller authentication
+  end note
+}
+
+package "Application" {
+  class BloodUnitService {
+    - bloodUnitDB: BloodUnitDB
+    - dateCalculationAPI: DateCalculationAPI
+    + recordBloodUnit(bloodType: ABO, rhFactor: Rh, donationDate: Date): BloodUnit
+    + calculateExpiration(unitId: String): Date
+    + flagExpiringUnits(): List<BloodUnit>
+  }
+
+  note right of BloodUnitService
+    handles FLOW_RECORD and FLOW_EXPIRE
+  end note
+}
+
+package "Controllers" {
+  class BloodUnitController {
+    + recordBloodUnit(request: RecordBloodUnitRequest): BloodUnitResponse
+    + getExpirationDate(unitId: String): Date
+    + getFlaggedUnits(): List<BloodUnitResponse>
+  }
+}
+
+package "DTOs" {
+  class RecordBloodUnitRequest <<dto>> {
+    + bloodType: ABO
+    + rhFactor: Rh
+    + donationDate: String
+  }
+
+  class BloodUnitResponse <<dto>> {
+    + id: String
+    + bloodType: ABO
+    + rhFactor: Rh
+    + donationDate: Date
+    + expirationDate: Date
+    + isExpiring: Boolean
+  }
+}
+
+package "Exceptions" {
+  class InvalidDateFormatException <<exception>> {
+    + message: String
+  }
+
+  class MissingRhFactorException <<exception>> {
+    + message: String
+  }
+
+  class AuthenticationException <<exception>> {
+    + message: String
+  }
+}
+
+package "Security" {
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  class BloodUnitDataResource {
+    - owner: Actor
+    - accessible: Set<Actor>
+  + setOwner(actor: Actor)
+  }
+
+  note right of BloodUnitDataResource
+    owner always in accessible set
+  end note
+
+  class Actor {
+    - name: String
+    - permissions: Set<Permission>
+  + checkPermission(actor: Actor, permission: Permission.WRITE) : boolean
+  }
+}
+
+' Relationships
+BloodUnit --> ABO : uses
+BloodUnit --> Rh : uses
+BloodUnitService --> BloodUnit : manages
+BloodUnitService --> BloodUnitDB : uses
+BloodUnitService --> DateCalculationAPI : uses
+BloodUnitController --> BloodUnitService : uses
+BloodUnitController --> RecordBloodUnitRequest : receives
+BloodUnitController --> BloodUnitResponse : returns
+BloodUnitService --> InvalidDateFormatException : throws
+BloodUnitService --> MissingRhFactorException : throws
+BloodUnitService --> AuthenticationException : throws
+BloodUnitDB --> AuthenticationException : throws
+DateCalculationAPI --> AuthenticationException : throws
+
+' Security relationships
+BloodUnitDataResource --> Actor : contains
+Actor --> Permission : has
+
+@enduml

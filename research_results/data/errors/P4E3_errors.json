@@ -1,0 +1,116 @@
+{
+  "run_id": "P4E3",
+  "project": 4,
+  "essay": 3,
+  "n_tasks": 6,
+  "wall_clock_s": 10626.02,
+  "pipeline_steps": 365,
+  "total_incidents": 11,
+  "fixed_incidents": 8,
+  "escalated_incidents": 3,
+  "self_fix_rate_pct": 72.7,
+  "by_phase": {
+    "ARCHITECTURE": {
+      "fixed": 0,
+      "escalated": 2
+    },
+    "IMPLEMENTATION": {
+      "fixed": 0,
+      "escalated": 1
+    },
+    "TESTING": {
+      "fixed": 8,
+      "escalated": 0
+    }
+  },
+  "incidents": [
+    {
+      "line_num": 5502,
+      "timestamp": "2026-06-17 09:58:12.448",
+      "phase": "ARCHITECTURE",
+      "error_type": "SYNTAX",
+      "outcome": "FAIL_ESCALATED",
+      "message": "7 file(s) still have errors after auto-fix: ['src/api/card/card_router.py', 'src/api/pin/pin_router.py', 'src/domain/account/Account.py', 'src/domain/daily_withdrawal_limit/DailyWithdrawalLimit.py', '"
+    },
+    {
+      "line_num": 12081,
+      "timestamp": "2026-06-17 12:19:48.320",
+      "phase": "ARCHITECTURE",
+      "error_type": "GENERAL",
+      "outcome": "FAIL_ESCALATED",
+      "message": "[tracer] tool generate_project_template_from_package_design failed: ValueError: Project 13: missing class diagrams for task(s) [102, 103, 104]. Run UML diagram generation for all tasks bef"
+    },
+    {
+      "line_num": 14719,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/withdrawal_transaction/test_withdrawal_transaction_service.py::TestWithdrawalTransactionService::test_happy_path_withdrawal"
+    },
+    {
+      "line_num": 14720,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/withdrawal_transaction/test_withdrawal_transaction_service.py::TestWithdrawalTransactionService::test_insufficient_funds_raises_error"
+    },
+    {
+      "line_num": 17299,
+      "timestamp": "2026-06-17 12:35:03.586",
+      "phase": "IMPLEMENTATION",
+      "error_type": "GENERAL",
+      "outcome": "FAIL_ESCALATED",
+      "message": "[tracer] tool write_file failed: TypeError: write_file() got an unexpected keyword argument 'project_id'"
+    },
+    {
+      "line_num": 18914,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/flagged_transaction/test_flagged_transaction_service.py::TestFlaggedTransactionService::test_get_flagged_transaction_by_id_not_found"
+    },
+    {
+      "line_num": 19024,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/flagged_transaction/test_flagged_transaction_service.py::TestFlaggedTransactionService::test_get_flagged_transaction_by_id_not_found"
+    },
+    {
+      "line_num": 24408,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/authentication_attempt/test_authentication_attempt_api.py::test_list_endpoint"
+    },
+    {
+      "line_num": 24409,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/authentication_attempt/test_authentication_attempt_api.py::test_create_endpoint"
+    },
+    {
+      "line_num": 24513,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/authentication_attempt/test_authentication_attempt_api.py::test_list_endpoint"
+    },
+    {
+      "line_num": 24514,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/authentication_attempt/test_authentication_attempt_api.py::test_create_endpoint"
+    }
+  ]
+}

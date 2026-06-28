@@ -1,0 +1,181 @@
+@startuml PackageArchitecture
+!pragma layout smetana
+scale 0.75
+
+title Package Architecture — Project 1
+
+skinparam {
+  BackgroundColor transparent
+  ComponentBorderColor #AAAAAA
+  ComponentFontSize 11
+  PackageFontSize 12
+  PackageFontStyle bold
+  ArrowColor #666666
+  ArrowThickness 1
+  Shadowing false
+}
+
+skinparam package<<Domain>> {
+  BackgroundColor #E1F5E1
+}
+skinparam package<<DTO>> {
+  BackgroundColor #E3F2FD
+}
+skinparam package<<Repository>> {
+  BackgroundColor #FCE4EC
+}
+skinparam package<<ORM>> {
+  BackgroundColor #FFF3E0
+}
+skinparam package<<Infra>> {
+  BackgroundColor #F3E5F5
+}
+skinparam package<<Service>> {
+  BackgroundColor #E0F2F1
+}
+skinparam package<<API>> {
+  BackgroundColor #FFF9C4
+}
+skinparam package<<UI>> {
+  BackgroundColor #F1F8E9
+}
+skinparam package<<Tests>> {
+  BackgroundColor #EEEEEE
+}
+skinparam package<<Config>> {
+  BackgroundColor #C8E6C9
+}
+skinparam package<<Docs>> {
+  BackgroundColor #BBDEFB
+}
+skinparam package<<Shared>> {
+  BackgroundColor #F5F5F5
+}
+
+package "Domain layer" <<Domain>> {
+  [domain.events] as domain_events
+  [domain.patient] as domain_patient
+  [domain.patient_queue] as domain_patient_queue
+  [domain.urgency_level] as domain_urgency_level
+}
+
+package "DTO layer" <<DTO>> {
+  [dto.patient] as dto_patient
+  [dto.patient_queue] as dto_patient_queue
+  [dto.urgency_level] as dto_urgency_level
+}
+
+package "Repository layer" <<Repository>> {
+  [repository.patient] as repository_patient
+  [repository.patient_queue] as repository_patient_queue
+  [repository.urgency_level] as repository_urgency_level
+}
+
+package "ORM layer" <<ORM>> {
+  [orm.patient] as orm_patient
+  [orm.patient_queue] as orm_patient_queue
+  [orm.urgency_level] as orm_urgency_level
+}
+
+package "Infra layer" <<Infra>> {
+  [infra.patient] as infra_patient
+  [infra.patient_queue] as infra_patient_queue
+  [infra.urgency_level] as infra_urgency_level
+  [shared.utilities] as shared_utilities
+}
+
+package "Service layer" <<Service>> {
+  [service.dashboard] as service_dashboard
+  [service.patient] as service_patient
+  [service.patient_queue] as service_patient_queue
+  [service.urgency_level] as service_urgency_level
+}
+
+package "API layer" <<API>> {
+  [api.dashboard] as api_dashboard
+  [api.patient] as api_patient
+  [api.patient_queue] as api_patient_queue
+  [api.urgency_level] as api_urgency_level
+}
+
+package "Config layer" <<Config>> {
+  [config.settings] as config_settings
+}
+
+package "Docs layer" <<Docs>> {
+  [docs.api_and_deployment] as docs_api_and_deployment
+}
+
+package "Tests layer" <<Tests>> {
+  [tests.integration] as tests_integration
+  [tests.unit.patient] as tests_unit_patient
+  [tests.unit.patient_queue] as tests_unit_patient_queue
+  [tests.unit.urgency_level] as tests_unit_urgency_level
+}
+
+' ── Dependencies ──
+dto_urgency_level --> domain_urgency_level
+repository_urgency_level --> domain_urgency_level
+orm_urgency_level --> domain_urgency_level
+infra_urgency_level --> domain_urgency_level
+infra_urgency_level --> repository_urgency_level
+infra_urgency_level --> orm_urgency_level
+service_urgency_level --> domain_urgency_level
+service_urgency_level --> repository_urgency_level
+service_urgency_level --> dto_urgency_level
+service_urgency_level --> service_patient
+api_urgency_level --> service_urgency_level
+api_urgency_level --> dto_urgency_level
+dto_patient_queue --> domain_patient_queue
+repository_patient_queue --> domain_patient_queue
+orm_patient_queue --> domain_patient_queue
+infra_patient_queue --> domain_patient_queue
+infra_patient_queue --> repository_patient_queue
+infra_patient_queue --> orm_patient_queue
+service_patient_queue --> domain_patient_queue
+service_patient_queue --> repository_patient_queue
+service_patient_queue --> dto_patient_queue
+service_patient_queue --> service_patient
+service_patient_queue --> service_urgency_level
+api_patient_queue --> service_patient_queue
+api_patient_queue --> dto_patient_queue
+dto_patient --> domain_patient
+repository_patient --> domain_patient
+orm_patient --> domain_patient
+infra_patient --> domain_patient
+infra_patient --> repository_patient
+infra_patient --> orm_patient
+service_patient --> domain_patient
+service_patient --> repository_patient
+service_patient --> dto_patient
+service_patient --> service_patient_queue
+api_patient --> service_patient
+api_patient --> dto_patient
+tests_unit_urgency_level --> domain_urgency_level
+tests_unit_urgency_level --> service_urgency_level
+tests_unit_urgency_level --> api_urgency_level
+tests_unit_patient_queue --> domain_patient_queue
+tests_unit_patient_queue --> service_patient_queue
+tests_unit_patient_queue --> api_patient_queue
+tests_unit_patient --> domain_patient
+tests_unit_patient --> service_patient
+tests_unit_patient --> api_patient
+tests_integration --> api_urgency_level
+tests_integration --> api_patient_queue
+tests_integration --> api_patient
+
+legend right
+  **Layers (top → bottom)**
+  Domain → DTO → Repository → ORM → Infra
+  → Service → API → UI
+  Shared: cross-cutting utilities
+  Tests: mirrors every layer
+  Config / Docs: support concerns
+  ----
+  Packages: 31
+  Tasks: 6
+  Domain classes: 3
+  Generated: 2026-06-12 11:57 UTC
+end legend
+
+@enduml

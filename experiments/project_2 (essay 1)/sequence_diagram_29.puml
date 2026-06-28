@@ -1,0 +1,215 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+    participant "BloodUnitController" as Controller
+end box
+
+box "Application Layer" #LightGreen
+    participant "ExpirationService" as Service
+    participant "AuthorizationService" as AuthService
+end box
+
+box "Domain Layer" #LightYellow
+    participant "BloodUnit" as BloodUnit
+    participant "BloodUnitStatus" as Status
+    participant "Actor" as Actor
+    participant "Blood_Bank_Administrators" as Admin
+    participant "Medical_Staff" as MedicalStaff
+    participant "Regulatory_Authorities" as Regulatory
+    participant "Permission" as Permission
+    participant "PermissionInstance" as PermEnum
+    participant "Resource" as Resource
+    participant "State" as State
+    participant "StateInstance" as StateEnum
+end box
+
+box "Infrastructure Layer" #LightCoral
+    participant "Blood_Units_Database" as DB
+    participant "System_Clock_API" as Clock
+end box
+
+== Flow: Expire Blood Unit (Happy Path) ==
+
+Controller -> AuthService : authorizeInitiator(initiator: Actor, requiredPermission: PermissionInstance) : boolean
+note right: inv_initiator_is_authorized
+
+AuthService -> Actor : getPermissions(initiator) : Set<PermissionInstance>
+Actor --> AuthService : permissions
+AuthService -> Permission : checkPermission(permissions, requiredPermission) : boolean
+Permission --> AuthService : true
+AuthService --> Controller : authorized
+
+Controller -> Service : expireBloodUnit(unitId: String, initiator: Actor) : void
+
+Service -> DB : getBloodUnit(unitId: String) : BloodUnit
+note right: [authenticated channel]
+DB --> Service : bloodUnit
+
+Service -> BloodUnit : getCollectionDate() : Date
+BloodUnit --> Service : collectionDate
+
+Service -> Clock : getCurrentDate() : Date
+note right: [authenticated channel]
+Clock --> Service : currentDate
+
+Service -> Service : calculateAge(currentDate, collectionDate) : int
+note right: age = currentDate - collectionDate
+
+alt age > 42 days
+    Service -> BloodUnit : markExpired() : void
+    note right: State transition: active -> expired
+    
+    BloodUnit -> Status : setStatus(BloodUnitStatus.EXPIRED)
+    Status --> BloodUnit : void
+    
+    BloodUnit -> BloodUnit : setAvailableForTransfusion(false)
+    note right: Post1 reached before Post2
+    
+    Service -> DB : updateBloodUnit(bloodUnit: BloodUnit) : void
+    note right: [authenticated channel]
+    DB --> Service : updated
+    
+    Service --> Controller : success
+    Controller --> Admin : 200 OK
+
+else age <= 42 days
+    Service --> Controller : unitNotExpired
+    Controller --> Admin : 200 OK (no action needed)
+end
+
+== Flow: Expire Blood Unit - Clock Failure ==
+
+Controller -> AuthService : authorizeInitiator(initiator: Actor, requiredPermission: PermissionInstance) : boolean
+AuthService --> Controller : authorized
+
+Controller -> Service : expireBloodUnit(unitId: String, initiator: Actor) : void
+
+Service -> DB : getBloodUnit(unitId: String) : BloodUnit
+DB --> Service : bloodUnit
+
+Service -> BloodUnit : getCollectionDate() : Date
+BloodUnit --> Service : collectionDate
+
+Service -> Clock : getCurrentDate() : Date
+
+alt Clock failure
+    Service -> Service : logError("Clock API unavailable")
+    note right: Continue without crash
+    
+    Service --> Controller : errorLogged
+    Controller --> Admin : 500 Internal Server Error
+end
+
+== Flow: Expire Blood Unit - Authorization Failure ==
+
+Controller -> AuthService : authorizeInitiator(initiator: Actor, requiredPermission: PermissionInstance) : boolean
+
+AuthService -> Actor : getPermissions(initiator) : Set<PermissionInstance>
+Actor --> AuthService : permissions
+AuthService -> Permission : checkPermission(permissions, requiredPermission) : boolean
+Permission --> AuthService : false
+
+AuthService --> Controller : unauthorized
+Controller --> Admin : 403 Forbidden
+
+== Flow: Expire Blood Unit - Database Failure ==
+
+Controller -> AuthService : authorizeInitiator(initiator: Actor, requiredPermission: PermissionInstance) : boolean
+AuthService --> Controller : authorized
+
+Controller -> Service : expireBloodUnit(unitId: String, initiator: Actor) : void
+
+Service -> DB : getBloodUnit(unitId: String) : BloodUnit
+
+alt Database unavailable
+    DB --> Service : error
+    Service -> Service : logError("Database unavailable")
+    Service --> Controller : databaseError
+    Controller --> Admin : 500 Internal Server Error
+end
+
+== Flow: Query Blood Unit Status (Medical Staff) ==
+
+Controller -> AuthService : authorizeInitiator(initiator: Actor, requiredPermission: PermissionInstance) : boolean
+AuthService --> Controller : authorized
+
+Controller -> Service : queryBloodUnitStatus(unitId: String, initiator: Actor) : BloodUnit
+
+Service -> DB : getBloodUnit(unitId: String) : BloodUnit
+DB --> Service : bloodUnit
+
+Service -> BloodUnit : getStatus() : BloodUnitStatus
+BloodUnit --> Service : status
+
+Service --> Controller : bloodUnitStatus
+Controller --> MedicalStaff : 200 OK (status)
+
+== Flow: Query Blood Unit Status - Unauthorized ==
+
+Controller -> AuthService : authorizeInitiator(initiator: Actor, requiredPermission: PermissionInstance) : boolean
+AuthService --> Controller : unauthorized
+Controller --> MedicalStaff : 403 Forbidden
+
+== Flow: Audit Blood Units (Regulatory Authorities) ==
+
+Controller -> AuthService : authorizeInitiator(initiator: Actor, requiredPermission: PermissionInstance) : boolean
+AuthService --> Controller : authorized
+
+Controller -> Service : auditBloodUnits(initiator: Actor) : List<BloodUnit>
+
+Service -> DB : getAllBloodUnits() : List<BloodUnit>
+DB --> Service : bloodUnits
+
+Service --> Controller : auditData
+Controller --> Regulatory : 200 OK (audit report)
+
+== Flow: Automatic Midnight Expiration ==
+
+Controller -> Service : processMidnightExpiration() : void
+
+Service -> Clock : getCurrentDate() : Date
+Clock --> Service : currentDate
+
+Service -> DB : getAllActiveBloodUnits() : List<BloodUnit>
+DB --> Service : activeUnits
+
+loop for each bloodUnit in activeUnits
+    Service -> BloodUnit : getCollectionDate() : Date
+    BloodUnit --> Service : collectionDate
+    
+    Service -> Service : calculateAge(currentDate, collectionDate) : int
+    
+    alt age > 42 days
+        Service -> BloodUnit : markExpired() : void
+        BloodUnit -> Status : setStatus(BloodUnitStatus.EXPIRED)
+        BloodUnit -> BloodUnit : setAvailableForTransfusion(false)
+        
+        Service -> DB : updateBloodUnit(bloodUnit: BloodUnit) : void
+        DB --> Service : updated
+    end
+end
+
+note right: Performance constraint: #op.target <= 5 (10,000 units/hour)
+note right: Response time <= 5 seconds per batch
+
+Service --> Controller : batchComplete
+Controller --> Controller : logCompletion
+
+== Flow: Resource Access Control Check ==
+
+Controller -> AuthService : checkResourceAccess(initiator: Actor, resource: Resource) : boolean
+
+AuthService -> Resource : getAccessible() : Set<Actor>
+Resource --> AuthService : accessibleActors
+
+AuthService -> AuthService : verifyInitiatorInAccessible(initiator, accessibleActors) : boolean
+
+alt initiator in accessibleActors
+    AuthService --> Controller : accessGranted
+else
+    AuthService --> Controller : accessDenied
+    Controller --> initiator : 403 Forbidden
+end
+
+@enduml

@@ -1,0 +1,266 @@
+/* ==========================================================================
+   Blood Bank Management System - Custom Styles
+   ==========================================================================
+   This stylesheet provides custom styling beyond Bootstrap defaults to ensure
+   a clean, professional, and consistent appearance across all dashboard pages.
+   Sections are organized modularly for easy maintenance.
+*/
+
+/* ==========================================================================
+   Global & Body Styles
+   ========================================================================== */
+body {
+    background-color: #f4f6f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* ==========================================================================
+   Navigation Bar Customization
+   ========================================================================== */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+}
+
+.nav-link {
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: #ffc107 !important; /* Bootstrap warning yellow */
+}
+
+/* ==========================================================================
+   Flash Messages
+   ========================================================================== */
+.alert {
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.alert-dismissible .btn-close {
+    outline: none;
+}
+
+/* ==========================================================================
+   Cards & Panels
+   ========================================================================== */
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-radius: 0.75rem 0.75rem 0 0;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.card-header .badge {
+    font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+.table {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+.table thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    background-color: #212529;
+    color: #ffffff;
+    border-bottom: 2px solid #343a40;
+}
+
+.table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+.table-responsive {
+    border-radius: 0.5rem;
+}
+
+/* ==========================================================================
+   Status Badges
+   ========================================================================== */
+.badge {
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.3em 0.6em;
+    border-radius: 0.375rem;
+}
+
+/* ==========================================================================
+   Buttons & Quick Actions
+   ========================================================================== */
+.btn {
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-info:hover,
+.btn-outline-success:hover,
+.btn-outline-danger:hover {
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   Dashboard Specific Styles
+   ========================================================================== */
+.display-5 {
+    font-weight: 600;
+    color: #343a40;
+}
+
+/* Stock summary status colors */
+.table .badge.bg-danger {
+    background-color: #dc3545;
+}
+
+.table .badge.bg-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.table .badge.bg-success {
+    background-color: #28a745;
+}
+
+/* ==========================================================================
+   Inventory Page
+   ========================================================================== */
+#add-unit-form .card {
+    border-left: 4px solid #28a745;
+}
+
+.filter-card {
+    border-left: 4px solid #6c757d;
+}
+
+/* ==========================================================================
+   Requests Page
+   ========================================================================== */
+#new-request-form .card {
+    border-left: 4px solid #17a2b8;
+}
+
+/* ==========================================================================
+   Alerts Page
+   ========================================================================== */
+#alerts-page .card-header {
+    background-color: #dc3545 !important;
+}
+
+.table-danger td {
+    background-color: #f8d7da;
+}
+
+.table-success td {
+    background-color: #d4edda;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.footer {
+    margin-top: auto;
+    border-top: 1px solid #e9ecef;
+    background-color: #f8f9fa !important;
+}
+
+.footer .text-muted {
+    font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   Responsiveness Tweaks
+   ========================================================================== */
+@media (max-width: 768px) {
+    .display-5 {
+        font-size: 1.8rem;
+    }
+
+    .card-header h5 {
+        font-size: 1.1rem;
+    }
+
+    .table thead th {
+        font-size: 0.75rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+}
+
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.shadow {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.rounded-lg {
+    border-radius: 0.5rem !important;
+}
+
+/* ==========================================================================
+   Print Styles (Optional)
+   ========================================================================== */
+@media print {
+    .navbar,
+    .footer,
+    .btn,
+    .alert {
+        display: none !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #ddd;
+    }
+
+    .table thead th {
+        background-color: #eee !important;
+        color: #000 !important;
+    }
+}

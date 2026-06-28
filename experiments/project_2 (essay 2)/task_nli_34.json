@@ -1,0 +1,44 @@
+{
+  "task_id": 34,
+  "confidence": 0.9935,
+  "evidence": [
+    {
+      "claim": "When a request is made, matching blood units are searched.",
+      "fact": "It pairs a request with a compatible blood unit by exact type match, then by nearest expiration date.",
+      "score": 0.9988,
+      "user_story_span": "When matching blood units are searched",
+      "fact_span": "pairs a request with a compatible blood unit"
+    },
+    {
+      "claim": "When a request is made, compatible types are considered.",
+      "fact": "The system matches requests to compatible units.",
+      "score": 0.9987,
+      "user_story_span": "When compatible types are considered",
+      "fact_span": "matches requests to compatible units"
+    },
+    {
+      "claim": "The system should select units with the closest expiry date among compatible types.",
+      "fact": "The compatibility engine prioritizes identical type matches and then chooses the unit with the closest expiry.",
+      "score": 0.9984,
+      "user_story_span": "Then the system should select units with the closest expiry date among compatible types",
+      "fact_span": "chooses the unit with the closest expiry"
+    },
+    {
+      "claim": "The system should first return units with an exact ABO/Rh match, sorted by closest expiry date.",
+      "fact": "The matching algorithm first looks for exactly compatible units and then selects the one expiring soonest.",
+      "score": 0.9907,
+      "user_story_span": "Then the system should first return units with exact ABO/Rh match sorted by closest expiry date",
+      "fact_span": "first looks for exactly compatible units"
+    },
+    {
+      "claim": "The user submits a transfusion request for a specific ABO/Rh type.",
+      "fact": "A transfusion order is a demand for a particular blood type and Rh with a given unit count.",
+      "score": 0.9809,
+      "user_story_span": "Given a transfusion request for a specific ABO/Rh type",
+      "fact_span": "a demand for a particular blood type and Rh"
+    }
+  ],
+  "total_claims": 10,
+  "supported_claims": 5,
+  "threshold": 0.6
+}

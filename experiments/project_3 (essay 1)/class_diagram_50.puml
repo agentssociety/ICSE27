@@ -1,0 +1,216 @@
+@startuml
+skinparam defaultFontName Arial
+skinparam classBackgroundColor #FEFEFE
+skinparam classBorderColor #888888
+skinparam interfaceBackgroundColor #E8F0FE
+skinparam interfaceBorderColor #336699
+skinparam noteBackgroundColor #FFFACD
+skinparam noteBorderColor #CCCC00
+
+package "Domain Model" {
+  enum RunwayStatus {
+    OPEN
+    CLOSED
+  }
+
+  enum WakeTurbulenceCategory {
+    LIGHT
+    MEDIUM
+    HEAVY
+    SUPER
+  }
+
+  enum PermissionLevel {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+
+  enum PreState {
+    PRE1
+    PRE2
+    PRE3
+    PRE4
+  }
+
+  enum PostState {
+    POST1
+    POST2
+  }
+
+  class Runway {
+    + id: String
+    + status: RunwayStatus
+    + capacity: int
+    + configuration: String
+    + aircraftTypeCompatibility: List<String>
+  + findAlternativeRunways(aircraftType, requiredCapacity)
+  + filterByConfiguration(aircraftType)
+  + filterByStatus(OPEN)
+  + checkCompatibility(flight, alternativeRunway)
+  }
+  note left of Runway
+    Invariants:
+    - Runway must be of suitable configuration for aircraft type
+    - Minimum separation time between assigned flights
+  end note
+
+  class Flight {
+    + id: String
+    + departureTime: DateTime
+    + arrivalTime: DateTime
+    + aircraftType: Aircraft
+  + assignToRunway(alternativeRunway.id, newDepartureTime)
+  }
+  note left of Flight
+    Invariants:
+    - Each flight must be assigned to exactly one runway at a time
+    - Departure time must be updated with appropriate delay when reassigned
+  end note
+
+  class Slot {
+    + time: DateTime
+    + runway: Runway
+    + flight: Flight
+  + createSlot(time, runway, flight)
+  }
+  note left of Slot
+    Invariants:
+    - No two flights assigned overlapping slots on same runway within minimum separation time
+  end note
+
+  class Aircraft {
+    + type: String
+    + size: String
+    + wakeTurbulenceCategory: WakeTurbulenceCategory
+  + getAircraft(flight.aircraftType)
+  + isCompatible(aircraftType, configuration)
+  }
+
+  class TrafficData {
+    + currentRunwayAssignments: List<Slot>
+    + queuedFlights: List<Flight>
+    + runwayLoads: Map<Runway, Integer>
+  + updateCurrentAssignments(flight, runway)
+  }
+
+  class SeparationRule {
+    + wakeTurbulenceSeparation: Map<Pair<WakeTurbulenceCategory>, Duration>
+    + minimumRunwaySeparationTime: Duration
+  + validateSeparation(flight, proposedSlot, runway, existingSlots)
+  + verifyAllAssignments()
+  }
+  note left of SeparationRule
+    Invariants:
+    - Separation rules must be enforced for all flight pairs using same runway within time window
+  end note
+
+  class Resource {
+    + owner: String
+  + checkAccess(resource=Runway, actor=System)
+  }
+  note left of Resource
+    Invariants:
+    - owner always in accessible set
+  end note
+
+  class Permission {
+    + level: PermissionLevel
+  + getPermission(actor, resource)
+  }
+  note left of Permission
+    Invariants:
+    - Permission partial order: Admin >= Execute/Write >= Read
+  end note
+
+  class State {
+    + preconditionStates: List<PreState>
+    + postconditionStates: List<PostState>
+  + recordPreCondition(Pre1)
+  + setPreState(Pre1)
+  + recordPreCondition(Pre2)
+  + setPreState(Pre2)
+  + recordPostCondition(Post2:SeparationMaintained)
+  + recordPostCondition(Post2)
+  + recordPostCondition(Post1)
+  + setPostState(Post1)
+  }
+  note left of State
+    Invariants:
+    - Each operation must transition from a defined pre-state to a defined post-state
+    - pre != post
+  end note
+}
+
+package "Application" {
+  class System {
+    // Manages slots for scheduling flights on runways
+  + rerouteToExternalAirport(flight)
+  + holdFlightUntilAvailable(flight)
+  + solveComplexConstraints(flights, availableRunways)
+  + updateAllAssignments()
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface RunwayStatusAPI {
+    // Provides real-time runway closure and availability information
+  }
+
+  interface AircraftAndTrafficDatabase {
+    // Stores aircraft types, current traffic data, and flight schedules
+  }
+
+  interface SeparationRulesDatabase {
+    // Contains rules for wake turbulence and runway spacing
+  + getMinimumSeparation(aircraftCategory, precedentCategory)
+  }
+}
+
+package "Controllers" {
+  abstract class Actor {
+    + name: String
+    + permissions: List<PermissionLevel>
+  }
+
+  class AirTrafficControlTeam {
+  + notifyNoAlternative(flight)
+  + notifyAircraftTooLarge(flight)
+  + notifyReassignmentComplete(summaryReport)
+  }
+  note left of AirTrafficControlTeam
+    Responsibilities:
+    - Initiate reassignment operations
+    - Update flight schedules
+  end note
+
+  class FlightOperationsManagement {
+  + notifyUpdatedSchedules(flights)
+  }
+  note left of FlightOperationsManagement
+    Responsibilities:
+    - Monitor reassignment outcomes
+  end note
+
+  class SafetyComplianceOffice {
+  + notifySeparationCompliance(complianceReport)
+  }
+  note left of SafetyComplianceOffice
+    Responsibilities:
+    - Verify separation rules compliance
+  end note
+}
+
+' Relationships
+Runway "1" -- "*" Flight : assigned to
+
+System "1" *-- "*" Slot : contains
+
+Actor "0..*" --> "0..*" Resource : access
+
+AirTrafficControlTeam --|> Actor
+FlightOperationsManagement --|> Actor
+SafetyComplianceOffice --|> Actor
+
+@enduml

@@ -1,0 +1,122 @@
+@startuml
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+skinparam backgroundColor white
+skinparam classAttributeIconSize 0
+skinparam stereotypeCBackgroundColor #F0F0F0
+
+package "Domain Model" {
+  class BloodBankManager {
+    userId: String
+    name: String
+    permissions: List<Permission>
+    ..
+    note "Must have Admin permission to access dashboard"
+  + returnAuthToken()
+  + allowAccess()
+  }
+
+  class UnauthorizedUser {
+    ..
+    note "Has no permissions\nDenied access to dashboard"
+  }
+
+  class InventoryItem {
+    aboRhType: ABORhType
+    stockLevel: Integer
+    expirationDate: Date
+    ..
+    note "Stock level non-negative\nExpiration date in future"
+  + validateStockLevel(stockLevel: int)
+  + validateExpirationDate(expirationDate: Date)
+  }
+
+  class TransfusionRequest {
+    requestId: String
+    status: TransfusionStatus
+    patientId: String
+    bloodType: ABORhType
+    ..
+    note "Status must be 'open' to be displayed on dashboard"
+  }
+
+  enum Permission {
+    READ
+    WRITE
+    ADMIN
+  }
+
+  enum TransfusionStatus {
+    OPEN
+    COMPLETED
+    CANCELLED
+  }
+
+  enum ABORhType {
+    A_POS
+    A_NEG
+    B_POS
+    B_NEG
+    O_POS
+    O_NEG
+    AB_POS
+    AB_NEG
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface "Inventory API" as InventoryAPI {
+    .. methods omitted per instruction ..
+    note "Provides current stock levels per ABO/Rh type and expiration dates"
+  }
+
+  interface "Transfusion Request API" as TransfusionRequestAPI {
+    .. methods omitted per instruction ..
+    note "Provides open transfusion requests"
+  }
+}
+
+package "Controllers" {
+  class DashboardView {
+    stockLevels: List<InventoryItem>
+    expirationWarnings: List<InventoryItem>
+    transfusionRequests: List<TransfusionRequest>
+    ..
+    note "Must refresh within 1 minute\nDisplays data from Inventory and Transfusion APIs"
+  + navigateToDashboard()
+  + authenticateUser(credentials)
+  + checkPermission(Admin)
+  + requestDashboardLoad()
+  + aggregateData(stockLevels, expiringUnits, openRequests)
+  + renderDashboard()
+  + displayError("Inventory API unavailable")
+  + showCachedData()
+  + displayError("Transfusion Request API unavailable")
+  + showInventoryDataOnly()
+  + displayError("Unable to load dashboard data")
+  + updateDashboardDisplay()
+  + skipRefreshCycle()
+  + displayError("Stock level data corrupted")
+  + displayWarning("Expired units detected")
+  + filterNonOpenRequests()
+  + updateState(Pre1 -> Post1)
+  + updateState(Pre2 -> Post2)
+  + updateState(Pre3 -> Post2)
+  }
+}
+
+' Relationships
+BloodBankManager -right-> DashboardView : uses >
+
+DashboardView o-up-> InventoryItem : contains
+DashboardView o-up-> TransfusionRequest : contains
+
+InventoryItem ..> InventoryAPI : depends on
+TransfusionRequest ..> TransfusionRequestAPI : depends on
+
+DashboardView ..> InventoryAPI : consumes
+DashboardView ..> TransfusionRequestAPI : consumes
+
+' UnauthorizedUser is shown but not connected; it's a separate role
+@enduml

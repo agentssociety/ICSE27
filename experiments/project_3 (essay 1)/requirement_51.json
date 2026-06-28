@@ -1,0 +1,100 @@
+{
+  "id": "REQ-ATC-EMLY-01",
+  "title": "Handle Emergency Flights",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "Critical",
+  "risk_level": "High",
+  "version": "1.0",
+  "description": "The system shall immediately allocate the next available slot to an incoming emergency flight and re-queue all other previously queued flights in order with adjusted slots.",
+  "rationale": "To ensure rapid response to critical situations, prioritizing emergency flights above all others is essential for public safety.",
+  "business_value": "Improves response time during emergencies, potentially saving lives by ensuring quick handling of critical flights.",
+  "source": {
+    "type": "User Story",
+    "id": 51,
+    "description": "As a air traffic controller I need the system to handle emergency flights by immediately allocating the next available slot and re-queuing all other affected flights to make room for the emergency so that ensuring rapid response to critical situations."
+  },
+  "stakeholders": [
+    "Air Traffic Controllers",
+    "Emergency Services",
+    "Flight Operators"
+  ],
+  "acceptance_criteria": [
+    "An incoming emergency flight is detected.",
+    "The system allocates the next available slot.",
+    "The emergency flight is inserted into that slot.",
+    "All other previously queued flights are re-queued in order with adjusted slots.",
+    "A queue of non-emergency flights exists.",
+    "An emergency flight is allocated a slot.",
+    "No non-emergency flight loses its original order.",
+    "The emergency flight is placed at the front of the queue (in the next available slot)."
+  ],
+  "preconditions": [
+    "The system has a queue of scheduled flights with assigned slots.",
+    "Emergency flights are flagged and prioritized above all others."
+  ],
+  "postconditions": [
+    "The emergency flight is handled immediately by allocating the next available slot.",
+    "All other previously queued flights are re-queued in order with adjusted slots.",
+    "No non-emergency flight loses its original order.",
+    "The emergency flight is placed at the front of the queue."
+  ],
+  "functional_constraints": [
+    "Slot allocation for emergencies does not require manual confirmation\u2014it happens automatically."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "Rapid response to critical situations.",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens if there are no available slots for emergency flights?",
+    "How does the system handle multiple emergencies simultaneously?",
+    "What if a non-emergency flight is re-queued but its adjusted slot causes delays?"
+  ],
+  "dependencies": [
+    "A queue management system to store and manage scheduled flights.",
+    "An emergency detection mechanism to flag incoming emergency flights."
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Flight Queue API",
+      "description": "The requirement interacts with the Flight Queue API to retrieve, update, and re-queue flight slots."
+    },
+    {
+      "type": "Database",
+      "name": "Flight Schedule Database",
+      "description": "The requirement uses the Flight Schedule Database to store and manage scheduled flights and their slots."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ATC-EMLY-01",
+      "description": "Test allocation of next available slot for an emergency flight.",
+      "expected_result": "The system inserts the emergency flight into the next available slot and re-queues all other flights in order with adjusted slots."
+    },
+    {
+      "id": "TC-ATC-EMLY-02",
+      "description": "Test handling of multiple emergencies simultaneously.",
+      "expected_result": "The system allocates slots to each emergency flight in the order they were detected and re-queues other flights accordingly."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T10:39:10.878469",
+  "last_updated": "2026-06-15T10:43:20.480749",
+  "traceability": {
+    "related_requirements": [
+      "REQ-ATC-01"
+    ],
+    "design_components": [
+      "EmergencyFlight",
+      "Flight",
+      "Slot"
+    ],
+    "test_artifacts": []
+  }
+}

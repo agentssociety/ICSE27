@@ -1,0 +1,213 @@
+@startuml
+title Project 8 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+note as RelationshipCorrections
+  <b>Relationship cardinalities corrected by LLM review</b>
+  BloodUnit "1" -- "*" Actor → BloodUnit "1" -- "0..1" Actor
+    Reason: A BloodUnit may optionally be associated with a single Actor (e.g., donor), but not necessarily many. One-to-many is too restrictive.
+  BloodUnit "1" -- "1" Actor → BloodUnit "1" -- "0..1" Actor
+    Reason: A BloodUnit should have an optional association with one Actor, not mandatory one-to-one. Current cardinality is too strict.
+  Operation "*" -- "2" State → Operation "*" -- "1" State
+    Reason: Cardinality '2' is non-standard; an Operation likely relates to a single State (e.g., current state). Changed to one.
+  REQ_BBT_01 "*" --> "*" Interface → REQ_BBT_01  Interface
+    Reason: REQ_BBT_01 is a requirement identifier, not a domain class. This relationship should not exist in a domain model.
+  REQ_BBT_01 "*" --> "*" Resource → REQ_BBT_01  Resource
+    Reason: REQ_BBT_01 is a requirement identifier, not a domain class. This relationship should not exist in a domain model.
+  REQ_BBT_01 "1" --> "1" Actor → REQ_BBT_01  Actor
+    Reason: REQ_BBT_01 is a requirement identifier, not a domain class. This relationship should not exist in a domain model.
+  REQ_BBT_01 "1" --> "1" Permission → REQ_BBT_01  Permission
+    Reason: REQ_BBT_01 is a requirement identifier, not a domain class. This relationship should not exist in a domain model.
+  REQ_BBT_01 "1" --> "1" State → REQ_BBT_01  State
+    Reason: REQ_BBT_01 is a requirement identifier, not a domain class. This relationship should not exist in a domain model.
+end note
+
+note as ArchitectureCorrections
+  <b>Architecture mistakes corrected automatically</b>
+  [wrong_inheritance] Clinical_Team, Inventory_Manager, and Quality_Assurance use association (--|>) instead of inheritance (--|>) to Actor.
+    Fix applied: change_class_type
+  [missing_relationship] TransfusionRequestData is not associated with Reservation; a reservation links a transfusion request to blood units.
+    Fix applied: add_relation
+  [misplaced_class] REQ_BBT_01 appears to be a placeholder or requirement artifact, not a domain class; it has no defined role or attributes.
+    Fix applied: remove_relation
+end note
+
+package "Task #39\nBlood Unit Tracking" {
+  class BloodUnit <<main>> <<level0>>
+  class Actor
+  enum IfaceKind
+  class Interface
+  enum Permission
+  class Resource
+  enum State
+}
+
+package "Task #40\nTransfusion Request\nIntake" {
+  class TransfusionRequest <<main>> <<level1>>
+  class REQ_BBT_01
+  class Transfusion_Requests_Database
+  class Transfusion_Requests_Resource
+}
+
+package "Task #43\nAutomatic Unit\nExpiration" {
+  note as TaskSummary43
+    No new domain model classes
+    Uses: BloodUnit
+  end note
+}
+
+package "Task #44\nShortage Alert Threshold" {
+  note as TaskSummary44
+    No new domain model classes
+    Uses: BloodUnit
+  end note
+}
+
+package "Task #41\nRequest-Unit\nCompatibility Matching" {
+  note as TaskSummary41
+    No new domain model classes
+    Uses: TransfusionRequest, BloodUnit
+  end note
+}
+
+package "Task #42\nReservation System with\nAuto-Release" {
+  class Reservation <<main>> <<level2>>
+  interface SystemClock
+}
+
+package "Task #45\nInventory Dashboard" {
+  note as TaskSummary45
+    No new domain model classes
+    Uses: BloodUnit, TransfusionRequest
+  end note
+}
+
+package "Shared / Cross-Task Classes\n[not owned by a single task]" <<Rectangle>> {
+  enum BloodType <<shared>>
+  note right of BloodType : "appears only in relations; not owned by any task"
+  class Blood_Unit_Database <<shared>>
+  note right of Blood_Unit_Database : "appears only in relations; not owned by any task"
+  class Clinical_Team <<shared>>
+  note right of Clinical_Team : "appears only in relations; not owned by any task"
+  class ExpirationData <<shared>>
+  note right of ExpirationData : "appears only in relations; not owned by any task"
+  class Inventory_Manager <<shared>>
+  note right of Inventory_Manager : "appears only in relations; not owned by any task"
+  class Operation <<shared>>
+  note right of Operation : "appears only in relations; not owned by any task"
+  enum PermissionValue <<shared>>
+  note right of PermissionValue : "appears only in relations; not owned by any task"
+  class Quality_Assurance <<shared>>
+  note right of Quality_Assurance : "appears only in relations; not owned by any task"
+  class StockLevels <<shared>>
+  note right of StockLevels : "appears only in relations; not owned by any task"
+  class TransfusionRequestData <<shared>>
+  note right of TransfusionRequestData : "appears only in relations; not owned by any task"
+  enum Urgency <<shared>>
+  note right of Urgency : "appears only in relations; not owned by any task"
+}
+
+Actor "*" -- "*" Permission
+BloodUnit "1" -- "0..1" Actor
+BloodUnit --> BloodType
+Blood_Unit_Database ..|> Interface
+Clinical_Team --|> Actor
+ExpirationData --> BloodType
+Interface --> IfaceKind
+Inventory_Manager --|> Actor
+Operation "*" -- "*" BloodUnit
+Operation "*" -- "*" Interface
+Operation "*" -- "1" Actor
+Operation "*" -- "1" Permission
+Operation "*" -- "1" State
+Permission <|.. PermissionValue
+Quality_Assurance --|> Actor
+REQ_BBT_01  Actor
+REQ_BBT_01  Interface
+REQ_BBT_01  Permission
+REQ_BBT_01  Resource
+REQ_BBT_01  State
+Reservation "*" -- "1" BloodUnit
+Reservation ..> SystemClock
+Resource "*" --> "*" Actor
+Resource "1" --> "1" Actor
+StockLevels --> BloodType
+TransfusionRequestData --> BloodType
+TransfusionRequestData --> Urgency
+Transfusion_Requests_Database --|> Interface
+Transfusion_Requests_Resource --|> Resource
+note right of TransfusionRequestData #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [rename_for_clarity] Rename to use consistent\nnaming convention: e.g., BloodUnitRepository,\nTransfusionRequestRepository to follow\nubiquitous language of repositories.
+end note
+
+note right of Blood_Unit_Database #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [rename_for_clarity] Rename to use consistent\nnaming convention: e.g., BloodUnitRepository,\nTransfusionRequestRepository to follow\nubiquitous language of repositories.
+end note
+
+note right of Transfusion_Requests_Database #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [rename_for_clarity] Rename to use consistent\nnaming convention: e.g., BloodUnitRepository,\nTransfusionRequestRepository to follow\nubiquitous language of repositories.
+end note
+
+note right of BloodUnit #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [introduce_value_object] Consider introducing a\nvalue object for ABO/Rh blood type (e.g.,\nBloodTypeVO) to encapsulate compatibility logic.
+end note
+
+note right of TransfusionRequestData #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [introduce_value_object] Consider introducing a\nvalue object for ABO/Rh blood type (e.g.,\nBloodTypeVO) to encapsulate compatibility logic.
+end note
+
+note right of BloodUnit #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [add_aggregate_root] Consider making BloodUnit\nan aggregate root to manage its state\n(available, reserved, expired) and lifecycle,\nand have Reservation reference it via ID.
+end note
+
+note right of Reservation #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [add_aggregate_root] Consider making BloodUnit\nan aggregate root to manage its state\n(available, reserved, expired) and lifecycle,\nand have Reservation reference it via ID.
+end note
+
+@enduml

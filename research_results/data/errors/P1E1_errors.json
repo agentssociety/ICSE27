@@ -1,0 +1,48 @@
+{
+  "run_id": "P1E1",
+  "project": 1,
+  "essay": 1,
+  "n_tasks": 6,
+  "wall_clock_s": 9315.37,
+  "pipeline_steps": 133,
+  "total_incidents": 3,
+  "fixed_incidents": 3,
+  "escalated_incidents": 0,
+  "self_fix_rate_pct": 100.0,
+  "by_phase": {
+    "FORMAL_SPEC": {
+      "fixed": 1,
+      "escalated": 0
+    },
+    "DESIGN_UML": {
+      "fixed": 2,
+      "escalated": 0
+    }
+  },
+  "incidents": [
+    {
+      "line_num": 3543,
+      "timestamp": "2026-06-12 10:28:16.415",
+      "phase": "FORMAL_SPEC",
+      "error_type": "LLM_REQUEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Error generating Alloy specifications for requirement file experiments/project_1/requirement_6.json on attempt 1/3: HTTPSConnectionPool(host='openrouter.ai', port=443): Max retries exceeded with url: "
+    },
+    {
+      "line_num": 3998,
+      "timestamp": "2026-06-12 10:42:09.151",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Class diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmp3dxyle6e/class_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/"
+    },
+    {
+      "line_num": 4143,
+      "timestamp": "2026-06-12 10:48:55.575",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpw64saqru/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    }
+  ]
+}

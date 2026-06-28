@@ -1,0 +1,144 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "PatientQueueController" as CONTROLLER
+end box
+
+box "Application Layer" #LightGreen
+  participant "PatientQueueService" as SERVICE
+  participant "AuthService" as AUTH
+end box
+
+box "Domain Layer" #LightYellow
+  participant "PatientQueue" as QUEUE
+  participant "Patient" as PATIENT
+  participant "Physician" as PHYSICIAN
+  participant "PatientQueueResource" as RESOURCE
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "PatientQueueRepository" as REPO
+end box
+
+box "External Systems" #LightGray
+  participant "Authentication and Authorization Service" as EXTAUTH
+  participant "Patient Queue API" as EXTERNAL_API
+end box
+
+== Flow: Physician Takes Next Patient ==
+
+CONTROLLER -> CONTROLLER : authenticateRequest(headers: HttpHeaders) : AuthToken
+note right: Extract JWT from Authorization header
+
+CONTROLLER -> AUTH : verifyToken(token: AuthToken) : AuthResult
+AUTH -> EXTAUTH : [TLS] verifyIdentity(token: AuthToken) : IdentityResponse
+EXTAUTH --> AUTH : identityResponse: IdentityResponse
+AUTH -> AUTH : extractRole(identityResponse: IdentityResponse) : Role
+AUTH -> AUTH : extractPermissions(identityResponse: IdentityResponse) : Set<Permission>
+
+alt Authentication or Authorization Fails
+    AUTH --> CONTROLLER : authResult: AuthResult{success: false, error: "Invalid token"}
+    CONTROLLER --> CONTROLLER : return 401 Unauthorized
+    note right: Error response: {"error": "Authentication failed"}
+    == Flow: Authentication Failure ==
+    CONTROLLER --> CONTROLLER : return 401 Unauthorized
+    note right: Post-state: No state change
+else Authentication Succeeds
+    AUTH --> CONTROLLER : authResult: AuthResult{success: true, role: Role.PHYSICIAN, permissions: [READ, WRITE, EXECUTE, ADMIN]}
+    
+    CONTROLLER -> SERVICE : getNextPatient(authResult: AuthResult) : PatientResponse
+    
+    SERVICE -> SERVICE : checkPermission(authResult: AuthResult, requiredPermission: Permission.WRITE) : boolean
+    
+    alt Insufficient Permissions
+        SERVICE --> CONTROLLER : error: "Insufficient permissions"
+        CONTROLLER --> CONTROLLER : return 403 Forbidden
+        note right: Post-state: No state change
+    else Permissions Valid
+        SERVICE -> QUEUE : getTopPatient() : Patient
+        QUEUE -> QUEUE : verifyQueueSorted()
+        
+        alt Queue is Empty
+            QUEUE --> SERVICE : null
+            SERVICE --> CONTROLLER : response: PatientResponse{patient: null, message: "Queue is empty"}
+            CONTROLLER --> CONTROLLER : return 200 OK with empty queue message
+            note right: Post-state: PostEmpty - Queue is empty, no patient retrieved
+            == Flow: Empty Queue ==
+            CONTROLLER --> CONTROLLER : return 200 OK
+            note right: Response: {"message": "No patients in queue"}
+        else Queue Has Patients
+            QUEUE --> SERVICE : patient: Patient
+            note right: Patient has urgency level determining position
+            
+            SERVICE -> REPO : removePatient(patient: Patient) : boolean
+            REPO -> QUEUE : remove(patient: Patient) : void
+            QUEUE -> QUEUE : reSortQueue()
+            note right: Invariant: queue sorted by urgency at all times
+            QUEUE --> REPO : void
+            REPO --> SERVICE : success: true
+            
+            SERVICE -> PATIENT : getDetails() : PatientDetails
+            PATIENT --> SERVICE : details: PatientDetails
+            
+            SERVICE --> CONTROLLER : response: PatientResponse{patient: details, message: "Success"}
+            CONTROLLER --> CONTROLLER : return 200 OK with patient details
+            note right: Post-state: Post1 - Patient removed from queue\nPost2 - Physician receives patient details
+        end
+    end
+end
+
+== Flow: Concurrent Addition While Retrieving ==
+
+CONTROLLER -> SERVICE : getNextPatient(authResult: AuthResult) : PatientResponse
+SERVICE -> QUEUE : getTopPatient() : Patient
+note right #FFB: Concurrent addPatient() may occur here
+QUEUE -> QUEUE : lockQueue()
+note right: Acquire write lock to ensure consistency
+QUEUE -> QUEUE : getTopPatient() : Patient
+QUEUE -> QUEUE : unlockQueue()
+QUEUE --> SERVICE : patient: Patient
+note right: Returns top of updated queue after concurrent additions
+
+== Flow: Nurse Views Queue (Read Only) ==
+
+CONTROLLER -> AUTH : verifyToken(token: AuthToken) : AuthResult
+AUTH -> EXTAUTH : [TLS] verifyIdentity(token: AuthToken) : IdentityResponse
+EXTAUTH --> AUTH : identityResponse: IdentityResponse
+AUTH --> CONTROLLER : authResult: AuthResult{role: Role.NURSE, permissions: [READ]}
+
+CONTROLLER -> SERVICE : viewQueue(authResult: AuthResult) : QueueViewResponse
+SERVICE -> SERVICE : checkPermission(authResult: AuthResult, requiredPermission: Permission.READ) : boolean
+
+alt Insufficient Permissions
+    SERVICE --> CONTROLLER : error: "Insufficient permissions"
+    CONTROLLER --> CONTROLLER : return 403 Forbidden
+else Permissions Valid
+    SERVICE -> QUEUE : getSortedPatients() : List<Patient>
+    QUEUE --> SERVICE : patients: List<Patient>
+    SERVICE --> CONTROLLER : response: QueueViewResponse{patients: patients}
+    CONTROLLER --> CONTROLLER : return 200 OK with queue view
+end
+
+== Flow: Administrative Staff Views Queue ==
+
+CONTROLLER -> AUTH : verifyToken(token: AuthToken) : AuthResult
+AUTH -> EXTAUTH : [TLS] verifyIdentity(token: AuthToken) : IdentityResponse
+EXTAUTH --> AUTH : identityResponse: IdentityResponse
+AUTH --> CONTROLLER : authResult: AuthResult{role: Role.ADMIN_STAFF, permissions: [READ]}
+
+CONTROLLER -> SERVICE : viewQueue(authResult: AuthResult) : QueueViewResponse
+SERVICE -> RESOURCE : checkOwnership(authResult: AuthResult) : boolean
+note right: AdministrativeStaff is owner of PatientQueueResource
+
+alt Not Owner
+    SERVICE --> CONTROLLER : error: "Access denied"
+    CONTROLLER --> CONTROLLER : return 403 Forbidden
+else Is Owner
+    SERVICE -> QUEUE : getSortedPatients() : List<Patient>
+    QUEUE --> SERVICE : patients: List<Patient>
+    SERVICE --> CONTROLLER : response: QueueViewResponse{patients: patients}
+    CONTROLLER --> CONTROLLER : return 200 OK with queue view
+end
+
+@enduml

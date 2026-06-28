@@ -1,0 +1,30 @@
+{
+  "task_id": 66,
+  "confidence": 0.9605,
+  "evidence": [
+    {
+      "claim": "The system allocates 5-minute time slots for flights.",
+      "fact": "The system allocates each flight the earliest available 5-minute slot on either runway at or after its estimated time.",
+      "score": 0.9986,
+      "user_story_span": "allocate 5-minute time slots for flights",
+      "fact_span": "allocates each flight the earliest available 5-minute slot"
+    },
+    {
+      "claim": "Each flight receives a dedicated 5-minute slot.",
+      "fact": "The system allocates each flight the earliest available 5-minute slot on either runway at or after its estimated time.",
+      "score": 0.9983,
+      "user_story_span": "Each flight receives a dedicated 5-minute slot",
+      "fact_span": "allocates each flight the earliest available 5-minute slot"
+    },
+    {
+      "claim": "A 3-minute gap is enforced between the end of one slot and the start of the next slot.",
+      "fact": "The system enforces a 3-minute separation gap between consecutive slots on the same runway.",
+      "score": 0.8847,
+      "user_story_span": "mandatory 3-minute gap between consecutive slots",
+      "fact_span": "enforces a 3-minute separation gap between consecutive slots"
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

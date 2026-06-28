@@ -1,0 +1,94 @@
+{
+  "id": "REQ-BAL-01",
+  "title": "Decline Withdrawals Exceeding Account Balance or Daily Limit",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall decline a withdrawal if the requested amount is greater than the user's account balance or if adding the requested amount to the cumulative daily withdrawal total would exceed the daily withdrawal limit.",
+  "rationale": "This requirement ensures that users cannot withdraw more money than they have available, preventing overspending and potential financial losses. It also adheres to the bank's policy on daily transaction limits, maintaining compliance with internal regulations.",
+  "business_value": "By implementing this requirement, the system enhances user trust and reduces the risk of fraudulent activities such as overdrafts and exceeding spending limits, thereby mitigating financial risks for both users and the bank.",
+  "source": {
+    "type": "User Story",
+    "id": 97,
+    "description": "As a user I need the system to decline withdrawals that exceed my account balance or daily withdrawal limit So that I cannot withdraw more than I have available or exceed my daily limit"
+  },
+  "stakeholders": [
+    "Bank Users",
+    "Customer Support",
+    "IT Team"
+  ],
+  "acceptance_criteria": [
+    "The system should decline a withdrawal if the requested amount is greater than the user's account balance.",
+    "The system should decline a withdrawal if adding the requested amount to the cumulative daily withdrawal total would exceed the daily withdrawal limit."
+  ],
+  "preconditions": [
+    "The user must have an active account with a positive balance.",
+    "The system must track the user's cumulative daily withdrawal total."
+  ],
+  "postconditions": [
+    "If a withdrawal is declined, the user should receive a message indicating that the amount exceeds their balance or daily limit."
+  ],
+  "functional_constraints": [
+    "The system must check both the current account balance and the cumulative daily withdrawal amount before approving a withdrawal.",
+    "The daily withdrawal limit resets at a predefined time (e.g., midnight)."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "N/A",
+    "availability": "N/A",
+    "scalability": "N/A",
+    "usability": "The error message should be clear and easy to understand."
+  },
+  "edge_cases": [
+    "What if the account balance and daily withdrawal limit are both zero?",
+    "What if there is an error in the system's calculation of the cumulative daily withdrawal total?",
+    "What if a user attempts to withdraw exactly the daily limit amount?"
+  ],
+  "dependencies": [
+    "Account Balance Database",
+    "Daily Withdrawal Tracking Service"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Account Balance Database",
+      "description": "The system must query this database to retrieve the user's current account balance."
+    },
+    {
+      "type": "Service",
+      "name": "Daily Withdrawal Tracking Service",
+      "description": "This service will be used to track and update the cumulative daily withdrawal total."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-1",
+      "description": "Attempt to withdraw more than the account balance.",
+      "expected_result": "The system should decline the withdrawal and display a message indicating that the amount exceeds the balance."
+    },
+    {
+      "id": "TC-2",
+      "description": "Attempt to withdraw an amount that would exceed the daily limit.",
+      "expected_result": "The system should decline the withdrawal and display a message indicating that the amount exceeds the daily limit."
+    },
+    {
+      "id": "TC-3",
+      "description": "Attempt to withdraw exactly the daily limit amount.",
+      "expected_result": "The system should approve the withdrawal, updating the cumulative daily withdrawal total accordingly."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-17T09:54:06.473706",
+  "last_updated": "2026-06-17T09:59:05.419020",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Account",
+      "DailyWithdrawalLimit"
+    ],
+    "test_artifacts": []
+  }
+}

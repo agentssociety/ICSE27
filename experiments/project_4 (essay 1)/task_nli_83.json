@@ -1,0 +1,23 @@
+{
+  "task_id": 83,
+  "confidence": 0.9823,
+  "evidence": [
+    {
+      "claim": "The system flags the account for review.",
+      "fact": "The system monitors withdrawal patterns and automatically marks transactions that appear unusual for later human inspection.",
+      "score": 0.9876,
+      "user_story_span": "flags the account for review",
+      "fact_span": "automatically marks transactions that appear unusual"
+    },
+    {
+      "claim": "The system monitors all withdrawal transactions.",
+      "fact": "All attempts to authenticate and every transition of a withdrawal's status are appended to an immutable audit trail.",
+      "score": 0.9769,
+      "user_story_span": "The system monitors all withdrawal transactions.",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

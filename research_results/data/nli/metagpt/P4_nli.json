@@ -1,0 +1,74 @@
+{
+  "project_id": 4,
+  "project_name": "atm_withdrawal_safety_backend",
+  "spec_path": "experiments/project_4 (metagpt)/docs/requirement.txt",
+  "prd_path": "experiments/project_4 (metagpt)/docs/prd/20260623150919.json",
+  "n_facts": 7,
+  "facts": [
+    "failed transaction is fully rolled back.",
+    "The system authenticate users by card number and PIN before any transaction, locking the account after 3 consecutive failed attempts.",
+    "The system decline withdrawals exceeding the account balance or the daily limit per calendar day.",
+    "The system process each withdrawal atomically, rolling back all steps completely if any step fails so the balance is unchanged.",
+    "The system detect suspicious withdrawal patterns and flag the transactions for administrator review.",
+    "The system let administrators review flagged transactions, lock or unlock accounts, and view transaction histories.",
+    "The system record every authentication attempt and transaction state change with a timestamp."
+  ],
+  "n_stories": 5,
+  "stories": [
+    {
+      "task_id": 1,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 2,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 3,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 4,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 5,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    }
+  ],
+  "summary": {
+    "mean_nli_alignment_score": 0.0,
+    "median_nli_alignment_score": 0.0,
+    "std_nli_alignment_score": 0.0,
+    "q1": 0,
+    "q3": 0,
+    "iqr": 0,
+    "n_outliers": 0,
+    "n_zero_alignment": 0,
+    "total_claims": 10,
+    "supported_claims": 0,
+    "spec_coverage_rate": 0.0,
+    "spec_extrapolation_rate": 1.0,
+    "overall_hallucination_rate": 1.0
+  }
+}

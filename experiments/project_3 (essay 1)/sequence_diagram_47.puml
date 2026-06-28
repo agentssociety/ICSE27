@@ -1,0 +1,196 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "Air_Traffic_Control_Console" as UI
+end box
+
+box "Application Layer" #LightGreen
+  participant "SlotAllocationService" as Service
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Operation" as Op
+  participant "OperationSlot" as OpSlot
+  participant "Slot" as Slot
+  participant "Resource" as Res
+  participant "State" as State
+  participant "Actor" as Actor
+  participant "Permission" as Perm
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "Flight_Schedule_Management_API" as API
+  participant "TimeService" as TimeSvc
+  participant "AuthService" as AuthSvc
+end box
+
+== Flow: Earliest Available Slot Allocation ==
+
+UI -> AuthSvc : authenticate(credentials) : AuthToken
+note right: Must use authenticated channel (encrypted)
+AuthSvc --> UI : authToken
+
+UI -> Service : requestSlotAllocation(authToken, resourceId)
+note right: Initiator must have Admin permission
+
+Service -> AuthSvc : validatePermission(authToken, "Admin") : boolean
+AuthSvc --> Service : permissionValid
+
+alt Permission Denied
+  Service --> UI : returnError("Insufficient permissions")
+else Permission Valid
+
+  Service -> TimeSvc : getCurrentTime() : int (minutes)
+  TimeSvc --> Service : currentTime
+
+  Service -> API : getSchedule(resourceId) [TLS]
+  note right: Encrypted channel required
+  API --> Service : scheduleData
+
+  Service -> Res : createFrom(scheduleData)
+  Res --> Service : resource
+
+  Service -> Service : findEarliestSlot(resource, currentTime)
+  note right: Algorithm: find 5-min slot with 3-min gap before and after existing slots
+
+  alt No Available Slot Found
+    Service --> UI : returnError("No available slots")
+    note right: Postcondition Post1 not reached
+  else Slot Found
+
+    Service -> Slot : create(time, resource)
+    Slot --> Service : newSlot
+
+    Service -> Op : create(initiator, resource, "Admin")
+    Op --> Service : operation
+
+    Service -> OpSlot : create(operation, newSlot)
+    OpSlot --> Service : operationSlot
+
+    Service -> API : allocateSlot(resourceId, newSlot) [TLS]
+    note right: Mark slot as unavailable
+    API --> Service : allocationResult
+
+    alt Allocation Successful
+      Service -> State : transitionTo(Post1)
+      note right: New 5-min slot allocated with 3-min gap enforced
+      Service --> UI : returnSuccess(newSlot)
+    else Allocation Failed
+      Service --> UI : returnError("Allocation failed - slot overlap detected")
+      note right: Should not happen, but handle gracefully
+    end
+  end
+end
+
+== Flow: Time Zone Handling ==
+
+UI -> Service : requestSlotAllocation(authToken, resourceId, timezone)
+
+Service -> TimeSvc : getCurrentTimeInTimezone(timezone) : int
+TimeSvc --> Service : adjustedTime
+
+Service -> API : getSchedule(resourceId) [TLS]
+API --> Service : scheduleData
+
+Service -> Service : findEarliestSlotWithTimezone(scheduleData, adjustedTime)
+note right: Correctly handles time zone differences
+
+alt Slot Found
+  Service -> Slot : create(time, resource)
+  Service -> Op : create(initiator, resource, "Admin")
+  Service -> OpSlot : create(operation, newSlot)
+  Service -> API : allocateSlot(resourceId, newSlot) [TLS]
+  API --> Service : success
+  Service --> UI : returnSuccess(newSlot)
+else No Slot Found
+  Service --> UI : returnError("No available slots in specified timezone")
+end
+
+== Flow: Overlap Detection and Recovery ==
+
+UI -> Service : requestSlotAllocation(authToken, resourceId)
+
+Service -> AuthSvc : validatePermission(authToken, "Admin")
+AuthSvc --> Service : valid
+
+Service -> API : getSchedule(resourceId) [TLS]
+API --> Service : scheduleData
+
+Service -> Service : findEarliestSlot(scheduleData, currentTime)
+note right: Calculates slot with 3-min gap before and after
+
+alt Calculated Slot Overlaps (edge case)
+  Service -> Service : findNextAvailableSlot(scheduleData, currentTime)
+  note right: Find alternative slot that respects 3-min gap
+  Service -> Slot : create(alternativeTime, resource)
+  Service -> Op : create(initiator, resource, "Admin")
+  Service -> OpSlot : create(operation, alternativeSlot)
+  Service -> API : allocateSlot(resourceId, alternativeSlot) [TLS]
+  API --> Service : success
+  Service --> UI : returnSuccess(alternativeSlot)
+else No Overlap
+  Service -> Slot : create(calculatedTime, resource)
+  Service -> Op : create(initiator, resource, "Admin")
+  Service -> OpSlot : create(operation, newSlot)
+  Service -> API : allocateSlot(resourceId, newSlot) [TLS]
+  API --> Service : success
+  Service --> UI : returnSuccess(newSlot)
+end
+
+== Flow: Authentication Failure ==
+
+UI -> AuthSvc : authenticate(credentials)
+AuthSvc --> UI : authFailed
+
+UI -> Service : requestSlotAllocation(authToken, resourceId)
+Service -> AuthSvc : validatePermission(authToken, "Admin")
+AuthSvc --> Service : invalidToken
+
+Service --> UI : returnError("Authentication required - please login")
+
+== Flow: Resource Not Found ==
+
+UI -> Service : requestSlotAllocation(authToken, resourceId)
+
+Service -> AuthSvc : validatePermission(authToken, "Admin")
+AuthSvc --> Service : valid
+
+Service -> API : getSchedule(resourceId) [TLS]
+API --> Service : resourceNotFound
+
+Service --> UI : returnError("Resource not found")
+
+== Flow: Concurrent Allocation Conflict ==
+
+UI -> Service : requestSlotAllocation(authToken, resourceId)
+
+Service -> AuthSvc : validatePermission(authToken, "Admin")
+AuthSvc --> Service : valid
+
+Service -> API : getSchedule(resourceId) [TLS]
+API --> Service : scheduleData
+
+Service -> Service : findEarliestSlot(scheduleData, currentTime)
+Service -> Slot : create(time, resource)
+Service -> Op : create(initiator, resource, "Admin")
+Service -> OpSlot : create(operation, newSlot)
+
+Service -> API : allocateSlot(resourceId, newSlot) [TLS]
+note right: Optimistic locking - version check
+alt Version Conflict
+  API --> Service : versionConflict
+  Service -> Service : retryWithLatestSchedule()
+  Service -> API : getSchedule(resourceId) [TLS]
+  API --> Service : updatedSchedule
+  Service -> Service : findEarliestSlot(updatedSchedule, currentTime)
+  Service -> Slot : create(newTime, resource)
+  Service -> API : allocateSlot(resourceId, newSlot) [TLS]
+  API --> Service : success
+  Service --> UI : returnSuccess(newSlot)
+else No Conflict
+  API --> Service : success
+  Service --> UI : returnSuccess(newSlot)
+end
+
+@enduml

@@ -1,0 +1,37 @@
+{
+  "task_id": 100,
+  "confidence": 0.9631,
+  "evidence": [
+    {
+      "claim": "The admin can review flagged transactions.",
+      "fact": "The system lets administrators review flagged transactions.",
+      "score": 0.9989,
+      "user_story_span": "review flagged transactions",
+      "fact_span": "review flagged transactions"
+    },
+    {
+      "claim": "Flagged transactions are those identified as suspicious or requiring review.",
+      "fact": "This backend enforces balance and daily withdrawal limits, rolls back any failed transaction completely, and flags suspicious activity for review.",
+      "score": 0.9982,
+      "user_story_span": "Flagged transactions are those identified as suspicious or requiring review",
+      "fact_span": "flags suspicious activity for review"
+    },
+    {
+      "claim": "The admin can lock user accounts.",
+      "fact": "The system lets administrators lock accounts.",
+      "score": 0.9583,
+      "user_story_span": "lock or unlock user accounts",
+      "fact_span": "lock accounts"
+    },
+    {
+      "claim": "The admin can unlock user accounts.",
+      "fact": "The system lets administrators unlock accounts.",
+      "score": 0.8972,
+      "user_story_span": "unlock user accounts",
+      "fact_span": "unlock accounts"
+    }
+  ],
+  "total_claims": 10,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

@@ -1,0 +1,284 @@
+@startuml
+!theme plain
+
+title Runway Slot Timetable - Sequence Diagram
+
+box "Controller Layer" #LightBlue
+participant "Runway_Timetable_UI" as UI
+end box
+
+box "Application Layer" #LightGreen
+participant "Operation" as Op
+participant "State" as St
+end box
+
+box "Domain Layer" #LightYellow
+participant "Air_Traffic_Controllers" as ATC
+participant "Runway" as RW
+participant "Slot" as S
+participant "Flight" as F
+end box
+
+box "Infrastructure Layer" #LightCoral
+participant "Flight_Database" as DB
+end box
+
+== Flow: View Runway Slot Timetable (Happy Path) ==
+
+activate UI
+UI -> ATC : login(username: String, password: String) : Boolean
+note right: Authentication required per INV-6
+activate ATC
+ATC --> UI : loginResult : Boolean
+deactivate ATC
+
+alt Authentication successful
+    UI -> UI : displayRunwaySelection()
+    UI -> RW : selectRunway(runwayId: String) : Runway
+    activate RW
+    RW --> UI : selectedRunway : Runway
+    deactivate RW
+
+    UI -> Op : createOperation(initiator: ATC, target: RW, grant: Permission.Read)
+    activate Op
+    Op -> St : checkPrecondition(Pre1, Pre2) : Boolean
+    activate St
+    St --> Op : preconditionsMet : Boolean
+    deactivate St
+
+    alt Preconditions met
+        Op -> RW : getSlots() : List<Slot>
+        activate RW
+        RW -> S : getSlotDetails() : SlotStatus
+        activate S
+        S --> RW : slotStatus : SlotStatus
+        deactivate S
+        RW --> Op : slots : List<Slot>
+        deactivate RW
+
+        Op -> DB : getFlightDetails(flightId: String) : Flight
+        activate DB
+        DB --> Op : flight : Flight
+        deactivate DB
+
+        Op -> St : setPostcondition(Post1)
+        activate St
+        St --> Op : postconditionSet : Boolean
+        deactivate St
+
+        Op --> UI : timetableData : List<Slot>
+        deactivate Op
+
+        UI -> UI : displayTimetable(slots, flights)
+        note right: Real-time updates via API polling
+
+    else Preconditions not met
+        Op --> UI : errorMessage : String
+        deactivate Op
+        UI -> UI : displayError("Unable to load timetable")
+    end
+
+else Authentication failed
+    UI -> UI : displayError("Invalid credentials")
+end
+
+deactivate UI
+
+== Flow: No Time Slots Available (Edge Case) ==
+
+activate UI
+UI -> ATC : login(username: String, password: String) : Boolean
+activate ATC
+ATC --> UI : loginResult : Boolean
+deactivate ATC
+
+alt Authentication successful
+    UI -> RW : selectRunway(runwayId: String) : Runway
+    activate RW
+    RW --> UI : selectedRunway : Runway
+    deactivate RW
+
+    UI -> Op : createOperation(initiator: ATC, target: RW, grant: Permission.Read)
+    activate Op
+    Op -> RW : getSlots() : List<Slot>
+    activate RW
+    RW --> Op : emptySlots : List<Slot>
+    deactivate RW
+
+    alt No slots allocated
+        Op --> UI : emptyTimetable : String
+        deactivate Op
+        UI -> UI : displayMessage("No time slots available")
+        note right: State remains unchanged (pre == post)
+    end
+
+else Authentication failed
+    UI -> UI : displayError("Invalid credentials")
+end
+
+deactivate UI
+
+== Flow: Real-Time Update During Operation ==
+
+activate UI
+UI -> ATC : login(username: String, password: String) : Boolean
+activate ATC
+ATC --> UI : loginResult : Boolean
+deactivate ATC
+
+alt Authentication successful
+    UI -> RW : selectRunway(runwayId: String) : Runway
+    activate RW
+    RW --> UI : selectedRunway : Runway
+    deactivate RW
+
+    UI -> Op : createOperation(initiator: ATC, target: RW, grant: Permission.Read)
+    activate Op
+    Op -> RW : getSlots() : List<Slot>
+    activate RW
+    RW --> Op : slots : List<Slot>
+    deactivate RW
+
+    Op -> DB : getFlightDetails(flightId: String) : Flight
+    activate DB
+    DB --> Op : flight : Flight
+    deactivate DB
+
+    Op --> UI : timetableData : List<Slot>
+    deactivate Op
+
+    UI -> UI : displayTimetable(slots, flights)
+    note right: Real-time update occurs
+    UI -> RW : pollForUpdates(runwayId: String) : List<Slot>
+    activate RW
+    RW --> UI : updatedSlots : List<Slot>
+    deactivate RW
+    UI -> UI : refreshDisplay(updatedSlots)
+
+else Authentication failed
+    UI -> UI : displayError("Invalid credentials")
+end
+
+deactivate UI
+
+== Flow: Multiple Runways with Overlapping Slots ==
+
+activate UI
+UI -> ATC : login(username: String, password: String) : Boolean
+activate ATC
+ATC --> UI : loginResult : Boolean
+deactivate ATC
+
+alt Authentication successful
+    UI -> RW : selectRunway(runwayId1: String) : Runway
+    activate RW
+    RW --> UI : runway1 : Runway
+    deactivate RW
+
+    UI -> Op : createOperation(initiator: ATC, target: RW, grant: Permission.Read)
+    activate Op
+    Op -> RW : getSlots() : List<Slot>
+    activate RW
+    RW --> Op : slots1 : List<Slot>
+    deactivate RW
+    Op --> UI : timetableData1 : List<Slot>
+    deactivate Op
+
+    UI -> RW : selectRunway(runwayId2: String) : Runway
+    activate RW
+    RW --> UI : runway2 : Runway
+    deactivate RW
+
+    UI -> Op : createOperation(initiator: ATC, target: RW, grant: Permission.Read)
+    activate Op
+    Op -> RW : getSlots() : List<Slot>
+    activate RW
+    RW --> Op : slots2 : List<Slot>
+    deactivate RW
+    Op --> UI : timetableData2 : List<Slot>
+    deactivate Op
+
+    UI -> UI : displayTimetable(slots1, flights1)
+    UI -> UI : displayTimetable(slots2, flights2)
+    note right: Each runway handled independently
+
+else Authentication failed
+    UI -> UI : displayError("Invalid credentials")
+end
+
+deactivate UI
+
+== Flow: Error Path - Database Failure ==
+
+activate UI
+UI -> ATC : login(username: String, password: String) : Boolean
+activate ATC
+ATC --> UI : loginResult : Boolean
+deactivate ATC
+
+alt Authentication successful
+    UI -> RW : selectRunway(runwayId: String) : Runway
+    activate RW
+    RW --> UI : selectedRunway : Runway
+    deactivate RW
+
+    UI -> Op : createOperation(initiator: ATC, target: RW, grant: Permission.Read)
+    activate Op
+    Op -> RW : getSlots() : List<Slot>
+    activate RW
+    RW --> Op : slots : List<Slot>
+    deactivate RW
+
+    Op -> DB : getFlightDetails(flightId: String) : Flight
+    activate DB
+    DB --> Op : error : DatabaseException
+    deactivate DB
+
+    alt Database unavailable
+        Op --> UI : errorMessage : String
+        deactivate Op
+        UI -> UI : displayError("Unable to retrieve flight data. Please try again.")
+        note right: User-friendly error per NFR usability
+    end
+
+else Authentication failed
+    UI -> UI : displayError("Invalid credentials")
+end
+
+deactivate UI
+
+== Flow: Error Path - Permission Denied ==
+
+activate UI
+UI -> ATC : login(username: String, password: String) : Boolean
+activate ATC
+ATC --> UI : loginResult : Boolean
+deactivate ATC
+
+alt Authentication successful
+    UI -> RW : selectRunway(runwayId: String) : Runway
+    activate RW
+    RW --> UI : selectedRunway : Runway
+    deactivate RW
+
+    UI -> Op : createOperation(initiator: ATC, target: RW, grant: Permission.Read)
+    activate Op
+    Op -> St : checkPermission(initiator, grant) : Boolean
+    activate St
+    St --> Op : permissionGranted : Boolean
+    deactivate St
+
+    alt Permission denied
+        Op --> UI : errorMessage : String
+        deactivate Op
+        UI -> UI : displayError("Access denied. You do not have permission to view this timetable.")
+        note right: INV-3 and INV-4 enforced
+    end
+
+else Authentication failed
+    UI -> UI : displayError("Invalid credentials")
+end
+
+deactivate UI
+
+@enduml

@@ -1,0 +1,96 @@
+{
+  "id": "REQ-INV-MAN-01",
+  "title": "Inventory Dashboard Display",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall display a dashboard that shows current stock levels, expiring units, and pending requests.",
+  "rationale": "To enable inventory managers to monitor inventory health, prioritize actions to reduce waste, and respond to urgent needs effectively.",
+  "business_value": "Improves operational efficiency by providing real-time insights into inventory status, reducing errors, and optimizing resource allocation.",
+  "source": {
+    "type": "User Story",
+    "id": 31,
+    "description": "As a inventory manager I need a dashboard that shows current stock levels, expiring units, and pending requests So that I can monitor inventory health, prioritize actions to reduce waste, and respond to urgent needs"
+  },
+  "stakeholders": [
+    "Inventory Management Team",
+    "Operations Team",
+    "Finance Team"
+  ],
+  "acceptance_criteria": [
+    "I see current stock levels for each item",
+    "I see a list of units approaching expiration",
+    "I see a count of pending requests"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "The user can view the summary section on the inventory dashboard"
+  ],
+  "functional_constraints": [],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens if there are no items in stock?",
+    "How does the system handle a large number of pending requests?",
+    "What if the expiration date for an item is not set?"
+  ],
+  "dependencies": [
+    "Inventory Data Service",
+    "Request Management System"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Inventory API",
+      "description": "The system will use this API to fetch current stock levels."
+    },
+    {
+      "type": "API",
+      "name": "Request API",
+      "description": "This API will provide the count of pending requests."
+    },
+    {
+      "type": "UI",
+      "name": "Inventory Dashboard",
+      "description": "The requirement interacts with this user interface to display the data."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-INV-DIS-01",
+      "description": "Verify the dashboard displays current stock levels for each item.",
+      "expected_result": "The system should list all items with their corresponding stock levels."
+    },
+    {
+      "id": "TC-INV-DIS-02",
+      "description": "Test the display of units approaching expiration.",
+      "expected_result": "A list of items nearing their expiration date should be shown on the dashboard."
+    },
+    {
+      "id": "TC-INV-DIS-03",
+      "description": "Check if the system correctly shows the count of pending requests.",
+      "expected_result": "The dashboard should display the total number of outstanding requests."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T14:50:19.076673",
+  "last_updated": "2026-06-14T14:51:00.372576",
+  "traceability": {
+    "related_requirements": [
+      "REQ-INV-01"
+    ],
+    "design_components": [
+      "BloodUnit",
+      "TransfusionRequest"
+    ],
+    "test_artifacts": []
+  }
+}

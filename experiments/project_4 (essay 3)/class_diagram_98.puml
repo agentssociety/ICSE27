@@ -1,0 +1,139 @@
+@startuml
+skinparam defaultFontName Arial
+skinparam backgroundColor transparent
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam stereotype {
+
+}
+skinparam class {
+  BorderColor #333333
+  BackgroundColor #FEFEFE
+  FontColor #333333
+}
+
+package "Domain Model" as Domain {
+    class UserAccount {
+        +balance : Money
+  + getBalance() : Decimal
+  + deduct(amount: Decimal) : Boolean
+  + reverseDeduction(amount: Decimal) : Boolean
+    }
+    note right of UserAccount::balance
+        invariant: balance >= withdrawal amount
+    end note
+
+    class WithdrawalLimit {
+        +dailyLimit : Money
+  + updateLimit(amount: Decimal) : Boolean
+  + reverseUpdate(amount: Decimal) : Boolean
+    }
+    note right of WithdrawalLimit::dailyLimit
+        atomic update with balance
+    end note
+
+    class TransactionLog {
+        +logRecord : String
+  + createLog(record: TransactionRecord) : Boolean
+    }
+    note right of TransactionLog::logRecord
+        not recorded on failure
+    end note
+
+    class WithdrawalRequest <<dto>> {
+        +amount : Money
+    }
+
+    class AccountBalance {
+        +account : Account
+        +balance : Money
+    }
+
+    class LoadAlert {
+        +channel : String
+        +highLoad : Boolean
+  + checkSystemLoad() : LoadAlert
+    }
+
+    class StorageState {
+        +resource : Resource
+        +capacity : Integer
+        +used : Integer
+  + checkStorageCapacity() : StorageState
+    }
+
+    class Account {
+        +id : String
+  + getAccount(accountId) : Account
+    }
+
+    class Actor {
+        +id : String
+    }
+
+    enum Permission {
+        READ
+        WRITE
+        EXECUTE
+        ADMIN
+    }
+
+    enum State {
+        PRE1
+        PRE2
+        POST1
+        POST2
+        POST3
+    }
+
+    ' Relationships
+    Account "1" -- "0..*" AccountBalance : contains >
+    Account "1" -> "1" Actor : owner
+    Account "1" -> "0..*" Actor : accessible
+    Account "1" --> "0..*" TransactionLog : generates
+    UserAccount "1" --> "1" WithdrawalLimit : has
+    UserAccount "1" --> "0..*" WithdrawalRequest : initiates
+    WithdrawalRequest "1" --> "1" UserAccount : from
+    WithdrawalRequest "1" --> "1" AccountBalance : checks >
+    WithdrawalRequest ..> State : precondition, postcondition
+    LoadAlert --> StorageState : monitors
+}
+
+package "Infrastructure — Ports" as Ports {
+    interface AccountService_API <<interface>> {
+    }
+    interface LimitService_API <<interface>> {
+    }
+    interface TransactionLog_Database <<interface>> {
+    }
+}
+
+package "Exceptions" as Exceptions {
+    class InsufficientBalanceException <<exception>> {
+    }
+    class HighLoadException <<exception>> {
+    }
+    class LogStorageFullException <<exception>> {
+    }
+}
+
+' Relationships between domains and ports
+UserAccount .> AccountService_API : uses
+WithdrawalLimit .> LimitService_API : uses
+TransactionLog .> TransactionLog_Database : stored by
+
+' Annotations for atomicity and state constraints
+note top of Domain
+    **** Atomicity Constraint ****
+    Deduct balance, update limit, log transaction
+    must all succeed or full rollback.
+end note
+
+note top of Exceptions
+    Exceptions correspond to error paths:
+    - Insufficient balance
+    - High load / unavailable
+    - Storage full
+end note
+
+@enduml

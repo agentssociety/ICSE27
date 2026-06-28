@@ -1,0 +1,187 @@
+@startuml
+!theme plain
+skinparam packageStyle rectangle
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+skinparam backgroundColor #FEFEFE
+skinparam noteBackgroundColor #FFF9C4
+skinparam noteBorderColor #F9A825
+
+package "Domain Model" {
+  class Account {
+    - balance: Money
+  + checkSufficientFunds(amount: Money) : boolean
+  }
+  note top of Account : Invariant: balance ≥ 0\nOnly authorized actors modify balance
+
+  class Transaction {
+    - initiator: Actor
+    - target: Resource
+    - channel: Interface
+    - grant: Permission
+    - pre: State
+    - post: State
+    - failure: FailureReason [optional]
+  + startWithdrawal(user: User, amount: Money, account: Account)
+  + setState(Processing)
+  + setState(Post1)
+  + detectFailure(reason: FailureReason.NetworkOutage)
+  + setState(RolledBack)
+  + detectFailure(reason: FailureReason.InsufficientFunds)
+  + checkPreconditions(user: User, amount: Money, account: Account)
+  }
+  note top of Transaction : Invariant: atomic all-or-nothing\nIf failure exists → post = Post2\npre ≠ post
+
+  class User {
+    - id: String
+    - role: Role
+  + displaySuccess()
+  + displayError("Insufficient funds")
+  + displayError("Transaction failed due to system issue")
+  + displayError("Insufficient funds during processing")
+  }
+
+  class WithdrawalRecord {
+    - id: TransactionId
+    - amount: Money
+    - timestamp: DateTime
+    - status: WithdrawalStatus
+  + create(id: TransactionId, amount: Money, timestamp: DateTime, status: WithdrawalStatus.Success)
+  }
+  note top of WithdrawalRecord : Created only on\nsuccessful withdrawal;\nnever on failure
+
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+  note top of Permission : Hierarchy:\nAdmin > Write > Read\nAdmin > Execute > Read\nWrite, Execute incomparable
+
+  enum State {
+    Pre1
+    Pre2
+    Post1
+    Post2
+    Processing
+    RolledBack
+  }
+
+  enum FailureReason {
+    NetworkOutage
+    SystemCrash
+    InsufficientFunds
+  }
+
+  enum Role {
+    User
+    Account_Management_Team
+    Security_Team
+    Finance_Department
+  }
+
+  enum WithdrawalStatus {
+    Success
+    Failure
+  }
+
+  class Money {
+    - amount: Decimal
+    - currency: String
+  }
+
+  class TransactionId {
+    - value: String
+  }
+
+  class Actor
+  class Resource
+  class Interface
+  class DateTime
+}
+
+package "Application" {
+  class TransactionService
+}
+
+package "Infrastructure — Ports" {
+  interface "TransactionAPI" as TransactionAPIInterface {
+  }
+  note top of TransactionAPIInterface : Authenticated channel
+
+  interface "FinancialDatabase" as FinancialDatabaseInterface {
+  }
+  note top of FinancialDatabaseInterface : Encrypted + authenticated
+
+  interface "UserInterface" as UserInterfaceInterface {
+  }
+}
+
+package "Controllers" {
+  class TransactionController
+}
+
+package "DTOs" {
+  class WithdrawalRequestDTO {
+    - userId: String
+    - amount: Money
+  }
+
+  class WithdrawalResponseDTO {
+    - transactionId: TransactionId
+    - status: WithdrawalStatus
+    - message: String
+  }
+
+  class ErrorResponseDTO {
+    - errorCode: String
+    - message: String
+  }
+}
+
+package "Exceptions" {
+  class WithdrawalException <<exception>> {
+    - reason: FailureReason
+  }
+
+  class InsufficientFundsException <<exception>> {
+    - details: String
+  }
+
+  class NetworkOutageException <<exception>> {
+    - details: String
+  }
+
+  class SystemCrashException <<exception>> {
+    - details: String
+  }
+}
+
+' --- Relationships ---
+
+User --> "1" Transaction : initiates >
+Transaction --> "1..*" Account : targets >
+Account *-- "1" FinancialDatabaseInterface : stored in
+
+Transaction ..> TransactionAPIInterface : uses
+Transaction ..> FinancialDatabaseInterface : updates
+
+TransactionController --> TransactionService : >
+TransactionService --> Transaction : manages >
+TransactionService ..> TransactionAPIInterface : calls
+TransactionService ..> FinancialDatabaseInterface : queries
+TransactionService ..> UserInterfaceInterface : presents
+
+User --> "0..*" WithdrawalRecord : owns
+
+WithdrawalException <|-- InsufficientFundsException
+WithdrawalException <|-- NetworkOutageException
+WithdrawalException <|-- SystemCrashException
+
+Transaction --> FailureReason : may contain
+Transaction --> Permission : uses
+Transaction --> State : uses
+User --> Role : has
+
+@enduml

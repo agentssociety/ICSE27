@@ -1,0 +1,37 @@
+{
+  "task_id": 43,
+  "confidence": 0.9965,
+  "evidence": [
+    {
+      "claim": "The system maintains collection dates for each blood unit.",
+      "fact": "The system records each blood unit's ABO group, Rh factor, and the date it was collected.",
+      "score": 0.9991,
+      "user_story_span": "The system maintains collection dates for each blood unit.",
+      "fact_span": "the date it was collected"
+    },
+    {
+      "claim": "When a user interacts with a blood unit, the expiration check runs.",
+      "fact": "When a request comes in, the system selects suitable blood units by checking ABO/Rh compatibility and picking the one expiring soonest among exact matches.",
+      "score": 0.9966,
+      "user_story_span": "",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system marks the blood unit as expired.",
+      "fact": "Past-due blood products are automatically flagged as expired and are not included in compatibility searches.",
+      "score": 0.9957,
+      "user_story_span": "marks the blood unit as expired",
+      "fact_span": "automatically flagged as expired"
+    },
+    {
+      "claim": "The system removes the blood unit from the active inventory.",
+      "fact": "Blood units that have passed their 42-day shelf life are automatically marked as expired and removed from matching consideration.",
+      "score": 0.9945,
+      "user_story_span": "removes it from the available inventory",
+      "fact_span": "removed from matching consideration"
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

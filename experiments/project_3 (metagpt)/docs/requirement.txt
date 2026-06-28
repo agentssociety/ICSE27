@@ -1,0 +1,23 @@
+Airport Runway Scheduling System
+
+A scheduling system that coordinates aircraft arrivals and departures
+across two runways. It allocates time slots, prevents conflicts
+between concurrent runway uses, and gives immediate priority to
+declared emergencies.
+
+Core features:
+- Register incoming and outgoing flights with their estimated times
+- Allocate each flight the earliest available 5-minute slot on either
+  runway at or after its estimated time, with a 3-minute separation
+  gap between consecutive slots on the same runway
+- Give arrivals priority over departures when competing for the same
+  slot
+- Detect and prevent any overlapping or gap-violating assignments on
+  the same runway
+- Allow a runway to be closed, automatically reassigning its future
+  flights to the other runway and marking flights as delayed if they
+  cannot be placed within 60 minutes of their estimated time
+- Immediately give a declared emergency flight the earliest possible
+  slot and re-queue displaced flights by the normal rules
+- Show a slot timetable per runway with delayed flights and emergency
+  events

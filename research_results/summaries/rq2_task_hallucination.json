@@ -1,0 +1,293 @@
+{
+  "metric": "rq2_task_hallucination",
+  "description": "Task-level structural hallucination: tasks created by the agent (confirmed via 'Successfully created the task' in run.log) that were subsequently deleted by the human operator (absent from agent.md and task_implementation_order.json). Root causes: (1) duplicate creation from pipeline restarts — the agent re-generated already-existing tasks; (2) over-generation — agent created more tasks than specified; (3) retry-replacement — a task was created then re-created with corrections. task_deletion_rate = n_deleted / n_created per run. Runs with no 'Successfully created' log entries (different log format) are treated as 0 deletions (conservative). Values reported as mean ± std (ddof=1) across 3 seeds per project.",
+  "totals": {
+    "total_tasks_created_in_logs": 92,
+    "total_tasks_deleted": 10,
+    "overall_deletion_rate": 0.1087,
+    "runs_with_deletions": 3
+  },
+  "projects": [
+    {
+      "project_id": 1,
+      "n_essays": 3,
+      "n_deleted_tasks": {
+        "mean": 2.0,
+        "std": 3.46,
+        "values": [
+          0.0,
+          0.0,
+          6.0
+        ]
+      },
+      "task_deletion_rate": {
+        "mean": 0.1667,
+        "std": 0.2887,
+        "values": [
+          0.0,
+          0.0,
+          0.5
+        ]
+      },
+      "n_duplicate_deleted": {
+        "mean": 2.0,
+        "std": 3.46,
+        "values": [
+          0.0,
+          0.0,
+          6.0
+        ]
+      },
+      "per_essay": [
+        {
+          "essay": 1,
+          "n_created": 6,
+          "n_kept": 6,
+          "n_deleted": 0,
+          "task_deletion_rate": 0.0,
+          "deleted_tasks": []
+        },
+        {
+          "essay": 2,
+          "n_created": 6,
+          "n_kept": 6,
+          "n_deleted": 0,
+          "task_deletion_rate": 0.0,
+          "deleted_tasks": []
+        },
+        {
+          "essay": 3,
+          "n_created": 12,
+          "n_kept": 6,
+          "n_deleted": 6,
+          "task_deletion_rate": 0.5,
+          "deleted_tasks": [
+            {
+              "task_id": 59,
+              "title": "Register Patient with Symptoms",
+              "is_duplicate": true
+            },
+            {
+              "task_id": 60,
+              "title": "Assign Urgency Level 1-5",
+              "is_duplicate": true
+            },
+            {
+              "task_id": 61,
+              "title": "Order Queue by Urgency then Time",
+              "is_duplicate": true
+            },
+            {
+              "task_id": 62,
+              "title": "Reorder Queue on Change",
+              "is_duplicate": true
+            },
+            {
+              "task_id": 63,
+              "title": "Take Next Patient from Head",
+              "is_duplicate": true
+            },
+            {
+              "task_id": 64,
+              "title": "Live Dashboard with Urgency and Wait Time",
+              "is_duplicate": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project_id": 2,
+      "n_essays": 3,
+      "n_deleted_tasks": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "task_deletion_rate": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "n_duplicate_deleted": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "per_essay": [
+        {
+          "essay": 1,
+          "n_created": 7,
+          "n_kept": 7,
+          "n_deleted": 0,
+          "task_deletion_rate": 0.0,
+          "deleted_tasks": []
+        },
+        {
+          "essay": 2,
+          "n_created": 7,
+          "n_kept": 7,
+          "n_deleted": 0,
+          "task_deletion_rate": 0.0,
+          "deleted_tasks": []
+        },
+        {
+          "essay": 3,
+          "n_created": 7,
+          "n_kept": 7,
+          "n_deleted": 0,
+          "task_deletion_rate": 0.0,
+          "deleted_tasks": []
+        }
+      ]
+    },
+    {
+      "project_id": 3,
+      "n_essays": 3,
+      "n_deleted_tasks": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "task_deletion_rate": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "n_duplicate_deleted": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "per_essay": [
+        {
+          "essay": 1,
+          "n_created": 7,
+          "n_kept": 7,
+          "n_deleted": 0,
+          "task_deletion_rate": 0.0,
+          "deleted_tasks": []
+        },
+        {
+          "essay": 2,
+          "n_created": 7,
+          "n_kept": 7,
+          "n_deleted": 0,
+          "task_deletion_rate": 0.0,
+          "deleted_tasks": []
+        },
+        {
+          "essay": 3,
+          "n_created": 7,
+          "n_kept": 7,
+          "n_deleted": 0,
+          "task_deletion_rate": 0.0,
+          "deleted_tasks": []
+        }
+      ]
+    },
+    {
+      "project_id": 4,
+      "n_essays": 3,
+      "n_deleted_tasks": {
+        "mean": 1.33,
+        "std": 1.53,
+        "values": [
+          1.0,
+          0.0,
+          3.0
+        ]
+      },
+      "task_deletion_rate": {
+        "mean": 0.1481,
+        "std": 0.1697,
+        "values": [
+          0.1111,
+          0.0,
+          0.3333
+        ]
+      },
+      "n_duplicate_deleted": {
+        "mean": 1.33,
+        "std": 1.53,
+        "values": [
+          1.0,
+          0.0,
+          3.0
+        ]
+      },
+      "per_essay": [
+        {
+          "essay": 1,
+          "n_created": 9,
+          "n_kept": 8,
+          "n_deleted": 1,
+          "task_deletion_rate": 0.1111,
+          "deleted_tasks": [
+            {
+              "task_id": 81,
+              "title": "Atomic Withdrawal with Rollback",
+              "is_duplicate": true
+            }
+          ]
+        },
+        {
+          "essay": 2,
+          "n_created": 8,
+          "n_kept": 8,
+          "n_deleted": 0,
+          "task_deletion_rate": 0.0,
+          "deleted_tasks": []
+        },
+        {
+          "essay": 3,
+          "n_created": 9,
+          "n_kept": 6,
+          "n_deleted": 3,
+          "task_deletion_rate": 0.3333,
+          "deleted_tasks": [
+            {
+              "task_id": 102,
+              "title": "Atomic Withdrawal with Rollback",
+              "is_duplicate": true
+            },
+            {
+              "task_id": 103,
+              "title": "Detection of Suspicious Withdrawal Patterns",
+              "is_duplicate": true
+            },
+            {
+              "task_id": 104,
+              "title": "Admin User Management and Transaction Review",
+              "is_duplicate": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

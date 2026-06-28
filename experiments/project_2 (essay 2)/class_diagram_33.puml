@@ -1,0 +1,161 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam class {
+    BorderColor #333333
+    FontColor #333333
+    BackgroundColor #F8F8F8
+}
+skinparam interface {
+    BorderColor #2E86C1
+    FontColor #2E86C1
+    BackgroundColor #EBF5FB
+}
+skinparam enum {
+    BorderColor #27AE60
+    FontColor #27AE60
+    BackgroundColor #E8F8F5
+}
+skinparam exception {
+    BorderColor #E74C3C
+    FontColor #E74C3C
+    BackgroundColor #FDEDEC
+}
+
+package "Domain Model" {
+    class TransfusionRequest {
+        - bloodType: BloodType
+        - rhFactor: RhFactor
+        - quantity: int
+        {field} invariants: quantity > 0
+    }
+
+    class BloodType {
+        - value: string
+        {field} invariants: value in {A, B, AB, O}
+  + createFromString(value: String) : BloodType
+    }
+
+    class RhFactor {
+        - value: string
+        {field} invariants: value in {+, -}
+  + createFromString(value: String) : RhFactor
+    }
+
+    class Inventory {
+        - bloodType: BloodType
+        - rhFactor: RhFactor
+        - quantity: int
+    }
+
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+    }
+
+    enum RequestState {
+        Pending
+        Validated
+        Stored
+        Failed
+  + nextState(current: Pending) : RequestState
+  + nextState(current: Validated) : RequestState
+    }
+}
+
+package "Application" {
+    class BloodBankStaff {
+        - permissions: Permission[]
+    }
+
+    class ClinicalTeams {
+        - permissions: Permission[]
+    }
+
+    class Patients {
+        - permissions: Permission[]
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface TransfusionRequestSubmissionAPI {
+        {abstract} receiveRequest(bloodType: string, rhFactor: string, quantity: int): Response
+        {abstract} validateParameters(bloodType: string, rhFactor: string, quantity: int): ValidationResult
+    }
+
+    interface TransfusionRequestDatabase {
+        {abstract} store(request: TransfusionRequest): StorageResult
+  + storeRequest(bloodType, rhFactor, quantity, state: Validated) : StorageResult
+  + storeRequest(...)
+    }
+}
+
+package "DTOs" {
+    class TransfusionRequestDTO <<dto>> {
+        + bloodType: string
+        + rhFactor: string
+        + quantity: int
+    }
+
+    class ValidationResult <<dto>> {
+        + isValid: boolean
+        + errorMessage: string
+  + validate(bloodType: BloodType, rhFactor: RhFactor, quantity: Integer) : ValidationResult
+  + validate(..., ...)
+    }
+
+    class StorageResult <<dto>> {
+        + success: boolean
+        + requestId: string
+        + errorMessage: string
+    }
+
+    class Response <<dto>> {
+        + success: boolean
+        + message: string
+        + requestId: string
+    }
+}
+
+package "Exceptions" {
+    class ValidationException <<exception>> {
+        - field: string
+        - reason: string
+    }
+
+    class StorageException <<exception>> {
+        - reason: string
+    }
+
+    class AuthorizationException <<exception>> {
+        - requiredPermission: Permission
+        - actualPermissions: Permission[]
+    }
+}
+
+' Relationships
+TransfusionRequest "1" --> "1" BloodType : has blood type
+TransfusionRequest "1" --> "1" RhFactor : has Rh factor
+TransfusionRequest "1" --> "1" RequestState : has state
+TransfusionRequest "1" --> "0..1" Inventory : matched against
+
+BloodBankStaff "1" --> "0..*" TransfusionRequest : creates/submits
+BloodBankStaff "1" --> "1..*" Permission : has
+
+ClinicalTeams "1" --> "1..*" Permission : has
+Patients "1" --> "0" Permission : has
+
+TransfusionRequestSubmissionAPI ..> TransfusionRequestDTO : receives
+TransfusionRequestSubmissionAPI ..> ValidationResult : returns
+TransfusionRequestSubmissionAPI ..> Response : returns
+
+TransfusionRequestDatabase ..> TransfusionRequest : stores
+TransfusionRequestDatabase ..> StorageResult : returns
+
+TransfusionRequestSubmissionAPI ..> ValidationException : throws
+TransfusionRequestSubmissionAPI ..> AuthorizationException : throws
+TransfusionRequestDatabase ..> StorageException : throws
+
+@enduml

@@ -1,0 +1,161 @@
+@startuml
+title Project 8 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+note as RelationshipCorrections
+  <b>Relationship cardinalities corrected by LLM review</b>
+  ChangeEvent --> QueueItem → ChangeEvent "1" -- "0..*" QueueItem
+    Reason: PlantUML "-->" is a directed association but lacks cardinality; the corrected relationship indicates a queue item may have zero or more change events, not the other way around.
+  Patient "1" --o "1" UserAuthenticationSystem → Patient "1" -- "1" UserAuthenticationSystem
+    Reason: A one-to-many aggregation from Patient to UserAuthenticationSystem is incorrect; a patient uses a single authentication system, so a simple one-to-one association is appropriate.
+  PatientDatabase ..> SymptomRecord → PatientDatabase "1" o-- "0..*" SymptomRecord
+    Reason: A dependency suggests a weaker relationship but the domain requires the database to own symptom records; corrected to an aggregation from database to records.
+  Queue *-- QueueItem → Queue "1" --* "0..*" QueueItem
+    Reason: The arrow "*--" indicates many on left, but Queue should own many QueueItems; reversal corrects to composition where Queue has many items.
+  Queue *-- "ordered list" Patient → Queue "1" --* "0..*" QueueItem
+    Reason: A queue contains queue items (not patients directly) and the ordered list constraint is better modeled as a composition with an ordering annotation; correcting the right class to QueueItem.
+  REQ_ITEM_URGENCY_01 "1" -- "1" Actor → REQ_ITEM_URGENCY_01 "1" -- "1" UrgencyLevel
+    Reason: REQ_ITEM_URGENCY_01 likely represents a requirement or use case, not directly associated with Actor, Permission, or State; it should only relate to UrgencyLevel as a requirement specification.
+  REQ_ITEM_URGENCY_01 "1" -- "1" Permission → REQ_ITEM_URGENCY_01 "1" -- "1" UrgencyLevel
+    Reason: Same as above; all other associations for REQ_ITEM_URGENCY_01 except to UrgencyLevel are inappropriate for this domain.
+  REQ_ITEM_URGENCY_01 "1" -- "1" State → REQ_ITEM_URGENCY_01 "1" -- "1" UrgencyLevel
+    Reason: Same as above; only the association with UrgencyLevel is relevant.
+  REQ_ITEM_URGENCY_01 "1" -- "many" Interface → REQ_ITEM_URGENCY_01 "1" -- "1" UrgencyLevel
+    Reason: Same as above; only UrgencyLevel association is intended.
+  REQ_ITEM_URGENCY_01 "1" -- "many" Resource → REQ_ITEM_URGENCY_01 "1" -- "1" UrgencyLevel
+    Reason: Same as above; only UrgencyLevel association is intended.
+  Resource "1" -- "1" Actor → Resource "1" -- "0..*" Actor
+    Reason: A resource is associated with zero or more actors (users), not necessarily exactly one; the cardinality should reflect optionality.
+  Resource "1" -- "many" Actor → Resource "1" -- "0..*" Actor
+    Reason: Same as above; the multiplicity on the right should be 0..* rather than 'many' which is ambiguous.
+  Resource "1" o-- "0..1" UrgencyLevel → Resource "1" -- "1" UrgencyLevel
+    Reason: A resource should have exactly one urgency level, not an optional 0..1; the task requires each item to have an urgency.
+  Symptom "1" -- "0..1" SymptomRecord → Symptom "1" -- "1" SymptomRecord
+    Reason: A symptom is a single occurrence and corresponds to exactly one symptom record; the original optionality suggests a symptom may not have a record, which contradicts the registration requirement.
+  SymptomRecord "0..1" --o "1" PatientDatabase → SymptomRecord "0..*" --o "1" PatientDatabase
+    Reason: The aggregation direction and cardinality are reversed; a symptom record is aggregated into at most one patient database, but a database can contain many records.
+end note
+
+note as ArchitectureCorrections
+  <b>Architecture mistakes corrected automatically</b>
+  [missing_relationship] There is no relationship between Patient and SymptomRecord, yet Task #53 requires recording symptom information.
+    Fix applied: add_relation
+  [missing_relationship] There is no relationship between Queue and Patient, yet Tasks #55, #56, #57 involve a queue of patients.
+    Fix applied: add_relation
+  [missing_relationship] There is no relationship between ChangeEvent and Queue, but Task #56 requires queue reordering on change.
+    Fix applied: add_relation
+end note
+
+package "Task #53\nRegister patient with\nsymptoms" {
+  class Patient <<main>> <<level0>>
+  interface PatientDatabase
+  class Symptom
+  class SymptomRecord
+  class UserAuthenticationSystem
+}
+
+package "Task #54\nAssign urgency level\n(1-5)" {
+  enum UrgencyLevel <<main>> <<level1>>
+  class Actor
+  class Interface
+  enum Permission
+  class REQ_ITEM_URGENCY_01
+  class Resource
+  class State
+}
+
+package "Task #55\nOrder queue by urgency\nthen time" {
+  class Queue <<main>> <<level2>>
+  class QueueItem
+}
+
+package "Task #56\nReorder queue on change" {
+  note as TaskSummary56
+    No new domain model classes
+    Uses: Queue, Patient, UrgencyLevel
+  end note
+}
+
+package "Task #57\nTake next patient from\nhead" {
+  note as TaskSummary57
+    No new domain model classes
+    Uses: Patient, Queue
+  end note
+}
+
+package "Task #58\nLive dashboard with\nurgency and wait time" {
+  note as TaskSummary58
+    No new domain model classes
+    Uses: Patient, UrgencyLevel, Queue
+  end note
+}
+
+package "Shared / Cross-Task Classes\n[not owned by a single task]" <<Rectangle>> {
+  class ChangeEvent <<shared>>
+  note right of ChangeEvent : "appears only in relations; not owned by any task"
+  interface QueueManagementSystem <<shared>>
+  note right of QueueManagementSystem : "appears only in relations; not owned by any task"
+}
+
+ChangeEvent "1" -- "0..*" QueueItem
+Patient "1" -- "0..*" Symptom
+Patient "1" -- "1" UserAuthenticationSystem
+PatientDatabase "1" o-- "0..*" SymptomRecord
+Queue "1" --* "0..*" QueueItem
+QueueItem "1" --> "1" UrgencyLevel
+QueueManagementSystem --> Queue
+REQ_ITEM_URGENCY_01 "1" -- "1" UrgencyLevel
+Resource "1" -- "0..*" Actor
+Resource "1" -- "1" UrgencyLevel
+Symptom "1" -- "1" SymptomRecord
+SymptomRecord "0..*" --o "1" PatientDatabase
+note right of UrgencyLevel #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [introduce_value_object] Consider making\nUrgencyLevel a value object (e.g., with range\n1-5 and validation) instead of an enum, to\nbetter encapsulate its behavior and constraints.
+end note
+
+note right of REQ_ITEM_URGENCY_01 #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [rename_for_clarity] Rename\n'REQ_ITEM_URGENCY_01' to a descriptive name like\n'ItemUrgency' to align with ubiquitous language\nand improve clarity.
+end note
+
+@enduml

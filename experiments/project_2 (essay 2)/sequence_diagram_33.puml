@@ -1,0 +1,116 @@
+@startuml
+skinparam BoxPadding 20
+skinparam ParticipantPadding 10
+
+title Transfusion Request Submission - Sequence Diagram
+
+actor "BloodBankStaff" as BBS
+
+box "Controller" #LightBlue
+  participant "TransfusionRequestSubmissionAPI" as API
+end box
+
+box "Application" #LightGreen
+  participant "TransfusionRequestApplicationService" as AppSvc
+end box
+
+box "Domain" #LightYellow
+  participant "BloodType" as BT
+  participant "RhFactor" as RF
+  participant "Inventory" as Inv
+  participant "ValidationResult" as VR
+  participant "StorageResult" as SR
+  participant "RequestState" as RS
+end box
+
+box "Infrastructure" #LightCoral
+  participant "TransfusionRequestDatabase" as DB
+  participant "AuthService" as Auth
+end box
+
+== Main Flow - Successful Submission ==
+
+BBS -> API ++ : POST /transfusion-requests\n[bloodType, rhFactor, quantity]\n[TLS]
+note right: Authenticated session required
+
+API -> Auth ++ : validateToken(token: String) : Boolean
+Auth --> API -- : true
+alt token invalid
+  API -> BBS : 401 Unauthorized\n{"error":"Invalid or expired token"}
+  deactivate BBS
+end
+
+API -> AppSvc ++ : submitRequest(bloodType: String, rhFactor: String, quantity: Integer) : StorageResult
+
+AppSvc -> BT ++ : createFromString(value: String) : BloodType
+BT --> AppSvc -- : bloodTypeValue
+note right: invariants: value in {A,B,AB,O}
+
+AppSvc -> RF ++ : createFromString(value: String) : RhFactor
+RF --> AppSvc -- : rhFactorValue
+note right: invariants: value in {+,-}
+
+AppSvc -> VR ++ : validate(bloodType: BloodType, rhFactor: RhFactor, quantity: Integer) : ValidationResult
+VR --> AppSvc -- : validationResult
+
+alt validationResult.isSuccess == false
+  AppSvc -> API : return ValidationResult(failure message)
+  API -> BBS : 400 Bad Request\n{"error": "Invalid parameters"}
+  deactivate BBS
+else validationResult.isSuccess == true
+  AppSvc -> RS ++ : nextState(current: Pending) : RequestState
+  note right: Transition: Pending -> Validated
+  RS --> AppSvc -- : Validated
+
+  AppSvc -> DB ++ : storeRequest(bloodType, rhFactor, quantity, state: Validated) : StorageResult
+  note right: [encrypted at rest]
+  DB --> AppSvc -- : storageResult
+
+  alt storageResult.isSuccess == false
+    AppSvc -> AppSvc : handleStorageFailure()
+    AppSvc -> API : return StorageResult(error)
+    API -> BBS : 500 Internal Server Error\n{"error":"Database error"}
+    deactivate BBS
+  else storageResult.isSuccess == true
+    AppSvc -> RS ++ : nextState(current: Validated) : RequestState
+    note right: Transition: Validated -> Stored
+    RS --> AppSvc -- : Stored
+
+    AppSvc --> API -- : StorageResult(success)
+    API -> BBS : 201 Created\n{"message":"Request stored","id":"..."}
+  end
+end
+deactivate BBS
+
+== Error Flow - Missing Parameters ==
+
+BBS -> API ++ : POST /transfusion-requests\n[missing required fields]
+
+API -> AppSvc ++ : submitRequest(...)
+AppSvc -> VR ++ : validate(..., ...)
+VR --> AppSvc -- : ValidationResult(failure: missing fields)
+AppSvc -> API : return ValidationResult error
+API -> BBS : 400 Bad Request\n{"error":"Missing required parameters"}
+deactivate BBS
+
+== Error Flow - Authorization Failure ==
+
+BBS -> API ++ : POST /transfusion-requests (with invalid token)
+API -> Auth ++ : validateToken(invalidToken)
+Auth --> API -- : false
+API -> BBS : 401 Unauthorized\n{"error":"Invalid or expired token"}
+deactivate BBS
+
+== Error Flow - Database Failure ==
+
+BBS -> API ++ : POST /transfusion-requests (valid request)
+API -> AppSvc ++ : submitRequest(...)
+AppSvc -> VR ++ : validate(...) -> success
+VR --> AppSvc -- : success
+AppSvc -> DB ++ : storeRequest(...)
+DB --> AppSvc -- : StorageResult(failure: connection lost)
+AppSvc -> API : return error
+API -> BBS : 500 Internal Server Error\n{"error":"Could not store request"}
+deactivate BBS
+
+@enduml

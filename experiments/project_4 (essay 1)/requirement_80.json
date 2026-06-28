@@ -1,0 +1,92 @@
+{
+  "id": "REQ-FUNC-01",
+  "title": "Transaction Balance and Limit Validation",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall validate that a transaction amount does not exceed the user's available balance before processing any transaction.",
+  "rationale": "Preventing overdraw or limit exceedance ensures financial integrity and customer trust by adhering to established rules and limits.",
+  "business_value": "Maintaining accurate balances and preventing limit breaches reduces operational risks and improves customer satisfaction.",
+  "source": {
+    "type": "User Story",
+    "id": 80,
+    "description": "As a user I need my transactions to respect the available balance and daily withdrawal limits so that overdraw or limit exceedance is prevented."
+  },
+  "stakeholders": [
+    "Finance Team",
+    "IT Development Team",
+    "Customer Support Team"
+  ],
+  "acceptance_criteria": [
+    "The transaction amount does not exceed the available balance.",
+    "The cumulative daily withdrawals including this transaction do not exceed the daily limit."
+  ],
+  "preconditions": [
+    "The user has an available balance.",
+    "The user has a daily withdrawal limit set."
+  ],
+  "postconditions": [
+    "The transaction is processed successfully if it meets both balance and limit criteria.",
+    "The transaction is denied with an appropriate message if either balance or limit criteria are not met."
+  ],
+  "functional_constraints": [
+    "Transactions exceeding the available balance are denied.",
+    "Daily withdrawal totals including this transaction cannot exceed the daily limit."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "User tries to make a transaction equal to their available balance.",
+    "Daily withdrawal limit is exactly met during a single day."
+  ],
+  "dependencies": [],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "User Balance and Limit Database",
+      "description": "The system interacts with this database to retrieve the user's available balance and daily withdrawal limit."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-REQ-FUNC-01-01",
+      "description": "Valid transaction amount below available balance.",
+      "expected_result": "Transaction is processed successfully."
+    },
+    {
+      "id": "TC-REQ-FUNC-01-02",
+      "description": "Invalid transaction amount exceeds available balance.",
+      "expected_result": "Transaction is denied with a message indicating overdrawn account."
+    },
+    {
+      "id": "TC-REQ-FUNC-01-03",
+      "description": "Valid daily withdrawal that brings total to limit.",
+      "expected_result": "Transaction is processed successfully."
+    },
+    {
+      "id": "TC-REQ-FUNC-01-04",
+      "description": "Invalid transaction amount exceeds daily withdrawal limit.",
+      "expected_result": "Transaction is denied with a message indicating daily withdrawal limit exceeded."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-16T09:53:42.157176",
+  "last_updated": "2026-06-16T10:13:41.399224",
+  "traceability": {
+    "related_requirements": [
+      "REQ-AUTH-01"
+    ],
+    "design_components": [
+      "Account"
+    ],
+    "test_artifacts": []
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "id": "REQ-MED-01",
+  "title": "Take Next Patient from Sorted Queue",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall provide the patient at the top of the queue when a physician requests the next patient.",
+  "rationale": "To ensure that patients are attended to based on their urgency, thereby improving treatment outcomes and reducing wait times for urgent cases.",
+  "business_value": "Improves patient satisfaction by addressing urgent needs promptly and efficiently, leading to better health outcomes and reduced healthcare costs.",
+  "source": {
+    "type": "User Story",
+    "id": 11,
+    "description": "As a physician I need to take the next patient from the top of the sorted queue so that I can attend to the most urgent case first."
+  },
+  "stakeholders": [
+    "Physicians",
+    "Nurses",
+    "Administrative Staff"
+  ],
+  "acceptance_criteria": [
+    "The system provides the patient at the top of the queue when a physician requests the next patient."
+  ],
+  "preconditions": [
+    "The patient queue is sorted by urgency.",
+    "A physician has access to the queue system."
+  ],
+  "postconditions": [
+    "The patient at the top of the queue is removed from the queue.",
+    "The physician receives the details of the next patient for attendance."
+  ],
+  "functional_constraints": [],
+  "security_requirements": [
+    "Authentication and authorization checks are performed to ensure that only authorized personnel can access the queue system."
+  ],
+  "non_functional_requirements": {
+    "performance": {
+      "response_time": "<= 5 seconds"
+    },
+    "availability": {
+      "uptime": "99.9%"
+    },
+    "scalability": {
+      "expected_load": "10,000 patients per day"
+    },
+    "usability": {
+      "error_handling": "Clear error messages and retry options",
+      "interface_behavior": "Intuitive and user-friendly interface for physician interaction"
+    }
+  },
+  "edge_cases": [
+    "The queue is empty when a physician requests the next patient.",
+    "A new patient is added to the queue while a physician is retrieving the next patient."
+  ],
+  "dependencies": [
+    "Queue System",
+    "Authentication and Authorization Service"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Patient Queue API",
+      "description": "The system interacts with the Patient Queue API to retrieve the top patient from the queue."
+    },
+    {
+      "type": "External System",
+      "name": "Authentication and Authorization Service",
+      "description": "The system uses the Authentication and Authorization Service to ensure that only authorized physicians can access the queue system."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-MED-01",
+      "description": "Retrieve next patient from an empty queue.",
+      "expected_result": "The system should return a message indicating that the queue is empty and no patient was retrieved."
+    },
+    {
+      "id": "TC-MED-02",
+      "description": "Retrieve next patient when a new patient is added to the queue while retrieving.",
+      "expected_result": "The system should retrieve the patient at the top of the updated queue."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-12T22:00:23.579170",
+  "last_updated": "2026-06-12T22:03:47.048942",
+  "traceability": {
+    "related_requirements": [
+      "REQ-TRIAGE-01"
+    ],
+    "design_components": [
+      "Patient"
+    ],
+    "test_artifacts": []
+  }
+}

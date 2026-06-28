@@ -1,0 +1,248 @@
+@startuml
+title Project 1 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+note as CycleLegend
+  <b>Recursive dependencies detected and resolved</b>
+  The following edges were removed to enable ordering:
+  Patient → PatientQueue
+  Patient → UrgencyLevel
+  Mutually recursive groups:
+  [Patient, PatientQueue, UrgencyLevel]
+end note
+
+note as RelationshipCorrections
+  <b>Relationship cardinalities corrected by LLM review</b>
+  DashboardAccessOperation "1" --> "some" Interface → DashboardAccessOperation "1" --> "*" Interface
+    Reason: The cardinality 'some' is not standard; replaced with '*' to indicate multiple interfaces.
+  DashboardAccessOperation "1" --> "some" Resource → DashboardAccessOperation "1" --> "*" Resource
+    Reason: The cardinality 'some' is not standard; replaced with '*' to indicate multiple resources.
+  Patient "1" --> "1" UrgencyLevel → Patient "*" --> "1" UrgencyLevel
+    Reason: Multiple patients can have the same urgency level, so cardinality should be many-to-one.
+  Patient *-- PatientRecord → Patient "1" --> "1" PatientRecord
+    Reason: Composition is not appropriate; each patient has exactly one record, so use one-to-one directed association.
+  Patient --> PatientQueue → PatientQueue "1" --> "*" Patient
+    Reason: Direction reversed: queue contains many patients, so queue should reference patient with one-to-many cardinality.
+  PatientQueue *-- "0..*" Patient → PatientQueue --* "0..*" Patient
+    Reason: Composition arrow should have diamond on the whole side (queue), indicating one queue contains many patients.
+  Queue "1" *--> "*" Patient → Queue --* "*" Patient
+    Reason: Composition arrow should have diamond on the whole side (queue), indicating one queue contains many patients.
+  Resource "1" --> "1" Actor → Resource "1" --> "*" Actor
+    Reason: A resource can be used by multiple actors, so cardinality should be one-to-many.
+  TriageNurse "1" --> "1" PatientRecord → TriageNurse "1" --> "*" PatientRecord
+    Reason: A triage nurse can create multiple patient records, so cardinality should be one-to-many.
+end note
+
+note as ArchitectureCorrections
+  <b>Architecture mistakes corrected automatically</b>
+  [duplicate_concept] There are two queue classes: 'Queue' and 'PatientQueue'. The tasks consistently refer to 'PatientQueue' as the class owning the queue logic. The 'Queue' class is redundant and likely a leftover from an earlier design.
+    Fix applied: remove_class
+  [missing_relationship] TriageNurse and Physician are both types of medical staff, but there is no inheritance relationship defined. According to the domain, they should be subclasses of MedicalStaff to reflect shared behavior and properties.
+    Fix applied: add_relation
+  [missing_relationship] Similarly, Physician should be a subclass of MedicalStaff.
+    Fix applied: add_relation
+  [other_correction] PatientQueue has three conflicting associations with Patient (a directed association with multiplicity, another directed association without multiplicity, and a composition). This is inconsistent and should be unified to a single composition indicating that PatientQueue owns Patients.
+    Fix applied: remove_relation
+  [other_correction] Remove the second conflicting directed association between PatientQueue and Patient.
+    Fix applied: remove_relation
+  [other_correction] Keep only the composition arrow from PatientQueue to Patient, which correctly models ownership.
+    Fix applied: add_relation
+  [wrong_class_type] Patient has two separate associations to UrgencyLevel (one with multiplicity and one without). The redundant one should be removed.
+    Fix applied: remove_relation
+end note
+
+package "Task #3\nQueue Sorting by Urgency\nand Arrival Time" {
+  class PatientQueue <<main>> <<level1>>
+  class Queue
+}
+
+package "Task #1\nPatient Registration\nwith Symptoms" {
+  class Patient <<main>> <<level2>>
+  class SymptomResource
+}
+
+package "Task #2\nUrgency Level Assignment" {
+  enum UrgencyLevel <<main>> <<level0>>
+  class MedicalStaff
+  class PatientCareTeam
+  class PatientRecord
+  class TriageNurse
+}
+
+package "Task #5\nPatient Dequeue for\nPhysician" {
+  note as TaskSummary5
+    No new domain model classes
+    Uses: Patient, PatientQueue
+  end note
+}
+
+package "Task #4\nDynamic Requeuing on New\nPatient or Re-triage" {
+  note as TaskSummary4
+    No new domain model classes
+    Uses: Patient, PatientQueue, UrgencyLevel
+  end note
+}
+
+package "Task #6\nLive Dashboard with\nUrgency and Wait Time" {
+  note as TaskSummary6
+    No new domain model classes
+    Uses: Patient, UrgencyLevel, PatientQueue
+  end note
+}
+
+package "Shared / Cross-Task Classes\n[not owned by a single task]" <<Rectangle>> {
+  class Actor <<shared>>
+  note right of Actor : "appears only in relations; not owned by any task"
+  class AuditLog <<shared>>
+  note right of AuditLog : "appears only in relations; not owned by any task"
+  class DashboardAccessOperation <<shared>>
+  note right of DashboardAccessOperation : "appears only in relations; not owned by any task"
+  interface Interface <<shared>>
+  note right of Interface : "appears only in relations; not owned by any task"
+  interface PatientQueueDatabase <<shared>>
+  note right of PatientQueueDatabase : "appears only in relations; not owned by any task"
+  enum Permission <<shared>>
+  note right of Permission : "appears only in relations; not owned by any task"
+  class Physician <<shared>>
+  note right of Physician : "appears only in relations; not owned by any task"
+  interface PhysicianInterface <<shared>>
+  note right of PhysicianInterface : "appears only in relations; not owned by any task"
+  class REQ_SYS_01_Operation <<shared>>
+  note right of REQ_SYS_01_Operation : "appears only in relations; not owned by any task"
+  class Resource <<shared>>
+  note right of Resource : "appears only in relations; not owned by any task"
+  class ResourceCapacity <<shared>>
+  note right of ResourceCapacity : "appears only in relations; not owned by any task"
+  enum State <<shared>>
+  note right of State : "appears only in relations; not owned by any task"
+}
+
+Actor "1" --> "*" Permission
+AuditLog --> DashboardAccessOperation
+DashboardAccessOperation "1" --> "*" Interface
+DashboardAccessOperation "1" --> "*" Resource
+DashboardAccessOperation "1" --> "1" Actor
+DashboardAccessOperation "1" --> "1" Permission
+DashboardAccessOperation "1" --> "1" State
+MedicalStaff "0..*" --> "0..*" PatientRecord
+Patient "*" --> "1" UrgencyLevel
+Patient "1" --> "1" PatientRecord
+Patient --> "0..*" SymptomResource
+PatientCareTeam "0..*" --> "0..*" PatientRecord
+PatientQueue --* "0..*" Patient
+PatientQueue --> State
+PatientQueueDatabase "1" --> "0..*" Patient
+Physician "1" --> "0..*" Patient
+Physician "1" --> "1" PatientQueue
+Physician "1" --> "1" PhysicianInterface
+Physician ..|> MedicalStaff
+Queue --* "*" Patient
+Queue ..> UrgencyLevel
+REQ_SYS_01_Operation "1" --> "1" Actor
+REQ_SYS_01_Operation "1" --> "1" Resource
+REQ_SYS_01_Operation ..> Queue
+Resource "1" --> "*" Actor
+ResourceCapacity "1" --> "1" Resource
+TriageNurse "1" --> "*" PatientRecord
+TriageNurse "1" --> "0..*" Patient
+TriageNurse ..|> MedicalStaff
+note right of SymptomResource #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [introduce_value_object] Replace SymptomResource\nwith a value object called 'Symptom' that\ncontains a name and optional severity.\nSymptomResource is misleading (sounds like a\nresource allocation) and should be a simple\nvalue object.
+end note
+
+note right of State #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [rename_for_clarity] Rename 'State' to\n'QueueState' or 'PatientState' to clarify its\npurpose. Currently it is ambiguous and could\nrefer to queue status or patient status.
+end note
+
+note right of Patient #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [add_aggregate_root] Consider making Patient the\naggregate root that owns PatientRecord and\nUrgencyLevel as value objects. This would reduce\nexternal references and enforce consistency when\nregistering and updating urgency.
+end note
+
+note right of PatientRecord #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [add_aggregate_root] Consider making Patient the\naggregate root that owns PatientRecord and\nUrgencyLevel as value objects. This would reduce\nexternal references and enforce consistency when\nregistering and updating urgency.
+end note
+
+note right of UrgencyLevel #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [add_aggregate_root] Consider making Patient the\naggregate root that owns PatientRecord and\nUrgencyLevel as value objects. This would reduce\nexternal references and enforce consistency when\nregistering and updating urgency.
+end note
+
+note right of SymptomResource #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [add_aggregate_root] Consider making Patient the\naggregate root that owns PatientRecord and\nUrgencyLevel as value objects. This would reduce\nexternal references and enforce consistency when\nregistering and updating urgency.
+end note
+
+note right of DashboardAccessOperation #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [general] The dashboard-related classes appear\noverly complex for the given requirements.\nConsider simplifying to a single 'Dashboard'\nclass that aggregates queue data and calculates\nwait times, rather than modeling access\noperations as separate entities.
+end note
+
+note right of Resource #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [general] The dashboard-related classes appear\noverly complex for the given requirements.\nConsider simplifying to a single 'Dashboard'\nclass that aggregates queue data and calculates\nwait times, rather than modeling access\noperations as separate entities.
+end note
+
+note right of ResourceCapacity #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [general] The dashboard-related classes appear\noverly complex for the given requirements.\nConsider simplifying to a single 'Dashboard'\nclass that aggregates queue data and calculates\nwait times, rather than modeling access\noperations as separate entities.
+end note
+
+note right of Permission #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [general] The dashboard-related classes appear\noverly complex for the given requirements.\nConsider simplifying to a single 'Dashboard'\nclass that aggregates queue data and calculates\nwait times, rather than modeling access\noperations as separate entities.
+end note
+
+note right of AuditLog #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [general] The dashboard-related classes appear\noverly complex for the given requirements.\nConsider simplifying to a single 'Dashboard'\nclass that aggregates queue data and calculates\nwait times, rather than modeling access\noperations as separate entities.
+end note
+
+note right of REQ_SYS_01_Operation #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [general] The dashboard-related classes appear\noverly complex for the given requirements.\nConsider simplifying to a single 'Dashboard'\nclass that aggregates queue data and calculates\nwait times, rather than modeling access\noperations as separate entities.
+end note
+
+@enduml

@@ -1,0 +1,51 @@
+{
+  "task_id": 79,
+  "confidence": 0.9915,
+  "evidence": [
+    {
+      "claim": "The system allows authentication using a card and PIN.",
+      "fact": "The system requires a valid card and corresponding personal identification number to verify a user's identity before any transaction proceeds.",
+      "score": 0.9987,
+      "user_story_span": "authenticate using my card and PIN",
+      "fact_span": "valid card and corresponding personal identification number"
+    },
+    {
+      "claim": "Authentication is card-and-PIN based.",
+      "fact": "The system requires a valid card and corresponding personal identification number to verify a user's identity before any transaction proceeds.",
+      "score": 0.998,
+      "user_story_span": "card and PIN",
+      "fact_span": "valid card and corresponding personal identification number"
+    },
+    {
+      "claim": "The system automatically locks the account after a specified number of failed attempts.",
+      "fact": "After three incorrect PIN entries in a row, the account is automatically disabled to prevent unauthorized access.",
+      "score": 0.9926,
+      "user_story_span": "automatically locked after a specified number of failed attempts",
+      "fact_span": "the account is automatically disabled"
+    },
+    {
+      "claim": "The system automatically locks the account after multiple failed attempts.",
+      "fact": "After three incorrect PIN entries in a row, the account is automatically disabled to prevent unauthorized access.",
+      "score": 0.9914,
+      "user_story_span": "automatically locked after multiple failed attempts",
+      "fact_span": "the account is automatically disabled"
+    },
+    {
+      "claim": "The user is granted access to their account.",
+      "fact": "Account history retrieval supplies a detailed log of events, including successful and failed transactions, sorted by time.",
+      "score": 0.9887,
+      "user_story_span": "granted access to my account",
+      "fact_span": ""
+    },
+    {
+      "claim": "The user has a valid card and PIN.",
+      "fact": "The system requires a valid card and corresponding personal identification number to verify a user's identity before any transaction proceeds.",
+      "score": 0.9797,
+      "user_story_span": "valid card and PIN",
+      "fact_span": "valid card and corresponding personal identification number"
+    }
+  ],
+  "total_claims": 7,
+  "supported_claims": 6,
+  "threshold": 0.6
+}

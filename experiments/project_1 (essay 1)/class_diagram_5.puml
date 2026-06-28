@@ -1,0 +1,154 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontName Arial
+skinparam classFontSize 12
+skinparam classAttributeFontSize 10
+skinparam classBorderColor #333333
+skinparam classHeaderBackgroundColor #EEEEEE
+
+package "Domain Model" {
+    enum Permission {
+        + Read
+        + Write
+        + Execute
+        + Admin
+        --
+        {field} Write subsumes Read
+        {field} Execute subsumes Write
+        {field} Admin subsumes all
+    }
+
+    enum State {
+        + Pre1
+        + Post1
+        + Post2
+        --
+        {field} Pre1 != Post1
+        {field} Pre1 != Post2
+    }
+
+    class Patient {
+        - priority: int
+        - details: String
+        - secondaryPriority: DateTime
+        --
+        {field} Each patient has a priority assigned by triage system
+  + createDetails(patientData: Patient)
+  + createDetails(patientA)
+  + createDetails(patientB)
+    }
+
+    class PatientQueue {
+        - patients: List<Patient> {ordered by priority descending}
+        --
+        {field} Queue is sorted by priority descending
+        {field} Queue can be empty
+    }
+
+    class Physician {
+        - identity: String
+        - permissions: List<Permission>
+        --
+        {field} Physician has Read+Write permissions for dequeue operation
+    }
+}
+
+package "Application" {
+    interface PhysicianInterface {
+        + requestDequeue(): void
+        + displayPatientDetails(patient: Patient): void
+        + displayError(message: String): void
+        --
+        {field} authentication_required
+        {field} encryption_required
+    }
+
+    interface PatientQueueDequeueAPI {
+        + dequeue(): Patient
+        --
+        {field} authentication_required
+        {field} encryption_required
+        {field} RESTful endpoint
+    }
+
+    interface PatientQueueDatabase {
+        + getHighestPriorityPatient(): Patient
+        + removePatient(patient: Patient): void
+        --
+        {field} authentication_required
+        {field} encryption_required
+        {field} Supports read and remove operations
+    }
+}
+
+package "Exceptions" {
+    class EmptyQueueException <<exception>> {
+        - message: String
+        - timestamp: DateTime
+    }
+
+    class NetworkFailureException <<exception>> {
+        - message: String
+        - timestamp: DateTime
+        - reconnectionAttempted: boolean
+    }
+
+    class ConcurrentAccessException <<exception>> {
+        - message: String
+        - timestamp: DateTime
+        - conflictingRequestId: String
+    }
+
+    class AuthenticationException <<exception>> {
+        - message: String
+        - timestamp: DateTime
+    }
+}
+
+package "DTOs" {
+    class PatientDTO <<dto>> {
+        - patientId: String
+        - priority: int
+        - details: String
+        - secondaryPriority: DateTime
+    }
+
+    class DequeueResponseDTO <<dto>> {
+        - patient: PatientDTO
+        - success: boolean
+        - errorMessage: String
+    }
+
+    class ErrorResponseDTO <<dto>> {
+        - errorCode: String
+        - errorMessage: String
+        - timestamp: DateTime
+    }
+}
+
+' Relationships
+Physician "1" --> "1" PhysicianInterface : uses
+PhysicianInterface "1" --> "1" PatientQueueDequeueAPI : calls
+PatientQueueDequeueAPI "1" --> "1" PatientQueueDatabase : reads/writes
+PatientQueueDatabase "1" --> "0..*" Patient : stores
+PatientQueue "1" --> "0..*" Patient : contains
+Physician "1" --> "0..*" Patient : accesses
+Physician "1" --> "1" PatientQueue : initiates dequeue operation
+
+' Exception relationships
+PatientQueueDequeueAPI ..> EmptyQueueException : throws
+PatientQueueDequeueAPI ..> NetworkFailureException : throws
+PatientQueueDequeueAPI ..> ConcurrentAccessException : throws
+PhysicianInterface ..> AuthenticationException : throws
+
+' DTO relationships
+PatientQueueDequeueAPI ..> DequeueResponseDTO : returns
+PatientQueueDequeueAPI ..> ErrorResponseDTO : returns on error
+PatientQueueDatabase ..> PatientDTO : returns
+
+' State relationships
+PatientQueue --> State : has states
+PatientQueueDequeueAPI --> State : transitions
+
+@enduml

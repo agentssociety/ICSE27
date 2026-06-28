@@ -1,0 +1,198 @@
+@startuml
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam packageFontSize 14
+skinparam packageFontName Arial
+skinparam packageBorderColor #333333
+skinparam classBorderColor #333333
+skinparam classHeaderBackgroundColor #F0F0F0
+
+package "Domain Model" {
+    abstract class Actor {
+        - mayPerform: set Permission
+    }
+    note right of Actor::mayPerform
+        Abstract; subtyped by Inventory_Manager and Blood_Bank_Operations_Team
+    end note
+
+    class Inventory_Manager {
+    }
+    note right of Inventory_Manager
+        inherits Actor
+    end note
+
+    class Blood_Bank_Operations_Team {
+    }
+    note right of Blood_Bank_Operations_Team
+        inherits Actor
+    end note
+
+    class Resource {
+        - owner: Actor
+        - accessible: set Actor
+    }
+    note right of Resource::owner
+        owner always in accessible
+    end note
+
+    abstract class Permission {
+    }
+    note right of Permission
+        Abstract; subtyped by Read, Write, Execute, Admin
+        stronger partial order defined
+    end note
+
+    class Read {
+    }
+    class Write {
+    }
+    class Execute {
+    }
+    class Admin {
+    }
+
+    abstract class State {
+    }
+    note right of State
+        Abstract; subtyped by PreIdle, Post1
+    end note
+
+    class PreIdle {
+    }
+    class Post1 {
+    }
+
+    abstract class IfaceKind {
+    }
+    note right of IfaceKind
+        Abstract; subtyped by API, External_System
+    end note
+
+    class API {
+    }
+    class External_System {
+    }
+
+    abstract class Bool {
+    }
+    note right of Bool
+        Abstract; subtyped by True, False
+    end note
+
+    class True {
+    }
+    class False {
+    }
+
+    class Interface {
+        - kind: IfaceKind
+        - encrypted: Bool
+        - authenticated: Bool
+    }
+    note right of Interface::kind
+        Inventory_API.kind = API
+        Alert_Notification_System.kind = External_System
+    end note
+
+    class Inventory_API {
+    }
+    note right of Inventory_API
+        Retrieves current inventory levels for ABO/Rh types
+    end note
+
+    class Alert_Notification_System {
+    }
+    note right of Alert_Notification_System
+        Sends alerts via email or dashboard
+    end note
+
+    class REQ_MON_01 {
+        - initiator: Actor
+        - target: set Resource
+        - channel: set Interface
+        - grant: Permission
+        - pre: State
+        - post: State
+    }
+    note right of REQ_MON_01
+        some channel
+        some target
+        grant in initiator.mayPerform
+        initiator in target.accessible
+        pre != post
+        some c: channel | c.authenticated = True
+        post in Post1
+    end note
+
+    Actor <|-- Inventory_Manager
+    Actor <|-- Blood_Bank_Operations_Team
+    Permission <|-- Read
+    Permission <|-- Write
+    Permission <|-- Execute
+    Permission <|-- Admin
+    State <|-- PreIdle
+    State <|-- Post1
+    IfaceKind <|-- API
+    IfaceKind <|-- External_System
+    Bool <|-- True
+    Bool <|-- False
+    Interface <|-- Inventory_API
+    Interface <|-- Alert_Notification_System
+
+    REQ_MON_01 "1" --> "1" Actor : initiator
+    REQ_MON_01 "1" --> "1..*" Resource : target
+    REQ_MON_01 "1" --> "1..*" Interface : channel
+    REQ_MON_01 "1" --> "1" Permission : grant
+    REQ_MON_01 "1" --> "1" State : pre
+    REQ_MON_01 "1" --> "1" State : post
+    Resource "1" --> "1" Actor : owner
+    Resource "1" --> "1..*" Actor : accessible
+}
+
+package "Exceptions" {
+    class UnauthorizedExecutionException <<exception>> {
+    }
+    class UnauthorizedResourceAccessException <<exception>> {
+    }
+    class AuthenticationRequiredException <<exception>> {
+    }
+}
+
+package "Application" {
+    class InventoryMonitorService {
+        - threshold: int = 5
+    }
+    note right of InventoryMonitorService
+        Threshold for alert is 5 units per ABO/Rh type
+        Alert triggered when inventory < 5 units (strictly below)
+    end note
+
+    class AlertService {
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface InventoryRepository {
+    }
+    interface AlertNotifier {
+    }
+}
+
+package "Controllers" {
+    class InventoryCheckController {
+    }
+}
+
+package "DTOs" {
+    class InventoryCheckRequest <<dto>> {
+        - bloodType: String
+        - currentUnits: int
+    }
+    class AlertNotification <<dto>> {
+        - bloodType: String
+        - currentUnits: int
+        - threshold: int
+    }
+}
+
+@enduml

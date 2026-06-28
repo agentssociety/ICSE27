@@ -1,0 +1,191 @@
+@startuml
+!define RECTANGLE class
+
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F5F5F5
+skinparam classBorderColor #333333
+skinparam classFontColor #333333
+skinparam classFontSize 12
+skinparam classAttributeFontSize 10
+skinparam packageBackgroundColor #FAFAFA
+skinparam packageBorderColor #666666
+skinparam packageFontStyle bold
+
+package "Domain Model" {
+    class Flight {
+        - id: String
+        - estimatedTimeOfArrival: DateTime
+        - status: FlightStatus
+  + getStatus() : FlightStatus
+  + updateStatus(status: FlightStatus) : void
+    }
+
+    enum FlightStatus {
+        SCHEDULED
+        DELAYED
+        CANCELED
+    }
+
+    class TimeSlot {
+        - startTime: DateTime
+        - endTime: DateTime
+        - duration: Duration
+  + createSlot(startTime: DateTime) : TimeSlot
+    }
+
+    class SlotAllocation {
+        - flightId: String
+        - slotStart: DateTime
+        - slotEnd: DateTime
+        - gapAfter: Duration
+  + createAllocation(flightId: String, slot: TimeSlot) : SlotAllocation
+  + enforceGap(allocation: SlotAllocation) : Boolean
+  + verifyGaps(allocations: List<SlotAllocation>) : Boolean
+  + verifyNoOverlaps(allocations: List<SlotAllocation>) : Boolean
+    }
+
+    class State {
+        - name: String
+  + transitionTo("Post1") : void
+  + transitionTo("Post2") : void
+    }
+
+    class Permission {
+        - level: PermissionLevel
+    }
+
+    enum PermissionLevel {
+        READ
+        WRITE
+        EXECUTE
+        ADMIN
+    }
+
+    class Actor {
+        - name: String
+        - mayPerform: Permission[]
+  + checkAuthentication(token: String) : Boolean
+  + checkPermission(actor: Actor, requiredLevel: PermissionLevel) : Boolean
+    }
+
+    class Resource {
+        - owner: String
+        - accessible: String[]
+  + checkAccessibility(actor: Actor) : Boolean
+    }
+
+    class Interface {
+        - kind: InterfaceKind
+        - encrypted: Boolean
+        - authenticated: Boolean
+    }
+
+    enum InterfaceKind {
+        DATABASE
+        API
+    }
+
+    class Operation {
+        - name: String
+    }
+
+    SlotAllocation "1" --> "1" Flight : associated with
+    SlotAllocation ..> TimeSlot : depends on
+    Actor --> Resource : accesses
+    Operation --> Interface : uses
+    Operation --> State : transitions
+}
+
+package "Application" {
+    class System {
+        - timeSlots: TimeSlot[]
+  + allocateSlot(flightId: String) : SlotAllocation
+  + verifySafetyCompliance() : Boolean
+    }
+
+    System *--> TimeSlot : manages
+}
+
+package "Infrastructure — Ports" {
+    interface "FlightInformationAPI" as FIA {
+        +{abstract} retrieveFlightSchedule()
+        +{abstract} updateSlotAllocation()
+    }
+
+    interface "FlightScheduleDatabase" as FSD {
+        +{abstract} storeSchedule()
+        +{abstract} retrieveSchedule()
+        +{abstract} updateAllocation()
+    }
+}
+
+package "Controllers" {
+    class SlotAllocationController {
+        - api: FlightInformationAPI
+        - database: FlightScheduleDatabase
+    }
+
+    class SafetyComplianceController {
+        - api: FlightInformationAPI
+        - database: FlightScheduleDatabase
+    }
+}
+
+package "Exceptions" {
+    class AuthenticationException <<exception>> {
+        - message: String
+    }
+
+    class ResourceInaccessibleException <<exception>> {
+        - message: String
+    }
+
+    class SlotOverlapException <<exception>> {
+        - message: String
+    }
+
+    class ViolationAlertException <<exception>> {
+        - message: String
+    }
+}
+
+package "DTOs" {
+    class SlotAllocationRequest <<dto>> {
+        - flightId: String
+        - requestedStartTime: DateTime
+    }
+
+    class SlotAllocationResponse <<dto>> {
+        - flightId: String
+        - slotStart: DateTime
+        - slotEnd: DateTime
+        - gapAfter: Duration
+        - success: Boolean
+    }
+
+    class SafetyVerificationRequest <<dto>> {
+        - allocationId: String
+    }
+
+    class SafetyVerificationResponse <<dto>> {
+        - verified: Boolean
+        - violations: String[]
+    }
+}
+
+SlotAllocationController ..> FIA
+SlotAllocationController ..> FSD
+SafetyComplianceController ..> FIA
+SafetyComplianceController ..> FSD
+
+SlotAllocationController ..> SlotAllocationRequest
+SlotAllocationController ..> SlotAllocationResponse
+SafetyComplianceController ..> SafetyVerificationRequest
+SafetyComplianceController ..> SafetyVerificationResponse
+
+SlotAllocationController ..> AuthenticationException
+SlotAllocationController ..> ResourceInaccessibleException
+SlotAllocationController ..> SlotOverlapException
+SafetyComplianceController ..> ViolationAlertException
+
+@enduml

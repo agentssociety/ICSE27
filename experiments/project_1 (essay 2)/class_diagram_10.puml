@@ -1,0 +1,161 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam defaultFontName Courier
+skinparam defaultFontSize 10
+skinparam classAttributeIconSize 0
+skinparam class {
+  BorderColor #2E4057
+  BackgroundColor #F8F9FA
+  FontColor #2E4057
+}
+skinparam interface {
+  BorderColor #2E4057
+  BackgroundColor #E2E8F0
+  FontColor #2E4057
+}
+skinparam enum {
+  BorderColor #2E4057
+  BackgroundColor #E6F7E6
+  FontColor #2E4057
+}
+skinparam stereotype {
+  BackgroundColor #FFFFFF
+  FontColor #2E4057
+}
+
+package "Domain Model" {
+  
+  class Patient {
+    - urgency: UrgencyLevel
+  + updateUrgency(newUrgencyLevel)
+  + updateUrgency(urgent)
+  + updateUrgency(critical)
+  }
+  
+  class Queue {
+    - patients: List<Patient>
+  + addPatient(patient)
+  + reorderByUrgency()
+  + getPatients() : List<Patient>
+  }
+  
+  enum UrgencyLevel {
+    CRITICAL
+    URGENT
+    NON_URGENT
+  + validate(urgencyLevel) : boolean
+  + validate(newUrgencyLevel) : boolean
+  + validate(urgent) : boolean
+  + validate(critical) : boolean
+  }
+  
+  Queue *-- Patient : "ordered"
+  Patient --> UrgencyLevel
+  
+  note right of Queue
+    sorted by urgency descending:
+    Critical > Urgent > NonUrgent
+  end note
+}
+
+package "Application" {
+  
+  class TriageService {
+  }
+  
+  TriageService --> Patient : manages
+  TriageService --> Queue : reorders
+}
+
+package "Infrastructure — Ports" {
+  
+  interface PatientAPI {
+  }
+  
+  interface QueueDatabase {
+  + retryWithLock()
+  + retryWithOptimisticLock(patientId)
+  + retryWithPessimisticLock(patientId)
+  }
+  
+  class PatientResource <<dto>> {
+    - owner: Actor
+    - accessible: Set<Actor>
+  + findById(patientId) : Patient
+  + findById(patientId1) : Patient
+  + findById(patientId2) : Patient
+  }
+  
+  class QueueResource <<dto>> {
+    - owner: Actor
+    - accessible: Set<Actor>
+  }
+  
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+  
+  class Actor {
+    - name: String
+    - roles: List<Role>
+  }
+  
+  enum Role {
+    TRIAGE_NURSE
+    DOCTOR
+    SYSTEM_ADMIN
+  }
+  
+  PatientResource --> Actor : "owner"
+  PatientResource --> Actor : "accessible"
+  QueueResource --> Actor : "owner"
+  QueueResource --> Actor : "accessible"
+  PatientResource --> Permission
+  QueueResource --> Permission
+  Actor --> Role
+  
+  TriageService --> PatientAPI
+  TriageService --> QueueDatabase
+}
+
+package "Controllers" {
+  
+  class PatientController {
+  }
+  
+  PatientController --> TriageService
+}
+
+package "DTOs" {
+  
+  class PatientDTO <<dto>> {
+    - patientId: String
+    - name: String
+    - urgency: UrgencyLevel
+  }
+  
+  class UrgencyUpdateDTO <<dto>> {
+    - patientId: String
+    - newUrgency: UrgencyLevel
+  }
+  
+  PatientDTO --> UrgencyLevel
+  UrgencyUpdateDTO --> UrgencyLevel
+}
+
+package "Exceptions" {
+  
+  class InvalidUrgencyException <<exception>> {
+  }
+  
+  class ConcurrentUpdateException <<exception>> {
+  }
+  
+  TriageService ..> InvalidUrgencyException
+  TriageService ..> ConcurrentUpdateException
+}
+
+@enduml

@@ -1,0 +1,93 @@
+{
+  "id": "REQ-FRAUD-01",
+  "title": "Detect and flag unusual withdrawal patterns",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall detect rapid consecutive withdrawals (more than 3 within 5 minutes) and amounts significantly outside the user's historical average, and flag the account for review.",
+  "rationale": "To identify potential fraud or errors quickly to prevent financial loss and maintain customer trust.",
+  "business_value": "Early detection of fraudulent activities can help in preventing financial losses and maintaining the integrity of the banking system.",
+  "source": {
+    "type": "User Story",
+    "id": 83,
+    "description": "As a system, I need detect unusual withdrawal patterns (e.g., rapid consecutive withdrawals, unusual amounts) and flag the account for review so that potential fraud or errors are identified quickly."
+  },
+  "stakeholders": [
+    "Finance Team",
+    "Fraud Detection Team",
+    "Customer Support"
+  ],
+  "acceptance_criteria": [
+    "Given the system is monitoring withdrawal transactions, When a user performs rapid consecutive withdrawals (e.g., 4 withdrawals within 5 minutes), Then the system flags the account for review.",
+    "Given the system is monitoring withdrawal transactions, When a user performs a withdrawal of an unusual amount (e.g., 10x the average), Then the system flags the account for review."
+  ],
+  "preconditions": [
+    "The system must be operational and actively monitoring withdrawal transactions."
+  ],
+  "postconditions": [
+    "The system must flag the account for review if it detects rapid consecutive withdrawals or an unusual amount."
+  ],
+  "functional_constraints": [
+    "The detection algorithm must operate within a response time of less than 2 minutes to ensure timely flagging."
+  ],
+  "security_requirements": [
+    "All withdrawal transactions must be securely logged and accessible only by authorized personnel.",
+    "User data must be encrypted at rest and in transit."
+  ],
+  "non_functional_requirements": {
+    "performance": "The system must handle up to 1000 concurrent users without significant performance degradation.",
+    "availability": "The system must be available 99.9% of the time with minimal downtime.",
+    "scalability": "The system must scale horizontally to accommodate growth in user base and transaction volume.",
+    "usability": "Error messages must be clear and actionable, and interfaces should be intuitive."
+  },
+  "edge_cases": [
+    "What happens if a user makes withdrawals during a holiday weekend when historical average transactions are lower?",
+    "How the system behaves if there is a sudden spike in transaction volume, leading to potential delays in detecting patterns?"
+  ],
+  "dependencies": [
+    "Historical transaction data for each user",
+    "Real-time monitoring capabilities of the system"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "User Transaction Database",
+      "description": "Used to store and access historical transaction data for users."
+    },
+    {
+      "type": "API",
+      "name": "Withdrawal API",
+      "description": "Interface through which withdrawal transactions are submitted for monitoring."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-01",
+      "description": "User makes 4 withdrawals within a span of 5 minutes.",
+      "expected_result": "The system flags the account for review."
+    },
+    {
+      "id": "TC-02",
+      "description": "User makes a withdrawal amount that is 10x their historical average.",
+      "expected_result": "The system flags the account for review."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-16T09:57:53.261185",
+  "last_updated": "2026-06-16T10:13:41.399224",
+  "traceability": {
+    "related_requirements": [
+      "REQ-FUNC-01",
+      "REQ-AUTH-01"
+    ],
+    "design_components": [
+      "AccountFlag",
+      "Account",
+      "Transaction"
+    ],
+    "test_artifacts": []
+  }
+}

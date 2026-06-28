@@ -1,0 +1,131 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam interfaceBackgroundColor #FEFEFE
+skinparam classBackgroundColor #FEFEFE
+skinparam noteBackgroundColor #FFFFCC
+
+package "Domain Model" {
+  enum SeverityLevel {
+    CRITICAL
+    HIGH
+    MEDIUM
+    LOW
+  + evaluateSeverity(symptoms: List<String>) : SeverityLevel
+  + evaluateSeverity(symptoms: []) : SeverityLevel
+  }
+
+  enum RecordState {
+    PENDING_TRIAGE
+    IN_CONSULTATION
+    COMPLETED
+    ARCHIVED
+  + setState(RecordState.ACTIVE) : void
+  }
+
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+  }
+
+  enum Role {
+    TRIAGE_NURSE_TEAM
+    MEDICAL_STAFF
+    PATIENT_CARE_COORDINATION_TEAM
+  }
+
+  abstract class SymptomResource {
+    - resourceId: UUID
+    - description: String
+  }
+
+  class Patient {
+    - patientId: UUID
+    - symptoms: SymptomResource[]
+    - state: RecordState
+  + createPatient(name: String, symptoms: List<String>) : Patient
+  + createPatient(name: String, symptoms: []) : Patient
+  }
+
+  note top of Patient : Invariant: Record must be\ncreated with or without symptoms
+
+  class PatientQueue {
+    - queueId: UUID
+    - patientId: UUID
+    - position: Integer
+    - severity: SeverityLevel
+  + addToQueue(patient: Patient, severity: SeverityLevel) : int
+  + calculatePosition(severity: SeverityLevel) : int
+  + addToQueue(patient: Patient, severity: SeverityLevel.LOW) : int
+  + calculatePosition(SeverityLevel.LOW) : int
+  }
+
+  note top of PatientQueue : Invariant: Queue position is\nbased on symptom severity
+
+  Patient --> "0..*" SymptomResource : aggregates >
+  Patient --> PatientQueue : dependency >
+}
+
+package "DTOs" <<Rectangle>> {
+  class PatientRegistrationDto <<dto>> {
+    - patientInfo: String
+    - symptoms: List<String>
+  }
+
+  class PatientRecordDto <<dto>> {
+    - recordId: UUID
+    - patientInfo: String
+    - symptoms: List<SymptomResource>
+    - queuePosition: Integer
+  }
+}
+
+package "Application" {
+  class TriageService
+  class PatientMapper
+}
+
+package "Infrastructure — Ports" {
+  interface PatientRepository
+  interface QueueManagementApi
+  interface NotificationService
+  interface AuthenticationService
+}
+
+package "Controllers" {
+  interface RegistrationFormInterface
+{
+  + displayRegistrationForm() : void
+  + displayError("Please correct the input errors")
+  + displaySuccess("Patient registered successfully")
+  + displaySuccess("Patient registered at end of queue")
+  + displayError("Symptoms entered incorrectly. Please correct before proceeding.")
+  + displayError("Unable to register. Contact support.")
+  + displayError("System error occurred. Please try again or contact support.")
+  + displayError("System error occurred. Manual intervention required.")
+  + displayError("Access denied. Only authorized triage nurses can register patients.")
+  + displayError("Session expired. Please log in again.")
+  + displayError("System is unavailable. Please try again later.")
+}
+}
+
+package "Exceptions" {
+  class RegistrationFailedException <<exception>>
+  class InvalidSymptomDataException <<exception>>
+  class UnauthorizedAccessException <<exception>>
+}
+
+' Relationships
+RegistrationFormInterface .right.> TriageService : uses >
+TriageService .right.> PatientRepository : uses >
+TriageService .right.> QueueManagementApi : uses >
+TriageService .right.> NotificationService : uses >
+TriageService .right.> AuthenticationService : uses >
+TriageService .left.> PatientMapper : uses >
+TriageService ..> PatientRegistrationDto : creates >
+TriageService ..> PatientRecordDto : creates >
+TriageService ..> RegistrationFailedException : throws }
+TriageService ..> InvalidSymptomDataException : throws }
+TriageService ..> UnauthorizedAccessException : throws }
+
+@enduml

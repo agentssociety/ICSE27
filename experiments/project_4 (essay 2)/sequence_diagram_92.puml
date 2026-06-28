@@ -1,0 +1,149 @@
+@startuml
+title Fraud Detection System – Sequence Diagram
+
+skinparam sequenceArrowThickness 2
+skinparam sequenceDividerBackgroundColor #F0F8FF
+skinparam participantBorderColor #4682B4
+skinparam participantBackgroundColor #E6F2FF
+skinparam noteBackgroundColor #FFFFE0
+skinparam noteBorderColor #DAA520
+
+box "External" #LightCyan
+participant "TransactionMonitoringAPI" as API
+participant "FraudAnalystDashboard" as Dashboard
+end box
+
+box "Application" #LightYellow
+participant "System" as System
+end box
+
+box "Domain" #MistyRose
+participant "User" as User
+participant "Transaction" as TX
+participant "FlaggedTransaction" as FT
+participant "FraudAnalyst" as Analyst
+participant "Permission" as Perm
+participant "State" as St
+participant "TransactionStatus" as TXStatus
+participant "FlaggedTransactionStatus" as FTStatus
+end box
+
+box "Infrastructure" #LightGreen
+participant "Database" as DB
+end box
+
+== Detect Suspicious Transaction Pattern (Happy Path) ==
+
+User -> User: createWithdrawalRequest()
+User -> TX : initiate(amount: Money, account: Account) : Transaction
+note over TX : state = 'PreIdle' (Transaction)
+
+TX -> API : sendTransaction(tx: Transaction) : HTTP POST /transactions
+API -> System : receiveTransaction(transaction: Transaction) : 201 Created
+System -> System: checkFrequencyAndSpeed(accountId: String, timeframe: Duration) : DetectionResult
+
+alt suspicious pattern detected (rapid withdrawals within timeframe)
+    System -> FT : create(transaction: Transaction) : FlaggedTransaction
+    note over FT : state = 'pending' (FlaggedTransaction.pending)
+    System -> DB: saveFlaggedTransaction(FT: FlaggedTransaction) : void
+    DB --> System : success
+
+    System -> API : transactionFlagged(flagId: String) : 200 OK
+    API -> TX : markFlagged(flagId: String) : void
+    note over TX : status updated (TransactionStatus.FLAGGED)
+
+    == Fraud Analyst Review and Resolution ==
+
+    Dashboard -> Dashboard: authenticateAnalyst(credentials) : AuthToken
+    note over Dashboard : requires Read permission
+    Dashboard -> System: getPendingFlaggedTransactions() : List<FlaggedTransaction>
+    System -> DB: loadPendingFlaggedTransactions() : List<FlaggedTransaction>
+    DB --> System : data
+    System --> Dashboard : response (200 OK, list)
+
+    Analyst -> Dashboard: selectTransactionForReview(FT: FlaggedTransaction)
+    Dashboard -> System: updateFlaggedTransactionStatus(flagId: String, newStatus: FlaggedTransactionStatus)
+    System -> FT : changeStatus(newStatus: FlaggedTransactionStatus) : void
+    note over FT : state = 'under_review' (FlaggedTransaction.under_review)
+    System -> DB: updateFlaggedTransaction(FT: FlaggedTransaction) : void
+    DB --> System : success
+    System --> Dashboard : status updated (200 OK)
+
+    Analyst -> Dashboard: resolveTransaction(resolution: String)
+    Dashboard -> System: resolveFlaggedTransaction(flagId: String, resolution: String)
+    System -> FT : changeStatus(FlaggedTransactionStatus.RESOLVED) : void
+    note over FT : state = 'resolved' (FlaggedTransaction.resolved)
+    System -> DB: updateFlaggedTransaction(FT: FlaggedTransaction) : void
+    DB --> System : success
+    System --> Dashboard : resolution accepted (200 OK)
+
+else no suspicious pattern detected
+    System -> API : transactionSafe(txId: String) : 200 OK
+    note over TX : transaction continues normally
+end
+
+== Network Outage (Error Path) ==
+
+User -> TX : initiate(amount: Money, account: Account) : Transaction
+TX -> API : sendTransaction(tx: Transaction) : HTTP POST /transactions
+
+API -> System : receiveTransaction(transaction: Transaction) : 201 Created
+System -> System: checkFrequencyAndSpeed(accountId: String, timeframe: Duration) : DetectionResult
+
+alt network outage occurs during detection
+    note over System #FFCCCC: Network connection lost to DB
+    System -> System: logOutageEvent(details: OutageEvent) : void
+    System -> System: startFallbackBuffer(tx: Transaction) : void
+    note right: Buffer transactions in memory until recovery
+    System -> System: waitForNetworkRecovery(timeout: Duration)
+    alt network restored within timeout
+        System -> DB: saveFlaggedTransaction(FT: FlaggedTransaction) : void
+        DB --> System : success
+        System -> System: clearBuffer() : void
+    else timeout exceeded
+        System -> System: alertITTeam(outageEvent: OutageEvent) : void
+        System -> System: persistBufferToLocalStorage() : void
+        note right: Transactions not lost, will sync later
+    end
+else network OK
+    System -> DB: saveFlaggedTransaction(FT: FlaggedTransaction) : void
+    DB --> System : success
+end
+
+== Transaction Volume Exceeds Capacity (Error Path) ==
+
+API -> System : receiveTransactionStream(stream: Stream<Transaction>) : 202 Accepted
+System -> System: checkCurrentLoad() : LoadMetrics
+alt load > 1,000 tpm threshold
+    System -> System: activateThrottling(policy: ThrottlingPolicy) : void
+    note right: Graceful degradation – sample incoming transactions
+    System -> System: processBatch(transactions: List<Transaction>) : void
+    alt batch includes suspicious pattern
+        System -> FT : create(transaction: Transaction) : FlaggedTransaction
+        System -> DB: saveFlaggedTransaction(FT: FlaggedTransaction) : void
+        DB --> System : success
+    end
+    System -> API : partialSuccess(processedCount: int, throttledCount: int) : 200 OK
+else load normal
+    System -> System: processTransaction(transaction: Transaction) : void
+    System -> API : success(accepted: true) : 200 OK
+end
+
+== Unauthorized Access Attempt (Error Path) ==
+
+Dashboard -> Dashboard: authenticateAnalyst(credentials) : AuthToken
+alt token invalid or missing required permission (Read)
+    Dashboard -> Analyst: showError("Access Denied – Insufficient Permissions") : 403 Forbidden
+else token valid with permission
+    Dashboard -> System: getPendingFlaggedTransactions() : List<FlaggedTransaction>
+    System -> System: checkPermission(initiator: Principal, resource: Resource) : boolean
+    alt initiator lacks required role
+        System -> Dashboard : error("Forbidden") : 403
+    else authorized
+        System -> DB: loadPendingFlaggedTransactions() : List<FlaggedTransaction>
+        DB --> System : data
+        System --> Dashboard : response (200 OK, list)
+    end
+end
+
+@enduml

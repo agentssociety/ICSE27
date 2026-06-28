@@ -1,0 +1,16 @@
+{
+  "run_id": "P2E1",
+  "project": 2,
+  "essay": 1,
+  "n_tasks": 7,
+  "spec_files": 7,
+  "verified_specs": 5,
+  "failed_specs": 2,
+  "total_specs": 7,
+  "verification_rate": 0.7143,
+  "n_commented_block_specs": 2,
+  "commented_block_specs": [
+    "formal_spec_27.als",
+    "formal_spec_30.als"
+  ]
+}

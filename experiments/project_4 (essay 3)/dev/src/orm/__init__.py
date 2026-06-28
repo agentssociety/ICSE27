@@ -1,0 +1,21 @@
+# Register all ORM models for Alembic and SQLAlchemy metadata.
+from src.orm.account_balance.account_balance_orm import AccountBalanceORM  # noqa: F401
+from src.orm.actor.actor_orm import ActorORM  # noqa: F401
+from src.orm.audit_log_resource.audit_log_resource_orm import AuditLogResourceORM  # noqa: F401
+from src.orm.authentication_attempt.authentication_attempt_orm import AuthenticationAttemptORM  # noqa: F401
+from src.orm.authentication_session.authentication_session_orm import AuthenticationSessionORM  # noqa: F401
+from src.orm.card.card_orm import CardORM  # noqa: F401
+from src.orm.failed_attempt.failed_attempt_orm import FailedAttemptORM  # noqa: F401
+from src.orm.load_alert.load_alert_orm import LoadAlertORM  # noqa: F401
+from src.orm.lockout_notification.lockout_notification_orm import LockoutNotificationORM  # noqa: F401
+from src.orm.lockout_record.lockout_record_orm import LockoutRecordORM  # noqa: F401
+from src.orm.pin.pin_orm import PinORM  # noqa: F401
+from src.orm.storage_state.storage_state_orm import StorageStateORM  # noqa: F401
+from src.orm.suspicious_pattern.suspicious_pattern_orm import SuspiciousPatternORM  # noqa: F401
+from src.orm.transaction_log.transaction_log_orm import TransactionLogORM  # noqa: F401
+from src.orm.transaction_state_change.transaction_state_change_orm import TransactionStateChangeORM  # noqa: F401
+from src.orm.user.user_orm import UserORM  # noqa: F401
+from src.orm.user_account.user_account_orm import UserAccountORM  # noqa: F401
+from src.orm.withdrawal_limit.withdrawal_limit_orm import WithdrawalLimitORM  # noqa: F401
+from src.orm.withdrawal_request.withdrawal_request_orm import WithdrawalRequestORM  # noqa: F401
+from src.orm.withdrawal_transaction.withdrawal_transaction_orm import WithdrawalTransactionORM  # noqa: F401

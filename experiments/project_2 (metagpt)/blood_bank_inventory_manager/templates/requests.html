@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Transfusion Requests - Blood Bank Management{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="display-5">Transfusion Requests</h1>
+        <p class="text-muted">Manage and create transfusion requests with auto-matching</p>
+    </div>
+</div>
+
+<!-- New Transfusion Request Form -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-plus-circle"></i> New Transfusion Request
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('main.new_request') }}">
+                    {{ new_request_form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ new_request_form.abo_type.label(class="form-label") }}
+                        {{ new_request_form.abo_type(class="form-select") }}
+                        {% for error in new_request_form.abo_type.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        {{ new_request_form.rh_factor.label(class="form-label") }}
+                        {{ new_request_form.rh_factor(class="form-select") }}
+                        {% for error in new_request_form.rh_factor.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        {{ new_request_form.quantity.label(class="form-label") }}
+                        {{ new_request_form.quantity(class="form-control") }}
+                        {% for error in new_request_form.quantity.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="d-grid">
+                        {{ new_request_form.submit(class="btn btn-info text-white") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-funnel"></i> Filter Requests
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('main.requests') }}">
+                    <div class="mb-3">
+                        {{ filter_form.status.label(class="form-label") }}
+                        {{ filter_form.status(class="form-select") }}
+                    </div>
+                    <div class="d-grid">
+                        {{ filter_form.submit(class="btn btn-outline-secondary") }}
+                        <a href="{{ url_for('main.requests') }}" class="btn btn-outline-danger mt-2">Clear Filters</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Requests Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-list"></i> Transfusion Requests
+                </h5>
+                <span class="badge bg-light text-dark">{{ request_list|length }} request(s)</span>
+            </div>
+            <div class="card-body">
+                {% if request_list %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>ABO Type</th>
+                                <th>Rh Factor</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                                <th>Created At</th>
+                                <th>Matched Units</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in request_list %}
+                            <tr>
+                                <td>{{ req.id }}</td>
+                                <td><strong>{{ req.abo_type }}</strong></td>
+                                <td>{{ req.rh_factor | capitalize }}</td>
+                                <td>{{ req.quantity }}</td>
+                                <td>
+                                    {% if req.status == 'pending' %}
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    {% elif req.status == 'fulfilled' %}
+                                        <span class="badge bg-success">Fulfilled</span>
+                                    {% elif req.status == 'cancelled' %}
+                                        <span class="badge bg-danger">Cancelled</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ req.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    {% if req.matched_units %}
+                                        <span class="small">
+                                            {% for unit in req.matched_units %}
+                                                Unit #{{ unit.id }}{% if not loop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted">None</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if req.status == 'pending' %}
+                                    <form action="{{ url_for('main.cancel_request', request_id=req.id) }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Cancel this request">
+                                            <i class="bi bi-x-circle"></i> Cancel
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info mb-0">
+                    <i class="bi bi-info-circle"></i> No transfusion requests found matching the current filters.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Optional: confirm before cancelling a request
+    document.querySelectorAll('form[action*="/cancel"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            if (!confirm('Are you sure you want to cancel this transfusion request? This will release all reserved units.')) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}

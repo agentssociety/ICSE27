@@ -1,0 +1,176 @@
+@startuml PackageArchitecture
+!pragma layout smetana
+scale 0.75
+
+title Package Architecture — Project 9
+
+skinparam {
+  BackgroundColor transparent
+  ComponentBorderColor #AAAAAA
+  ComponentFontSize 11
+  PackageFontSize 12
+  PackageFontStyle bold
+  ArrowColor #666666
+  ArrowThickness 1
+  Shadowing false
+}
+
+skinparam package<<Domain>> {
+  BackgroundColor #E1F5E1
+}
+skinparam package<<DTO>> {
+  BackgroundColor #E3F2FD
+}
+skinparam package<<Repository>> {
+  BackgroundColor #FCE4EC
+}
+skinparam package<<ORM>> {
+  BackgroundColor #FFF3E0
+}
+skinparam package<<Infra>> {
+  BackgroundColor #F3E5F5
+}
+skinparam package<<Service>> {
+  BackgroundColor #E0F2F1
+}
+skinparam package<<API>> {
+  BackgroundColor #FFF9C4
+}
+skinparam package<<UI>> {
+  BackgroundColor #F1F8E9
+}
+skinparam package<<Tests>> {
+  BackgroundColor #EEEEEE
+}
+skinparam package<<Config>> {
+  BackgroundColor #C8E6C9
+}
+skinparam package<<Docs>> {
+  BackgroundColor #BBDEFB
+}
+skinparam package<<Shared>> {
+  BackgroundColor #F5F5F5
+}
+
+package "Domain layer" <<Domain>> {
+  [domain.flight] as domain_flight
+  [domain.runway] as domain_runway
+  [domain.time_slot] as domain_time_slot
+}
+
+package "DTO layer" <<DTO>> {
+  [dto.flight] as dto_flight
+  [dto.runway] as dto_runway
+  [dto.time_slot] as dto_time_slot
+}
+
+package "Repository layer" <<Repository>> {
+  [repository.flight] as repository_flight
+  [repository.runway] as repository_runway
+  [repository.time_slot] as repository_time_slot
+}
+
+package "ORM layer" <<ORM>> {
+  [orm.flight] as orm_flight
+  [orm.runway] as orm_runway
+  [orm.time_slot] as orm_time_slot
+}
+
+package "Infra layer" <<Infra>> {
+  [infra.flight] as infra_flight
+  [infra.runway] as infra_runway
+  [infra.time_slot] as infra_time_slot
+}
+
+package "Service layer" <<Service>> {
+  [service.flight] as service_flight
+  [service.runway] as service_runway
+  [service.time_slot] as service_time_slot
+}
+
+package "API layer" <<API>> {
+  [api.flight] as api_flight
+  [api.runway] as api_runway
+  [api.time_slot] as api_time_slot
+}
+
+package "Config layer" <<Config>> {
+  [config.settings] as config_settings
+}
+
+package "Docs layer" <<Docs>> {
+  [docs.api_and_deployment] as docs_api_and_deployment
+}
+
+package "Tests layer" <<Tests>> {
+  [tests.integration] as tests_integration
+  [tests.unit.flight] as tests_unit_flight
+  [tests.unit.runway] as tests_unit_runway
+  [tests.unit.time_slot] as tests_unit_time_slot
+}
+
+' ── Dependencies ──
+dto_flight --> domain_flight
+repository_flight --> domain_flight
+orm_flight --> domain_flight
+infra_flight --> domain_flight
+infra_flight --> repository_flight
+infra_flight --> orm_flight
+service_flight --> domain_flight
+service_flight --> repository_flight
+service_flight --> dto_flight
+api_flight --> service_flight
+api_flight --> dto_flight
+dto_time_slot --> domain_time_slot
+repository_time_slot --> domain_time_slot
+orm_time_slot --> domain_time_slot
+infra_time_slot --> domain_time_slot
+infra_time_slot --> repository_time_slot
+infra_time_slot --> orm_time_slot
+service_time_slot --> domain_time_slot
+service_time_slot --> repository_time_slot
+service_time_slot --> dto_time_slot
+service_time_slot --> service_flight
+api_time_slot --> service_time_slot
+api_time_slot --> dto_time_slot
+dto_runway --> domain_runway
+repository_runway --> domain_runway
+orm_runway --> domain_runway
+infra_runway --> domain_runway
+infra_runway --> repository_runway
+infra_runway --> orm_runway
+service_runway --> domain_runway
+service_runway --> repository_runway
+service_runway --> dto_runway
+service_runway --> service_flight
+service_runway --> service_time_slot
+api_runway --> service_runway
+api_runway --> dto_runway
+tests_unit_flight --> domain_flight
+tests_unit_flight --> service_flight
+tests_unit_flight --> api_flight
+tests_unit_time_slot --> domain_time_slot
+tests_unit_time_slot --> service_time_slot
+tests_unit_time_slot --> api_time_slot
+tests_unit_runway --> domain_runway
+tests_unit_runway --> service_runway
+tests_unit_runway --> api_runway
+tests_integration --> api_flight
+tests_integration --> api_time_slot
+tests_integration --> api_runway
+
+legend right
+  **Layers (top → bottom)**
+  Domain → DTO → Repository → ORM → Infra
+  → Service → API → UI
+  Shared: cross-cutting utilities
+  Tests: mirrors every layer
+  Config / Docs: support concerns
+  ----
+  Packages: 27
+  Tasks: 7
+  Domain classes: 3
+  Generated: 2026-06-15 20:14 UTC
+end legend
+
+@enduml

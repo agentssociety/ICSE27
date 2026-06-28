@@ -1,0 +1,149 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #333333
+  FontName Arial
+}
+
+!define DTO <<dto>>
+!define EXC <<exception>>
+
+package "Domain Model" {
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+
+  enum State {
+    PRE1
+    POST1
+    EC_SAFETY_STALE
+  + setState(Post1)
+  }
+
+  class User {
+    - userId: String
+    - mayPerform: Set<Permission>
+  + hasPermission(Permission.Admin) : boolean
+  }
+
+  abstract class Resource {
+    # resourceId: String
+    # owner: User
+    # accessible: Set<User>
+  }
+
+  class BloodTypeResource {
+    - bloodType: String
+    - units: Integer
+  + isAccessible(manager) : boolean
+  }
+  note right of BloodTypeResource
+    Invariant: At least one instance exists
+    Invariant: Subtype of Resource representing blood type inventory
+  end note
+
+  abstract class Operation {
+    # operationId: String
+    # initiator: User
+    # targets: Set<Resource>
+    # channels: Set<Channel>
+    # grant: Permission
+    # pre: State
+    # post: State
+  }
+
+  class BloodTypeAlertOperation {
+    - inventoryPort: InventoryPort
+    - notificationPort: NotificationPort
+  + create(manager, bloodTypes)
+  + checkStock(inventory)
+  + updateState(Post1)
+  }
+  note left of BloodTypeAlertOperation
+    Invariant: pre != post
+    Invariant: post must be POST1 (alert sent)
+    Invariant: Must affect at least one BloodTypeResource
+    Invariant: Initiator must hold required permission
+    Invariant: Initiator must be in targeted resource's accessible set
+    Invariant: Stock < 5 units triggers alert
+  end note
+
+  Resource "1" -- "0..1" User : owner
+  Resource "1" -- "*" User : accessible
+  Operation "1" -- "1" User : initiator
+  Operation "1" -- "*" Resource : targets
+  BloodTypeResource --|> Resource
+  BloodTypeAlertOperation --|> Operation
+}
+
+package "Infrastructure — Ports" {
+  interface Channel {
+  }
+
+  interface InventoryPort {
+  }
+
+  interface NotificationPort {
+  + sendAlert(channels: [Email, SMS], message)
+  }
+
+  BloodTypeAlertOperation "1" -- "1" InventoryPort
+  BloodTypeAlertOperation "1" -- "1" NotificationPort
+  BloodTypeAlertOperation "1" -- "*" Channel
+}
+
+package "Controllers" {
+  class InventoryApiAdapter {
+    - apiEndpoint: String
+  }
+  InventoryApiAdapter ..|> InventoryPort
+
+  class NotificationGatewayAdapter {
+  }
+  NotificationGatewayAdapter ..|> NotificationPort
+
+  InventoryApiAdapter ..|> Channel
+  NotificationGatewayAdapter ..|> Channel
+}
+
+package "Application" {
+  class AlertService {
+  }
+  AlertService ..> BloodTypeAlertOperation : triggers
+}
+
+package "DTOs" {
+  class AlertRequest DTO {
+    + targetUsers: List<String>
+    + message: String
+    + channels: List<String>
+  }
+
+  class InventoryLevel DTO {
+    + bloodType: String
+    + units: Integer
+  }
+
+  class OperationRequest DTO {
+    + initiatorId: String
+    + targetResourceIds: List<String>
+  }
+}
+
+package "Exceptions" {
+  class UnauthorizedOperationException EXC {
+  }
+
+  class InvalidStateTransitionException EXC {
+  }
+
+  class StaleInventoryDataException EXC {
+  }
+}
+
+@enduml

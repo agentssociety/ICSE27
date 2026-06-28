@@ -1,0 +1,243 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam sequenceArrowThickness 2
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+box "Controller Layer" #LightBlue
+    actor "Fraud_Detection_Team" as FDT
+    actor "User" as User
+endbox
+
+box "Application Layer" #LightGreen
+    participant "WithdrawalAPI" as API
+    participant "AuditService" as Audit
+endbox
+
+box "Domain Layer" #LightYellow
+    participant "REQ_FRAUD_01" as Op
+    participant "Resource" as Res
+    participant "Actor" as Act
+    participant "Interface" as Iface
+    participant "State" as St
+    participant "AuditEntry" as AE
+endbox
+
+box "Infrastructure Layer" #LightCoral
+    database "User_Transaction_Database" as DB
+endbox
+
+== Flag Unusual Withdrawal - Happy Path ==
+
+FDT -> API : POST /flag_withdrawal(accountId: String)
+note right : permission check required: Write in FDT.mayPerform
+API -> API : validatePermission(FDT, Write)
+API -> Act : mayPerform.contains(Write)
+Act --> API : true
+
+API -> Res : getAccessibleAccounts(FDT)
+Res --> API : [accountIds]
+
+API -> Op : create(initiator=FDT, grant=Write)
+Op -> Op : validatePreCondition()
+note right : pre != post enforcement
+Op --> API : valid
+
+API -> Iface : getChannel(Withdrawal_API)
+API <-- Iface : channel (encrypted=true, authenticated=true)
+
+API -> DB : [TLS] queryHistoricalData(accountId)
+DB --> API : transactionHistory
+
+API -> API : detectPattern(history)
+note right: rapid consecutive (>3 in 5min) or unusual amount (10x avg)
+
+alt Pattern Detected
+    API -> Op : setPostState(Post1)
+    Op -> Op : transitionState(pre: Pre1 -> post: Post1)
+    Op --> API : stateUpdated
+
+    API -> Audit : createAuditEntry(operation=Op, recordedBy=FDT)
+    Audit -> AE : new(operation, FDT)
+    AE --> Audit : entryCreated
+    Audit -> DB : [TLS] storeAuditEntry(entry)
+    DB --> Audit : stored
+
+    API --> FDT : 200 OK {flagged: true}
+else Normal Pattern
+    API --> FDT : 200 OK {flagged: false}
+end
+
+== Rapid Consecutive Withdrawals - Error Path ==
+
+User -> API : POST /withdrawal(amount, accountId)
+
+API -> User : 401 Unauthorized
+note right: User lacks Write permission in mayPerform
+
+User -> API : GET /check_permissions()
+API --> User : [Read]
+
+== Rapid Consecutive Withdrawals - Authentication Error Path ==
+
+User -> API : POST /withdrawal(amount, accountId)
+note right: Withdrawal_API requires authenticated=True
+alt Channel not authenticated
+    API -> Iface : isAuthenticated(Withdrawal_API)
+    Iface --> API : false
+    API -> User : 403 Forbidden - Authentication Required
+else Channel authenticated
+    API -> User : 200 OK - withdrawal processed
+end
+
+== Unusual Amount Withdrawal - Threshold Enforcement ==
+
+User -> API : POST /withdrawal(amount: 10000)
+note right: amount 10x historical average
+
+API -> DB : [TLS] getHistoricalAverage(accountId)
+DB --> API : avgAmount: 1000
+
+alt amount > 10 * avgAmount
+    API -> Op : create(initiator=User, grant=Read)
+    Op -> Op : validateTransition(pre: Pre1, post: Post1)
+    Op --> API : valid
+    
+    API -> Audit : createAuditEntry(operation=Op, recordedBy=FDT)
+    Audit -> AE : new(Op, FDT)
+    AE --> Audit : created
+    Audit -> DB : [TLS] storeAuditEntry(entry)
+    DB --> Audit : stored
+    
+    API -> User : 200 OK {flagged: true, reason: "unusual_amount"}
+else amount <= 10 * avgAmount
+    API -> User : 200 OK {flagged: false}
+end
+
+== Database Error Path ==
+
+FDT -> API : POST /flag_withdrawal(accountId)
+
+API -> DB : [TLS] queryHistoricalData(accountId)
+
+alt Database Unavailable
+    DB --> API : 503 Service Unavailable
+    API -> API : retryWithBackoff()
+    alt Retry successful
+        API -> FDT : 200 OK
+    else Retry failed after 3 attempts
+        API -> FDT : 500 Internal Server Error
+    end
+else Query timeout
+    API -> DB : timeout after 2 minutes
+    DB --> API : timeout
+    API -> FDT : 504 Gateway Timeout
+end
+
+== Audit Entry Creation Error ==
+
+FDT -> API : POST /flag_withdrawal(accountId)
+
+API -> DB : [TLS] queryHistoricalData(accountId)
+DB --> API : [data]
+
+API -> API : detectPattern(history)
+note right: pattern detected
+
+API -> Audit : createAuditEntry(operation, recordedBy)
+
+alt Audit Service Unavailable
+    Audit --> API : 503 Service Unavailable
+    API -> API : logError("Audit entry creation failed")
+    API -> FDT : 200 OK {flagged: true, audit_warning: true}
+else Fraud_Detection_Team not authorized
+    Audit -> AE : validateRecordedBy(FDT)
+    AE --> Audit : false
+    Audit -> API : 403 Forbidden - recordBy not in Fraud_Detection_Team
+end
+
+== Concurrent Access - State Consistency ==
+
+User -> API : POST /withdrawal(amount, accountId) [tx1]
+User -> API : POST /withdrawal(amount, accountId) [tx2]
+
+API -> Op : create(initiator=User, grant=Read) [tx1]
+Op --> API : Op1
+
+API -> Op : create(initiator=User, grant=Read) [tx2]
+Op --> API : Op2
+
+API -> Res : checkAccessible(User, accountId)
+Res --> API : true
+
+alt State conflict
+    API -> St : checkPreState(Pre1)
+    St --> API : valid for Op1
+    St --> API : valid for Op2
+    API -> Op1 : setPostState(Post1)
+    API -> Op2 : setPostState(Post1)
+    note right: Both operations result in same post-state
+    API -> User : 200 OK {operations: 2, flagged: true}
+else State isolation
+    API -> St : lockState(accountId)
+    St --> API : locked
+    API -> Op1 : process(Pre1 -> Post1)
+    API -> St : unlockState(accountId)
+    St --> API : unlocked
+    API -> User : 200 OK
+end
+
+== Bulk Operation Error Path ==
+
+FDT -> API : POST /flag_bulk_withdrawals(accountIds: [id1, id2, id3])
+
+API -> DB : [TLS] getAccountsData(accountIds)
+
+alt Partial success
+    DB --> API : [data1, data2], id3 not found
+    API -> API : processPartialResults([id1, id2])
+    API -> FDT : 207 Multi-Status {flagged: [id1, id2], not_found: [id3]}
+else All failed
+    DB --> API : 503 Service Unavailable
+    API -> FDT : 503 Service Unavailable
+end
+
+== System Scalability Check - Horizontal Scaling ==
+
+API -> DB : [TLS] scaleOut(instanceCount: 2)
+note right: At least 2 resources per operation
+
+DB --> API : scaled
+API -> Res : getResources()
+Res --> API : [res1, res2]
+
+alt Insufficient resources
+    API -> FDT : 507 Insufficient Storage
+else Sufficient resources
+    API -> FDT : 200 OK
+end
+
+== Availability Check - Redundancy ==
+
+API -> Iface : getChannels()
+note right: At least 2 channels per operation
+
+Iface --> API : [channel1, channel2]
+
+alt Single channel available
+    API -> FDT : 200 OK {redundancy: 1}
+else Both channels available
+    API -> FDT : 200 OK {redundancy: 2}
+end
+
+== Error Message Quality Check ==
+
+API -> User : POST /withdrawal(invalid_amount)
+note right: Clear and actionable error messages required
+
+API -> User : 400 Bad Request {message: "Amount must be positive number", suggestion: "Enter a value greater than 0.01"}
+
+API -> User : POST /withdrawal(amount, invalid_account)
+API -> User : 404 Not Found {message: "Account not found", suggestion: "Check account ID and try again"}
+
+@enduml

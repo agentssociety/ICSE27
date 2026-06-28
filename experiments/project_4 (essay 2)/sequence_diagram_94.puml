@@ -1,0 +1,308 @@
+@startuml
+'
+
+' Participants
+actor "Admin" as admin
+actor "SecurityTeam" as security
+
+box "UI / Controller" #LightBlue
+  participant "UserManagementPage" as page
+  participant "LockUnlockController" as controller
+end box
+
+box "Application" #LightGreen
+  participant "UserManagementService" as service
+end box
+
+box "Domain" #LightYellow
+  participant "UserAccount" as account
+  participant "AccountStatus" as status <<enum>> #LightYellow
+  participant "Admin" as adminDomain #LightYellow
+  participant "Permission" as perm <<enum>> #LightYellow
+end box
+
+box "Infrastructure" #LightCoral
+  participant "UserManagementDatabase" as db #LightCoral
+end box
+
+' ====================
+' == Flow 1: Lock Account ==
+' ====================
+== Lock Account ==
+
+admin -> page : lock account (accountId)
+activate page
+page -> controller : PATCH /accounts/{id}/status [TLS]
+note right: Authenticated session assumed
+activate controller
+
+controller -> controller : authenticateAdmin()
+alt [admin authenticated]
+  controller -> service : lockAccount(adminId: String, accountId: String) : Result
+  activate service
+
+  service -> service : checkPermission(admin, Permission.ADMIN)
+  alt [permission ok]
+    service -> account : load(accountId)
+    activate account
+    account -> db : SELECT * FROM accounts WHERE id=:id [encrypted at rest]
+    activate db
+    db --> account : account data
+    deactivate db
+
+    alt [account exists]
+      service -> account : getOwner()
+      account --> service : ownerId
+      alt [adminId != ownerId]
+        service -> account : getStatus() : AccountStatus
+        account --> service : status
+        alt [status == AccountStatus.ACTIVE]
+          service -> account : lock()
+          activate account
+          note right of account: state transition: ACTIVE -> LOCKED
+          account --> service : success
+          deactivate account
+
+          service -> db : UPDATE accounts SET status='LOCKED', version=version+1 WHERE id=:id AND version=:currentVersion [encrypted at rest]
+          activate db
+          alt [update success (version matched)]
+            db --> service : 1 row updated
+            deactivate db
+            service --> controller : Result(status=locked)
+            controller --> page : 200 OK
+          else [version mismatch -> concurrent update]
+            deactivate db
+            service --> controller : Result(error=CONCURRENT_UPDATE)
+            controller --> page : 409 Conflict
+          end
+        else [status == AccountStatus.LOCKED]
+          service --> controller : Result(status=locked, message=already locked)
+          controller --> page : 200 OK (no change)
+        end
+      else [adminId == ownerId]
+        service --> controller : Result(error=SELF_LOCK)
+        controller --> page : 403 Forbidden (cannot lock own account)
+      end
+    else [account not found]
+      service --> controller : Result(error=NOT_FOUND)
+      controller --> page : 404 Not Found
+    end
+    deactivate account
+  else [permission denied]
+    service --> controller : Result(error=FORBIDDEN)
+    controller --> page : 403 Forbidden
+  end
+  deactivate service
+else [not authenticated]
+  controller --> page : 401 Unauthorized
+end
+deactivate controller
+deactivate page
+
+' ====================
+' == Flow 2: Unlock Account ==
+' ====================
+== Unlock Account ==
+
+admin -> page : unlock account (accountId)
+activate page
+page -> controller : PATCH /accounts/{id}/status [TLS]
+activate controller
+
+controller -> controller : authenticateAdmin()
+alt [admin authenticated]
+  controller -> service : unlockAccount(adminId: String, accountId: String) : Result
+  activate service
+
+  service -> service : checkPermission(admin, Permission.ADMIN)
+  alt [permission ok]
+    service -> account : load(accountId)
+    activate account
+    account -> db : SELECT * FROM accounts WHERE id=:id [encrypted at rest]
+    activate db
+    db --> account : account data
+    deactivate db
+
+    alt [account exists]
+      service -> account : getStatus() : AccountStatus
+      account --> service : status
+      alt [status == AccountStatus.LOCKED]
+        service -> account : unlock()
+        activate account
+        note right of account: state transition: LOCKED -> ACTIVE
+        account --> service : success
+        deactivate account
+
+        service -> db : UPDATE accounts SET status='ACTIVE', version=version+1 WHERE id=:id AND version=:currentVersion [encrypted at rest]
+        activate db
+        alt [update success (version matched)]
+          db --> service : 1 row updated
+          deactivate db
+          service --> controller : Result(status=active)
+          controller --> page : 200 OK
+        else [version mismatch -> concurrent update]
+          deactivate db
+          service --> controller : Result(error=CONCURRENT_UPDATE)
+          controller --> page : 409 Conflict
+        end
+      else [status == AccountStatus.ACTIVE]
+        ' idempotent: no state change
+        service --> controller : Result(status=active, message=already active)
+        controller --> page : 200 OK (no change)
+      end
+    else [account not found]
+      service --> controller : Result(error=NOT_FOUND)
+      controller --> page : 404 Not Found
+    end
+    deactivate account
+  else [permission denied]
+    service --> controller : Result(error=FORBIDDEN)
+    controller --> page : 403 Forbidden
+  end
+  deactivate service
+else [not authenticated]
+  controller --> page : 401 Unauthorized
+end
+deactivate controller
+deactivate page
+
+' ====================
+' == Flow 3: Self-Lock Denied ==
+' ====================
+== Self-Lock Denied ==
+
+admin -> page : lock own account (accountId = adminId)
+activate page
+page -> controller : PATCH /accounts/{id}/status [TLS]
+activate controller
+
+controller -> controller : authenticateAdmin()
+alt [admin authenticated]
+  controller -> service : lockAccount(adminId, accountId)
+  activate service
+
+  service -> service : checkPermission(admin, Permission.ADMIN)
+  alt [permission ok]
+    service -> account : load(accountId)
+    activate account
+    account -> db : SELECT * FROM accounts WHERE id=:id [encrypted at rest]
+    activate db
+    db --> account : account data
+    deactivate db
+
+    alt [account exists]
+      service -> account : getOwner()
+      account --> service : ownerId
+      alt [adminId == ownerId]
+        service --> controller : Result(error=SELF_LOCK)
+        controller --> page : 403 Forbidden (cannot lock own account)
+      else [adminId != ownerId]
+        service --> controller : proceed as normal lock (handled in other flow)
+      end
+    else [not found]
+      service --> controller : Result(error=NOT_FOUND)
+      controller --> page : 404 Not Found
+    end
+    deactivate account
+  else [permission denied]
+    service --> controller : Result(error=FORBIDDEN)
+    controller --> page : 403 Forbidden
+  end
+  deactivate service
+else [not authenticated]
+  controller --> page : 401 Unauthorized
+end
+deactivate controller
+deactivate page
+
+' ====================
+' == Flow 4: Unlock Already Active (Idempotent) ==
+' ====================
+== Unlock Already Active ==
+
+admin -> page : unlock account that is already active
+activate page
+page -> controller : PATCH /accounts/{id}/status [TLS]
+activate controller
+
+controller -> controller : authenticateAdmin()
+alt [admin authenticated]
+  controller -> service : unlockAccount(adminId, accountId)
+  activate service
+
+  service -> service : checkPermission(admin, Permission.ADMIN)
+  alt [permission ok]
+    service -> account : load(accountId)
+    activate account
+    account -> db : SELECT * FROM accounts WHERE id=:id [encrypted at rest]
+    activate db
+    db --> account : account data
+    deactivate db
+
+    alt [account exists]
+      service -> account : getStatus() : AccountStatus
+      account --> service : status
+      alt [status == AccountStatus.ACTIVE]
+        service --> controller : Result(status=active, message=already active)
+        controller --> page : 200 OK (no change)
+      else [status == LOCKED]
+        service --> controller : proceed as normal unlock (handled in other flow)
+      end
+    else [not found]
+      service --> controller : Result(error=NOT_FOUND)
+      controller --> page : 404 Not Found
+    end
+    deactivate account
+  else [permission denied]
+    service --> controller : Result(error=FORBIDDEN)
+    controller --> page : 403 Forbidden
+  end
+  deactivate service
+else [not authenticated]
+  controller --> page : 401 Unauthorized
+end
+deactivate controller
+deactivate page
+
+' ====================
+' == Flow 5: Simultaneous Operation Denied (Concurrent Update) ==
+' ====================
+== Simultaneous Operation Denied ==
+
+' Assumption: two concurrent lock/unlock requests for same account arrive at the same time.
+' At most one operation per resource allowed due to optimistic locking.
+
+admin -> controller : PATCH /accounts/{id}/status [TLS]
+activate controller
+note right of controller: Request 1
+
+admin -> controller : PATCH /accounts/{id}/status [TLS] (concurrent)
+note right of controller: Request 2
+
+controller -> service : lockAccount (or unlockAccount)
+controller -> service : lockAccount (or unlockAccount)
+
+service -> account : load(accountId)
+service -> account : load(accountId)
+
+account -> db : SELECT (both)
+db --> account : version=1 for both
+
+' First operation acquires lock (optimistic)
+service -> account : updateStatus()
+account -> db : UPDATE WHERE version=1
+db --> account : success (version becomes 2)
+
+' Second operation attempts update
+service -> account : updateStatus()
+account -> db : UPDATE WHERE version=1 (old version)
+db --> account : 0 rows updated (version mismatch)
+service -> service : detect conflict
+service --> controller : Result(error=CONCURRENT_UPDATE)
+controller --> admin : 409 Conflict (for second request)
+' First request completes
+controller --> admin : 200 OK
+
+deactivate controller
+
+@enduml

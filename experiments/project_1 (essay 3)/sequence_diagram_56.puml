@@ -1,0 +1,336 @@
+@startuml
+title Queue Management Sequence Diagrams
+
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+box "Controller" #LightBlue
+  participant QueueController
+end box
+
+box "Application" #LightGreen
+  participant QueueService
+  participant AuthService
+  participant PermissionService
+  participant ResourceService
+  participant ReorderService
+  participant EventPublisher
+end box
+
+box "Domain" #LightYellow
+  participant Queue
+  participant QueueItem
+  participant ChangeEvent
+  participant ChangeType
+  participant Resource
+  participant Actor
+  participant Permission
+  participant State
+end box
+
+box "Infrastructure" #LightCoral
+  participant QueueRepository
+  participant Channel
+  participant EncryptionService
+end box
+
+box "External" #LightGrey
+  participant ExternalEventSource
+  participant Client
+end box
+
+== Add Item Flow ==
+
+Actor -> QueueController : POST /queue/items (item, token) [TLS]
+activate QueueController
+QueueController -> QueueService : addItem(item: QueueItem, token: String) : QueueItem
+activate QueueService
+
+QueueService -> AuthService : authenticate(actor: Actor, token: String) : Boolean
+activate AuthService
+AuthService --> QueueService : authenticationResult
+deactivate AuthService
+
+alt Authentication failed
+  QueueService --> QueueController : 401 Unauthorized
+  deactivate QueueService
+  QueueController --> Actor : 401
+  deactivate QueueController
+  note right: All channels must be encrypted [TLS] – enforced by infrastructure
+else Authentication successful
+
+  QueueService -> PermissionService : checkPermission(actor: Actor, permission: Permission) : Boolean
+  activate PermissionService
+  PermissionService --> QueueService : hasPermission
+  deactivate PermissionService
+
+  alt Permission denied (actor does not have Write)
+    QueueService --> QueueController : 403 Forbidden (insufficient permissions)
+    deactivate QueueService
+    QueueController --> Actor : 403
+    deactivate QueueController
+  else Permission granted
+
+    QueueService -> ResourceService : checkResourceAccess(actor: Actor, resourceId: String) : Boolean
+    activate ResourceService
+    ResourceService --> QueueService : isAccessible
+    deactivate ResourceService
+
+    alt Resource not accessible (actor not in accessible set and not owner)
+      QueueService --> QueueController : 403 Forbidden (resource access denied)
+      deactivate QueueService
+      QueueController --> Actor : 403
+      deactivate QueueController
+    else Resource accessible
+
+      QueueService -> QueueRepository : getQueue(queueId: String) : Queue [TLS]
+      activate QueueRepository
+      QueueRepository --> QueueService : queue (with version)
+      deactivate QueueRepository
+
+      alt Concurrent modification detected (version mismatch)
+        QueueService --> QueueController : 409 Conflict (concurrent modification)
+        note right: No two operations with same initiator but different grants on same resource
+        deactivate QueueService
+        QueueController --> Actor : 409
+        deactivate QueueController
+      else Version OK
+
+        QueueService -> Queue : addItem(item: QueueItem) : void
+        activate Queue
+        Queue -> ChangeEvent : recordChange(changeType: ChangeType.ADD, item: QueueItem)
+        activate ChangeEvent
+        ChangeEvent --> Queue
+        deactivate ChangeEvent
+        Queue --> QueueService
+        deactivate Queue
+
+        QueueService -> ReorderService : reorder(queue: Queue) : void
+        activate ReorderService
+        ReorderService -> Queue : reorder() : void
+        activate Queue
+        note right: positions recalculated according to urgency rules
+        Queue -> State : transition(State.PreIdle) : State.Post1
+        activate State
+        State --> Queue
+        deactivate State
+        Queue --> ReorderService
+        deactivate Queue
+        ReorderService --> QueueService
+        deactivate ReorderService
+
+        QueueService -> QueueRepository : save(queue: Queue) : void [TLS]
+        activate QueueRepository
+        QueueRepository --> QueueService
+        deactivate QueueRepository
+
+        QueueService -> EventPublisher : publishChange(changeEvent: ChangeEvent) : void
+        activate EventPublisher
+        EventPublisher --> QueueService
+        deactivate EventPublisher
+
+        QueueService --> QueueController : 201 Created (item)
+        deactivate QueueService
+        QueueController --> Actor : 201
+        deactivate QueueController
+
+      end
+    end
+  end
+end
+
+== Remove Item Flow ==
+
+Actor -> QueueController : DELETE /queue/items/{itemId} (token) [TLS]
+activate QueueController
+QueueController -> QueueService : removeItem(itemId: String, token: String) : void
+activate QueueService
+
+QueueService -> AuthService : authenticate(actor: Actor, token: String) : Boolean
+activate AuthService
+AuthService --> QueueService : authenticationResult
+deactivate AuthService
+
+alt Authentication failed
+  QueueService --> QueueController : 401
+  deactivate QueueService
+  QueueController --> Actor : 401
+  deactivate QueueController
+else Authentication successful
+
+  QueueService -> PermissionService : checkPermission(actor: Actor, Permission.Write) : Boolean
+  activate PermissionService
+  PermissionService --> QueueService : hasPermission
+  deactivate PermissionService
+
+  alt Permission denied
+    QueueService --> QueueController : 403
+    deactivate QueueService
+    QueueController --> Actor : 403
+    deactivate QueueController
+  else Permission granted
+
+    QueueService -> ResourceService : checkResourceAccess(actor: Actor, resourceId: String) : Boolean
+    activate ResourceService
+    ResourceService --> QueueService : isAccessible
+    deactivate ResourceService
+
+    alt Resource not accessible
+      QueueService --> QueueController : 403
+      deactivate QueueService
+      QueueController --> Actor : 403
+      deactivate QueueController
+    else Resource accessible
+
+      QueueService -> QueueRepository : getQueue(queueId: String) : Queue [TLS]
+      activate QueueRepository
+      QueueRepository --> QueueService : queue (with version)
+      deactivate QueueRepository
+
+      alt Concurrent modification detected
+        QueueService --> QueueController : 409
+        deactivate QueueService
+        QueueController --> Actor : 409
+        deactivate QueueController
+      else Version OK
+
+        QueueService -> Queue : removeItem(itemId: String) : void
+        activate Queue
+        Queue -> ChangeEvent : recordChange(ChangeType.REMOVE, item)
+        activate ChangeEvent
+        ChangeEvent --> Queue
+        deactivate ChangeEvent
+        Queue --> QueueService
+        deactivate Queue
+
+        QueueService -> ReorderService : reorder(queue: Queue) : void
+        activate ReorderService
+        ReorderService -> Queue : reorder() : void
+        activate Queue
+        Queue -> State : transition(State.PreIdle) : State.Post1
+        activate State
+        State --> Queue
+        deactivate State
+        Queue --> ReorderService
+        deactivate Queue
+        ReorderService --> QueueService
+        deactivate ReorderService
+
+        QueueService -> QueueRepository : save(queue: Queue) : void [TLS]
+        activate QueueRepository
+        QueueRepository --> QueueService
+        deactivate QueueRepository
+
+        QueueService -> EventPublisher : publishChange(changeEvent: ChangeEvent) : void
+        activate EventPublisher
+        EventPublisher --> QueueService
+        deactivate EventPublisher
+
+        QueueService --> QueueController : 204 No Content
+        deactivate QueueService
+        QueueController --> Actor : 204
+        deactivate QueueController
+
+      end
+    end
+  end
+end
+
+== Modify Item Flow ==
+
+Actor -> QueueController : PUT /queue/items/{itemId} (updatedItem, token) [TLS]
+activate QueueController
+QueueController -> QueueService : modifyItem(itemId: String, updatedItem: QueueItem, token: String) : QueueItem
+activate QueueService
+
+QueueService -> AuthService : authenticate(actor: Actor, token: String) : Boolean
+activate AuthService
+AuthService --> QueueService : authenticationResult
+deactivate AuthService
+
+alt Authentication failed
+  QueueService --> QueueController : 401
+  deactivate QueueService
+  QueueController --> Actor : 401
+  deactivate QueueController
+else Authentication successful
+
+  QueueService -> PermissionService : checkPermission(actor: Actor, Permission.Write) : Boolean
+  activate PermissionService
+  PermissionService --> QueueService : hasPermission
+  deactivate PermissionService
+
+  alt Permission denied
+    QueueService --> QueueController : 403
+    deactivate QueueService
+    QueueController --> Actor : 403
+    deactivate QueueController
+  else Permission granted
+
+    QueueService -> ResourceService : checkResourceAccess(actor: Actor, resourceId: String) : Boolean
+    activate ResourceService
+    ResourceService --> QueueService : isAccessible
+    deactivate ResourceService
+
+    alt Resource not accessible
+      QueueService --> QueueController : 403
+      deactivate QueueService
+      QueueController --> Actor : 403
+      deactivate QueueController
+    else Resource accessible
+
+      QueueService -> QueueRepository : getQueue(queueId: String) : Queue [TLS]
+      activate QueueRepository
+      QueueRepository --> QueueService : queue (with version)
+      deactivate QueueRepository
+
+      alt Concurrent modification detected
+        QueueService --> QueueController : 409
+        deactivate QueueService
+        QueueController --> Actor : 409
+        deactivate QueueController
+      else Version OK
+
+        QueueService -> Queue : modifyItem(itemId: String, updatedItem: QueueItem) : void
+        activate Queue
+        Queue -> ChangeEvent : recordChange(ChangeType.MODIFY, updatedItem)
+        activate ChangeEvent
+        ChangeEvent --> Queue
+        deactivate ChangeEvent
+        Queue --> QueueService
+        deactivate Queue
+
+        QueueService -> ReorderService : reorder(queue: Queue) : void
+        activate ReorderService
+        ReorderService -> Queue : reorder() : void
+        activate Queue
+        Queue -> State : transition(State.PreIdle) : State.Post1
+        activate State
+        State --> Queue
+        deactivate State
+        Queue --> ReorderService
+        deactivate Queue
+        ReorderService --> QueueService
+        deactivate ReorderService
+
+        QueueService -> QueueRepository : save(queue: Queue) : void [TLS]
+        activate QueueRepository
+        QueueRepository --> QueueService
+        deactivate QueueRepository
+
+        QueueService -> EventPublisher : publishChange(changeEvent: ChangeEvent) : void
+        activate EventPublisher
+        EventPublisher --> QueueService
+        deactivate EventPublisher
+
+        QueueService --> QueueController : 200 OK (updated item)
+        deactivate QueueService
+        QueueController --> Actor : 200
+        deactivate QueueController
+
+      end
+    end
+  end
+end
+
+@enduml

@@ -1,0 +1,16 @@
+{
+  "task_id": 65,
+  "confidence": 0.9091,
+  "evidence": [
+    {
+      "claim": "Registered flights can be edited.",
+      "fact": "The system marks flights as delayed if they cannot be placed within 60 minutes of their estimated time.",
+      "score": 0.9091,
+      "user_story_span": "Registered flights can be edited",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 4,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

@@ -1,0 +1,95 @@
+{
+  "run_id": "P4E2",
+  "project": 4,
+  "essay": 2,
+  "n_tasks": 8,
+  "tasks": [
+    {
+      "task_id": 88,
+      "nli_alignment_score": 0.9977,
+      "total_claims": 5,
+      "supported_claims": 5,
+      "spec_extrapolation_rate": 0.0,
+      "spec_coverage_rate": 1.0,
+      "n_evidence": 5
+    },
+    {
+      "task_id": 89,
+      "nli_alignment_score": 0.9896,
+      "total_claims": 4,
+      "supported_claims": 1,
+      "spec_extrapolation_rate": 0.75,
+      "spec_coverage_rate": 0.25,
+      "n_evidence": 1
+    },
+    {
+      "task_id": 90,
+      "nli_alignment_score": 0.9932,
+      "total_claims": 17,
+      "supported_claims": 8,
+      "spec_extrapolation_rate": 0.5294,
+      "spec_coverage_rate": 0.4706,
+      "n_evidence": 8
+    },
+    {
+      "task_id": 91,
+      "nli_alignment_score": 0.9874,
+      "total_claims": 10,
+      "supported_claims": 5,
+      "spec_extrapolation_rate": 0.5,
+      "spec_coverage_rate": 0.5,
+      "n_evidence": 5
+    },
+    {
+      "task_id": 92,
+      "nli_alignment_score": 0.9958,
+      "total_claims": 8,
+      "supported_claims": 1,
+      "spec_extrapolation_rate": 0.875,
+      "spec_coverage_rate": 0.125,
+      "n_evidence": 1
+    },
+    {
+      "task_id": 93,
+      "nli_alignment_score": 0.9851,
+      "total_claims": 8,
+      "supported_claims": 5,
+      "spec_extrapolation_rate": 0.375,
+      "spec_coverage_rate": 0.625,
+      "n_evidence": 5
+    },
+    {
+      "task_id": 94,
+      "nli_alignment_score": 0.9767,
+      "total_claims": 14,
+      "supported_claims": 8,
+      "spec_extrapolation_rate": 0.4286,
+      "spec_coverage_rate": 0.5714,
+      "n_evidence": 8
+    },
+    {
+      "task_id": 95,
+      "nli_alignment_score": 0.992,
+      "total_claims": 15,
+      "supported_claims": 2,
+      "spec_extrapolation_rate": 0.8667,
+      "spec_coverage_rate": 0.1333,
+      "n_evidence": 2
+    }
+  ],
+  "summary": {
+    "mean_nli_alignment_score": 0.9897,
+    "median_nli_alignment_score": 0.9908,
+    "std_nli_alignment_score": 0.0067,
+    "q1": 0.9868,
+    "q3": 0.9939,
+    "iqr": 0.007,
+    "n_outliers": 0,
+    "n_zero_alignment": 0,
+    "total_claims": 81,
+    "supported_claims": 35,
+    "spec_coverage_rate": 0.4321,
+    "spec_extrapolation_rate": 0.5679,
+    "overall_hallucination_rate": 0.5679
+  }
+}

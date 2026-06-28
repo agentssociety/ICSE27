@@ -1,0 +1,180 @@
+{
+  "detected_cycles": [],
+  "removed_edges_to_break_cycles": [],
+  "relationship_corrections": [
+    {
+      "original": {
+        "left": "BloodUnit",
+        "arrow": "\"1\" -- \"*\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "BloodUnit",
+        "arrow": "\"1\" -- \"0..1\"",
+        "right": "Actor"
+      },
+      "reason": "A BloodUnit may optionally be associated with a single Actor (e.g., donor), but not necessarily many. One-to-many is too restrictive."
+    },
+    {
+      "original": {
+        "left": "BloodUnit",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "BloodUnit",
+        "arrow": "\"1\" -- \"0..1\"",
+        "right": "Actor"
+      },
+      "reason": "A BloodUnit should have an optional association with one Actor, not mandatory one-to-one. Current cardinality is too strict."
+    },
+    {
+      "original": {
+        "left": "Operation",
+        "arrow": "\"*\" -- \"2\"",
+        "right": "State"
+      },
+      "corrected": {
+        "left": "Operation",
+        "arrow": "\"*\" -- \"1\"",
+        "right": "State"
+      },
+      "reason": "Cardinality '2' is non-standard; an Operation likely relates to a single State (e.g., current state). Changed to one."
+    },
+    {
+      "original": {
+        "left": "REQ_BBT_01",
+        "arrow": "\"*\" --> \"*\"",
+        "right": "Interface"
+      },
+      "corrected": {
+        "left": "REQ_BBT_01",
+        "arrow": "",
+        "right": "Interface"
+      },
+      "reason": "REQ_BBT_01 is a requirement identifier, not a domain class. This relationship should not exist in a domain model."
+    },
+    {
+      "original": {
+        "left": "REQ_BBT_01",
+        "arrow": "\"*\" --> \"*\"",
+        "right": "Resource"
+      },
+      "corrected": {
+        "left": "REQ_BBT_01",
+        "arrow": "",
+        "right": "Resource"
+      },
+      "reason": "REQ_BBT_01 is a requirement identifier, not a domain class. This relationship should not exist in a domain model."
+    },
+    {
+      "original": {
+        "left": "REQ_BBT_01",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "REQ_BBT_01",
+        "arrow": "",
+        "right": "Actor"
+      },
+      "reason": "REQ_BBT_01 is a requirement identifier, not a domain class. This relationship should not exist in a domain model."
+    },
+    {
+      "original": {
+        "left": "REQ_BBT_01",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "Permission"
+      },
+      "corrected": {
+        "left": "REQ_BBT_01",
+        "arrow": "",
+        "right": "Permission"
+      },
+      "reason": "REQ_BBT_01 is a requirement identifier, not a domain class. This relationship should not exist in a domain model."
+    },
+    {
+      "original": {
+        "left": "REQ_BBT_01",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "State"
+      },
+      "corrected": {
+        "left": "REQ_BBT_01",
+        "arrow": "",
+        "right": "State"
+      },
+      "reason": "REQ_BBT_01 is a requirement identifier, not a domain class. This relationship should not exist in a domain model."
+    }
+  ],
+  "architecture_corrections": [
+    {
+      "kind": "wrong_inheritance",
+      "description": "Clinical_Team, Inventory_Manager, and Quality_Assurance use association (--|>) instead of inheritance (--|>) to Actor.",
+      "fix": {
+        "action": "change_class_type",
+        "details": {
+          "affected_classes": [
+            "Clinical_Team",
+            "Inventory_Manager",
+            "Quality_Assurance"
+          ],
+          "new_arrow": "--|>"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "TransfusionRequestData is not associated with Reservation; a reservation links a transfusion request to blood units.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "from_class": "Reservation",
+          "to_class": "TransfusionRequestData",
+          "arrow": "\"*\" -- \"1\"",
+          "meaning": "association"
+        }
+      }
+    },
+    {
+      "kind": "misplaced_class",
+      "description": "REQ_BBT_01 appears to be a placeholder or requirement artifact, not a domain class; it has no defined role or attributes.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "affected_classes": [
+            "REQ_BBT_01"
+          ],
+          "reason": "Not a domain class"
+        }
+      }
+    }
+  ],
+  "architecture_suggestions": [
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "TransfusionRequestData",
+        "Blood_Unit_Database",
+        "Transfusion_Requests_Database"
+      ],
+      "suggestion": "Rename to use consistent naming convention: e.g., BloodUnitRepository, TransfusionRequestRepository to follow ubiquitous language of repositories."
+    },
+    {
+      "kind": "introduce_value_object",
+      "affected_classes": [
+        "BloodUnit",
+        "TransfusionRequestData"
+      ],
+      "suggestion": "Consider introducing a value object for ABO/Rh blood type (e.g., BloodTypeVO) to encapsulate compatibility logic."
+    },
+    {
+      "kind": "add_aggregate_root",
+      "affected_classes": [
+        "BloodUnit",
+        "Reservation"
+      ],
+      "suggestion": "Consider making BloodUnit an aggregate root to manage its state (available, reserved, expired) and lifecycle, and have Reservation reference it via ID."
+    }
+  ]
+}

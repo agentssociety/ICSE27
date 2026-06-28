@@ -1,0 +1,113 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor white
+  BorderColor black
+}
+skinparam interface {
+  BackgroundColor lightGray
+  BorderColor black
+}
+skinparam enum {
+  BackgroundColor lightYellow
+  BorderColor black
+}
+skinparam exception {
+  BackgroundColor lightCoral
+  BorderColor black
+}
+skinparam dto {
+  BackgroundColor lightCyan
+  BorderColor black
+}
+skinparam note {
+  BackgroundColor lightGray
+}
+
+package "Domain Model" as Domain {
+    class Actor {
+        mayPerform : Set<Permission>
+  + hasPermission(admin : Actor, resource : Resource, permission : Permission.Admin) : boolean
+    }
+    class Resource {
+        owner : Actor
+        accessible : List<Actor>
+        hasTransactions : Bool
+  + getById(userId : String) : Resource
+  + isAccessible(actor : Admin) : boolean
+    }
+    class Transaction {
+    }
+    class User {
+    }
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+    }
+    enum State {
+        Pre1
+        PostDone
+    }
+    note right of User : "Maps to Resource"
+    note right of State : "Pre-/Post-conditions"
+}
+
+package "Application" as App {
+    class TransactionHistoryService {
+    }
+}
+
+package "Infrastructure — Ports" as Ports {
+    interface UserManagementAPI {
+    }
+    interface TransactionLogDB {
+  + fetchTransactions(userId : String) : List<Transaction>
+    }
+}
+
+package "Controllers" as Controllers {
+    class UserManagementController {
+    }
+}
+
+package "DTOs" as Dtos {
+    class TransactionHistoryResponse <<dto>> {
+        transactions : List<Transaction>
+        message : String
+    }
+}
+
+package "Exceptions" as Exceptions {
+    class AccessDeniedException <<exception>> {
+    }
+    class ResourceNotFoundException <<exception>> {
+    }
+}
+
+' --- Relationships ---
+
+' Ownership: Actor owns Resources
+Actor "1" -- "0..*" Resource : owns
+
+' Accessibility: Actor can access Resources
+Actor "0..*" -- "0..*" Resource : accessible
+
+' Resource has Transactions
+Resource "1" -- "0..*" Transaction : has
+
+' User is a specialization of Resource
+User --|> Resource : extends
+
+' Controller implements API interface
+UserManagementController ..|> UserManagementAPI : implements
+
+' Service uses ports
+TransactionHistoryService ..> UserManagementAPI : uses
+TransactionHistoryService ..> TransactionLogDB : uses
+
+' Controller depends on service
+UserManagementController ..> TransactionHistoryService : uses
+
+@enduml

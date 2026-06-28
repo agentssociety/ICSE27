@@ -1,0 +1,80 @@
+{
+  "id": "REQ-BLOOD-01",
+  "title": "Track Blood Units with ABO/Rh Type and Collection Date",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall store the ABO/Rh type and collection date for each blood unit received.",
+  "rationale": "This requirement is necessary to achieve full inventory management, ensuring that all relevant details about each blood unit are recorded and easily accessible.",
+  "business_value": "Improves inventory accuracy and efficiency, facilitating better resource allocation and reducing waste.",
+  "source": {
+    "type": "User Story",
+    "id": 39,
+    "description": "As a blood bank manager I need to track blood units with ABO/Rh type and collection date So that I can achieve full inventory management."
+  },
+  "stakeholders": [
+    "Blood Bank Manager",
+    "Inventory Management Team"
+  ],
+  "acceptance_criteria": [
+    "The unit is added to the inventory with the provided details",
+    "I can view all tracked units in the inventory"
+  ],
+  "preconditions": [
+    "A new blood unit is received"
+  ],
+  "postconditions": [],
+  "functional_constraints": [
+    "The system must store at least ABO/Rh type and collection date for each blood unit."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": {},
+    "availability": {},
+    "scalability": {},
+    "usability": {}
+  },
+  "edge_cases": [
+    "Handling of blood units with missing ABO/Rh type or collection date",
+    "Tracking of expired blood units",
+    "Recording of duplicate blood unit IDs"
+  ],
+  "dependencies": [],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Inventory Management API",
+      "description": "The system will use this API to add new blood units and retrieve all tracked units."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-BLOOD-01",
+      "description": "Adding a new blood unit with ABO/Rh type and collection date",
+      "expected_result": "The system successfully adds the blood unit to the inventory with the provided details."
+    },
+    {
+      "id": "TC-BLOOD-02",
+      "description": "Viewing all tracked units in the inventory",
+      "expected_result": "The system displays a list of all tracked blood units, including their ABO/Rh type and collection date."
+    },
+    {
+      "id": "TC-BLOOD-03",
+      "description": "Handling of missing ABO/Rh type during unit addition",
+      "expected_result": "The system rejects the input with an error message indicating that the ABO/Rh type is required."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T23:30:13.968498",
+  "last_updated": "2026-06-14T23:46:50.079200",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "BloodUnit"
+    ],
+    "test_artifacts": []
+  }
+}

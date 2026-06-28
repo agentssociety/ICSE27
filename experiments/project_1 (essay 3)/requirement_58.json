@@ -1,0 +1,92 @@
+{
+  "id": "REQ-DASH-01",
+  "title": "Real-time live dashboard displaying urgency and wait time",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall provide a live dashboard that updates in real time to display current urgency and wait time values.",
+  "rationale": "To allow users to prioritize tasks based on the latest urgency and waiting duration data, enhancing operational efficiency and decision-making.",
+  "business_value": "Improves task prioritization, reducing delays and increasing productivity by allowing quick access to critical information.",
+  "source": {
+    "type": "User Story",
+    "id": 58,
+    "description": "As a user I need a live dashboard that displays urgency and wait time So that I can prioritize tasks based on current urgency and waiting duration"
+  },
+  "stakeholders": [
+    "All users who need to prioritize tasks",
+    "IT support team responsible for the system's uptime and maintenance"
+  ],
+  "acceptance_criteria": [
+    "Given I am on the live dashboard",
+    "When urgency and wait time data are updated",
+    "Then the dashboard shows the current urgency and wait time values"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "The dashboard displays the most recent urgency and wait time values",
+    "The user can prioritize tasks based on the displayed information"
+  ],
+  "functional_constraints": [
+    "The dashboard updates in real time",
+    "Urgency and wait time data are available from the system"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The response time for updating the dashboard should be less than 500ms under normal conditions.",
+    "availability": "The dashboard must be available at least 99.9% of the time.",
+    "scalability": "The system should handle up to 1,000 concurrent users accessing the dashboard without performance degradation.",
+    "usability": "Error messages should be clear and actionable; the interface should be intuitive for all users"
+  },
+  "edge_cases": [
+    "What happens when there is a network outage affecting data availability?",
+    "How does the system handle sudden spikes in data volume?",
+    "What if the urgency or wait time data becomes corrupted?"
+  ],
+  "dependencies": [
+    "Real-time data feed from the underlying system",
+    "A reliable backend service to process and store data"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Data Feed API",
+      "description": "The dashboard interacts with this API to fetch real-time urgency and wait time data."
+    },
+    {
+      "type": "UI",
+      "name": "Live Dashboard Interface",
+      "description": "This is the interface where users interact with the live dashboard to view urgency and wait time data."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-DASH-01",
+      "description": "Verify that the live dashboard updates in real-time when data feed API provides new values.",
+      "expected_result": "The dashboard displays updated urgency and wait time values within 500ms."
+    },
+    {
+      "id": "TC-DASH-02",
+      "description": "Test how the system handles network outages by simulating a lost connection to the data feed API.",
+      "expected_result": "The dashboard shows an error message or maintains old data until it can re-establish the connection."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T17:34:30.677550",
+  "last_updated": "2026-06-15T17:40:00.410895",
+  "traceability": {
+    "related_requirements": [
+      "REQ-QUEUE-01",
+      "REQ-ITEM-URGENCY-01",
+      "REQ-SYM-01"
+    ],
+    "design_components": [
+      "Patient",
+      "UrgencyLevel",
+      "Queue"
+    ],
+    "test_artifacts": []
+  }
+}

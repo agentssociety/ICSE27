@@ -1,0 +1,274 @@
+{
+  "metric": "rq2_hallucination",
+  "description": "Two DISTINCT categories — do not conflate them. (A) Code structural issues: defects in generated code that are always errors. Orphan routes: FastAPI route decorators with no matching handler function. Unused imports: names imported but absent from all ast.Name/ast.Attribute uses. Schema mismatches: backend DTO fields absent from frontend type definitions. (B) Spec extrapolation rate: fraction of user-story claims not traceable to the source specification (1 - supported_claims / total_claims from NLI). These are NOT hallucinations — in SE, specifications are incomplete by design and the agent is expected to elicit implied requirements (defaults, error states, UX copy) that the spec never mentioned. High extrapolation is expected and often desirable. 50% extrapolation means 1 implied claim per explicit spec claim. spec_coverage_rate = 1 - spec_extrapolation_rate. Values reported as mean ± std across 3 essay seeds per project.",
+  "projects": [
+    {
+      "project_id": 1,
+      "n_essays": 3,
+      "orphan_routes": {
+        "mean": 2.0,
+        "std": 1.0,
+        "values": [
+          3.0,
+          2.0,
+          1.0
+        ]
+      },
+      "unused_imports": {
+        "mean": 106.0,
+        "std": 44.91,
+        "values": [
+          147.0,
+          58.0,
+          113.0
+        ]
+      },
+      "schema_mismatches": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "spec_extrapolation_rate": {
+        "mean": 0.423,
+        "std": 0.0322,
+        "values": [
+          0.3902,
+          0.4545,
+          0.4242
+        ]
+      },
+      "spec_coverage_rate": {
+        "mean": 0.577,
+        "std": 0.0322,
+        "values": [
+          0.6098,
+          0.5455,
+          0.5758
+        ]
+      },
+      "task_hallucination_rate": {
+        "mean": 0.423,
+        "std": 0.0322,
+        "values": [
+          0.3902,
+          0.4545,
+          0.4242
+        ]
+      },
+      "overall_hallucination_rate": {
+        "mean": 0.423,
+        "std": 0.0322,
+        "values": [
+          0.3902,
+          0.4545,
+          0.4242
+        ]
+      }
+    },
+    {
+      "project_id": 2,
+      "n_essays": 3,
+      "orphan_routes": {
+        "mean": 4.0,
+        "std": 3.61,
+        "values": [
+          8.0,
+          3.0,
+          1.0
+        ]
+      },
+      "unused_imports": {
+        "mean": 92.67,
+        "std": 25.5,
+        "values": [
+          118.0,
+          67.0,
+          93.0
+        ]
+      },
+      "schema_mismatches": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "spec_extrapolation_rate": {
+        "mean": 0.5364,
+        "std": 0.0553,
+        "values": [
+          0.5091,
+          0.5,
+          0.6
+        ]
+      },
+      "spec_coverage_rate": {
+        "mean": 0.4636,
+        "std": 0.0553,
+        "values": [
+          0.4909,
+          0.5,
+          0.4
+        ]
+      },
+      "task_hallucination_rate": {
+        "mean": 0.5364,
+        "std": 0.0553,
+        "values": [
+          0.5091,
+          0.5,
+          0.6
+        ]
+      },
+      "overall_hallucination_rate": {
+        "mean": 0.5364,
+        "std": 0.0553,
+        "values": [
+          0.5091,
+          0.5,
+          0.6
+        ]
+      }
+    },
+    {
+      "project_id": 3,
+      "n_essays": 3,
+      "orphan_routes": {
+        "mean": 1.67,
+        "std": 1.15,
+        "values": [
+          3.0,
+          1.0,
+          1.0
+        ]
+      },
+      "unused_imports": {
+        "mean": 117.0,
+        "std": 44.24,
+        "values": [
+          168.0,
+          94.0,
+          89.0
+        ]
+      },
+      "schema_mismatches": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "spec_extrapolation_rate": {
+        "mean": 0.5702,
+        "std": 0.0513,
+        "values": [
+          0.6032,
+          0.5962,
+          0.5111
+        ]
+      },
+      "spec_coverage_rate": {
+        "mean": 0.4298,
+        "std": 0.0513,
+        "values": [
+          0.3968,
+          0.4038,
+          0.4889
+        ]
+      },
+      "task_hallucination_rate": {
+        "mean": 0.5702,
+        "std": 0.0513,
+        "values": [
+          0.6032,
+          0.5962,
+          0.5111
+        ]
+      },
+      "overall_hallucination_rate": {
+        "mean": 0.5702,
+        "std": 0.0513,
+        "values": [
+          0.6032,
+          0.5962,
+          0.5111
+        ]
+      }
+    },
+    {
+      "project_id": 4,
+      "n_essays": 3,
+      "orphan_routes": {
+        "mean": 5.33,
+        "std": 4.93,
+        "values": [
+          3.0,
+          2.0,
+          11.0
+        ]
+      },
+      "unused_imports": {
+        "mean": 222.0,
+        "std": 114.71,
+        "values": [
+          265.0,
+          92.0,
+          309.0
+        ]
+      },
+      "schema_mismatches": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "spec_extrapolation_rate": {
+        "mean": 0.5577,
+        "std": 0.0381,
+        "values": [
+          0.5156,
+          0.5679,
+          0.5897
+        ]
+      },
+      "spec_coverage_rate": {
+        "mean": 0.4423,
+        "std": 0.0381,
+        "values": [
+          0.4844,
+          0.4321,
+          0.4103
+        ]
+      },
+      "task_hallucination_rate": {
+        "mean": 0.5577,
+        "std": 0.0381,
+        "values": [
+          0.5156,
+          0.5679,
+          0.5897
+        ]
+      },
+      "overall_hallucination_rate": {
+        "mean": 0.5577,
+        "std": 0.0381,
+        "values": [
+          0.5156,
+          0.5679,
+          0.5897
+        ]
+      }
+    }
+  ]
+}

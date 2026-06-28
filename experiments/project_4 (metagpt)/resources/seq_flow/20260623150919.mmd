@@ -1,0 +1,77 @@
+
+sequenceDiagram
+    participant ATM as ATM Terminal
+    participant API as Flask API
+    participant Auth as AuthService
+    participant UserDB as User Model
+    participant Tx as TransactionService
+    participant Audit as AuditService
+    participant Fraud as FraudDetectionService
+    participant DB as Database
+    participant Admin as Admin API
+
+    Note over ATM,API: Authentication Flow
+    ATM->>API: POST /auth/login (card_number, pin)
+    API->>Auth: authenticate(card_number, pin)
+    Auth->>UserDB: get user by card_number
+    alt User not found or locked
+        Auth-->>API: error response
+        API-->>ATM: 401 Unauthorized
+    else PIN correct
+        Auth->>UserDB: reset_failed_attempts()
+        Auth-->>API: success, return token
+        Auth->>Audit: log_action('LOGIN_SUCCESS', user_id, None, ...)
+        API-->>ATM: 200 OK, token
+    else PIN incorrect
+        Auth->>UserDB: increment_failed_attempts()
+        Auth->>Audit: log_action('LOGIN_FAILED', user_id, None, ...)
+        alt Failed attempts >= 3
+            Auth->>UserDB: lock_account()
+            Auth->>Audit: log_action('ACCOUNT_LOCKED', user_id, None, ...)
+            API-->>ATM: 423 Locked
+        else
+            API-->>ATM: 401 Unauthorized
+        end
+    end
+
+    Note over ATM,API: Withdrawal Flow
+    ATM->>API: POST /withdraw (amount, token)
+    API->>Auth: verify token
+    API->>Tx: process_withdrawal(user, amount)
+    Tx->>UserDB: get user (with balance, daily_limit, daily_withdrawn_today)
+    Tx->>Tx: check_balance_and_limit(user, amount)
+    alt Insufficient funds or exceeds daily limit
+        Tx-->>API: decline, reason
+        Tx->>Audit: log_action('WITHDRAWAL_DECLINED', user_id, None, reason)
+        API-->>ATM: 400 Bad Request, reason
+    else Valid
+        Tx->>DB: begin transaction
+        Tx->>UserDB: update balance and daily_withdrawn_today
+        Tx->>UserDB: create Transaction record (pending)
+        Tx->>Fraud: analyze_transaction(user, transaction)
+        alt Suspicious
+            Fraud->>Fraud: flag_transaction(transaction, reason)
+            Fraud->>Tx: mark transaction as flagged
+        end
+        Tx->>UserDB: set transaction status to 'approved'
+        Tx->>DB: commit
+        Tx-->>API: success, transaction_id
+        Tx->>Audit: log_action('WITHDRAWAL_SUCCESS', user_id, transaction.id, amount)
+        API-->>ATM: 200 OK, transaction_id
+        note over Tx: If any failure during DB update, rollback
+    end
+
+    Note over Admin,API: Admin Review
+    Admin->>API: GET /admin/flagged
+    API->>Fraud: get_flagged_transactions()
+    Fraud-->>API: list of flagged transactions
+    API-->>Admin: JSON response
+    Admin->>API: POST /admin/review (flagged_id, status)
+    API->>AdminService: review_flagged_transaction(...)
+    AdminService->>Audit: log_action('FLAGGED_REVIEWED', reviewer_id, transaction_id, status)
+    API-->>Admin: 200 OK
+    Admin->>API: POST /admin/account/lock (user_id, lock=true)
+    API->>AdminService: lock_unlock_account(user_id, lock)
+    AdminService->>UserDB: lock/unlock account
+    AdminService->>Audit: log_action('ACCOUNT_LOCK_STATUS_CHANGED', user_id, None, lock_status)
+    API-->>Admin: 200 OK

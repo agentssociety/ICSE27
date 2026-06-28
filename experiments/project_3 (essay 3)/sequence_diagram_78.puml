@@ -1,0 +1,218 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+participant "AirTrafficController" as ATC
+participant "OperationsManagementTeam" as OMT
+participant "EmergencyServices" as ES
+end box
+
+box "Application Layer" #LightGreen
+participant "ScheduleService" as SS
+participant "EmergencyService" as EMS
+end box
+
+box "Domain Layer" #LightYellow
+participant "Runway" as RW
+participant "Slot" as S
+participant "Flight" as F
+participant "SlotStatus" as SS_ENUM
+participant "Permission" as PERM
+participant "EmergencyStatus" as ES_DOMAIN
+end box
+
+box "Infrastructure Layer" #LightCoral
+participant "FlightInformationAPIPort" as FIAPI
+participant "RunwayScheduleDatabasePort" as RSDB
+end box
+
+box "External Systems" #LightGray
+participant "Flight_Information_API" as EXT_API
+participant "Runway_Schedule_Database" as EXT_DB
+end box
+
+== Flow CTR-01: View Runway Slot Timetable ==
+
+ATC -> SS : viewRunwaySchedule(runwayId: String) : ScheduleView
+SS -> RSDB : checkAccess(controllerId: String, permission: Permission) : Boolean
+note right: Verify controller is in RunwayScheduleDB.accessible set
+
+alt Access Denied
+    RSDB --> SS : return false
+    SS --> ATC : return Error("Unauthorized access")
+else Access Granted
+    RSDB --> SS : return true
+    
+    SS -> RSDB : getRunwayById(runwayId: String) : Runway
+    RSDB -> EXT_DB : [SQL] SELECT * FROM runways WHERE id = runwayId
+    EXT_DB --> RSDB : runway data
+    RSDB --> SS : runway: Runway
+    
+    alt Runway Not Found
+        SS --> ATC : return Error("Runway not found")
+    else Runway Found
+        SS -> RSDB : getSlotsByRunway(runwayId: String) : List<Slot>
+        RSDB -> EXT_DB : [SQL] SELECT * FROM slots WHERE runway_id = runwayId
+        EXT_DB --> RSDB : slots data
+        RSDB --> SS : slots: List<Slot>
+        
+        alt No Slots Scheduled
+            SS --> ATC : return EmptyScheduleView("No scheduled slots")
+        else Slots Found
+            SS -> FIAPI : fetchFlightData(flightIds: List<String>) : Map<FlightId, FlightData>
+            FIAPI -> EXT_API : [TLS][Authenticated] GET /flights?ids=flightIds
+            note right: Encrypted transport layer
+            
+            alt API Unavailable
+                EXT_API --> FIAPI : HTTP 503 Service Unavailable
+                FIAPI --> SS : return Error("API unavailable")
+                SS -> RSDB : getCachedFlightData(flightIds: List<String>) : Map<FlightId, FlightData>
+                RSDB -> EXT_DB : [SQL] SELECT * FROM cached_flights WHERE flight_id IN flightIds
+                EXT_DB --> RSDB : cached data
+                RSDB --> SS : cachedFlightData
+                SS --> ATC : return ScheduleView with warning("Using cached data - API unavailable")
+            else API Available
+                EXT_API --> FIAPI : HTTP 200 [JSON] flight data
+                FIAPI --> SS : flightData: Map<FlightId, FlightData>
+                
+                SS -> SS : mergeSlotAndFlightData(slots: List<Slot>, flightData: Map) : ScheduleView
+                note right: Each slot includes flightId, scheduledTime, status, updatedTime, emergencyFlag
+                
+                alt Response Time > 2 seconds
+                    SS --> ATC : return ScheduleView with warning("Response time exceeded")
+                end
+                
+                SS --> ATC : return ScheduleView
+            end
+        end
+    end
+end
+
+== Flow CTR-02: Delay Update ==
+
+OMT -> SS : updateDelay(slotId: String, newScheduledTime: DateTime) : Slot
+SS -> RSDB : checkAccess(operatorId: String, permission: Permission) : Boolean
+
+alt Access Denied
+    RSDB --> SS : return false
+    SS --> OMT : return Error("Unauthorized access")
+else Access Granted
+    SS -> RSDB : getSlotById(slotId: String) : Slot
+    RSDB -> EXT_DB : [SQL] SELECT * FROM slots WHERE id = slotId
+    EXT_DB --> RSDB : slot: Slot
+    RSDB --> SS : slot: Slot
+    
+    alt Slot Not Found
+        SS --> OMT : return Error("Slot not found")
+    else Slot Found
+        SS -> S : getStatus() : SlotStatus
+        
+        alt Status is Emergency
+            S --> SS : return SlotStatus.EMERGENCY
+            SS --> OMT : return Error("Cannot delay emergency flight")
+        else Status is On-Time or Delayed
+            S --> SS : return status
+            
+            SS -> RW : getOperatingHours() : OperatingHours
+            RSDB -> EXT_DB : [SQL] SELECT operating_hours FROM runways WHERE id = runwayId
+            EXT_DB --> RSDB : operatingHours
+            RSDB --> SS : operatingHours: OperatingHours
+            
+            alt New Time Exceeds Operating Hours
+                SS -> S : setUpdatedTime(newScheduledTime: DateTime)
+                SS -> S : setStatus(SlotStatus.DELAYED)
+                SS -> RSDB : updateSlot(slot: Slot) : Boolean
+                RSDB -> EXT_DB : [SQL] UPDATE slots SET status='delayed', updated_time=newScheduledTime WHERE id=slotId
+                EXT_DB --> RSDB : success
+                RSDB --> SS : return true
+                SS --> ATC : raiseAlert("New time exceeds runway operating hours")
+                SS --> OMT : return Slot with alert("Time exceeds operating hours")
+            else Time Within Operating Hours
+                SS -> S : setUpdatedTime(newScheduledTime: DateTime)
+                SS -> S : setStatus(SlotStatus.DELAYED)
+                SS -> RSDB : updateSlot(slot: Slot) : Boolean
+                RSDB -> EXT_DB : [SQL] UPDATE slots SET status='delayed', updated_time=newScheduledTime WHERE id=slotId
+                EXT_DB --> RSDB : success
+                RSDB --> SS : return true
+                SS --> OMT : return Slot
+            end
+        end
+    end
+end
+
+== Flow CTR-03: Emergency Flight Addition ==
+
+ES -> EMS : addEmergencySlot(flightId: String, runwayId: String, scheduledTime: DateTime) : Slot
+EMS -> ES_DOMAIN : isActive() : Boolean
+
+alt Emergency Status Inactive
+    ES_DOMAIN --> EMS : return false
+    EMS --> ES : return Error("Emergency mode not active")
+else Emergency Status Active
+    ES_DOMAIN --> EMS : return true
+    
+    EMS -> RSDB : checkPermission(operatorId: String, permission: Permission) : Boolean
+    note right: Requires Execute or Admin permission
+    
+    alt Insufficient Permissions
+        RSDB --> EMS : return false
+        EMS --> ES : return Error("Insufficient permissions for emergency operation")
+    else Permissions Granted
+        RSDB --> EMS : return true
+        
+        EMS -> RSDB : getRunwayById(runwayId: String) : Runway
+        RSDB -> EXT_DB : [SQL] SELECT * FROM runways WHERE id = runwayId
+        EXT_DB --> RSDB : runway: Runway
+        RSDB --> EMS : runway: Runway
+        
+        alt Runway Not Found
+            EMS --> ES : return Error("Runway not found")
+        else Runway Found
+            EMS -> RW : getOperatingHours() : OperatingHours
+            RSDB -> EXT_DB : [SQL] SELECT operating_hours FROM runways WHERE id = runwayId
+            EXT_DB --> RSDB : operatingHours
+            RSDB --> EMS : operatingHours: OperatingHours
+            
+            alt Time Outside Operating Hours
+                EMS --> ES : return Error("Cannot schedule outside operating hours")
+                note right: No state change - edge case safety constraint
+            else Time Within Operating Hours
+                EMS -> S : createEmergencySlot(flightId: String, scheduledTime: DateTime) : Slot
+                note right: Sets status=EMERGENCY, emergencyFlag=true
+                
+                EMS -> RSDB : insertSlot(slot: Slot, priority: Integer) : Boolean
+                RSDB -> EXT_DB : [SQL] INSERT INTO slots (flight_id, scheduled_time, status, emergency_flag) VALUES (...)
+                EXT_DB --> RSDB : success
+                RSDB --> EMS : return true
+                
+                EMS -> SS : notifyControllers(emergencySlot: Slot)
+                note right: Notify all controllers viewing any runway
+                SS --> EMS : acknowledgment
+                
+                EMS --> ES : return Slot with emergency flag
+            end
+        end
+    end
+end
+
+== Error Path: Concurrent Access Handling ==
+
+SS -> RSDB : beginTransaction()
+RSDB -> EXT_DB : BEGIN TRANSACTION
+SS -> RSDB : updateSlotWithLock(slot: Slot) : Boolean
+RSDB -> EXT_DB : [SQL] UPDATE slots SET ... WHERE id=slotId AND version=currentVersion
+
+alt Optimistic Lock Failure
+    EXT_DB --> RSDB : rows_affected = 0
+    RSDB --> SS : return false
+    SS -> RSDB : rollbackTransaction()
+    RSDB -> EXT_DB : ROLLBACK
+    SS --> ATC : return Error("Concurrent modification detected, please retry")
+else Update Successful
+    EXT_DB --> RSDB : rows_affected = 1
+    RSDB --> SS : return true
+    SS -> RSDB : commitTransaction()
+    RSDB -> EXT_DB : COMMIT
+end
+
+@enduml

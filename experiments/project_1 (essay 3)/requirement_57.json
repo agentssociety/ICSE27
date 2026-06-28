@@ -1,0 +1,87 @@
+{
+  "id": "REQ-HEALTHCARE-01",
+  "title": "Take Next Patient from Queue",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall automatically display the patient at the head of the queue and remove that patient from the queue when requested by a healthcare practitioner.",
+  "rationale": "This requirement ensures that patients are seen in order of arrival, improving efficiency and fairness in patient care.",
+  "business_value": "Improves patient satisfaction and reduces wait times by ensuring timely and orderly service.",
+  "source": {
+    "type": "User Story",
+    "id": 57,
+    "description": "As a healthcare practitioner, I need to take the next patient from the head of the queue so that patients are seen in order of arrival."
+  },
+  "stakeholders": [
+    "Healthcare Practitioners",
+    "Patient Care Coordinators",
+    "System Administrators"
+  ],
+  "acceptance_criteria": [
+    "The system displays the patient at the head of the queue.",
+    "The system removes that patient from the queue."
+  ],
+  "preconditions": [
+    "There is a queue with multiple patients."
+  ],
+  "postconditions": [],
+  "functional_constraints": [
+    "The system must automatically provide the next patient when requested by a healthcare practitioner."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "The queue is empty when a practitioner requests the next patient.",
+    "A practitioner attempts to remove a patient who has already been served."
+  ],
+  "dependencies": [
+    "Patient Queue Management System"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Queue Service API",
+      "description": "The requirement interacts with the Queue Service API to retrieve and update the queue status."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-HEALTHCARE-01",
+      "description": "Verify that the system displays the patient at the head of the queue when requested.",
+      "expected_result": "The system displays the first patient in the queue and does not remove them."
+    },
+    {
+      "id": "TC-HEALTHCARE-02",
+      "description": "Verify that the system removes a patient from the queue after displaying them.",
+      "expected_result": "The system updates the queue to remove the displayed patient, and the next patient is now at the head of the queue."
+    },
+    {
+      "id": "TC-HEALTHCARE-03",
+      "description": "Verify that the system handles an empty queue correctly.",
+      "expected_result": "The system displays a message indicating that the queue is empty and does not attempt to remove any patient."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T17:33:34.982082",
+  "last_updated": "2026-06-15T17:39:57.291188",
+  "traceability": {
+    "related_requirements": [
+      "REQ-QUEUE-01",
+      "REQ-ITEM-URGENCY-01",
+      "REQ-SYM-01"
+    ],
+    "design_components": [
+      "Patient",
+      "Queue"
+    ],
+    "test_artifacts": []
+  }
+}

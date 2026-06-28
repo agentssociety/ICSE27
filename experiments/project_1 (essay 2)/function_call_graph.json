@@ -1,0 +1,1186 @@
+{
+  "src.api.data_at_rest_encryption.data_at_rest_encryption_router._repo": {
+    "file": "src/api/data_at_rest_encryption/data_at_rest_encryption_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.data_at_rest_encryption.data_at_rest_encryption_router.list_data_at_rest_encryptions": {
+    "file": "src/api/data_at_rest_encryption/data_at_rest_encryption_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_data_at_rest_encryptions",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.data_at_rest_encryption.data_at_rest_encryption_router.get_data_at_rest_encryption": {
+    "file": "src/api/data_at_rest_encryption/data_at_rest_encryption_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_data_at_rest_encryption",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.data_at_rest_encryption.data_at_rest_encryption_router.create_data_at_rest_encryption": {
+    "file": "src/api/data_at_rest_encryption/data_at_rest_encryption_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_data_at_rest_encryption",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.data_at_rest_encryption.data_at_rest_encryption_router.update_data_at_rest_encryption": {
+    "file": "src/api/data_at_rest_encryption/data_at_rest_encryption_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_data_at_rest_encryption",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.data_at_rest_encryption.data_at_rest_encryption_router.delete_data_at_rest_encryption": {
+    "file": "src/api/data_at_rest_encryption/data_at_rest_encryption_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_data_at_rest_encryption",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router._repo": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.list_patients": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_patients",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.get_patient": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_patient",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.create_patient": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_patient",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.update_patient": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_patient",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.delete_patient": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_patient",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_record.patient_record_router.get_db": {
+    "file": "src/api/patient_record/patient_record_router.py",
+    "line": 12,
+    "end_line": 13,
+    "class": null,
+    "name": "get_db",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.patient_record.patient_record_router._repo": {
+    "file": "src/api/patient_record/patient_record_router.py",
+    "line": 18,
+    "end_line": 19,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.patient_record.patient_record_router.list_patient_records": {
+    "file": "src/api/patient_record/patient_record_router.py",
+    "line": 23,
+    "end_line": 24,
+    "class": null,
+    "name": "list_patient_records",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_record.patient_record_router.get_patient_record": {
+    "file": "src/api/patient_record/patient_record_router.py",
+    "line": 28,
+    "end_line": 32,
+    "class": null,
+    "name": "get_patient_record",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_record.patient_record_router.create_patient_record": {
+    "file": "src/api/patient_record/patient_record_router.py",
+    "line": 36,
+    "end_line": 37,
+    "class": null,
+    "name": "create_patient_record",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_record.patient_record_router.update_patient_record": {
+    "file": "src/api/patient_record/patient_record_router.py",
+    "line": 41,
+    "end_line": 45,
+    "class": null,
+    "name": "update_patient_record",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.patient_record.patient_record_router.delete_patient_record": {
+    "file": "src/api/patient_record/patient_record_router.py",
+    "line": 49,
+    "end_line": 51,
+    "class": null,
+    "name": "delete_patient_record",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.queue_entry.queue_entry_router._repo": {
+    "file": "src/api/queue_entry/queue_entry_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.queue_entry.queue_entry_router.list_queue_entrys": {
+    "file": "src/api/queue_entry/queue_entry_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_queue_entrys",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.queue_entry.queue_entry_router.get_queue_entry": {
+    "file": "src/api/queue_entry/queue_entry_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_queue_entry",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.queue_entry.queue_entry_router.create_queue_entry": {
+    "file": "src/api/queue_entry/queue_entry_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_queue_entry",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.queue_entry.queue_entry_router.update_queue_entry": {
+    "file": "src/api/queue_entry/queue_entry_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_queue_entry",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.queue_entry.queue_entry_router.delete_queue_entry": {
+    "file": "src/api/queue_entry/queue_entry_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_queue_entry",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router._repo": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.list_resources": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_resources",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.get_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_resource",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.create_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_resource",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.update_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_resource",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.delete_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_resource",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_data.symptom_data_router._repo": {
+    "file": "src/api/symptom_data/symptom_data_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.symptom_data.symptom_data_router.list_symptom_datas": {
+    "file": "src/api/symptom_data/symptom_data_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_symptom_datas",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_data.symptom_data_router.get_symptom_data": {
+    "file": "src/api/symptom_data/symptom_data_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_symptom_data",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_data.symptom_data_router.create_symptom_data": {
+    "file": "src/api/symptom_data/symptom_data_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_symptom_data",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_data.symptom_data_router.update_symptom_data": {
+    "file": "src/api/symptom_data/symptom_data_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_symptom_data",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_data.symptom_data_router.delete_symptom_data": {
+    "file": "src/api/symptom_data/symptom_data_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_symptom_data",
+    "calls": [
+      "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.config.database.get_db": {
+    "file": "src/config/database.py",
+    "line": 14,
+    "end_line": 20,
+    "class": null,
+    "name": "get_db",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.Container.__init__": {
+    "file": "src/config/dependencies.py",
+    "line": 14,
+    "end_line": 15,
+    "class": "Container",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.settings.Settings.__init__": {
+    "file": "src/config/settings.py",
+    "line": 14,
+    "end_line": 15,
+    "class": "Settings",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient.Patient.Actor.checkPermission": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 27,
+    "end_line": 28,
+    "class": "Actor",
+    "name": "checkPermission",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient.Patient.PatientRecord.createPatientRecord": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 50,
+    "end_line": 51,
+    "class": "PatientRecord",
+    "name": "createPatientRecord",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient.Patient.SymptomData.createSymptomData": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 59,
+    "end_line": 60,
+    "class": "SymptomData",
+    "name": "createSymptomData",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient.Patient.QueueEntry.createQueueEntry": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 68,
+    "end_line": 69,
+    "class": "QueueEntry",
+    "name": "createQueueEntry",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient.Patient.DataAtRestEncryption.encryptResource": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 77,
+    "end_line": 79,
+    "class": "DataAtRestEncryption",
+    "name": "encryptResource",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient.Patient.Patient.assignUrgency": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 96,
+    "end_line": 100,
+    "class": "Patient",
+    "name": "assignUrgency",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient.Patient.Patient.updateUrgency": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 102,
+    "end_line": 103,
+    "class": "Patient",
+    "name": "updateUrgency",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient.Patient.Patient.getDetails": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 105,
+    "end_line": 112,
+    "class": "Patient",
+    "name": "getDetails",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.__init__": {
+    "file": "src/infra/data_at_rest_encryption/data_at_rest_encryption_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyDataAtRestEncryptionRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_by_id": {
+    "file": "src/infra/data_at_rest_encryption/data_at_rest_encryption_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyDataAtRestEncryptionRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": [
+      "src.api.data_at_rest_encryption.data_at_rest_encryption_router.get_data_at_rest_encryption",
+      "src.api.patient.patient_router.get_patient",
+      "src.api.patient_record.patient_record_router.get_patient_record",
+      "src.api.queue_entry.queue_entry_router.get_queue_entry",
+      "src.api.resource.resource_router.get_resource",
+      "src.api.symptom_data.symptom_data_router.get_symptom_data"
+    ]
+  },
+  "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.get_all": {
+    "file": "src/infra/data_at_rest_encryption/data_at_rest_encryption_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyDataAtRestEncryptionRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": [
+      "src.api.data_at_rest_encryption.data_at_rest_encryption_router.list_data_at_rest_encryptions",
+      "src.api.patient.patient_router.list_patients",
+      "src.api.patient_record.patient_record_router.list_patient_records",
+      "src.api.queue_entry.queue_entry_router.list_queue_entrys",
+      "src.api.resource.resource_router.list_resources",
+      "src.api.symptom_data.symptom_data_router.list_symptom_datas"
+    ]
+  },
+  "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.create": {
+    "file": "src/infra/data_at_rest_encryption/data_at_rest_encryption_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyDataAtRestEncryptionRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": [
+      "src.api.data_at_rest_encryption.data_at_rest_encryption_router.create_data_at_rest_encryption",
+      "src.api.patient.patient_router.create_patient",
+      "src.api.patient_record.patient_record_router.create_patient_record",
+      "src.api.queue_entry.queue_entry_router.create_queue_entry",
+      "src.api.resource.resource_router.create_resource",
+      "src.api.symptom_data.symptom_data_router.create_symptom_data"
+    ]
+  },
+  "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.update": {
+    "file": "src/infra/data_at_rest_encryption/data_at_rest_encryption_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyDataAtRestEncryptionRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": [
+      "src.api.data_at_rest_encryption.data_at_rest_encryption_router.update_data_at_rest_encryption",
+      "src.api.patient.patient_router.update_patient",
+      "src.api.patient_record.patient_record_router.update_patient_record",
+      "src.api.queue_entry.queue_entry_router.update_queue_entry",
+      "src.api.resource.resource_router.update_resource",
+      "src.api.symptom_data.symptom_data_router.update_symptom_data"
+    ]
+  },
+  "src.infra.data_at_rest_encryption.data_at_rest_encryption_repo_impl.SQLAlchemyDataAtRestEncryptionRepository.delete": {
+    "file": "src/infra/data_at_rest_encryption/data_at_rest_encryption_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyDataAtRestEncryptionRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": [
+      "src.api.data_at_rest_encryption.data_at_rest_encryption_router.delete_data_at_rest_encryption",
+      "src.api.patient.patient_router.delete_patient",
+      "src.api.patient_record.patient_record_router.delete_patient_record",
+      "src.api.queue_entry.queue_entry_router.delete_queue_entry",
+      "src.api.resource.resource_router.delete_resource",
+      "src.api.symptom_data.symptom_data_router.delete_symptom_data"
+    ]
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.__init__": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 11,
+    "end_line": 12,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.get_by_id": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 14,
+    "end_line": 15,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.get_all": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 17,
+    "end_line": 18,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.create": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 20,
+    "end_line": 21,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.update": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 23,
+    "end_line": 24,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.delete": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 26,
+    "end_line": 27,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_record.patient_record_repo_impl.SQLAlchemyPatientRecordRepository.__init__": {
+    "file": "src/infra/patient_record/patient_record_repo_impl.py",
+    "line": 11,
+    "end_line": 12,
+    "class": "SQLAlchemyPatientRecordRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_record.patient_record_repo_impl.SQLAlchemyPatientRecordRepository.get_by_id": {
+    "file": "src/infra/patient_record/patient_record_repo_impl.py",
+    "line": 14,
+    "end_line": 15,
+    "class": "SQLAlchemyPatientRecordRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_record.patient_record_repo_impl.SQLAlchemyPatientRecordRepository.get_all": {
+    "file": "src/infra/patient_record/patient_record_repo_impl.py",
+    "line": 17,
+    "end_line": 18,
+    "class": "SQLAlchemyPatientRecordRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_record.patient_record_repo_impl.SQLAlchemyPatientRecordRepository.create": {
+    "file": "src/infra/patient_record/patient_record_repo_impl.py",
+    "line": 20,
+    "end_line": 21,
+    "class": "SQLAlchemyPatientRecordRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_record.patient_record_repo_impl.SQLAlchemyPatientRecordRepository.update": {
+    "file": "src/infra/patient_record/patient_record_repo_impl.py",
+    "line": 23,
+    "end_line": 24,
+    "class": "SQLAlchemyPatientRecordRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient_record.patient_record_repo_impl.SQLAlchemyPatientRecordRepository.delete": {
+    "file": "src/infra/patient_record/patient_record_repo_impl.py",
+    "line": 26,
+    "end_line": 27,
+    "class": "SQLAlchemyPatientRecordRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.queue_entry.queue_entry_repo_impl.SQLAlchemyQueueEntryRepository.__init__": {
+    "file": "src/infra/queue_entry/queue_entry_repo_impl.py",
+    "line": 11,
+    "end_line": 12,
+    "class": "SQLAlchemyQueueEntryRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.queue_entry.queue_entry_repo_impl.SQLAlchemyQueueEntryRepository.get_by_id": {
+    "file": "src/infra/queue_entry/queue_entry_repo_impl.py",
+    "line": 14,
+    "end_line": 15,
+    "class": "SQLAlchemyQueueEntryRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.queue_entry.queue_entry_repo_impl.SQLAlchemyQueueEntryRepository.get_all": {
+    "file": "src/infra/queue_entry/queue_entry_repo_impl.py",
+    "line": 17,
+    "end_line": 18,
+    "class": "SQLAlchemyQueueEntryRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.queue_entry.queue_entry_repo_impl.SQLAlchemyQueueEntryRepository.create": {
+    "file": "src/infra/queue_entry/queue_entry_repo_impl.py",
+    "line": 20,
+    "end_line": 21,
+    "class": "SQLAlchemyQueueEntryRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.queue_entry.queue_entry_repo_impl.SQLAlchemyQueueEntryRepository.update": {
+    "file": "src/infra/queue_entry/queue_entry_repo_impl.py",
+    "line": 23,
+    "end_line": 24,
+    "class": "SQLAlchemyQueueEntryRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.queue_entry.queue_entry_repo_impl.SQLAlchemyQueueEntryRepository.delete": {
+    "file": "src/infra/queue_entry/queue_entry_repo_impl.py",
+    "line": 26,
+    "end_line": 27,
+    "class": "SQLAlchemyQueueEntryRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.__init__": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.get_by_id": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.get_all": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.create": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.update": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.delete": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_data.symptom_data_repo_impl.SQLAlchemySymptomDataRepository.__init__": {
+    "file": "src/infra/symptom_data/symptom_data_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemySymptomDataRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_data.symptom_data_repo_impl.SQLAlchemySymptomDataRepository.get_by_id": {
+    "file": "src/infra/symptom_data/symptom_data_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemySymptomDataRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_data.symptom_data_repo_impl.SQLAlchemySymptomDataRepository.get_all": {
+    "file": "src/infra/symptom_data/symptom_data_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemySymptomDataRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_data.symptom_data_repo_impl.SQLAlchemySymptomDataRepository.create": {
+    "file": "src/infra/symptom_data/symptom_data_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemySymptomDataRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_data.symptom_data_repo_impl.SQLAlchemySymptomDataRepository.update": {
+    "file": "src/infra/symptom_data/symptom_data_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemySymptomDataRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_data.symptom_data_repo_impl.SQLAlchemySymptomDataRepository.delete": {
+    "file": "src/infra/symptom_data/symptom_data_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemySymptomDataRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.data_at_rest_encryption.data_at_rest_encryption_repository.DataAtRestEncryptionRepository.get_by_id": {
+    "file": "src/repository/data_at_rest_encryption/data_at_rest_encryption_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "DataAtRestEncryptionRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.data_at_rest_encryption.data_at_rest_encryption_repository.DataAtRestEncryptionRepository.get_all": {
+    "file": "src/repository/data_at_rest_encryption/data_at_rest_encryption_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "DataAtRestEncryptionRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.data_at_rest_encryption.data_at_rest_encryption_repository.DataAtRestEncryptionRepository.create": {
+    "file": "src/repository/data_at_rest_encryption/data_at_rest_encryption_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "DataAtRestEncryptionRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.data_at_rest_encryption.data_at_rest_encryption_repository.DataAtRestEncryptionRepository.update": {
+    "file": "src/repository/data_at_rest_encryption/data_at_rest_encryption_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "DataAtRestEncryptionRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.data_at_rest_encryption.data_at_rest_encryption_repository.DataAtRestEncryptionRepository.delete": {
+    "file": "src/repository/data_at_rest_encryption/data_at_rest_encryption_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "DataAtRestEncryptionRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.get_by_id": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "PatientRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.get_all": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "PatientRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.create": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "PatientRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.update": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "PatientRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.delete": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "PatientRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_record.patient_record_repository.PatientRecordRepository.get_by_id": {
+    "file": "src/repository/patient_record/patient_record_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "PatientRecordRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_record.patient_record_repository.PatientRecordRepository.get_all": {
+    "file": "src/repository/patient_record/patient_record_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "PatientRecordRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_record.patient_record_repository.PatientRecordRepository.create": {
+    "file": "src/repository/patient_record/patient_record_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "PatientRecordRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_record.patient_record_repository.PatientRecordRepository.update": {
+    "file": "src/repository/patient_record/patient_record_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "PatientRecordRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient_record.patient_record_repository.PatientRecordRepository.delete": {
+    "file": "src/repository/patient_record/patient_record_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "PatientRecordRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.queue_entry.queue_entry_repository.QueueEntryRepository.get_by_id": {
+    "file": "src/repository/queue_entry/queue_entry_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "QueueEntryRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.queue_entry.queue_entry_repository.QueueEntryRepository.get_all": {
+    "file": "src/repository/queue_entry/queue_entry_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "QueueEntryRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.queue_entry.queue_entry_repository.QueueEntryRepository.create": {
+    "file": "src/repository/queue_entry/queue_entry_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "QueueEntryRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.queue_entry.queue_entry_repository.QueueEntryRepository.update": {
+    "file": "src/repository/queue_entry/queue_entry_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "QueueEntryRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.queue_entry.queue_entry_repository.QueueEntryRepository.delete": {
+    "file": "src/repository/queue_entry/queue_entry_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "QueueEntryRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.get_by_id": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "ResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.get_all": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "ResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.create": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "ResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.update": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "ResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.delete": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "ResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_data.symptom_data_repository.SymptomDataRepository.get_by_id": {
+    "file": "src/repository/symptom_data/symptom_data_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "SymptomDataRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_data.symptom_data_repository.SymptomDataRepository.get_all": {
+    "file": "src/repository/symptom_data/symptom_data_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "SymptomDataRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_data.symptom_data_repository.SymptomDataRepository.create": {
+    "file": "src/repository/symptom_data/symptom_data_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "SymptomDataRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_data.symptom_data_repository.SymptomDataRepository.update": {
+    "file": "src/repository/symptom_data/symptom_data_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "SymptomDataRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_data.symptom_data_repository.SymptomDataRepository.delete": {
+    "file": "src/repository/symptom_data/symptom_data_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "SymptomDataRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.patient.patient_service.PatientServiceImpl.__init__": {
+    "file": "src/service/patient/patient_service.py",
+    "line": 23,
+    "end_line": 24,
+    "class": "PatientServiceImpl",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.conftest.test_conftest_placeholder": {
+    "file": "tests/integration/conftest.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_conftest_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_api_contracts.test_test_api_contracts_placeholder": {
+    "file": "tests/integration/test_api_contracts.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_api_contracts_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_patient_flow.test_test_patient_flow_placeholder": {
+    "file": "tests/integration/test_patient_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_patient_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_api.test_test_patient_api_placeholder": {
+    "file": "tests/unit/patient/test_patient_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_patient_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_domain.test_test_patient_domain_placeholder": {
+    "file": "tests/unit/patient/test_patient_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_patient_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_service.test_test_patient_service_placeholder": {
+    "file": "tests/unit/patient/test_patient_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_patient_service_placeholder",
+    "calls": [],
+    "called_by": []
+  }
+}

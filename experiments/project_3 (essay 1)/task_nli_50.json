@@ -1,0 +1,37 @@
+{
+  "task_id": 50,
+  "confidence": 0.9781,
+  "evidence": [
+    {
+      "claim": "The system automatically reassigns affected flights to alternative runways.",
+      "fact": "When a runway is closed, the system reassigns its future flights to the other runway.",
+      "score": 0.9854,
+      "user_story_span": "automatically reassigning affected flights to alternative runways",
+      "fact_span": "reassigns its future flights to the other runway"
+    },
+    {
+      "claim": "The system marks affected flights with appropriate delays.",
+      "fact": "The slot timetable includes delayed flights.",
+      "score": 0.9815,
+      "user_story_span": "marking them with appropriate delays",
+      "fact_span": "includes delayed flights"
+    },
+    {
+      "claim": "The system processes a runway closure when it is declared.",
+      "fact": "When a runway is closed, the system reassigns its future flights to the other runway.",
+      "score": 0.9739,
+      "user_story_span": "handle runway closures",
+      "fact_span": "When a runway is closed"
+    },
+    {
+      "claim": "The system adjusts departure and arrival times according to the delay.",
+      "fact": "When an emergency is declared, the system instantly frees up a slot and reorders other flights to accommodate it.",
+      "score": 0.9715,
+      "user_story_span": "Delay marking adjusts estimated departure/arrival times accordingly",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 17,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

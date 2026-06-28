@@ -1,0 +1,83 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #E8F0FE
+skinparam interfaceBackgroundColor #FFF3CD
+skinparam enumBackgroundColor #D4EDDA
+skinparam noteBackgroundColor #F8D7DA
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+
+package "Domain Model" {
+  class FlightAssignment {
+    - resource: Resource
+    - finalized: Bool
+    - sector: Sector
+  + create(assignmentData)
+  + setFinalized(false)
+  }
+  note right of FlightAssignment::resource
+    <b>Invariants:</b>
+    - Two non-finalized assignments cannot share the same resource
+    - Two non-finalized assignments in same sector cannot share the same resource
+    - At any time, no two assignments occupy the same slot or runway simultaneously
+  end note
+
+  class Resource {
+    - owner: Actor
+    - accessible: Set<Actor>
+  + getAccessibleSet(resourceId)
+  }
+  note right of Resource::owner
+    <b>Invariant:</b>
+    - owner always in accessible
+  end note
+
+  class Sector {
+  }
+
+  class Actor {
+  }
+
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+  note right of Permission
+    <b>Partial order:</b>
+    Read <= Write, Read <= Execute, Admin strongest
+  end note
+
+  enum State {
+    PRE1
+    POST1
+    POST2
+  + transitionTo(Post1)
+  + transitionTo(Post2)
+  }
+  note right of State
+    <b>Behavioral constraint:</b>
+    Operation must change state (pre != post)
+  end note
+}
+
+package "Infrastructure — Ports" {
+  interface Flight_Assignment_API {
+  }
+  note right of Flight_Assignment_API
+    Requires authentication
+  end note
+
+  interface Flight_Assignment_Database {
+  }
+}
+
+' Relationships
+FlightAssignment "1" --> "1" Resource : uses
+FlightAssignment "1" --> "1" Sector : belongs to
+Actor "1" --> "*" Resource : owns
+Actor "*" --> "*" Resource : accesses
+
+@enduml

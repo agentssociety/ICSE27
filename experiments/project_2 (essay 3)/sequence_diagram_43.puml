@@ -1,0 +1,269 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "Scheduling_API" as SchedulingAPI
+  participant "Inventory_Manager" as InventoryManager
+  participant "Clinical_Team" as ClinicalTeam
+  participant "Quality_Assurance" as QualityAssurance
+end box
+
+box "Application Layer" #LightGreen
+  participant "Operation" as Operation
+end box
+
+box "Domain Layer" #LightYellow
+  participant "BloodUnit" as BloodUnit
+  participant "BloodUnitStatus" as BloodUnitStatus
+  participant "Permission" as Permission
+  participant "PermissionValue" as PermissionValue
+  participant "State" as State
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "Blood_Unit_Database" as BloodUnitDB
+  participant "Interface" as Interface
+  participant "IfaceKind" as IfaceKind
+end box
+
+== Scheduled Expiration Check - Main Flow ==
+
+SchedulingAPI -> Operation : triggerExpirationCheck() : void
+note right: [TLS encrypted] [authenticated]
+
+Operation -> BloodUnitDB : readAllBloodUnits() : List<BloodUnit>
+note right: [encrypted at rest] [authenticated]
+
+BloodUnitDB --> Operation : bloodUnits
+
+loop for each BloodUnit
+  Operation -> BloodUnit : getCollectionDate() : datetime
+  Operation -> BloodUnit : getShelfLifeDuration() : int
+  Operation -> BloodUnit : calculateExpirationDate(collectionDate: datetime, shelfLife: int) : datetime
+  
+  alt currentDate > expirationDate
+    Operation -> BloodUnit : markAsExpired() : void
+    note right: State transition: available -> expired
+    
+    Operation -> BloodUnit : getOwner() : Actor
+    Operation -> BloodUnit : getAccessibleActors() : Set<Actor>
+    
+    alt initiator has Write permission AND is in accessible set
+      Operation -> BloodUnit : setStatus(BloodUnitStatus.expired) : void
+      Operation -> BloodUnitDB : updateBloodUnit(bloodUnit: BloodUnit) : void
+      note right: [encrypted at rest]
+      
+      Operation -> BloodUnit : removeFromAvailableInventory() : void
+      note right: State transition: Post1 -> Post2
+      
+      alt initiator has Admin permission
+        Operation -> BloodUnitDB : removeFromInventory(bloodUnitId: String) : void
+        note right: [encrypted at rest]
+        BloodUnitDB --> Operation : success
+        
+        Operation -> SchedulingAPI : logExpirationEvent(bloodUnitId: String) : void
+        Operation -> SchedulingAPI : notifyStakeholders(event: ExpirationEvent) : void
+        
+      else initiator lacks Admin permission
+        Operation --> SchedulingAPI : returnError("Insufficient permissions for removal")
+        note right: Error: Admin permission required for Post2
+      end
+      
+    else initiator lacks Write permission OR not in accessible set
+      Operation --> SchedulingAPI : returnError("Unauthorized: Write permission required")
+      note right: Error: Only Inventory_Manager can perform state changes
+    end
+    
+  else currentDate <= expirationDate
+    note right: No state change required
+  end
+end
+
+SchedulingAPI --> SchedulingAPI : scheduleNextCheck()
+
+== Manual Expiration Check - Main Flow ==
+
+InventoryManager -> Operation : manualExpirationCheck(bloodUnitId: String) : void
+note right: [TLS encrypted] [authenticated]
+
+Operation -> BloodUnitDB : readBloodUnit(bloodUnitId: String) : BloodUnit
+note right: [encrypted at rest]
+
+BloodUnitDB --> Operation : bloodUnit
+
+Operation -> BloodUnit : getCollectionDate() : datetime
+Operation -> BloodUnit : getShelfLifeDuration() : int
+
+alt collectionDate >= 0
+  Operation -> BloodUnit : calculateExpirationDate(collectionDate: datetime, shelfLife: int) : datetime
+  
+  alt currentDate > expirationDate
+    Operation -> BloodUnit : markAsExpired() : void
+    Operation -> BloodUnit : setStatus(BloodUnitStatus.expired) : void
+    Operation -> BloodUnitDB : updateBloodUnit(bloodUnit: BloodUnit) : void
+    
+    Operation -> BloodUnit : removeFromAvailableInventory() : void
+    Operation -> BloodUnitDB : removeFromInventory(bloodUnitId: String) : void
+    
+    InventoryManager <- Operation : returnSuccess("Blood unit expired and removed")
+    
+  else currentDate <= expirationDate
+    InventoryManager <- Operation : returnSuccess("Blood unit still valid")
+  end
+  
+else collectionDate < 0
+  note right: Edge case: Indefinite shelf life
+  
+  alt initiator is Quality_Assurance
+    Operation -> BloodUnit : markAsExpired() : void
+    note right: Quality_Assurance can set Post1 or Post2
+    
+    alt Quality_Assurance chooses Post1
+      Operation -> BloodUnit : setStatus(BloodUnitStatus.expired) : void
+      Operation -> BloodUnitDB : updateBloodUnit(bloodUnit: BloodUnit) : void
+      QualityAssurance <- Operation : returnSuccess("Unit marked as expired (indefinite shelf life)")
+      
+    else Quality_Assurance chooses Post2
+      Operation -> BloodUnit : setStatus(BloodUnitStatus.expired) : void
+      Operation -> BloodUnitDB : updateBloodUnit(bloodUnit: BloodUnit) : void
+      Operation -> BloodUnit : removeFromAvailableInventory() : void
+      Operation -> BloodUnitDB : removeFromInventory(bloodUnitId: String) : void
+      QualityAssurance <- Operation : returnSuccess("Unit removed from inventory (indefinite shelf life)")
+    end
+    
+  else initiator is not Quality_Assurance
+    InventoryManager <- Operation : returnError("Only Quality_Assurance can handle indefinite shelf life units")
+    note right: Error: Unauthorized role for edge case
+  end
+end
+
+== Read-Only Check - Clinical Team ==
+
+ClinicalTeam -> Operation : checkExpirationStatus(bloodUnitId: String) : void
+note right: [TLS encrypted] [authenticated]
+
+Operation -> BloodUnitDB : readBloodUnit(bloodUnitId: String) : BloodUnit
+note right: [encrypted at rest]
+
+BloodUnitDB --> Operation : bloodUnit
+
+Operation -> BloodUnit : getStatus() : BloodUnitStatus
+Operation -> BloodUnit : getCollectionDate() : datetime
+Operation -> BloodUnit : getExpirationDate() : datetime
+
+ClinicalTeam <- Operation : returnBloodUnitStatus(status: BloodUnitStatus, collectionDate: datetime, expirationDate: datetime)
+note right: Read-only access, no state changes
+
+== Error Path - System Clock Discrepancy ==
+
+SchedulingAPI -> Operation : triggerExpirationCheck() : void
+
+Operation -> BloodUnitDB : readAllBloodUnits() : List<BloodUnit>
+BloodUnitDB --> Operation : bloodUnits
+
+loop for each BloodUnit
+  Operation -> BloodUnit : getCollectionDate() : datetime
+  Operation -> BloodUnit : getShelfLifeDuration() : int
+  
+  alt collectionDate > currentDate
+    note right: System clock discrepancy detected
+    
+    alt initiator is Inventory_Manager
+      Operation -> BloodUnit : markAsExpired() : void
+      Operation -> BloodUnit : setStatus(BloodUnitStatus.expired) : void
+      Operation -> BloodUnitDB : updateBloodUnit(bloodUnit: BloodUnit) : void
+      
+      Operation -> BloodUnit : removeFromAvailableInventory() : void
+      Operation -> BloodUnitDB : removeFromInventory(bloodUnitId: String) : void
+      
+      SchedulingAPI <- Operation : returnSuccess("Unit processed despite clock discrepancy")
+      
+    else initiator is not Inventory_Manager
+      SchedulingAPI <- Operation : returnError("Clock discrepancy detected - only Inventory_Manager can process")
+      note right: Error: Unauthorized role for clock discrepancy edge case
+    end
+    
+  else collectionDate <= currentDate
+    note right: Normal processing continues
+  end
+end
+
+== Error Path - Dynamic Shelf Life Regulatory Update ==
+
+InventoryManager -> Operation : updateShelfLifeDuration(newDuration: int) : void
+note right: [TLS encrypted] [authenticated]
+
+alt initiator has Admin permission
+  Operation -> BloodUnitDB : readAllBloodUnits() : List<BloodUnit>
+  BloodUnitDB --> Operation : bloodUnits
+  
+  loop for each BloodUnit
+    Operation -> BloodUnit : setShelfLifeDuration(newDuration: int) : void
+    Operation -> BloodUnit : recalculateExpirationDate() : datetime
+    
+    alt new expirationDate < currentDate
+      Operation -> BloodUnit : markAsExpired() : void
+      Operation -> BloodUnit : setStatus(BloodUnitStatus.expired) : void
+      Operation -> BloodUnitDB : updateBloodUnit(bloodUnit: BloodUnit) : void
+      
+      Operation -> BloodUnit : removeFromAvailableInventory() : void
+      Operation -> BloodUnitDB : removeFromInventory(bloodUnitId: String) : void
+    end
+  end
+  
+  InventoryManager <- Operation : returnSuccess("Shelf life updated for all units")
+  
+else initiator lacks Admin permission
+  InventoryManager <- Operation : returnError("Admin permission required for regulatory updates")
+  note right: Error: Only Admin can modify regulatory compliance
+end
+
+== Error Path - Database Connection Failure ==
+
+SchedulingAPI -> Operation : triggerExpirationCheck() : void
+
+Operation -> BloodUnitDB : readAllBloodUnits() : List<BloodUnit>
+
+alt database connection fails
+  Operation --> SchedulingAPI : returnError("Database connection failed")
+  note right: Error: Unable to read blood units
+  
+  SchedulingAPI -> SchedulingAPI : retryWithBackoff()
+  
+  alt retry succeeds
+    note right: Continue with normal flow
+  else retry fails after max attempts
+    SchedulingAPI -> SchedulingAPI : logCriticalError("Expiration check failed")
+    SchedulingAPI -> SchedulingAPI : notifyAdmin("System unavailable")
+  end
+  
+else database returns empty set
+  SchedulingAPI <- Operation : returnSuccess("No blood units to check")
+end
+
+== Error Path - Authentication/Authorization Failure ==
+
+ClinicalTeam -> Operation : markBloodUnitExpired(bloodUnitId: String) : void
+note right: [TLS encrypted] [authenticated]
+
+alt authentication fails
+  Operation --> ClinicalTeam : returnError("Authentication failed")
+  note right: Error: Invalid credentials
+  
+else authentication succeeds but authorization fails
+  Operation -> BloodUnitDB : readBloodUnit(bloodUnitId: String) : BloodUnit
+  BloodUnitDB --> Operation : bloodUnit
+  
+  Operation -> BloodUnit : getAccessibleActors() : Set<Actor>
+  
+  alt ClinicalTeam not in accessible set
+    Operation --> ClinicalTeam : returnError("Access denied: not authorized for this blood unit")
+    note right: Error: Resource access control violation
+    
+  else ClinicalTeam lacks Write permission
+    Operation --> ClinicalTeam : returnError("Insufficient permissions: Read-only access")
+    note right: Error: Clinical_Team cannot perform state changes
+  end
+end
+
+@enduml

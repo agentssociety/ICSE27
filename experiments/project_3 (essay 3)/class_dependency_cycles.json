@@ -1,0 +1,384 @@
+{
+  "detected_cycles": [],
+  "removed_edges_to_break_cycles": [],
+  "relationship_corrections": [
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "-->",
+        "right": "Permission"
+      },
+      "corrected": {
+        "left": "Actor",
+        "arrow": "\"1\" --> \"*\"",
+        "right": "Permission"
+      },
+      "reason": "The relationship should be one Actor has many Permissions, not a simple directed association without multiplicity. Corrected to reflect a one-to-many directed association."
+    },
+    {
+      "original": {
+        "left": "Flight",
+        "arrow": "\"0..1\" -- \"0..1\"",
+        "right": "Slot"
+      },
+      "corrected": {
+        "left": "Flight",
+        "arrow": "\"1\" -- \"0..1\"",
+        "right": "Slot"
+      },
+      "reason": "A Flight can have at most one Slot, and a Slot can be associated with zero or one Flight, so the multiplicity should be 1 on Flight side and 0..1 on Slot side."
+    },
+    {
+      "original": {
+        "left": "Flight",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "Flight",
+        "arrow": "\"*\" --> \"1\"",
+        "right": "Actor"
+      },
+      "reason": "Many Flights can be associated with one Actor (e.g., dispatcher), not a one-to-one relationship."
+    },
+    {
+      "original": {
+        "left": "Flight",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "Resource"
+      },
+      "corrected": {
+        "left": "Flight",
+        "arrow": "\"*\" --> \"1\"",
+        "right": "Resource"
+      },
+      "reason": "Many Flights can use one Resource (e.g., runway), not a one-to-one relationship."
+    },
+    {
+      "original": {
+        "left": "Resource",
+        "arrow": "\"1\" --> \"*\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "Resource",
+        "arrow": "\"*\" --> \"1\"",
+        "right": "Actor"
+      },
+      "reason": "Many Resources can be assigned to one Actor, not one Resource to many Actors."
+    },
+    {
+      "original": {
+        "left": "Schedule",
+        "arrow": "\"1\" *-- \"many\"",
+        "right": "Slot"
+      },
+      "corrected": {
+        "left": "Schedule",
+        "arrow": "\"1\" *-- \"0..*\"",
+        "right": "Slot"
+      },
+      "reason": "A Schedule can contain many Slots, so composition is correct: one Schedule has many Slots."
+    },
+    {
+      "original": {
+        "left": "Slot",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "Flight"
+      },
+      "corrected": {
+        "left": "Slot",
+        "arrow": "\"0..1\" --> \"1\"",
+        "right": "Flight"
+      },
+      "reason": "A Slot may be associated with zero or one Flight, not one-to-one. A Slot can be unassigned."
+    }
+  ],
+  "architecture_corrections": [
+    {
+      "kind": "wrong_inheritance",
+      "description": "Actor inherits from Permission via a directed association arrow, but Permission is an enum (role), not a base class.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "Actor",
+          "to": "Permission",
+          "arrow": "\"*\" --> \"*\""
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Actor inherits from Permission again with a different multiplicity, which is redundant and incorrect.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "Actor",
+          "to": "Permission",
+          "arrow": "\"1\" --> \"*\""
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Flight has a directed association to Actor, but the task context shows Flight is a domain entity, not owned by an actor.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "Flight",
+          "to": "Actor",
+          "arrow": "\"*\" --> \"1\""
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Resource inherits from Actor with multiplicity, but Resource is a base class for things like Runway, not an actor.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "Resource",
+          "to": "Actor",
+          "arrow": "\"*\" --> \"1\""
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Resource has another directed association to Actor with different multiplicity, likely a mistake.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "Resource",
+          "to": "Actor",
+          "arrow": "\"1\" --> \"1\""
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Slot has a directed association to Actor, but Slot is a time interval, not owned by an actor.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "Slot",
+          "to": "Actor",
+          "arrow": "-->"
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "SlotAllocationOperation has a directed association to Actor, but it's an operation, not an actor.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "SlotAllocationOperation",
+          "to": "Actor",
+          "arrow": "-->"
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Operation has a directed association to Actor, but Operation is an action, not an entity owned by an actor.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "Operation",
+          "to": "Actor",
+          "arrow": "\"*\" --> \"1\""
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "REQ_OPM_01 has a directed association to Actor, but requirements are not owned by actors.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "REQ_OPM_01",
+          "to": "Actor",
+          "arrow": "\"1\" --> \"1\""
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "State has inheritance arrows to Post1, Post2, Post3, Pre1, Pre2, but these are likely states, not subclasses. Should be a composition or enumeration.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "State",
+          "to": "Post1"
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Same for Post2, Post3, Pre1, Pre2: they should not inherit from State.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "State",
+          "to": "Post2"
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Same for Post3.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "State",
+          "to": "Post3"
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Same for Pre1.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "State",
+          "to": "Pre1"
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Same for Pre2.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "from": "State",
+          "to": "Pre2"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Task #74 (Arrival Priority) requires priority logic between Slot and Flight type (arrival/departure), but no relationship exists to indicate flight type or priority.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "from": "Flight",
+          "to": "Slot",
+          "arrow": "\"1\" --> \"0..*\"",
+          "meaning": "a flight may have multiple slots (e.g., arrival and departure), but priority is missing"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Task #75 (Conflict Detection) requires checking overlaps between slots, but there is no relationship between Slot and Slot for conflict detection.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "from": "Slot",
+          "to": "Slot",
+          "arrow": "\"0..*\" -- \"0..*\"",
+          "meaning": "conflict detection (overlap/gap) between slots"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Task #76 (Runway Closure) requires Runway to have a relationship to Flight for reassignment, but Runway only composes Slot.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "from": "Runway",
+          "to": "Flight",
+          "arrow": "\"1\" --> \"0..*\"",
+          "meaning": "a runway handles multiple flights"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Task #77 (Emergency Flight Handling) requires a queue for flights, but Queue only composes Flight without a priority or emergency flag.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "from": "Queue",
+          "to": "Flight",
+          "arrow": "\"1\" *-- \"0..*\"",
+          "meaning": "queue contains flights, but missing priority ordering"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Task #78 (Slot Timetable) requires a view that links Runway, Slot, Flight, and status, but no direct relationship between Runway and Flight exists.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "from": "Runway",
+          "to": "Flight",
+          "arrow": "\"1\" --> \"0..*\"",
+          "meaning": "runway has flights for timetable"
+        }
+      }
+    }
+  ],
+  "architecture_suggestions": [
+    {
+      "kind": "extract_base_class",
+      "affected_classes": [
+        "Post1",
+        "Post2",
+        "Post3",
+        "Pre1",
+        "Pre2"
+      ],
+      "suggestion": "These appear to be states (pre/post conditions). Consider extracting them as values of an enum 'StateValue' rather than separate classes."
+    },
+    {
+      "kind": "introduce_value_object",
+      "affected_classes": [
+        "Slot"
+      ],
+      "suggestion": "Slot duration (5 minutes) and gap (3 minutes) are fixed. Introduce a value object 'SlotDuration' and 'GapDuration' to encapsulate these constants."
+    },
+    {
+      "kind": "add_aggregate_root",
+      "affected_classes": [
+        "Flight",
+        "Slot",
+        "Runway"
+      ],
+      "suggestion": "Consider making 'Runway' an aggregate root that manages its own slots and flights, ensuring consistency for slot allocation and conflict detection."
+    },
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "Actor"
+      ],
+      "suggestion": "Rename 'Actor' to 'User' or 'Personnel' to better reflect the domain (flight dispatcher, scheduler, air traffic controller)."
+    },
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "Operation"
+      ],
+      "suggestion": "Rename 'Operation' to 'Task' or 'Activity' to avoid confusion with system operations."
+    },
+    {
+      "kind": "split_class",
+      "affected_classes": [
+        "Flight"
+      ],
+      "suggestion": "Consider splitting Flight into 'FlightPlan' (route info) and 'FlightInstance' (actual departure/arrival) to separate scheduling from execution."
+    },
+    {
+      "kind": "general",
+      "affected_classes": [
+        "Queue"
+      ],
+      "suggestion": "Add a 'Priority' attribute to Flight or Queue to support emergency prioritization as per Task #77."
+    }
+  ]
+}

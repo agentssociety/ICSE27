@@ -1,0 +1,156 @@
+@startuml
+!theme plain
+
+' Participants grouped by layer
+box "Controller" #LightBlue
+  participant "Flight_Assignment_API" as API
+end box
+
+box "Application" #LightGreen
+  participant "AssignmentService" as Service
+end box
+
+box "Domain" #LightYellow
+  participant "FlightAssignment" as FA
+  participant "Resource" as Res
+  participant "Sector" as Sec
+  participant "Actor" as Act
+  participant "Permission" as Perm
+  participant "State" as State
+end box
+
+box "Infrastructure" #LightCoral
+  participant "Flight_Assignment_Database" as DB
+  participant "NotificationService" as Notif
+end box
+
+box "External" #LightGray
+  actor "Air_Traffic_Controller" as ATC
+  actor "Safety_Compliance_Department" as SCD
+end box
+
+' Notes for constraints
+note right of API : inv_authenticated_channel_required\n(at least one channel authenticated)
+note right of Service : inv_initiator_is_authorized\ninv_resource_access_control
+note right of State : Pre1: system monitors all assignments\nPost1: reject assignment\nPost2: notify controller
+
+== Create Flight Assignment (Happy Path – No Overlap) ==
+
+ATC -> API : POST /assignments [TLS]
+note right : includes assignment data (resource, sector, etc.)
+API -> API : authenticateRequest()
+alt Authentication fails
+  API -> ATC : 401 Unauthorized
+  note right : inv_authenticated_channel_required violated
+else Authentication succeeds
+  API -> Service : createAssignment(assignmentData)
+  Service -> Service : checkPermission(initiator, "Write")
+  alt Permission denied
+    Service -> API : 403 Forbidden
+    API -> ATC : 403 Forbidden
+    note right : inv_initiator_is_authorized
+  else Permission granted
+    Service -> Res : getAccessibleSet(resourceId)
+    Res --> Service : accessibleActors
+    alt Initiator not in accessible set
+      Service -> API : 403 Forbidden
+      API -> ATC : 403 Forbidden
+      note right : inv_resource_access_control
+    else Access granted
+      Service -> DB : queryExistingAssignments(resourceId, sectorId, finalized=false) [TLS]
+      DB --> Service : existingAssignments
+      alt Overlap detected (same resource, same sector)
+        ' This path is handled in next flow
+      else No overlap
+        Service -> FA : create(assignmentData)
+        FA -> FA : setFinalized(false)
+        Service -> DB : save(flightAssignment) [encrypted at rest]
+        DB --> Service : success
+        Service -> API : 201 Created
+        API -> ATC : 201 Created
+        note right : System remains in Pre1 (no state change)
+      end
+    end
+  end
+end
+
+== Create Flight Assignment (Overlap in Same Sector – Reject & Notify) ==
+
+ATC -> API : POST /assignments [TLS]
+API -> Service : createAssignment(assignmentData)
+Service -> Service : checkPermission(initiator, "Write")
+Service -> Res : getAccessibleSet(resourceId)
+Res --> Service : accessibleActors
+Service -> DB : queryExistingAssignments(resourceId, sectorId, finalized=false) [TLS]
+DB --> Service : existingAssignments
+alt Overlap detected (same resource, same sector)
+  Service -> State : transitionTo(Post1)
+  note right : State changes from Pre1 to Post1
+  State --> Service : ok
+  Service -> State : transitionTo(Post2)
+  note right : State changes from Pre1 to Post2
+  State --> Service : ok
+  Service -> Notif : sendConflictNotification(assignmentData, controllerId)
+  Notif -> ATC : notification [TLS]
+  Service -> API : 409 Conflict
+  API -> ATC : 409 Conflict
+  note right : Assignment rejected, controller notified
+else No overlap
+  ' handled in happy path
+end
+
+== Create Flight Assignment (Overlap in Different Sector – Allowed) ==
+
+ATC -> API : POST /assignments [TLS]
+API -> Service : createAssignment(assignmentData)
+Service -> Service : checkPermission(initiator, "Write")
+Service -> Res : getAccessibleSet(resourceId)
+Res --> Service : accessibleActors
+Service -> DB : queryExistingAssignments(resourceId, sectorId, finalized=false) [TLS]
+DB --> Service : existingAssignments
+alt Overlap detected (same resource, different sector)
+  Service -> FA : create(assignmentData)
+  FA -> FA : setFinalized(false)
+  Service -> DB : save(flightAssignment) [encrypted at rest]
+  DB --> Service : success
+  Service -> API : 201 Created
+  API -> ATC : 201 Created
+  note right : Allowed per edge case (different sectors)
+else Overlap in same sector
+  ' handled in previous flow
+end
+
+== Authorization Failure (Missing Write Permission) ==
+
+ATC -> API : POST /assignments [TLS]
+API -> Service : createAssignment(assignmentData)
+Service -> Service : checkPermission(initiator, "Write")
+alt Permission denied
+  Service -> API : 403 Forbidden
+  API -> ATC : 403 Forbidden
+  note right : inv_initiator_is_authorized
+end
+
+== Access Control Failure (Initiator not in accessible set) ==
+
+ATC -> API : POST /assignments [TLS]
+API -> Service : createAssignment(assignmentData)
+Service -> Service : checkPermission(initiator, "Write")
+Service -> Res : getAccessibleSet(resourceId)
+Res --> Service : accessibleActors
+alt Initiator not in accessible set
+  Service -> API : 403 Forbidden
+  API -> ATC : 403 Forbidden
+  note right : inv_resource_access_control
+end
+
+== Authentication Failure ==
+
+ATC -> API : POST /assignments [TLS]
+API -> API : authenticateRequest()
+alt Authentication fails
+  API -> ATC : 401 Unauthorized
+  note right : inv_authenticated_channel_required violated
+end
+
+@enduml

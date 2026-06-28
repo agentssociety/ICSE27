@@ -1,0 +1,105 @@
+
+classDiagram
+    class User {
+        -int id
+        -string card_number
+        -string pin_hash
+        -string account_number
+        -float balance
+        -float daily_limit
+        -float daily_withdrawn_today
+        -date last_withdrawal_date
+        -bool is_locked
+        -int failed_attempts
+        +check_pin(pin: str) bool
+        +increment_failed_attempts()
+        +reset_failed_attempts()
+        +lock_account()
+        +unlock_account()
+    }
+    
+    class Transaction {
+        -int id
+        -int user_id
+        -float amount
+        -datetime timestamp
+        -string status  # pending, approved, declined, flagged
+        -string decline_reason
+        -bool is_flagged
+        +set_status(status: str)
+        +flag()
+    }
+    
+    class AuthenticationAttempt {
+        -int id
+        -int user_id
+        -datetime timestamp
+        -bool success
+        -string ip_address
+    }
+    
+    class AuditLog {
+        -int id
+        -string action
+        -int user_id
+        -int transaction_id
+        -string details
+        -datetime timestamp
+    }
+    
+    class FlaggedTransaction {
+        -int id
+        -int transaction_id
+        -string reason
+        -string severity  # low, medium, high
+        -int reviewed_by
+        -string review_status
+        -datetime review_timestamp
+    }
+    
+    class AuthService {
+        +authenticate(card_number: str, pin: str) User
+        +lock_account(user_id: int)
+        +unlock_account(user_id: int)
+        +get_failed_attempts(user_id: int) int
+    }
+    
+    class TransactionService {
+        -db_session
+        +process_withdrawal(user: User, amount: float) dict
+        +check_balance_and_limit(user: User, amount: float) bool
+        +execute_withdrawal(user: User, amount: float) Transaction
+        -rollback(transaction: Transaction)
+    }
+    
+    class FraudDetectionService {
+        +analyze_transaction(user: User, transaction: Transaction) bool
+        +flag_transaction(transaction: Transaction, reason: str)
+        +get_flagged_transactions() list[FlaggedTransaction]
+    }
+    
+    class AuditService {
+        +log_action(action: str, user_id: int, transaction_id: int, details: str)
+        +get_audit_logs(filters: dict) list[AuditLog]
+    }
+    
+    class AdminService {
+        +review_flagged_transaction(flagged_id: int, reviewer_id: int, status: str)
+        +lock_unlock_account(user_id: int, lock: bool)
+        +get_transaction_history(user_id: int) list[Transaction]
+        +get_audit_logs_history(filters: dict) list[AuditLog]
+    }
+    
+    User --> Transaction : has many
+    User --> AuthenticationAttempt : has many
+    Transaction --> FlaggedTransaction : can be flagged
+    AuthService --> User
+    TransactionService --> User
+    TransactionService --> Transaction
+    FraudDetectionService --> Transaction
+    FraudDetectionService --> FlaggedTransaction
+    AuditService --> AuditLog
+    AdminService --> User
+    AdminService --> FlaggedTransaction
+    AdminService --> Transaction
+    AdminService --> AuditLog

@@ -1,0 +1,23 @@
+{
+  "task_id": 85,
+  "confidence": 0.9579,
+  "evidence": [
+    {
+      "claim": "When the interaction occurs, the admin locks the account.",
+      "fact": "When an account is locked by an admin, it cannot be used for any further transactions until it is unlocked again.",
+      "score": 0.9897,
+      "user_story_span": "When the admin locks the account",
+      "fact_span": "When an account is locked by an admin"
+    },
+    {
+      "claim": "When the account is locked, the user cannot log in.",
+      "fact": "After three incorrect PIN entries in a row, the account is automatically disabled to prevent unauthorized access.",
+      "score": 0.926,
+      "user_story_span": "the account is locked and the user cannot log in",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

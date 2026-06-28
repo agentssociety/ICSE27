@@ -1,0 +1,232 @@
+{
+  "detected_cycles": [],
+  "removed_edges_to_break_cycles": [],
+  "relationship_corrections": [
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "Resource"
+      },
+      "corrected": {
+        "left": "Actor",
+        "arrow": "\"1\" -- \"*\"",
+        "right": "Resource"
+      },
+      "reason": "An air traffic controller manages multiple resources (runways, slots), not exactly one."
+    },
+    {
+      "original": {
+        "left": "Flight",
+        "arrow": "\"1\" *-- \"many\"",
+        "right": "AircraftMovementLog"
+      },
+      "corrected": {
+        "left": "Flight",
+        "arrow": "\"1\" --* \"many\"",
+        "right": "AircraftMovementLog"
+      },
+      "reason": "One flight can have multiple log entries; the composition arrow should have many on the right."
+    },
+    {
+      "original": {
+        "left": "Operation",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "Operation",
+        "arrow": "\"1\" -- \"*\"",
+        "right": "Actor"
+      },
+      "reason": "An operation can be performed by many actors, not exactly one."
+    },
+    {
+      "original": {
+        "left": "Operation",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "Permission"
+      },
+      "corrected": {
+        "left": "Operation",
+        "arrow": "\"1\" -- \"*\"",
+        "right": "Permission"
+      },
+      "reason": "An operation may require multiple permissions, not exactly one."
+    },
+    {
+      "original": {
+        "left": "Operation",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "State"
+      },
+      "corrected": {
+        "left": "Operation",
+        "arrow": "\"1\" -- \"*\"",
+        "right": "State"
+      },
+      "reason": "An operation can have multiple states over time, not exactly one."
+    },
+    {
+      "original": {
+        "left": "Runway",
+        "arrow": "*--",
+        "right": "Slot"
+      },
+      "corrected": {
+        "left": "Runway",
+        "arrow": "\"1\" --* \"*\"",
+        "right": "Slot"
+      },
+      "reason": "One runway has many slots; the composition arrow should have many on the right."
+    },
+    {
+      "original": {
+        "left": "System",
+        "arrow": "\"1\" *-- \"*\"",
+        "right": "Slot"
+      },
+      "corrected": {
+        "left": "System",
+        "arrow": "\"1\" --* \"*\"",
+        "right": "Slot"
+      },
+      "reason": "The system owns many slots; the composition arrow should have many on the right."
+    }
+  ],
+  "architecture_corrections": [
+    {
+      "kind": "wrong_class_type",
+      "description": "The class 'Interface' is a generic term and likely represents a UI interface, not a domain entity. It should be removed from the domain model.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "class": "Interface",
+          "reason": "Not a domain concept; better suited for infrastructure layer."
+        }
+      }
+    },
+    {
+      "kind": "wrong_class_type",
+      "description": "The classes 'Actor', 'Operation', 'Permission', 'State', 'System' are generic and not specific to the flight registration and slot allocation domain. They should be removed or moved to a common/shared kernel.",
+      "fix": {
+        "action": "move_class",
+        "details": {
+          "classes": [
+            "Actor",
+            "Operation",
+            "Permission",
+            "State",
+            "System"
+          ],
+          "target_package": "common"
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Inheritance arrows from Actor to Air_Traffic_Controllers, Flight_Schedule_Managers, Operations_Management are marked as 'association' but the arrow '<|--' indicates generalization. The meaning should be 'generalization' or the arrow should be replaced with a simple line if not true inheritance.",
+      "fix": {
+        "action": "change_class_type",
+        "details": {
+          "arrow_pairs": [
+            {
+              "left": "Actor",
+              "right": "Air_Traffic_Controllers"
+            },
+            {
+              "left": "Actor",
+              "right": "Flight_Schedule_Managers"
+            },
+            {
+              "left": "Actor",
+              "right": "Operations_Management"
+            }
+          ],
+          "new_meaning": "generalization"
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "Inheritance arrow from EmergencyFlight to Flight is marked as 'association' but should be 'generalization'.",
+      "fix": {
+        "action": "change_class_type",
+        "details": {
+          "arrow_pairs": [
+            {
+              "left": "EmergencyFlight",
+              "right": "Flight"
+            }
+          ],
+          "new_meaning": "generalization"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "The model lacks an explicit relationship to represent runway closure handling (Task #50). Flights should be associated with a closure event or a reassignment process.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "note": "Consider adding a 'RunwayClosure' class or a relation between Runway and a closure status.",
+          "suggestion": "Introduce a 'RunwayClosure' entity or a value object on Runway to indicate closure."
+        }
+      }
+    },
+    {
+      "kind": "duplicate_concept",
+      "description": "Multiple associations between the same classes (e.g., Flight to Slot with different multiplicities) are redundant. Consolidate to one meaningful association.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "redundant_pairs": [
+            {
+              "left": "Flight",
+              "right": "Slot"
+            },
+            {
+              "left": "Runway",
+              "right": "Slot"
+            }
+          ],
+          "note": "Keep only the associations that are necessary for the domain; remove duplicates."
+        }
+      }
+    }
+  ],
+  "architecture_suggestions": [
+    {
+      "kind": "introduce_value_object",
+      "affected_classes": [
+        "Flight",
+        "Slot"
+      ],
+      "suggestion": "Consider introducing a value object for 'ScheduledTime' or 'TimeSlot' to encapsulate time-related constraints (e.g., 5-minute slots with 3-minute gaps). This would improve consistency and reduce primitive obsession."
+    },
+    {
+      "kind": "add_aggregate_root",
+      "affected_classes": [
+        "Allocation",
+        "Flight",
+        "Slot"
+      ],
+      "suggestion": "Make 'Allocation' an aggregate root that enforces invariants like no overlapping slots and priority handling. The current model has scattered references; a dedicated aggregate can centralize allocation logic."
+    },
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "Air_Traffic_Control_Console",
+        "AircraftMovementLogDatabase"
+      ],
+      "suggestion": "Rename 'Air_Traffic_Control_Console' to 'Console' or 'ATCConsole' for brevity, and rename 'AircraftMovementLogDatabase' to 'FlightLogRepository' to reflect its role as a repository interface."
+    },
+    {
+      "kind": "split_class",
+      "affected_classes": [
+        "Operation"
+      ],
+      "suggestion": "The 'Operation' class seems to mix concerns (permissions, actors, resources). Consider splitting it into separate domain concepts such as 'FlightOperation' or 'SlotOperation' to align with ubiquitous language."
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "id": "REQ-AC-01",
+  "title": "Prioritize Arrivals Over Departures During Slot Allocation",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall prioritize arriving flights over departing flights during slot allocation to reduce holding patterns and improve landing efficiency.",
+  "rationale": "This requirement addresses the need to manage airspace more efficiently by ensuring that arrivals are given priority in slot conflicts, thereby reducing delays and improving overall air traffic flow.",
+  "business_value": "Reducing holding patterns and improving landing efficiency can lead to increased runway capacity, reduced fuel consumption for aircraft, and enhanced customer satisfaction.",
+  "source": {
+    "type": "User Story",
+    "id": 67,
+    "description": "As a air traffic controller I need arrivals to be prioritized over departures during slot allocation So that holding patterns are reduced and landing efficiency is improved"
+  },
+  "stakeholders": [
+    "Air Traffic Controllers",
+    "Operations Management",
+    "Flight Service Providers"
+  ],
+  "acceptance_criteria": [
+    "Given there is a slot conflict between an arriving flight and a departing flight",
+    "When the slot allocation algorithm runs",
+    "Then the arriving flight is assigned the conflicting slot",
+    "And the departing flight is assigned an alternative slot"
+  ],
+  "preconditions": [
+    "A set of arrival and departure requests for a given time window"
+  ],
+  "postconditions": [
+    "All arrival slots are placed before any departure slots are adjusted"
+  ],
+  "functional_constraints": [
+    "Arriving flights must be considered higher priority than departing flights when slot conflicts occur",
+    "Departure slots should only be adjusted after arrival slots are finalized"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The system should handle high volumes of flight requests without significant delays in slot allocation",
+    "availability": "The system must be available 99.9% of the time to minimize disruptions",
+    "scalability": "The system should be able to scale to accommodate additional airports or airspaces with increasing traffic",
+    "usability": "Error handling mechanisms should provide clear and concise messages to users"
+  },
+  "edge_cases": [
+    "What happens when there are multiple conflicting slots for arrivals and departures?",
+    "How does the system handle a sudden surge in traffic that exceeds capacity?",
+    "What if an arriving flight is delayed unexpectedly during slot allocation?"
+  ],
+  "dependencies": [
+    "The existing slot allocation algorithm must be updated to support priority logic.",
+    "All arrival requests must be processed before departure slots are finalized."
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Flight Request API",
+      "description": "The system will interact with this API to receive real-time flight request data and provide updated slot allocations."
+    },
+    {
+      "type": "Database",
+      "name": "Slot Allocation Database",
+      "description": "This database will store the current state of slot allocations, arrival/departure requests, and priority information."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-AC-01",
+      "description": "Test scenario where there is a single conflict between an arriving and a departing flight.",
+      "expected_result": "The system should assign the conflicting slot to the arriving flight and provide an alternative slot for the departing flight."
+    },
+    {
+      "id": "TC-AC-02",
+      "description": "Test scenario with multiple conflicts where both arrivals and departures are affected.",
+      "expected_result": "Arrival slots should be prioritized over departure slots, and all arrival requests should be placed before any departure slots are adjusted."
+    },
+    {
+      "id": "TC-AC-03",
+      "description": "Test scenario with a sudden surge in arrival requests that exceed available slots.",
+      "expected_result": "The system should dynamically adjust slot allocations to accommodate the increased demand while maintaining priority for arrivals."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T19:48:24.184009",
+  "last_updated": "2026-06-15T19:54:40.480301",
+  "traceability": {
+    "related_requirements": [
+      "REQ-ATC-TIME-SLOTS-01",
+      "REQ-ATC-01"
+    ],
+    "design_components": [
+      "Slot",
+      "Flight"
+    ],
+    "test_artifacts": []
+  }
+}

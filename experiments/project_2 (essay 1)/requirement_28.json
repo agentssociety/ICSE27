@@ -1,0 +1,95 @@
+{
+  "id": "REQ-BB-01",
+  "title": "Automatic Release of Reserved Units for Scheduled Transfusions",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall automatically release reserved units if not used within the configured timeframe after a scheduled transfusion.",
+  "rationale": "To ensure that blood products are available for patients as scheduled and to prevent waste in cases where transfusions are not completed on time.",
+  "business_value": "Reduces wastage of blood products, improves resource utilization, and ensures timely availability for patients requiring transfusions.",
+  "source": {
+    "type": "User Story",
+    "id": 28,
+    "description": "As a blood bank manager I need units to be reserved for scheduled transfusions and automatically released if not used within a timeframe So that blood products are available for scheduled patients without being wasted if unused"
+  },
+  "stakeholders": [
+    "Blood Bank Manager",
+    "Clinical Team",
+    "IT Support"
+  ],
+  "acceptance_criteria": [
+    "Given a scheduled transfusion with reserved units",
+    "When the scheduled time passes without the units being used",
+    "Then the reservation is automatically released"
+  ],
+  "preconditions": [
+    "The system supports scheduling transfusions in advance",
+    "A defined timeframe for unit release is configured",
+    "Units are reserved only for confirmed scheduled transfusions"
+  ],
+  "postconditions": [
+    "The reservation is automatically released if not used within the configured timeframe"
+  ],
+  "functional_constraints": [],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens if a scheduled transfusion is canceled before the timeframe expires?",
+    "How should the system handle units reserved for multiple patients that are not all used within the timeframe?",
+    "What if there is a system outage during the reservation period, and it prevents the automatic release of unused units?"
+  ],
+  "dependencies": [
+    "Scheduling System",
+    "Blood Inventory Management System"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Scheduling API",
+      "description": "The requirement interacts with the Scheduling API to confirm scheduled transfusions and manage reservations."
+    },
+    {
+      "type": "Database",
+      "name": "Blood Inventory Database",
+      "description": "The requirement updates the Blood Inventory Database to reserve units and track their usage status."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-BB-01",
+      "description": "Confirm that a reservation is automatically released if not used within the configured timeframe.",
+      "expected_result": "The reservation should be automatically released, and the units should be available for future use."
+    },
+    {
+      "id": "TC-BB-02",
+      "description": "Verify that unused units are not released prematurely if a scheduled transfusion is canceled before the timeframe expires.",
+      "expected_result": "The reservation should remain intact until the cancellation is confirmed and the units are no longer needed."
+    },
+    {
+      "id": "TC-BB-03",
+      "description": "Check that the system handles multiple reservations for different patients correctly.",
+      "expected_result": "Each patient's reservation should be managed independently, and unused units should only be released when their respective timeframe has expired."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T14:49:16.095241",
+  "last_updated": "2026-06-14T14:50:53.612205",
+  "traceability": {
+    "related_requirements": [
+      "REQ-INV-01"
+    ],
+    "design_components": [
+      "Reservation",
+      "BloodUnit"
+    ],
+    "test_artifacts": []
+  }
+}

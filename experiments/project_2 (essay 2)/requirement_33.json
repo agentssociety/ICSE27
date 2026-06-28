@@ -1,0 +1,104 @@
+{
+  "id": "REQ-BB-01",
+  "title": "Accept and Store Transfusion Requests",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall accept transfusion requests specifying required blood type, Rh factor, and quantity, validate request parameters, and store them for matching against available inventory.",
+  "rationale": "To enable accurate processing and matching of transfusion requests with available blood supply, ensuring timely and appropriate blood distribution.",
+  "business_value": "Improves patient care by ensuring that patients receive compatible blood in a timely manner, reducing the risk of complications due to incompatible blood types.",
+  "source": {
+    "type": "User Story",
+    "id": 33,
+    "description": "As a blood bank staff member, I need to accept transfusion requests specifying required blood type, Rh factor, and quantity, and validate request parameters and store them for matching against available inventory so that requests can be accurately processed and matched with available blood supply."
+  },
+  "stakeholders": [
+    "Blood Bank Staff",
+    "Clinical Teams",
+    "Patients"
+  ],
+  "acceptance_criteria": [
+    "Given a transfusion request with blood type, Rh factor, and quantity",
+    "When the request parameters are validated",
+    "Then the request is stored for matching against available inventory",
+    "Given a transfusion request with missing or invalid parameters",
+    "When the request parameters are validated",
+    "Then an error is returned and the request is not stored"
+  ],
+  "preconditions": [
+    "The system must be running and accessible to blood bank staff members."
+  ],
+  "postconditions": [
+    "The transfusion request with valid parameters must be stored in a database.",
+    "An error message must be displayed if the request has missing or invalid parameters, and it must not be stored."
+  ],
+  "functional_constraints": [
+    "All request parameters (blood type, Rh factor, quantity) must be validated for correctness and completeness before storage."
+  ],
+  "security_requirements": [
+    "The system must ensure that only authorized blood bank staff members can access and submit transfusion requests."
+  ],
+  "non_functional_requirements": {
+    "performance": "The system should respond within 5 seconds to validation and storage of a transfusion request.",
+    "availability": "The system must be available 99.9% of the time.",
+    "scalability": "The system must be able to handle up to 1000 concurrent transfusion requests without degradation in performance.",
+    "usability": "Error messages should be clear and actionable, guiding staff members on how to correct invalid parameters."
+  },
+  "edge_cases": [
+    "Request with all parameters as undefined or null",
+    "Request with unexpected blood types (e.g., Aa, Bb)",
+    "Request with invalid Rh factors (+ and - are the only valid options)",
+    "High volume of concurrent requests near the system's capacity limit"
+  ],
+  "dependencies": [
+    "Database for storing transfusion request data",
+    "Authentication system to ensure authorized access to the request submission endpoint"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Transfusion Request Submission API",
+      "description": "The requirement interacts with this API to receive and validate transfusion requests. The API will return success or error responses based on the validation results."
+    },
+    {
+      "type": "Database",
+      "name": "Transfusion Request Database",
+      "description": "The system stores validated transfusion requests in this database for later matching against available inventory."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-BB-01",
+      "description": "Valid request with all parameters provided",
+      "expected_result": "Request is accepted, validated, and stored successfully"
+    },
+    {
+      "id": "TC-BB-02",
+      "description": "Request with missing parameters",
+      "expected_result": "Error message returned, request not stored"
+    },
+    {
+      "id": "TC-BB-03",
+      "description": "Request with invalid blood type",
+      "expected_result": "Error message returned, request not stored"
+    },
+    {
+      "id": "TC-BB-04",
+      "description": "High volume of concurrent requests near system capacity limit",
+      "expected_result": "Requests are accepted and processed within performance limits"
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T20:11:37.363179",
+  "last_updated": "2026-06-14T20:15:35.267937",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "TransfusionRequest"
+    ],
+    "test_artifacts": []
+  }
+}

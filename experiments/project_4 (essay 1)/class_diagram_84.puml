@@ -1,0 +1,125 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam class {
+    BackgroundColor #FEFEFE
+    BorderColor #333333
+    ArrowColor #333333
+}
+
+package "Domain Model" {
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+    }
+    enum Status {
+        Pending
+        Approved
+        Rejected
+        Escalated
+    }
+    class Actor {
+        - name: String
+        - mayPerform: Set<Permission>
+        note "Only actors with Admin\npermission can access\nFlaggedTransaction"
+  + displayFlaggedTransactions(list)
+  + showConfirmation("Transaction approved")
+  + showError("Cannot act on escalated transaction")
+  + showEmptyList("No flagged transactions")
+  + showConfirmation("Transaction rejected")
+  + showError("Another admin already acted on this transaction")
+  + showError("Cannot escalate an already escalated transaction")
+  + showConfirmation("Transaction escalated")
+  + showError("System error, please try again")
+    }
+    class FlaggedTransaction {
+        - transactionId: String { unique }
+        - amount: Decimal
+        - timestamp: DateTime
+        - status: Status
+  + getById(id: String) : FlaggedTransaction
+  + validateState(transaction: FlaggedTransaction) : Boolean
+  + updateStatus(transaction: FlaggedTransaction, newStatus: Status.Approved) : void
+  + updateStatus(transaction: FlaggedTransaction, newStatus: Status.Rejected) : void
+  + updateStatus(transaction: FlaggedTransaction, newStatus: Status.Escalated) : void
+    }
+    class AuditEntry {
+        - operation: String
+        - timestamp: DateTime
+  + create(operation: "REQ_ADMIN_01", timestamp: DateTime, transactionId: String) : AuditEntry
+  + logFailure(operation: "REQ_ADMIN_01", reason: "State inconsistency") : void
+    }
+    FlaggedTransaction *-- AuditEntry : "composition: each action creates one"
+    Actor --> FlaggedTransaction : "association: Admin can review/update"
+    Actor --> "mayPerform" Permission : "contains"
+}
+
+package "Infrastructure — Ports" {
+    interface TransactionReviewInterface <<interface>> {
+        note "UI channel, must be encrypted (HTTPS), requires authentication"
+  + login(username: String, password: String) : SessionToken
+  + requestFlaggedTransactions()
+  + selectAction(transactionId: String, action: String)
+    }
+    interface FlaggedTransactionsAPI <<interface>> {
+        note "REST endpoint, requires authentication, may be unencrypted (but TLS recommended)"
+    }
+}
+
+package "Controllers" {
+    class AdminWebController {
+        note "implements TransactionReviewInterface"
+    }
+    class TransactionRestController {
+        note "implements FlaggedTransactionsAPI"
+    }
+    AdminWebController ..|> TransactionReviewInterface : implements
+    TransactionRestController ..|> FlaggedTransactionsAPI : implements
+}
+
+package "Application" {
+    class FlaggedTransactionService {
+        note "Orchestrates review actions, enforces authorization and state transitions"
+    }
+    FlaggedTransactionService --> FlaggedTransaction
+    FlaggedTransactionService --> AuditEntry
+    FlaggedTransactionService --> Actor : "checks permissions"
+}
+
+package "DTOs" {
+    class FlaggedTransactionDTO {
+        - transactionId: String
+        - amount: Decimal
+        - timestamp: DateTime
+        - status: Status
+    }
+    class ActionRequestDTO {
+        - action: String { "Approve", "Reject", "Escalate" }
+    }
+    FlaggedTransactionDTO --> Status
+    ActionRequestDTO --> "action" : "string enum"
+}
+
+package "Exceptions" {
+    class ConcurrentActionException <<exception>> {
+        note "Thrown when another admin\nhas already acted on the transaction"
+    }
+    class InvalidStateException <<exception>> {
+        note "Thrown when transaction is\nin escalation state or invalid transition"
+    }
+    class AuthorizationException <<exception>> {
+        note "Thrown when actor lacks Admin permission"
+    }
+}
+
+' Additional constraints as notes
+note left of FlaggedTransaction : "Invariant: Only admin actors can access"
+note left of FlaggedTransaction : "Invariant: Must have unique transactionId"
+note left of AuditEntry : "Invariant: Every action on FlaggedTransaction\ncreates a corresponding audit entry"
+note left of Actor : "Invariant: Admin_Team has Admin permission"
+
+' Relationship from use case (informational)
+note "REQ_ADMIN_01: Operation targets\nFlaggedTransaction and uses\ncommunication channels (UI/API)" as reqNote
+
+@enduml

@@ -1,0 +1,296 @@
+{
+  "run_id": "P4E1",
+  "project": 4,
+  "essay": 1,
+  "n_tasks": 8,
+  "wall_clock_s": 18933.96,
+  "pipeline_steps": 460,
+  "total_incidents": 33,
+  "fixed_incidents": 23,
+  "escalated_incidents": 10,
+  "self_fix_rate_pct": 69.7,
+  "by_phase": {
+    "USER_STORIES": {
+      "fixed": 0,
+      "escalated": 1
+    },
+    "DESIGN_UML": {
+      "fixed": 5,
+      "escalated": 0
+    },
+    "ARCHITECTURE": {
+      "fixed": 0,
+      "escalated": 1
+    },
+    "TESTING": {
+      "fixed": 18,
+      "escalated": 8
+    }
+  },
+  "incidents": [
+    {
+      "line_num": 348,
+      "timestamp": "2026-06-16 08:55:03.496",
+      "phase": "USER_STORIES",
+      "error_type": "GENERAL",
+      "outcome": "FAIL_ESCALATED",
+      "message": "[tracer] tool write_small_resume_from_description failed: ConnectionError: HTTPSConnectionPool(host='openrouter.ai', port=443): Max retries exceeded with url: /api/v1/chat/comple"
+    },
+    {
+      "line_num": 5769,
+      "timestamp": "2026-06-16 09:51:36.630",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Class diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpccqigpx9/class_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/"
+    },
+    {
+      "line_num": 5874,
+      "timestamp": "2026-06-16 09:55:57.018",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpcqqddsz1/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 5958,
+      "timestamp": "2026-06-16 10:04:26.490",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Class diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpgs8k0lqb/class_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/"
+    },
+    {
+      "line_num": 6013,
+      "timestamp": "2026-06-16 10:07:31.328",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpoejzoq4r/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 6104,
+      "timestamp": "2026-06-16 10:13:29.640",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmp4xlv0e4n/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 7088,
+      "timestamp": "2026-06-16 10:35:31.769",
+      "phase": "ARCHITECTURE",
+      "error_type": "SYNTAX",
+      "outcome": "FAIL_ESCALATED",
+      "message": "2 file(s) still have errors after auto-fix: ['src/domain/account_flag/AccountFlag.py', 'src/domain/audit_log_entry/AuditLogEntry.py']"
+    },
+    {
+      "line_num": 13777,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/user/test_user_api.py::TestUserAPI::test_list_users"
+    },
+    {
+      "line_num": 13785,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/account/test_account_api.py::TestAccountAPI::test_list_accounts"
+    },
+    {
+      "line_num": 13789,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/card/test_card_api.py::TestCardAPI::test_list_cards"
+    },
+    {
+      "line_num": 18397,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/audit_log_entry/test_audit_log_entry_service.py::TestAuditLogEntryService::test_get_recent_logs"
+    },
+    {
+      "line_num": 29285,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/transaction/test_transaction_service.py::TestTransactionService::test_get_transactions_by_user_id_returns_list"
+    },
+    {
+      "line_num": 29287,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/transaction/test_transaction_service.py::TestTransactionService::test_get_transactions_by_user_id_only_returns_matching"
+    },
+    {
+      "line_num": 29328,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/transaction/test_transaction_service.py::TestTransactionService::test_get_transactions_by_user_id_returns_list"
+    },
+    {
+      "line_num": 29330,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/transaction/test_transaction_service.py::TestTransactionService::test_get_transactions_by_user_id_only_returns_matching"
+    },
+    {
+      "line_num": 39779,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/account_flag/test_account_flag_service.py::TestAccountFlagService::test_detect_and_flag_creates_flag_for_rapid_withdrawals"
+    },
+    {
+      "line_num": 39780,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/account_flag/test_account_flag_service.py::TestAccountFlagService::test_detect_and_flag_creates_flag_for_unusual_amount"
+    },
+    {
+      "line_num": 39781,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/account_flag/test_account_flag_service.py::TestAccountFlagService::test_detect_and_flag_rapid_withdrawals_takes_precedence"
+    },
+    {
+      "line_num": 39782,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/account_flag/test_account_flag_service.py::TestAccountFlagService::test_get_flags_for_account_returns_matching_flags"
+    },
+    {
+      "line_num": 39784,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/account_flag/test_account_flag_service.py::TestAccountFlagService::test_get_all_flags_returns_all"
+    },
+    {
+      "line_num": 40137,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/account_flag/test_account_flag_service.py::TestAccountFlagService::test_detect_and_flag_creates_flag_for_rapid_withdrawals"
+    },
+    {
+      "line_num": 40138,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/account_flag/test_account_flag_service.py::TestAccountFlagService::test_detect_and_flag_creates_flag_for_unusual_amount"
+    },
+    {
+      "line_num": 40139,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/account_flag/test_account_flag_service.py::TestAccountFlagService::test_detect_and_flag_rapid_withdrawals_takes_precedence"
+    },
+    {
+      "line_num": 40140,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/account_flag/test_account_flag_service.py::TestAccountFlagService::test_get_flags_for_account_returns_matching_flags"
+    },
+    {
+      "line_num": 40142,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/account_flag/test_account_flag_service.py::TestAccountFlagService::test_get_all_flags_returns_all"
+    },
+    {
+      "line_num": 41096,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/transaction/test_admin_review.py::TestAdminReview::test_approve_flagged_transaction"
+    },
+    {
+      "line_num": 41097,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/transaction/test_admin_review.py::TestAdminReview::test_reject_flagged_transaction"
+    },
+    {
+      "line_num": 41098,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/transaction/test_admin_review.py::TestAdminReview::test_escalate_flagged_transaction"
+    },
+    {
+      "line_num": 41103,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/transaction/test_admin_review.py::TestAdminReview::test_audit_logged_on_review"
+    },
+    {
+      "line_num": 41129,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/audit_log_entry/test_audit_log_entry_service.py::TestAuditLogEntryService::test_log_authentication_success"
+    },
+    {
+      "line_num": 41130,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/audit_log_entry/test_audit_log_entry_service.py::TestAuditLogEntryService::test_log_authentication_failure"
+    },
+    {
+      "line_num": 41131,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/audit_log_entry/test_audit_log_entry_service.py::TestAuditLogEntryService::test_log_account_locked"
+    },
+    {
+      "line_num": 41132,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/audit_log_entry/test_audit_log_entry_service.py::TestAuditLogEntryService::test_log_account_unlocked"
+    }
+  ]
+}

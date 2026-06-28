@@ -1,0 +1,23 @@
+{
+  "task_id": 98,
+  "confidence": 0.9868,
+  "evidence": [
+    {
+      "claim": "After a rollback, the user's balance is unchanged.",
+      "fact": "The system ensures the balance is unchanged after a failed withdrawal.",
+      "score": 0.9974,
+      "user_story_span": "the user's balance is unchanged",
+      "fact_span": "balance is unchanged"
+    },
+    {
+      "claim": "After a rollback, the withdrawal limits are unchanged.",
+      "fact": "The system ensures the balance is unchanged after a failed withdrawal.",
+      "score": 0.9762,
+      "user_story_span": "the withdrawal limits are unchanged",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

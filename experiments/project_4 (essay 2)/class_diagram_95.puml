@@ -1,0 +1,149 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+skinparam backgroundColor #FEFEFE
+skinparam classBorderColor #333333
+skinparam classHeaderBackgroundColor #EEEEEE
+
+package "Domain Model" {
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+    note: Partial order: Admin > Execute > Write > Read
+  }
+
+  enum State {
+    PreIdle
+    Post1
+    Post2
+    Post3
+    note: State progression: PreIdle -> Post1/Post2/Post3, then Post1 -> Post2 -> Post3
+  + transitionTo(Post2)
+  + transitionTo(Post1)
+  + transitionTo(Post3)
+  }
+
+  class Actor {
+    - mayPerform: set Permission
+  + hasPermission(actor, Write) : boolean
+  + hasPermission(actor, Read) : boolean
+  + hasPermission(actor, Read) : false
+  + hasPermission(actor, Admin) : boolean
+  + hasPermission(actor, Admin) : false
+  }
+
+  class Resource {
+    - owner: Actor
+    - accessible: set Actor
+    note: Owner is always in accessible set
+  + isAccessible(actor, auditLogResource) : boolean
+  }
+
+  class Interface {
+    - kind: IfaceKind
+    - encrypted: Bool
+    - authenticated: Bool
+  }
+
+  enum IfaceKind {
+    API
+    Database
+  }
+
+  class Operation {
+    - initiator: Actor
+    - target: set Resource
+    - channel: set Interface
+    - grant: Permission
+    - pre: State
+    - post: State
+    note: At least one channel
+    note: At least one target
+    note: Initiator must have required permission
+    note: Initiator must be in target.accessible
+    note: Pre and post states must differ
+    note: At least one channel must be authenticated
+  }
+
+  class AuditLogEntry {
+    - eventType: String
+    - timestamp: DateTime
+    - userId: String
+    - sourceIp: String
+    - outcome: String
+    note: Timestamp must be ISO 8601 with millisecond precision
+    note: Log entry is immutable after creation
+  + createEntry(eventType, timestamp, userId, sourceIp, outcome) : AuditLogEntry
+  }
+}
+
+package "Application" {
+  class AuditOperation {
+    - searchable: Bool
+    - exportable: Bool
+  + wrapForExport(results, searchable=true, exportable=true) : AuditOperation
+  + generateExport(entries, format) : FileData
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface EventNotificationAPI {
+    note: Encrypted: optional (required for Post3)
+    note: Authenticated: required
+  }
+
+  interface AuditLogDatabase {
+    note: Encrypted: optional (required for Post3)
+    note: Authenticated: required for access
+  + storeEntry(entry) : void
+  + write(eventData, authToken)
+  + validateChannelAuthenticated(authToken) : boolean
+  + appendOnlyStore(entry) : void
+  + write(eventData, invalidAuth)
+  + validateChannelAuthenticated(invalidAuth) : false
+  + search(query) : List<AuditLogEntry>
+  + retrieveAllEntries() : List<AuditLogEntry>
+  + enforceAppendOnly() : void
+  + logTamperProofActivation(actor) : void
+  }
+}
+
+package "Exceptions" {
+  class OperationDeniedException <<exception>> {
+    - reason: String
+  }
+
+  class AccessDeniedException <<exception>> {
+    - reason: String
+  }
+
+  class InvalidStateTransitionException <<exception>> {
+    - fromState: State
+    - toState: State
+  }
+}
+
+' Relationships
+Actor "1" -- "0..*" Permission : mayPerform >
+Resource "1" -- "1" Actor : owner >
+Resource "1" -- "0..*" Actor : accessible >
+Operation "1" -- "1" Actor : initiator >
+Operation "1" -- "1..*" Resource : target >
+Operation "1" -- "1..*" Interface : channel >
+Operation "1" -- "1" Permission : grant >
+Operation "1" -- "1" State : pre >
+Operation "1" -- "1" State : post >
+AuditOperation "1" -- "1" Operation : wraps >
+
+' Inheritance/Realization
+AuditOperation --|> Operation : extends
+
+' Note: AuditLogDatabase is both an interface and a class in the domain
+AuditLogDatabase ..|> Interface : realizes
+EventNotificationAPI ..|> Interface : realizes
+
+@enduml

@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Stock Alerts - Blood Bank Management{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="display-5">Stock Alerts</h1>
+        <p class="text-muted">Monitor and manage low stock alerts for blood types</p>
+    </div>
+</div>
+
+<!-- Alerts Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-danger">
+            <div class="card-body text-center">
+                <h5 class="card-title text-danger">
+                    <i class="bi bi-exclamation-triangle"></i> Active Alerts
+                </h5>
+                <p class="display-6 text-danger">
+                    {{ alert_list|selectattr('active', 'equalto', True)|list|length }}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-success">
+            <div class="card-body text-center">
+                <h5 class="card-title text-success">
+                    <i class="bi bi-check-circle"></i> Resolved Alerts
+                </h5>
+                <p class="display-6 text-success">
+                    {{ alert_list|selectattr('active', 'equalto', False)|list|length }}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-info">
+            <div class="card-body text-center">
+                <h5 class="card-title text-info">
+                    <i class="bi bi-list"></i> Total Alerts
+                </h5>
+                <p class="display-6 text-info">{{ alert_list|length }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alerts Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-bell"></i> All Stock Alerts
+                </h5>
+                <span class="badge bg-light text-dark">{{ alert_list|length }} alert(s)</span>
+            </div>
+            <div class="card-body">
+                {% if alert_list %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Alert ID</th>
+                                <th>Blood Type</th>
+                                <th>Rh Factor</th>
+                                <th>Current Stock</th>
+                                <th>Threshold</th>
+                                <th>Status</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for alert in alert_list %}
+                            <tr class="{% if alert.active %}table-danger{% else %}table-success{% endif %}">
+                                <td>{{ alert.id }}</td>
+                                <td><strong>{{ alert.abo_type }}</strong></td>
+                                <td>{{ alert.rh_factor | capitalize }}</td>
+                                <td>
+                                    <span class="badge {% if alert.current_stock < 5 %}bg-danger{% elif alert.current_stock < 10 %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                                        {{ alert.current_stock }}
+                                    </span>
+                                </td>
+                                <td>5 units</td>
+                                <td>
+                                    {% if alert.active %}
+                                    <span class="badge bg-danger">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-success">Resolved</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ alert.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    {% if alert.active %}
+                                    <form action="{{ url_for('main.resolve_alert', alert_id=alert.id) }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-outline-success" title="Resolve this alert">
+                                            <i class="bi bi-check-lg"></i> Resolve
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <span class="text-muted small">Resolved</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-success mb-0">
+                    <i class="bi bi-check-circle"></i> No stock alerts have been created. All blood types are adequately stocked.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions Section -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-lightning"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-speedometer2"></i> Go to Dashboard
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ url_for('main.inventory') }}" class="btn btn-outline-info w-100">
+                            <i class="bi bi-droplet"></i> View Inventory
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ url_for('main.requests') }}" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-send"></i> New Transfusion Request
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Optional: confirm before resolving an alert
+    document.querySelectorAll('form[action*="/resolve"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            if (!confirm('Are you sure you want to resolve this stock alert?')) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Auto-refresh alerts page every 30 seconds
+    setTimeout(function() {
+        location.reload();
+    }, 30000);
+</script>
+{% endblock %}

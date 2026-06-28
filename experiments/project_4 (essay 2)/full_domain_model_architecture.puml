@@ -1,0 +1,133 @@
+@startuml
+title Project 12 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+package "Task #88\nCard and PIN\nAuthentication" {
+  class User <<main>> <<level0>>
+  class Card <<main>> <<level1>>
+  class Pin <<main>> <<level2>>
+  class Actor
+  class CardReader
+  class Credential
+  class Digit
+  interface Interface
+  enum Permission
+  class REQ_AUTH_01
+  class Resource
+  enum State
+}
+
+package "Task #92\nSuspicious Pattern\nDetection and Flagging" {
+  class Transaction <<main>> <<level1>>
+  class FlaggedTransaction
+  class FraudAnalyst
+  interface FraudAnalystDashboard
+  class System
+}
+
+package "Task #91\nAtomic Transaction with\nRollback" {
+  note as TaskSummary91
+    No new domain model classes
+    Uses: None
+  end note
+}
+
+package "Task #95\nAudit Log with\nTimestamps" {
+  class AuditLogEntry <<main>> <<level0>>
+}
+
+package "Task #93\nAdmin Review of Flagged\nTransactions" {
+  note as TaskSummary93
+    No new domain model classes
+    Uses: User
+  end note
+}
+
+package "Task #89\nAccount Lockout After 3\nFailed Attempts" {
+  class Account <<main>> <<level2>>
+}
+
+package "Task #94\nAdmin Lock/Unlock\nAccounts" {
+  enum AccountStatus
+  class Admin
+  class SecurityTeam
+  class UserAccount
+}
+
+package "Task #90\nBalance and Daily Limit\nEnforcement" {
+  class Operation
+}
+
+Account "1" --> "*" Actor
+Account "1" --> "1" Actor
+Actor "1" -- "0..*" Resource
+Actor "1" -- "1" Credential
+Actor "1" -- "1" Resource
+Admin "1" -- "0..*" UserAccount
+Admin ..|> Permission
+Credential *-- "1" Pin
+FlaggedTransaction "*" -- "1" Transaction
+FraudAnalyst "1" -- "*" FlaggedTransaction
+FraudAnalyst ..> FraudAnalystDashboard
+Interface <|-- CardReader
+Operation "1" *--> "1" Account
+Operation "1" --> "1" Actor
+Operation "1" --> "1" Permission
+Operation "1" --> "1" State
+Operation "1" --> "1" Transaction
+Operation "1" --> "1..*" Interface
+Pin *-- "4..12" Digit
+REQ_AUTH_01 "1" -- "1" Actor
+REQ_AUTH_01 "1" -- "1" Permission
+REQ_AUTH_01 "1" -- "1" State
+REQ_AUTH_01 "1" -- "1..*" Interface
+REQ_AUTH_01 "1" -- "1..*" Resource
+Resource "1" --> "*" Actor
+Resource "1" --> "1" Actor
+SecurityTeam "1" -- "0..*" UserAccount
+SecurityTeam ..|> Permission
+System "1" -- "*" FlaggedTransaction
+System "1" -- "*" Transaction
+User "1" *-- "*" Permission
+User "1" -- "*" Transaction
+User "1" -- "1" Account
+@enduml

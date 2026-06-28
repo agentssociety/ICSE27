@@ -1,0 +1,112 @@
+{
+  "detected_cycles": [],
+  "removed_edges_to_break_cycles": [],
+  "relationship_corrections": [],
+  "architecture_corrections": [
+    {
+      "kind": "wrong_class_type",
+      "description": "BloodUnitDatabase is an interface but is also listed as implementing Interface and Resource; it should be a concrete repository, not an interface implementing other interfaces.",
+      "fix": {
+        "action": "change_class_type",
+        "details": {
+          "class": "BloodUnitDatabase",
+          "new_type": "class",
+          "remove_realizations": [
+            "Interface",
+            "Resource"
+          ]
+        }
+      }
+    },
+    {
+      "kind": "wrong_class_type",
+      "description": "InventoryManagementUI is an interface but is listed as implementing Interface; it should be a concrete UI class, not an interface.",
+      "fix": {
+        "action": "change_class_type",
+        "details": {
+          "class": "InventoryManagementUI",
+          "new_type": "class",
+          "remove_realization": "Interface"
+        }
+      }
+    },
+    {
+      "kind": "misplaced_class",
+      "description": "BloodTypeCompatibilityAlgorithm is a dependency of Reservation but should be owned by the matching algorithm in Task #34; it belongs in BloodUnit matching context, not Reservation.",
+      "fix": {
+        "action": "move_class",
+        "details": {
+          "class": "BloodTypeCompatibilityAlgorithm",
+          "target_package": "BloodUnit Matching (Task #34)",
+          "remove_dependency_from": "Reservation"
+        }
+      }
+    },
+    {
+      "kind": "duplicate_concept",
+      "description": "Interface class appears twice as a generic interface, but BloodUnitDatabase and InventoryManagementUI both implement it; this is a duplicate of the concept 'Interface' that should be merged or removed.",
+      "fix": {
+        "action": "merge_classes",
+        "details": {
+          "classes_to_merge": [
+            "Interface"
+          ],
+          "into": "BloodUnitDatabase or InventoryManagementUI",
+          "remove_duplicate": "Interface"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "TransfusionRequestDatabase is missing a relationship to TransfusionRequest; it should store requests, but no association exists.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "left": "TransfusionRequestDatabase",
+          "arrow": "\"1\" -- \"0..*\"",
+          "right": "TransfusionRequest",
+          "meaning": "association"
+        }
+      }
+    }
+  ],
+  "architecture_suggestions": [
+    {
+      "kind": "introduce_value_object",
+      "affected_classes": [
+        "BloodUnit"
+      ],
+      "suggestion": "Extract collection date and expiry date into a value object 'ExpirationPeriod' to encapsulate 42-day calculation logic and avoid primitive obsession."
+    },
+    {
+      "kind": "add_aggregate_root",
+      "affected_classes": [
+        "BloodUnit",
+        "Reservation",
+        "Inventory"
+      ],
+      "suggestion": "Consider making 'Inventory' an aggregate root that manages BloodUnit lifecycle and reservations, ensuring consistency across expiration, status, and reservation logic."
+    },
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "InventoryState"
+      ],
+      "suggestion": "Rename 'InventoryState' to 'InventoryStatus' to align with ubiquitous language (status vs state) and avoid confusion with State class."
+    },
+    {
+      "kind": "split_class",
+      "affected_classes": [
+        "Actor"
+      ],
+      "suggestion": "Split 'Actor' into 'BloodBankManager' and 'BloodBankStaff' to reflect distinct roles and permissions in the domain, avoiding a generic actor class."
+    },
+    {
+      "kind": "general",
+      "affected_classes": [
+        "BloodTypeCompatibilityAlgorithm"
+      ],
+      "suggestion": "Consider making BloodTypeCompatibilityAlgorithm a domain service rather than a dependency of Reservation, as it is used by multiple tasks (matching and reservation)."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 91,
+  "confidence": 0.9874,
+  "evidence": [
+    {
+      "claim": "If any operation within the transaction fails, all previous operations must be rolled back.",
+      "fact": "Each withdrawal is processed as an all-or-nothing operation; if any single step fails, all previous changes are undone completely.",
+      "score": 0.9982,
+      "user_story_span": "If any operation within the transaction fails, all previous operations must be rolled back.",
+      "fact_span": "if any single step fails, all previous changes are undone completely."
+    },
+    {
+      "claim": "The transaction must be either fully committed or fully rolled back with no partial state changes.",
+      "fact": "Each withdrawal is processed as an all-or-nothing operation; if any single step fails, all previous changes are undone completely.",
+      "score": 0.9969,
+      "user_story_span": "The transaction should be either fully committed or fully rolled back with no partial state changes.",
+      "fact_span": "if any single step fails, all previous changes are undone completely."
+    },
+    {
+      "claim": "When one or more operations fail, no changes from the transaction are persisted.",
+      "fact": "Each withdrawal is processed as an all-or-nothing operation; if any single step fails, all previous changes are undone completely.",
+      "score": 0.9894,
+      "user_story_span": "",
+      "fact_span": "if any single step fails, all previous changes are undone completely."
+    },
+    {
+      "claim": "The user can create a transaction with multiple operations.",
+      "fact": "Suspicious withdrawals are tagged in the system, alerting administrators to review them for possible fraud.",
+      "score": 0.9782,
+      "user_story_span": "",
+      "fact_span": ""
+    },
+    {
+      "claim": "When one or more operations fail, the transaction is rolled back.",
+      "fact": "The system performs the entire withdrawal sequence in a single unit, and upon any error, automatically reverses every modification made.",
+      "score": 0.9745,
+      "user_story_span": "",
+      "fact_span": "upon any error, automatically reverses every modification made."
+    }
+  ],
+  "total_claims": 10,
+  "supported_claims": 5,
+  "threshold": 0.6
+}

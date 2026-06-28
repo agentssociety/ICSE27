@@ -1,0 +1,23 @@
+{
+  "task_id": 78,
+  "confidence": 0.9849,
+  "evidence": [
+    {
+      "claim": "The system displays a slot timetable per runway.",
+      "fact": "The system shows a slot timetable per runway.",
+      "score": 0.9991,
+      "user_story_span": "view a slot timetable per runway",
+      "fact_span": "The system shows a slot timetable per runway."
+    },
+    {
+      "claim": "The timetable should be filterable by runway.",
+      "fact": "It assigns time windows to arriving and departing planes while ensuring no two aircraft occupy the same runway slot simultaneously.",
+      "score": 0.9707,
+      "user_story_span": "The timetable should be filterable by runway.",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

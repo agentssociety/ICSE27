@@ -1,0 +1,93 @@
+@startuml
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F0F0F0
+skinparam interfaceBackgroundColor #E0F0FF
+skinparam enumBackgroundColor #E8FFE8
+skinparam noteBackgroundColor #FFFFCC
+
+package "Domain Model" #DDDDDD {
+    class Slot {
+        + startTime: DateTime
+        + endTime: DateTime
+        + duration: Duration = 5 minutes
+        + gapAfter: Duration = 3 minutes
+        constraint "Duration must be exactly 5 min"
+        constraint "Gap between slots must be exactly 3 min"
+        constraint "No overlapping slots allowed"
+  + checkOverlap(newSlot, existingSlots) : boolean
+  + checkAdjacentGap(newSlot, existingSlots) : boolean
+  + create(startTime, endTime, \nduration=5, gapAfter=3)
+  + verifyAllocations(allSlots) : boolean
+    }
+
+    class Actor {
+        + name: String
+        + permissions: Permission[]
+    }
+
+    class Resource {
+        + owner: Actor
+        + accessible: Actor[]
+        constraint "Owner must be in accessible set"
+  + isAccessible(actor) : boolean
+    }
+
+    class Operation {
+        // attributes and methods TBD
+  + create(actor, resource, slot)
+    }
+
+    enum Permission <<enum>> {
+        Read
+        Write
+        Execute
+        Admin
+        note "Partial order: Write ⊇ Read, Execute ⊇ Read, Admin ⊇ all"
+  + checkPermission(actor, \nPermission::Write) : boolean
+    }
+
+    enum State <<enum>> {
+        PreIdle
+        Post1
+        Post2
+  + transition(PreIdle, Post1)
+  + transition(Post1, Post2)
+    }
+}
+
+package "Infrastructure — Ports" #EEEEEE {
+    interface SchedulingAPI <<interface>> {
+        // createSlot, etc. (details TBD)
+    }
+
+    interface SchedulingDatabase <<interface>> {
+        // insertSlot, querySlots, etc. (details TBD)
+  + querySlots(startTime, endTime) : Slot[]
+  + querySlots(all) : Slot[]
+    }
+}
+
+' ---------- Relationships ----------
+' Actor initiates Operation
+Actor "1" -- "1..*" Operation : initiates
+
+' Operation operates_on Resource
+Operation "1" -- "1..*" Resource : operates_on
+
+' Operation uses Interface
+Operation "1" -- "1..*" SchedulingAPI : uses
+Operation "1" -- "1..*" SchedulingDatabase : uses
+
+' Actor has Permission (set – shown as association)
+Actor "1" -- "*" Permission : has_permission
+
+' Actor owns Resource
+Actor "1" -- "1..*" Resource : owns
+
+' State transitions (self‑reference)
+State "1" -> "1..*" State : transitions
+note on link: "PreIdle → Post1 → Post2"
+
+@enduml

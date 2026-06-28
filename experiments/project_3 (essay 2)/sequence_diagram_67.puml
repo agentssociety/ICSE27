@@ -1,0 +1,137 @@
+@startuml
+skinparam participantPadding 20
+
+box "External" #LightBlue
+participant "Air_Traffic_Controllers" as ATC <<Actor>>
+participant "Flight_Service_Providers" as FSP <<Actor>>
+participant "Operations_Management" as OM <<Actor>>
+end box
+
+box "Controller" #LightGreen
+participant "SlotController" as Ctrl
+end box
+
+box "Application" #LightYellow
+participant "AuthorizationService" as Auth
+participant "AccessControlService" as Access
+participant "InterfaceManager" as IM
+participant "SlotAllocator" as Alloc
+participant "StateManager" as SM
+end box
+
+box "Domain" #LightCoral
+participant "REQ_AC_01" as Req
+participant "Resource" as Res
+participant "Capacity" as Cap
+participant "Pre1" as Pre
+participant "Post1" as Post
+end box
+
+box "Infrastructure" #LightGray
+participant "Flight_Request_API" as API <<Interface>>
+participant "Slot_Allocation_Database" as DB <<Interface>>
+end box
+
+== Main Flow: Successful Slot Allocation ==
+ATC -> Ctrl: POST /slot-allocate\n(initiator, target, grant, channel)
+activate Ctrl
+Ctrl -> Req: create(initiator, target, channel, grant, pre, post)
+activate Req
+note right of Req: State = Pre1
+deactivate Req
+
+Ctrl -> Pre: checkPrecondition()
+activate Pre
+Pre --> Ctrl: OK (has arrival and departure requests)
+deactivate Pre
+
+Ctrl -> Auth: authorize(initiator, grant)
+activate Auth
+Auth -> ATC: getMayPerform()
+ATC --> Auth: [Write, Admin]
+Auth -> Auth: check grant in mayPerform
+alt grant not in mayPerform
+ Auth --> Ctrl: DENIED
+ Ctrl -> ATC: 403 Forbidden (Unauthorized)
+else grant in mayPerform
+ Auth --> Ctrl: GRANTED
+end
+deactivate Auth
+
+Ctrl -> Access: checkAccess(initiator, target)
+activate Access
+Access -> Res: isAccessible(initiator)
+activate Res
+Res --> Access: bool
+alt not accessible
+ Access --> Ctrl: DENIED
+ Ctrl -> ATC: 403 Forbidden (Access denied)
+else accessible
+ Access --> Ctrl: GRANTED
+end
+deactivate Access
+deactivate Res
+
+Ctrl -> IM: checkAuthenticatedChannel(channels)
+activate IM
+IM -> API: isAuthenticated()
+API --> IM: true
+IM -> DB: isAuthenticated()
+DB --> IM: true
+alt none authenticated
+ IM --> Ctrl: NONE
+ Ctrl -> ATC: 400 Bad Request (No authenticated channel)
+else at least one authenticated
+ IM --> Ctrl: OK
+end
+deactivate IM
+
+Ctrl -> Alloc: allocateSlots(target, arrivalRequests, departureRequests)
+activate Alloc
+Alloc -> Res: getCapacity()
+activate Res
+Res -> Cap: getMax()
+activate Cap
+Cap --> Res: max=1
+deactivate Cap
+Res --> Alloc: capacity=1
+deactivate Res
+note right of Alloc: Priority: arrivals before departures
+Alloc -> FSP: assignArrivalSlot(slot1)
+FSP --> Alloc: confirmed
+Alloc -> OM: assignDepartureSlot(slot2)
+OM --> Alloc: confirmed
+Alloc -> SM: transitionState(Pre1, Post1)
+activate SM
+SM -> Pre: markProcessed()
+SM -> Post: create(arrivalSlots, departureSlots)
+SM --> Alloc: done
+deactivate SM
+Alloc --> Ctrl: allocationResult
+deactivate Alloc
+Ctrl -> ATC: 200 OK (allocation details)
+deactivate Ctrl
+
+== Alternative: Multiple Conflicting Slots ==
+note over Alloc: When multiple slots conflict, all arrival slots placed before any departure adjustments
+
+== Alternative: Surge in Arrival Requests Exceeding Capacity ==
+note over Alloc: Capacity per resource = 1; dynamic adjustment maintains arrival priority; additional requests requeued
+
+== Alternative: Delayed Arrival During Allocation ==
+note over Access: If grant = Write and initiator is not resource owner => operation blocked; else re-queued
+
+== Error: Precondition Not Met ==
+Ctrl -> Pre: checkPrecondition()
+alt precondition fails
+  Pre --> Ctrl: FAIL (no requests or invalid time window)
+  Ctrl -> ATC: 400 Bad Request (Precondition not met)
+end
+
+== Edge Case: Capacity Constraint Violation ==
+note over Alloc: Attempt to allocate >1 operation per resource triggers 409 Conflict
+
+== Edge Case: Safety – Conflicting Grants on Same Resource ==
+note over Alloc: If another operation with Write/Admin on same resource from different initiator => 409 Conflict
+
+@enduml

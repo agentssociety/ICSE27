@@ -1,0 +1,191 @@
+@startuml
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+box "Controller" #LightBlue
+participant "Flight Data API" as API
+participant "Alert UI" as AlertUI
+end box
+
+box "Application" #LightGreen
+participant "Operation" as Op
+end box
+
+box "Domain" #LightYellow
+participant "FlightAssignment" as FA
+participant "TimeSlot" as TS
+participant "Alert" as Alert
+participant "Actor" as Actor
+participant "Permission" as Perm
+participant "Resource" as Res
+participant "State" as State
+end box
+
+box "Infrastructure" #LightCoral
+participant "Scheduling Database" as DB
+end box
+
+== Flow: detect-overlap (Happy Path) ==
+
+Actor -> API : submitFlightAssignments(assignments: List<FlightAssignment>)
+note right: Authenticated channel required (Alloy INV-6)
+API -> Op : processOverlapDetection(assignments: List<FlightAssignment>)
+Op -> DB : readAssignments(startTime: DateTime, endTime: DateTime) : List<FlightAssignment> [TLS]
+DB --> Op : assignments
+Op -> FA : checkOverlap(newAssignment: FlightAssignment, existing: List<FlightAssignment>) : boolean
+alt Overlap detected
+    FA -> Alert : createAlert(flightIds: List<String>, violationType: ViolationType.OVERLAP, message: String) : Alert
+    Alert -> Op : alert
+    Op -> AlertUI : pushAlert(alert: Alert)
+    AlertUI --> Op : acknowledged
+    Op -> DB : updateViolationFlag(flightId: String, flag: boolean) [TLS]
+    Op -> State : transitionTo(Post1)
+else No overlap
+    Op -> State : transitionTo(Monitoring)
+end
+
+== Flow: detect-overlap (Error Path - DB Unavailable) ==
+
+Actor -> API : submitFlightAssignments(assignments: List<FlightAssignment>)
+API -> Op : processOverlapDetection(assignments: List<FlightAssignment>)
+Op -> DB : readAssignments(startTime: DateTime, endTime: DateTime) : List<FlightAssignment> [TLS]
+alt DB unavailable
+    DB --> Op : error: ConnectionTimeout
+    Op -> Op : retryLogic(maxRetries: int = 3)
+    alt Retries exhausted
+        Op -> Op : logFailure(error: String)
+        Op -> AlertUI : pushAlert(alert: Alert) : Alert
+        note right: Alert monitor about DB failure
+        AlertUI --> Op : acknowledged
+        Op -> State : transitionTo(ErrorState)
+    else Retry succeeds
+        DB --> Op : assignments
+        Op -> FA : checkOverlap(newAssignment: FlightAssignment, existing: List<FlightAssignment>) : boolean
+        alt Overlap detected
+            FA -> Alert : createAlert(flightIds: List<String>, violationType: ViolationType.OVERLAP, message: String) : Alert
+            Alert -> Op : alert
+            Op -> AlertUI : pushAlert(alert: Alert)
+            AlertUI --> Op : acknowledged
+            Op -> DB : updateViolationFlag(flightId: String, flag: boolean) [TLS]
+            Op -> State : transitionTo(Post1)
+        else No overlap
+            Op -> State : transitionTo(Monitoring)
+        end
+    end
+end
+
+== Flow: detect-gap-violation (Happy Path) ==
+
+Actor -> API : submitFlightAssignments(assignments: List<FlightAssignment>)
+API -> Op : processGapViolationDetection(assignments: List<FlightAssignment>)
+Op -> DB : readConsecutiveSlots(aircraft: String) : List<TimeSlot> [TLS]
+DB --> Op : slots
+Op -> TS : computeGap(endTime1: DateTime, startTime2: DateTime) : Duration
+note right: Normalize to UTC before computation
+alt Gap < 3 minutes
+    TS -> Alert : createAlert(flightIds: List<String>, violationType: ViolationType.GAP_VIOLATION, message: String) : Alert
+    Alert -> Op : alert
+    Op -> AlertUI : pushAlert(alert: Alert)
+    AlertUI --> Op : acknowledged
+    Op -> DB : updateViolationFlag(flightId: String, flag: boolean) [TLS]
+    Op -> State : transitionTo(Post1)
+else Gap >= 3 minutes
+    Op -> State : transitionTo(Monitoring)
+end
+
+== Flow: detect-gap-violation (Error Path - Timezone Issue) ==
+
+Actor -> API : submitFlightAssignments(assignments: List<FlightAssignment>)
+API -> Op : processGapViolationDetection(assignments: List<FlightAssignment>)
+Op -> DB : readConsecutiveSlots(aircraft: String) : List<TimeSlot> [TLS]
+DB --> Op : slots
+Op -> TS : computeGap(endTime1: DateTime, startTime2: DateTime) : Duration
+alt Timezone mismatch detected
+    TS -> TS : normalizeToUTC(slot: TimeSlot) : TimeSlot
+    TS -> TS : computeGap(endTime1: DateTime, startTime2: DateTime) : Duration
+    alt Gap < 3 minutes
+        TS -> Alert : createAlert(flightIds: List<String>, violationType: ViolationType.GAP_VIOLATION, message: String) : Alert
+        Alert -> Op : alert
+        Op -> AlertUI : pushAlert(alert: Alert)
+        AlertUI --> Op : acknowledged
+        Op -> DB : updateViolationFlag(flightId: String, flag: boolean) [TLS]
+        Op -> State : transitionTo(Post1)
+    else Gap >= 3 minutes
+        Op -> State : transitionTo(Monitoring)
+    end
+else No timezone issue
+    alt Gap < 3 minutes
+        TS -> Alert : createAlert(flightIds: List<String>, violationType: ViolationType.GAP_VIOLATION, message: String) : Alert
+        Alert -> Op : alert
+        Op -> AlertUI : pushAlert(alert: Alert)
+        AlertUI --> Op : acknowledged
+        Op -> DB : updateViolationFlag(flightId: String, flag: boolean) [TLS]
+        Op -> State : transitionTo(Post1)
+    else Gap >= 3 minutes
+        Op -> State : transitionTo(Monitoring)
+    end
+end
+
+== Flow: show-violation-indicator (Happy Path) ==
+
+Op -> DB : readViolationFlags() : List<FlightAssignment> [TLS]
+DB --> Op : flaggedAssignments
+Op -> AlertUI : displayViolationIndicator(assignments: List<FlightAssignment>)
+note right: Visual indicator (icon/color) and notification
+AlertUI --> Op : displayed
+Op -> DB : logViolationForAuditing(alert: Alert) [TLS]
+Op -> State : transitionTo(Post2)
+
+== Flow: show-violation-indicator (Error Path - UI Unavailable) ==
+
+Op -> DB : readViolationFlags() : List<FlightAssignment> [TLS]
+DB --> Op : flaggedAssignments
+Op -> AlertUI : displayViolationIndicator(assignments: List<FlightAssignment>)
+alt UI unavailable
+    AlertUI --> Op : error: UIUnavailable
+    Op -> Op : logViolation(alert: Alert)
+    note right: Fallback to log only
+    Op -> Op : scheduleRetryDisplay(alert: Alert, retryInterval: Duration)
+    Op -> State : transitionTo(Post2)
+else UI available
+    AlertUI --> Op : displayed
+    Op -> DB : logViolationForAuditing(alert: Alert) [TLS]
+    Op -> State : transitionTo(Post2)
+end
+
+== Flow: Permission Check (Cross-cutting) ==
+
+Actor -> API : performOperation(operation: Operation)
+API -> Op : checkPermission(actor: Actor, requiredPermission: PermissionLevel)
+Op -> Actor : getPermissions() : List<Permission>
+Actor --> Op : permissions
+Op -> Perm : hasRequiredLevel(permissions: List<Permission>, required: PermissionLevel) : boolean
+alt Permission denied
+    Perm --> Op : false
+    Op -> API : returnError("Insufficient permissions")
+    API -> Actor : 403 Forbidden
+else Permission granted
+    Perm --> Op : true
+    Op -> Op : proceedWithOperation()
+end
+
+== Flow: Resource Access Check (Cross-cutting) ==
+
+Op -> Res : isAccessibleBy(actor: Actor) : boolean
+Res -> Actor : isOwner(actor: Actor) : boolean
+alt Actor is owner
+    Actor --> Res : true
+    Res --> Op : true
+else Actor is not owner
+    Actor --> Res : false
+    Res -> Res : checkAccessibleActors(actor: Actor) : boolean
+    alt Actor in accessible set
+        Res --> Op : true
+    else Actor not in accessible set
+        Res --> Op : false
+        Op -> API : returnError("Resource not accessible")
+        API -> Actor : 403 Forbidden
+    end
+end
+
+@enduml

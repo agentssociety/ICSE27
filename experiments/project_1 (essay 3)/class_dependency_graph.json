@@ -1,0 +1,10 @@
+{
+  "Patient": [
+    "UrgencyLevel",
+    "Queue"
+  ],
+  "UrgencyLevel": [
+    "Queue"
+  ],
+  "Queue": []
+}

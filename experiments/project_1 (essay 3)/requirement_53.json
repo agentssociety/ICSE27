@@ -1,0 +1,89 @@
+{
+  "id": "REQ-SYM-01",
+  "title": "Register Symptoms",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow a patient to register their symptoms.",
+  "rationale": "To ensure that the system can handle and process patient case information effectively, it is necessary for patients to be able to report their symptoms.",
+  "business_value": "Improves the efficiency of case management by enabling timely symptom recording, which aids in faster diagnosis and treatment planning.",
+  "source": {
+    "type": "User Story",
+    "id": 53,
+    "description": "As a patient, I need to register my symptoms so that the system can handle my case."
+  },
+  "stakeholders": [
+    "Patient Care Team",
+    "System Administrators",
+    "Quality Assurance"
+  ],
+  "acceptance_criteria": [
+    "The system records my symptom information."
+  ],
+  "preconditions": [
+    "I am a patient.",
+    "The user is logged in to the system."
+  ],
+  "postconditions": [
+    "The symptom information is recorded and stored in the system database.",
+    "A confirmation message is displayed to the patient indicating that their symptoms have been successfully registered."
+  ],
+  "functional_constraints": [
+    "Symptom information must be recorded accurately and securely."
+  ],
+  "security_requirements": [
+    "Symptom data must be encrypted during transit and at rest to protect patient privacy."
+  ],
+  "non_functional_requirements": {
+    "performance": "The system should respond within 5 seconds for symptom registration.",
+    "availability": "The system must be available 99.9% of the time.",
+    "scalability": "The system must support up to 1,000 concurrent patient registrations per minute.",
+    "usability": "Error messages should clearly inform patients how their symptoms were not recorded and suggest next steps."
+  },
+  "edge_cases": [
+    "Patient inputs symptoms in multiple languages.",
+    "System fails to record symptom information due to network issues.",
+    "Patient enters duplicate symptom entries."
+  ],
+  "dependencies": [
+    "User authentication system for patient login.",
+    "Database system to store symptom information securely."
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Symptom Registration API",
+      "description": "The requirement interacts with the Symptom Registration API to record and store patient symptoms in the database."
+    },
+    {
+      "type": "Database",
+      "name": "Patient Database",
+      "description": "The requirement interacts with the Patient Database to persistently store symptom information."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-SYM-01",
+      "description": "Verify that a patient can register their symptoms using valid input.",
+      "expected_result": "Symptom information is recorded and stored successfully in the database with a confirmation message displayed to the patient."
+    },
+    {
+      "id": "TC-SYM-02",
+      "description": "Verify that the system handles network failures gracefully when recording symptom information.",
+      "expected_result": "The system should display an error message to the patient and retry the registration upon successful network reconnection."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T17:31:50.859348",
+  "last_updated": "2026-06-15T17:39:43.819856",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Patient"
+    ],
+    "test_artifacts": []
+  }
+}

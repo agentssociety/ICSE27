@@ -1,0 +1,133 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam NoteFontColor darkblue
+skinparam NoteBorderColor lightblue
+
+package "Domain Model" {
+    enum Permission {
+        READ
+        WRITE
+        EXECUTE
+        ADMIN
+    }
+
+    enum UrgencyLevel {
+        LOW
+        MEDIUM
+        HIGH
+    }
+
+    enum Role {
+        PHYSICIAN
+        NURSE
+        ADMINISTRATIVE_STAFF
+    }
+
+    class Patient {
+        - urgency: UrgencyLevel
+  + getDetails() : PatientDetails
+    }
+    note right of Patient::urgency
+        determines position in sorted queue
+    end note
+
+    class PatientQueue {
+        - patients: List<Patient>
+  + getTopPatient() : Patient
+  + verifyQueueSorted()
+  + remove(patient: Patient) : void
+  + reSortQueue()
+  + lockQueue()
+  + unlockQueue()
+  + getSortedPatients() : List<Patient>
+    }
+    note left of PatientQueue
+        queue is sorted by urgency at all times
+    end note
+
+    class Physician {
+        - permissions: Permission[]
+    }
+
+    class Nurse {
+        - permissions: Permission[]
+    }
+
+    class AdministrativeStaff {
+        - permissions: Permission[]
+    }
+
+    class PatientQueueResource {
+        - owner: AdministrativeStaff
+        - accessible: List<Role>
+  + checkOwnership(authResult: AuthResult) : boolean
+    }
+    note right of PatientQueueResource
+        owner always accessible
+    end note
+
+    Physician --> PatientQueue : "requests next patient"
+    PatientQueue *-- Patient : contains
+}
+
+package "Application" {
+    class PatientQueueService {
+        - queue: PatientQueue
+        - resource: PatientQueueResource
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface PatientQueueAPI {
+        + getTopPatient(): PatientDTO
+    }
+
+    interface AuthenticationAuthorizationService {
+        + authenticate(): boolean
+        + authorize(): boolean
+    }
+}
+
+package "Controllers" {
+    class PatientQueueController {
+        - service: PatientQueueService
+    }
+}
+
+package "DTOs" {
+    class PatientDTO <<dto>> {
+        - urgency: UrgencyLevel
+        - details: String
+    }
+
+    class ErrorResponse <<dto>> {
+        - error: String
+        - timestamp: Date
+    }
+}
+
+package "Exceptions" {
+    class EmptyQueueException <<exception>> {
+        - message: String
+    }
+
+    class AuthenticationException <<exception>> {
+        - message: String
+    }
+
+    class AuthorizationException <<exception>> {
+        - message: String
+    }
+}
+
+PatientQueueController --> PatientQueueService : uses
+PatientQueueService --> PatientQueueAPI : dependency
+PatientQueueService --> AuthenticationAuthorizationService : dependency
+PatientQueueService --> PatientQueue : uses
+PatientQueueService --> PatientQueueResource : uses
+PatientQueueService ..> EmptyQueueException : throws
+PatientQueueService ..> AuthenticationException : throws
+PatientQueueService ..> AuthorizationException : throws
+
+@enduml

@@ -1,0 +1,103 @@
+{
+  "id": "REQ-ATC-TIMETABLE-01",
+  "title": "View Runway Slot Timetable",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall display a slot timetable per runway showing all allocated time slots, flight details, and status.",
+  "rationale": "This requirement is necessary for air traffic controllers to monitor and manage runway utilization efficiently and effectively.",
+  "business_value": "Improved operational efficiency and safety through quick access to runway usage data.",
+  "source": {
+    "type": "User Story",
+    "id": 52,
+    "description": "As a air traffic controller, I need to view a slot timetable per runway showing all allocated time slots, flight details, and status so that I can monitor and manage runway utilization at a glance."
+  },
+  "stakeholders": [
+    "Air Traffic Controllers",
+    "Operations Management",
+    "Flight Schedule Managers"
+  ],
+  "acceptance_criteria": [
+    "The system should display a slot timetable showing allocated time slots, flight details, and status for the selected runway."
+  ],
+  "preconditions": [
+    "The user must be logged into the runway management system.",
+    "The specific runway must have allocated time slots, flight details, and statuses to display."
+  ],
+  "postconditions": [
+    "The user should see a slot timetable with all necessary information for the selected runway."
+  ],
+  "functional_constraints": [
+    "Data must be displayed in real-time or near real-time.",
+    "The system must handle multiple runways simultaneously without performance degradation."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The system should respond within 2 seconds for each runway timetable request.",
+    "availability": "The system must be available 99.9% of the time.",
+    "scalability": "The system should support up to 100 runways and handle at least 50 requests per minute.",
+    "usability": "Error messages must be clear and user-friendly."
+  },
+  "edge_cases": [
+    "What happens if no time slots are allocated for a runway?",
+    "How will the system handle data updates in real-time during flight operations?",
+    "What is the behavior of the system when multiple runways have overlapping time slots?"
+  ],
+  "dependencies": [
+    "Runway Management System",
+    "Flight Information System",
+    "User Authentication and Authorization System"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Runway API",
+      "description": "The requirement interacts with the Runway API to fetch runway data, including time slots, flight details, and statuses."
+    },
+    {
+      "type": "Database",
+      "name": "Flight Database",
+      "description": "The system retrieves flight details from the Flight Database to populate the timetable."
+    },
+    {
+      "type": "UI",
+      "name": "Runway Timetable UI",
+      "description": "The requirement interacts with the Runway Timetable UI to display the slot timetable to air traffic controllers."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-01",
+      "description": "Verify that the system displays a slot timetable for a runway with allocated time slots.",
+      "expected_result": "The user should see a slot timetable showing all allocated time slots, flight details, and statuses for the selected runway."
+    },
+    {
+      "id": "TC-02",
+      "description": "Test the system's response when no time slots are allocated for a runway.",
+      "expected_result": "The system should display an empty timetable or a message indicating that there are no time slots available for the selected runway."
+    },
+    {
+      "id": "TC-03",
+      "description": "Check the system's ability to handle real-time data updates during flight operations.",
+      "expected_result": "The user should see updated time slots, flight details, and statuses in the timetable as they occur."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T10:39:45.137739",
+  "last_updated": "2026-06-15T10:43:24.375730",
+  "traceability": {
+    "related_requirements": [
+      "REQ-ATC-01",
+      "REQ-ATC-01"
+    ],
+    "design_components": [
+      "Runway",
+      "Slot",
+      "Flight"
+    ],
+    "test_artifacts": []
+  }
+}

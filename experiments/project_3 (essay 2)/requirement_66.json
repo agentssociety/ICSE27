@@ -1,0 +1,96 @@
+{
+  "id": "REQ-ATC-TIME-SLOTS-01",
+  "title": "Allocate 5-minute time slots with mandatory 3-minute gaps between flights",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall automatically allocate 5-minute time slots for each flight with a mandatory 3-minute gap between consecutive slots.",
+  "rationale": "To ensure safe separation between flights and prevent collisions.",
+  "business_value": "Improves operational safety and reduces the risk of air accidents.",
+  "source": {
+    "type": "User Story",
+    "id": 66,
+    "description": "As an air traffic controller, I need the system to allocate 5-minute time slots for flights with a mandatory 3-minute gap between consecutive slots so that ensure safe separation."
+  },
+  "stakeholders": [
+    "Air Traffic Control Team",
+    "Flight Operations Management",
+    "Safety Compliance Department"
+  ],
+  "acceptance_criteria": [
+    "Each flight gets a 5-minute slot",
+    "There is a 3-minute gap between the end of one slot and the start of the next",
+    "Slots are automatically assigned based on scheduling rules"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "Flights are scheduled with adequate time separation",
+    "Safety protocols are enforced during flight allocation"
+  ],
+  "functional_constraints": [
+    "The system must allocate slots in a manner that complies with air traffic control regulations",
+    "The allocation algorithm must handle multiple flights concurrently without overlap"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The system should complete slot allocation within 10 seconds for each flight request",
+    "availability": "99.9% uptime during peak hours",
+    "scalability": "Must support up to 10,000 concurrent flight requests without performance degradation",
+    "usability": "Error messages must be clear and actionable"
+  },
+  "edge_cases": [
+    "What happens if a flight is canceled during the allocation process?",
+    "How should the system handle flights that are delayed and need to be rescheduled?",
+    "What if multiple flights have the same estimated time of arrival?"
+  ],
+  "dependencies": [
+    "Flight Schedule Data",
+    "Air Traffic Control Regulations",
+    "Scheduling Algorithm"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Flight Information API",
+      "description": "The system will use this API to retrieve flight schedule data and update slot allocations."
+    },
+    {
+      "type": "Database",
+      "name": "Flight Schedule Database",
+      "description": "Stores flight schedules, allocated time slots, and other relevant information."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-01",
+      "description": "Verify that each flight receives a dedicated 5-minute slot.",
+      "expected_result": "All flights have been assigned non-overlapping 5-minute slots."
+    },
+    {
+      "id": "TC-02",
+      "description": "Check if there is a mandatory 3-minute gap between consecutive time slots.",
+      "expected_result": "There is a 3-minute gap between the end of one slot and the start of the next for all flights."
+    },
+    {
+      "id": "TC-03",
+      "description": "Test system performance under peak hour load.",
+      "expected_result": "The system completes slot allocation within 10 seconds for each flight request, with a 99.9% uptime during peak hours."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T19:47:48.608600",
+  "last_updated": "2026-06-15T19:54:38.598716",
+  "traceability": {
+    "related_requirements": [
+      "REQ-ATC-01"
+    ],
+    "design_components": [
+      "Slot",
+      "Flight"
+    ],
+    "test_artifacts": []
+  }
+}

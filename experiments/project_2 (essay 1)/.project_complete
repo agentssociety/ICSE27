@@ -1,0 +1,1 @@
+Project 5 fully deployed and operational. Backend (direct run): address in use error, could not fix; Frontend (npm build): OK; API integration tests: PASSED; DevOps config: fixed vite rewrite, nginx proxy, host ports; Docker build: OK after fixing requirements.txt; Docker run: both containers healthy (backend healthy, frontend running); Paths: start.sh, docker-compose.yml

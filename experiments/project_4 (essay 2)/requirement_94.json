@@ -1,0 +1,109 @@
+{
+  "id": "REQ-ACC-01",
+  "title": "Manual Lock/Unlock User Accounts",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall provide an interface for admins to manually lock or unlock user accounts.",
+  "rationale": "Admins need the ability to control user access and security by locking or unlocking accounts as needed.",
+  "business_value": "Enhances security and compliance with organizational policies, reducing unauthorized access risks.",
+  "source": {
+    "type": "User Story",
+    "id": 94,
+    "description": "As an admin I need to manually lock or unlock user accounts So that I can control user access and security"
+  },
+  "stakeholders": [
+    "Admins",
+    "Security Team"
+  ],
+  "acceptance_criteria": [
+    "Given I am an authenticated admin on the user management page",
+    "When I select a user account and choose to lock it",
+    "Then the account status changes to 'locked' and the user cannot log in",
+    "Given I am an authenticated admin on the user management page",
+    "When I select a locked user account and choose to unlock it",
+    "Then the account status changes to 'active' and the user can log in again"
+  ],
+  "preconditions": [
+    "Admin is authenticated with proper authorization",
+    "User management interface is accessible"
+  ],
+  "postconditions": [
+    "Selected user account status is updated to 'locked'",
+    "Selected locked user account status is updated to 'active'"
+  ],
+  "functional_constraints": [
+    "The lock/unlock functionality must be available within the user management interface",
+    "Locking an account prevents any login or actions performed by the user"
+  ],
+  "security_requirements": [
+    "Authentication mechanism for admins must comply with organizational security standards",
+    "Access control to the user management page should follow role-based access controls (RBAC)"
+  ],
+  "non_functional_requirements": {
+    "performance": "System should respond within 500ms for lock/unlock operations",
+    "availability": "99.9% uptime during peak hours",
+    "scalability": "System should be able to handle up to 1,000 active users without performance degradation",
+    "usability": "Error messages should be clear and actionable"
+  },
+  "edge_cases": [
+    "What happens if an admin attempts to lock their own account?",
+    "How does the system handle simultaneous lock/unlock operations for the same user?",
+    "What is the behavior when trying to unlock a user account that is already active?"
+  ],
+  "dependencies": [
+    "Authentication and authorization service",
+    "User management database",
+    "Frontend user interface"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Lock/Unlock API",
+      "description": "Interface for admins to lock or unlock user accounts via a RESTful API."
+    },
+    {
+      "type": "Database",
+      "name": "User Management Database",
+      "description": "Stores user account information including status (locked/unlocked)."
+    },
+    {
+      "type": "UI",
+      "name": "User Management Page",
+      "description": "Frontend interface where admins can select and lock/unlock user accounts."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ACC-01",
+      "description": "Admin attempts to lock their own account.",
+      "expected_result": "The system denies the request with a clear error message."
+    },
+    {
+      "id": "TC-ACC-02",
+      "description": "Simultaneous lock and unlock operations on the same user.",
+      "expected_result": "The last operation takes precedence, and the final status is applied to the user account."
+    },
+    {
+      "id": "TC-ACC-03",
+      "description": "Unlocking a user account that is already active.",
+      "expected_result": "The system acknowledges the request but does not change the account status."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-16T21:46:45.439116",
+  "last_updated": "2026-06-16T22:06:35.762628",
+  "traceability": {
+    "related_requirements": [
+      "REQ-AUTH-01"
+    ],
+    "design_components": [
+      "Account",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

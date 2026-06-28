@@ -1,0 +1,100 @@
+@startuml
+' Layer grouping
+actor User
+box "Controller" #LightBlue
+  participant AuthenticationController
+  participant TransactionController
+end box
+box "Application" #LightGreen
+  participant AuditService
+end box
+box "Domain" #LightYellow
+  participant AuditEvent
+  participant AuthenticationAttempt
+  participant TransactionStateChange
+  participant AuditLogResource
+end box
+box "Infrastructure" #LightCoral
+  participant AuditLogDatabase
+end box
+box "External" #LightGray
+  participant Authentication_API
+end box
+
+== Record Successful Authentication ==
+User -> AuthenticationController: POST /auth (credentials)
+note right: HTTP request with basic auth [authenticated=True]
+AuthenticationController -> Authentication_API: authenticate(credentials) : AuthenticationOutcome
+Authentication_API --> AuthenticationController: success (200 OK)
+alt API returns success
+  AuthenticationController -> AuditService: logAuthAttempt(outcome=success, timestamp)
+  AuditService -> AuditEvent: createAuthenticationAttempt(outcome, timestamp) : AuthenticationAttempt
+  note right: state transition: PreIdle -> Post1
+  AuditEvent --> AuthenticationAttempt : <<create>>
+  AuditService -> AuditLogResource: recordAuthenticationAttempt(attempt: AuthenticationAttempt)
+  note right: state transition: empty -> contains entry
+  AuditLogResource -> AuditLogDatabase: appendEntry(entry, timestamp) [TLS] [encrypted at rest]
+  AuditLogDatabase --> AuditLogResource: success
+  AuditLogResource --> AuditService: ok
+  AuditService --> AuthenticationController: logged
+  AuthenticationController --> User: 201 Created
+else API returns failure
+  AuthenticationController -> AuditService: logAuthAttempt(outcome=failure, timestamp)
+' same recording path
+else API call fails (network error)
+  AuthenticationController -> AuditService: logAuthAttempt(outcome=failure, timestamp)
+  note right: Record failure outcome even if API unreachable
+  ' recording continues
+end
+
+== Record Failed Authentication ==
+User -> AuthenticationController: POST /auth (invalid credentials)
+AuthenticationController -> Authentication_API: authenticate(credentials) : AuthenticationOutcome
+Authentication_API --> AuthenticationController: failure (401 Unauthorized)
+alt API returns failure
+  AuthenticationController -> AuditService: logAuthAttempt(outcome=failure, timestamp)
+  AuditService -> AuditEvent: createAuthenticationAttempt(outcome, timestamp) : AuthenticationAttempt
+  note right: state: Post1 maintained (another failure)
+  AuditService -> AuditLogResource: recordAuthenticationAttempt(attempt)
+  AuditLogResource -> AuditLogDatabase: appendEntry(entry, timestamp) [TLS] [encrypted at rest]
+  AuditLogDatabase --> AuditLogResource: success
+  AuditLogResource --> AuditService: ok
+  AuditService --> AuthenticationController: logged
+  AuthenticationController --> User: 401 Unauthorized (with log)
+else API call fails (timeout)
+  AuthenticationController -> AuditService: logAuthAttempt(outcome=failure, timestamp)
+  note right: record failure to maintain audit completeness
+  ' recording continues
+end
+
+== Record Transaction State Change ==
+TransactionController -> TransactionController: updateState(newState: TransactionState)
+note right: state transition inside transaction (pending->completed)
+TransactionController -> AuditService: logStateChange(oldState, newState, timestamp)
+AuditService -> AuditEvent: createTransactionStateChange(oldState, newState, timestamp) : TransactionStateChange
+note right: state: Post2 reached (all state changes logged)
+AuditService -> AuditLogResource: recordStateChange(change: TransactionStateChange)
+AuditLogResource -> AuditLogDatabase: appendEntry(entry, timestamp) [TLS] [encrypted at rest]
+alt database write succeeds
+  AuditLogDatabase --> AuditLogResource: success
+  AuditLogResource --> AuditService: ok
+  AuditService --> TransactionController: logged
+  TransactionController --> User: 200 OK (state changed)
+else database write fails (network/storage)
+  AuditLogDatabase --> AuditLogResource: error
+  note right: Security properties maintained (authorization still in place)
+  AuditLogResource --> AuditService: failure
+  AuditService --> TransactionController: logFailed
+  TransactionController --> User: 500 Internal Server Error
+  note right: Log entry not persisted; system remains in previous state
+end
+
+== Concurrent Access Error ==
+alt Two concurrent writes to AuditLogResource by different actors
+  AuditLogResource -> AuditLogResource: checkPermissions(actor)
+  note right: must have compatible permissions (no conflicting writes)
+  AuditLogResource --> AuditLogResource: incompatible permissions => deny
+  AuditLogResource --> AuditService: WriteDenied
+  AuditService --> AuthenticationController: 403 Forbidden
+end
+@enduml

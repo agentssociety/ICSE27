@@ -1,0 +1,23 @@
+{
+  "task_id": 87,
+  "confidence": 0.9736,
+  "evidence": [
+    {
+      "claim": "The system logs all account state changes (lock/unlock).",
+      "fact": "Every login attempt and each change to a transaction's status is recorded with a precise time marker for later auditing.",
+      "score": 0.9818,
+      "user_story_span": "system to log all authentication attempts (success/failure) and account state changes (lock/unlock)",
+      "fact_span": "Every login attempt and each change to a transaction's status is recorded with a precise time marker for later auditing."
+    },
+    {
+      "claim": "The system logs all authentication attempts (success/failure).",
+      "fact": "Every login attempt and each change to a transaction's status is recorded with a precise time marker for later auditing.",
+      "score": 0.9654,
+      "user_story_span": "system to log all authentication attempts (success/failure) and account state changes (lock/unlock)",
+      "fact_span": "Every login attempt and each change to a transaction's status is recorded with a precise time marker for later auditing."
+    }
+  ],
+  "total_claims": 4,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

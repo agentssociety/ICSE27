@@ -1,0 +1,83 @@
+{
+  "project_id": 2,
+  "project_name": "blood_bank_inventory_manager",
+  "spec_path": "experiments/project_2 (metagpt)/docs/requirement.txt",
+  "prd_path": "experiments/project_2 (metagpt)/docs/prd/20260623143455.json",
+  "n_facts": 8,
+  "facts": [
+    "blood bank. It manages compatibility between blood types, monitors.",
+    "The system track blood units by ABO type, Rh factor, and collection date, with expiry fixed at 42 days after collection.",
+    "The system accept transfusion requests specifying blood type, Rh factor, and quantity.",
+    "The system match requests to compatible units using standard ABO/Rh donor compatibility (exact-type matches first, then closest expiry first).",
+    "The system reserve matched units, and release a reservation back to stock if it is not confirmed as issued within 24 hours.",
+    "The system automatically expire units past their expiry date and exclude them from matching.",
+    "The system raise a shortage alert whenever available stock of any blood type falls below 5 units.",
+    "The system show a dashboard of stock per type, units expiring within 7 days, and open requests."
+  ],
+  "n_stories": 5,
+  "stories": [
+    {
+      "task_id": 1,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 3,
+      "supported_claims": 0,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 2,
+      "confidence": 0.9991,
+      "evidence": [
+        {
+          "claim": "The system enables users to submit a transfusion request specifying blood type, Rh, and quantity.",
+          "fact": "The system accept transfusion requests specifying blood type, Rh factor, and quantity.",
+          "score": 0.9991,
+          "user_story_span": "",
+          "fact_span": ""
+        }
+      ],
+      "total_claims": 3,
+      "supported_claims": 1,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 3,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 4,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 5,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    }
+  ],
+  "summary": {
+    "mean_nli_alignment_score": 0.9991,
+    "median_nli_alignment_score": 0.9991,
+    "std_nli_alignment_score": 0.0,
+    "q1": 0.9991,
+    "q3": 0.9991,
+    "iqr": 0.0,
+    "n_outliers": 0,
+    "n_zero_alignment": 0,
+    "total_claims": 12,
+    "supported_claims": 1,
+    "spec_coverage_rate": 0.0833,
+    "spec_extrapolation_rate": 0.9167,
+    "overall_hallucination_rate": 0.9167
+  }
+}

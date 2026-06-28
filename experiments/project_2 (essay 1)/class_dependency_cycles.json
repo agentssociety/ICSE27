@@ -1,0 +1,345 @@
+{
+  "detected_cycles": [],
+  "removed_edges_to_break_cycles": [],
+  "relationship_corrections": [
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "\"1\" -- \"0..*\"",
+        "right": "Permission"
+      },
+      "corrected": {
+        "left": "Actor",
+        "arrow": "\"1\" --> \"0..*\"",
+        "right": "Permission"
+      },
+      "reason": "Undirected association is redundant; directed association reflects Actor owning Permissions."
+    },
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "<|--",
+        "right": "Blood_Bank_Administrators"
+      },
+      "corrected": {
+        "left": "Blood_Bank_Administrators",
+        "arrow": "<|--",
+        "right": "Actor"
+      },
+      "reason": "Inheritance reversed: Blood_Bank_Administrators is a subclass of Actor, not the reverse."
+    },
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "<|--",
+        "right": "Blood_Bank_Manager"
+      },
+      "corrected": {
+        "left": "Blood_Bank_Manager",
+        "arrow": "<|--",
+        "right": "Actor"
+      },
+      "reason": "Inheritance reversed: Blood_Bank_Manager is a subclass of Actor."
+    },
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "<|--",
+        "right": "Clinical_Team"
+      },
+      "corrected": {
+        "left": "Clinical_Team",
+        "arrow": "<|--",
+        "right": "Actor"
+      },
+      "reason": "Inheritance reversed: Clinical_Team is a subclass of Actor."
+    },
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "<|--",
+        "right": "FinanceTeam"
+      },
+      "corrected": {
+        "left": "FinanceTeam",
+        "arrow": "<|--",
+        "right": "Actor"
+      },
+      "reason": "Inheritance reversed: FinanceTeam is a subclass of Actor."
+    },
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "<|--",
+        "right": "IT_Support"
+      },
+      "corrected": {
+        "left": "IT_Support",
+        "arrow": "<|--",
+        "right": "Actor"
+      },
+      "reason": "Inheritance reversed: IT_Support is a subclass of Actor."
+    },
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "<|--",
+        "right": "InventoryManagementTeam"
+      },
+      "corrected": {
+        "left": "InventoryManagementTeam",
+        "arrow": "<|--",
+        "right": "Actor"
+      },
+      "reason": "Inheritance reversed: InventoryManagementTeam is a subclass of Actor."
+    },
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "<|--",
+        "right": "Medical_Staff"
+      },
+      "corrected": {
+        "left": "Medical_Staff",
+        "arrow": "<|--",
+        "right": "Actor"
+      },
+      "reason": "Inheritance reversed: Medical_Staff is a subclass of Actor."
+    },
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "<|--",
+        "right": "OperationsTeam"
+      },
+      "corrected": {
+        "left": "OperationsTeam",
+        "arrow": "<|--",
+        "right": "Actor"
+      },
+      "reason": "Inheritance reversed: OperationsTeam is a subclass of Actor."
+    },
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "<|--",
+        "right": "Regulatory_Authorities"
+      },
+      "corrected": {
+        "left": "Regulatory_Authorities",
+        "arrow": "<|--",
+        "right": "Actor"
+      },
+      "reason": "Inheritance reversed: Regulatory_Authorities is a subclass of Actor."
+    },
+    {
+      "original": {
+        "left": "BloodUnit",
+        "arrow": "-->",
+        "right": "ABO"
+      },
+      "corrected": {
+        "left": "BloodUnit",
+        "arrow": "\"*\" --> \"1\"",
+        "right": "ABO"
+      },
+      "reason": "Many BloodUnits can share the same ABO type; missing multiplicity on BloodUnit side."
+    },
+    {
+      "original": {
+        "left": "BloodUnit",
+        "arrow": "-->",
+        "right": "Rh"
+      },
+      "corrected": {
+        "left": "BloodUnit",
+        "arrow": "\"*\" --> \"1\"",
+        "right": "Rh"
+      },
+      "reason": "Many BloodUnits can share the same Rh factor; missing multiplicity on BloodUnit side."
+    },
+    {
+      "original": {
+        "left": "Interface",
+        "arrow": "<|--",
+        "right": "Blood_Inventory_Database"
+      },
+      "corrected": {
+        "left": "Blood_Inventory_Database",
+        "arrow": "<|..",
+        "right": "Interface"
+      },
+      "reason": "Interface should be realized by the database, not inherited; corrected to realization."
+    },
+    {
+      "original": {
+        "left": "Interface",
+        "arrow": "<|--",
+        "right": "InventoryDashboard"
+      },
+      "corrected": {
+        "left": "InventoryDashboard",
+        "arrow": "<|..",
+        "right": "Interface"
+      },
+      "reason": "Dashboard should realize the Interface, not inherit from it; corrected to realization."
+    },
+    {
+      "original": {
+        "left": "OutageRecord",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "Boolean"
+      },
+      "corrected": {
+        "left": "OutageRecord",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "State"
+      },
+      "reason": "Association to primitive type Boolean is invalid; likely should relate to State like other records."
+    },
+    {
+      "original": {
+        "left": "Resource",
+        "arrow": "<|--",
+        "right": "BloodUnit"
+      },
+      "corrected": {
+        "left": "BloodUnit",
+        "arrow": "<|--",
+        "right": "Resource"
+      },
+      "reason": "BloodUnit is a subtype of Resource; inheritance was reversed."
+    },
+    {
+      "original": {
+        "left": "State",
+        "arrow": "<|--",
+        "right": "Post1"
+      },
+      "corrected": {
+        "left": "Post1",
+        "arrow": "<|--",
+        "right": "State"
+      },
+      "reason": "Post1 is a specific state, should inherit from State; inheritance was reversed."
+    },
+    {
+      "original": {
+        "left": "State",
+        "arrow": "<|--",
+        "right": "PreIdle"
+      },
+      "corrected": {
+        "left": "PreIdle",
+        "arrow": "<|--",
+        "right": "State"
+      },
+      "reason": "PreIdle is a specific state, should inherit from State; inheritance was reversed."
+    }
+  ],
+  "architecture_corrections": [
+    {
+      "kind": "other_correction",
+      "description": "Missing class 'TransfusionRequest' which is owned by Task #26 (Transfusion Request Acceptance) and required for Task #27 (Compatibility Matching).",
+      "fix": {
+        "action": "other",
+        "details": {
+          "add_class": {
+            "name": "TransfusionRequest",
+            "kind": "class"
+          }
+        }
+      }
+    },
+    {
+      "kind": "other_correction",
+      "description": "Missing class 'Reservation' which is owned by Task #28 (Reservation and Auto-Release).",
+      "fix": {
+        "action": "other",
+        "details": {
+          "add_class": {
+            "name": "Reservation",
+            "kind": "class"
+          }
+        }
+      }
+    },
+    {
+      "kind": "other_correction",
+      "description": "Missing class 'Alert' which is owned by Task #30 (Shortage Alert).",
+      "fix": {
+        "action": "other",
+        "details": {
+          "add_class": {
+            "name": "Alert",
+            "kind": "class"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Missing association between TransfusionRequest and BloodUnit: a transfusion request can involve multiple blood units.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "left": "TransfusionRequest",
+          "arrow": "\"1\" --> \"*\"",
+          "right": "BloodUnit",
+          "meaning": "directed association"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Missing association between Reservation and BloodUnit: a reservation reserves one or more blood units.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "left": "Reservation",
+          "arrow": "\"1\" --> \"*\"",
+          "right": "BloodUnit",
+          "meaning": "directed association"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Missing association between Reservation and TransfusionRequest: a reservation corresponds to a scheduled transfusion request.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "left": "Reservation",
+          "arrow": "\"1\" --> \"1\"",
+          "right": "TransfusionRequest",
+          "meaning": "directed association"
+        }
+      }
+    }
+  ],
+  "architecture_suggestions": [
+    {
+      "kind": "introduce_value_object",
+      "affected_classes": [
+        "BloodUnit",
+        "TransfusionRequest",
+        "Resource"
+      ],
+      "suggestion": "Consider introducing a value object 'BloodType' that encapsulates ABO and Rh, as these two attributes always appear together in matching and inventory tracking."
+    },
+    {
+      "kind": "add_aggregate_root",
+      "affected_classes": [
+        "BloodUnit"
+      ],
+      "suggestion": "Consider designating 'BloodUnit' as an aggregate root to enforce consistency around its lifecycle (e.g., status changes, expiration, reservation)."
+    },
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "BloodUnitStatus"
+      ],
+      "suggestion": "Rename 'BloodUnitStatus' to 'UnitStatus' for brevity and consistency, as the context already implies blood units."
+    }
+  ]
+}

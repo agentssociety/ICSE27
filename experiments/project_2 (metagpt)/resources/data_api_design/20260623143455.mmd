@@ -1,0 +1,72 @@
+```mermaid
+classDiagram
+    class BloodUnit {
+        +int id
+        +str abo_type
+        +str rh_factor
+        +datetime collection_date
+        +datetime expiry_date
+        +str status: 'available','reserved','issued','expired'
+        +int? reservation_id
+        +__init__(abo_type, rh_factor, collection_date)
+        +expire()
+        +reserve(request_id) -> bool
+        +issue() -> bool
+        +release() -> bool
+    }
+    class TransfusionRequest {
+        +int id
+        +str abo_type
+        +str rh_factor
+        +int quantity
+        +str status: 'pending','fulfilled','cancelled'
+        +datetime created_at
+        +list[BloodUnit] matched_units
+        +__init__(abo_type, rh_factor, quantity)
+        +fulfill()
+        +cancel()
+    }
+    class Reservation {
+        +int id
+        +int request_id
+        +int unit_id
+        +datetime reserved_at
+        +bool confirmed
+        +release_after() datetime
+        +confirm()
+        +expire()
+    }
+    class StockAlert {
+        +int id
+        +str abo_type
+        +str rh_factor
+        +int current_stock
+        +datetime created_at
+        +bool active
+        +resolve()
+    }
+    class MatchingService {
+        +find_compatible_units(abo_type, rh_factor, quantity) -> list[BloodUnit]
+        +reserve_units(request, units)
+        +auto_match_and_reserve(request) -> bool
+    }
+    class Scheduler {
+        +expire_units_job()
+        +release_unconfirmed_reservations()
+        +check_and_raise_alerts()
+    }
+    class DashboardData {
+        +list[dict] stock_summary
+        +list[BloodUnit] expiring_soon
+        +list[TransfusionRequest] open_requests
+        +list[StockAlert] active_alerts
+    }
+    BloodUnit --> Reservation : has one
+    TransfusionRequest --> Reservation : has many
+    MatchingService --> BloodUnit
+    MatchingService --> TransfusionRequest
+    MatchingService --> Reservation
+    Scheduler --> BloodUnit
+    Scheduler --> Reservation
+    Scheduler --> StockAlert
+```

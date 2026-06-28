@@ -1,0 +1,187 @@
+@startuml
+!define RECTANGLE class
+
+box "Controller Layer" #LightCyan
+    participant "Admin_API" as API
+end box
+
+box "Application Layer" #LightGreen
+    participant "Admin" as Admin
+end box
+
+box "Domain Layer" #LightYellow
+    participant "Account" as Account
+    participant "Transaction" as Transaction
+    participant "AuthenticationAttempt" as AuthAttempt
+    participant "TransactionStateChange" as StateChange
+end box
+
+box "Infrastructure Layer" #LightBlue
+    participant "User_Database" as DB
+end box
+
+box "External Systems" #LightGray
+    participant "Authentication_Service" as AuthService
+end box
+
+== FLOW-01: View Flagged Transactions ==
+
+Admin -> API : GET /flagged-transactions\n(authenticationToken: String)
+note right: [TLS] [encrypted at rest]
+
+API -> AuthService : validateToken(token: String) : Boolean
+note right: Must verify admin identity
+
+alt Authentication fails
+    AuthService --> API : return false
+    API --> Admin : HTTP 401 Unauthorized
+else Authentication succeeds
+    AuthService --> API : return true
+    API -> AuthAttempt : create(success: true, timestamp: Time)
+    note right: Log authentication attempt
+
+    API -> DB : queryFlaggedTransactions() : List<Transaction>
+    note right: [TLS] [encrypted at rest]
+
+    alt Database unavailable
+        DB --> API : return null
+        API --> Admin : HTTP 503 Service Unavailable
+    else Database available
+        DB --> API : return List<Transaction>\n(with userID, amount, timestamp)
+        API -> Transaction : createFlaggedList(transactions: List)
+        note right: Ensure flagged=true
+        API --> Admin : HTTP 200 OK\n(flaggedTransactions: List)
+    end
+end
+
+== FLOW-02: Lock User Account ==
+
+Admin -> API : PUT /users/{userId}/lock\n(authenticationToken: String)
+note right: [TLS] [encrypted at rest]
+
+API -> AuthService : validateToken(token: String) : Boolean
+note right: Must verify admin role
+
+alt Authentication fails
+    AuthService --> API : return false
+    API --> Admin : HTTP 401 Unauthorized
+else Authentication succeeds
+    AuthService --> API : return true
+    API -> AuthAttempt : create(success: true, timestamp: Time)
+
+    API -> DB : findUserById(userId: String) : User
+    note right: [TLS] [encrypted at rest]
+
+    alt User not found
+        DB --> API : return null
+        API --> Admin : HTTP 404 Not Found
+    else User found
+        DB --> API : return User(accountStatus: {locked, unlocked})
+        API -> Account : getStatus() : AccountStatus
+
+        alt Account already locked
+            Account --> API : return AccountStatus.LOCKED
+            API --> Admin : HTTP 409 Conflict\n(optional, reversible allowed)
+        else Account unlocked
+            Account --> API : return AccountStatus.UNLOCKED
+            API -> DB : updateAccountStatus(userId: String, status: LOCKED) : Boolean
+            note right: [TLS] [encrypted at rest]
+
+            alt Concurrent lock attempt
+                DB --> API : return false (optimistic lock)
+                API --> Admin : HTTP 409 Conflict
+            else Update successful
+                DB --> API : return true
+                API -> StateChange : create(oldState: UNLOCKED, newState: LOCKED)
+                note right: State change must be valid
+                API --> Admin : HTTP 200 OK\n(confirmation: String)
+            end
+        end
+    end
+end
+
+== FLOW-03: Unlock User Account ==
+
+Admin -> API : PUT /users/{userId}/unlock\n(authenticationToken: String)
+note right: [TLS] [encrypted at rest]
+
+API -> AuthService : validateToken(token: String) : Boolean
+note right: Must verify admin role
+
+alt Authentication fails
+    AuthService --> API : return false
+    API --> Admin : HTTP 401 Unauthorized
+else Authentication succeeds
+    AuthService --> API : return true
+    API -> AuthAttempt : create(success: true, timestamp: Time)
+
+    API -> DB : findUserById(userId: String) : User
+    note right: [TLS] [encrypted at rest]
+
+    alt User not found
+        DB --> API : return null
+        API --> Admin : HTTP 404 Not Found
+    else User found
+        DB --> API : return User(accountStatus: {locked, unlocked})
+        API -> Account : getStatus() : AccountStatus
+
+        alt Account already unlocked
+            Account --> API : return AccountStatus.UNLOCKED
+            API --> Admin : HTTP 409 Conflict\n(idempotent OK)
+        else Account locked
+            Account --> API : return AccountStatus.LOCKED
+            API -> DB : updateAccountStatus(userId: String, status: UNLOCKED) : Boolean
+            note right: [TLS] [encrypted at rest]
+
+            alt Concurrent unlock attempt
+                DB --> API : return false (optimistic lock)
+                API --> Admin : HTTP 409 Conflict
+            else Update successful
+                DB --> API : return true
+                API -> StateChange : create(oldState: LOCKED, newState: UNLOCKED)
+                note right: State change must be valid
+                API --> Admin : HTTP 200 OK\n(confirmation: String)
+            end
+        end
+    end
+end
+
+== FLOW-04: View Transaction History ==
+
+Admin -> API : GET /users/{userId}/transactions\n(authenticationToken: String)
+note right: [TLS] [encrypted at rest]
+
+API -> AuthService : validateToken(token: String) : Boolean
+note right: Must verify admin role
+
+alt Authentication fails
+    AuthService --> API : return false
+    API --> Admin : HTTP 401 Unauthorized
+else Authentication succeeds
+    AuthService --> API : return true
+    API -> AuthAttempt : create(success: true, timestamp: Time)
+
+    API -> DB : findUserById(userId: String) : User
+    note right: [TLS] [encrypted at rest]
+
+    alt User not found
+        DB --> API : return null
+        API --> Admin : HTTP 404 Not Found
+    else User found
+        DB --> API : return User
+        API -> DB : queryTransactionsByUser(userId: String) : List<Transaction>
+        note right: [TLS] [encrypted at rest]
+
+        alt Database retrieval failure
+            DB --> API : return null
+            API --> Admin : HTTP 500 Internal Server Error
+        else Database retrieval successful
+            DB --> API : return List<Transaction>\n(with date, amount, type)
+            API -> Transaction : createHistoryList(transactions: List)
+            note right: Ensure accurate retrieval
+            API --> Admin : HTTP 200 OK\n(transactionHistory: List)
+        end
+    end
+end
+
+@enduml

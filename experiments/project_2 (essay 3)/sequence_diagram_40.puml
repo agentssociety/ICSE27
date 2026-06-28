@@ -1,0 +1,183 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "Transfusion_Request_Submission_API" as API
+end box
+
+box "Application Layer" #LightGreen
+  participant "REQ_BBT_01" as Controller
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Actor" as Actor
+  participant "Resource" as Resource
+  participant "PatientDetail" as PatientDetail
+  participant "BloodType" as BloodType
+  participant "State" as State
+  participant "Permission" as Permission
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "Transfusion_Requests_Database" as Database
+end box
+
+== Main Flow: Medical Staff Submits Transfusion Request ==
+
+Actor -> API : Medical_Staff submits transfusion request [TLS]
+activate API
+
+API -> Controller : submitRequest(initiator: Actor, target: Resource, patientDetail: PatientDetail, bloodType: BloodType) : REQ_BBT_01
+activate Controller
+
+Controller -> Actor : getPermissions(actor: Actor) : set Permission
+activate Actor
+Actor --> Controller : return permissions
+deactivate Actor
+
+alt Permission Check Failed
+    Controller --> API : return Error("Insufficient permissions")
+    API --> Actor : HTTP 403 Forbidden
+    deactivate Controller
+    deactivate API
+else Permission Check Passed
+    Controller -> Resource : checkAccess(initiator: Actor, target: Resource) : Bool
+    activate Resource
+    Resource --> Controller : return accessGranted
+    deactivate Resource
+
+    alt Access Denied
+        Controller --> API : return Error("Access denied")
+        API --> Actor : HTTP 403 Forbidden
+        deactivate Controller
+        deactivate API
+    else Access Granted
+        Controller -> PatientDetail : validateFormat(patientDetail: PatientDetail) : Bool
+        activate PatientDetail
+        PatientDetail --> Controller : return isValid
+        deactivate PatientDetail
+
+        alt Invalid Patient Details
+            Controller -> State : transitionTo(pre: State, post: State) : State
+            activate State
+            State --> Controller : return Post2
+            deactivate State
+            Controller --> API : return Error("Invalid patient details - stored for processing")
+            API --> Actor : HTTP 202 Accepted (stored for further processing)
+            deactivate Controller
+            deactivate API
+        else Valid Patient Details
+            Controller -> BloodType : validateType(bloodType: BloodType) : Bool
+            activate BloodType
+            BloodType --> Controller : return isValid
+            deactivate BloodType
+
+            alt Invalid Blood Type
+                Controller -> State : transitionTo(pre: State, post: State) : State
+                activate State
+                State --> Controller : return Post2
+                deactivate State
+                Controller --> API : return Error("Invalid blood type - stored for processing")
+                API --> Actor : HTTP 202 Accepted (stored for further processing)
+                deactivate Controller
+                deactivate API
+            else Valid Blood Type
+                Controller -> State : transitionTo(pre: Pre1, post: Post1) : State
+                activate State
+                State --> Controller : return Post1
+                deactivate State
+
+                Controller -> Database : storeRequest(request: REQ_BBT_01) : Bool [encrypted at rest]
+                activate Database
+                Database --> Controller : return stored
+                deactivate Database
+
+                alt Database Storage Failed
+                    Controller --> API : return Error("Storage failed")
+                    API --> Actor : HTTP 500 Internal Server Error
+                    deactivate Controller
+                    deactivate API
+                else Database Storage Succeeded
+                    Controller --> API : return Success(Post1)
+                    API --> Actor : HTTP 201 Created
+                    deactivate Controller
+                    deactivate API
+                end
+            end
+        end
+    end
+end
+
+== Concurrent Flow: Multiple Requests Submitted Simultaneously ==
+
+Actor -> API : Medical_Staff submits multiple requests concurrently [TLS]
+activate API
+
+API -> Controller : submitMultipleRequests(requests: List<REQ_BBT_01>) : List<Result>
+activate Controller
+
+loop for each request
+    Controller -> Actor : getPermissions(actor: Actor) : set Permission
+    activate Actor
+    Actor --> Controller : return permissions
+    deactivate Actor
+
+    Controller -> Resource : checkAccess(initiator: Actor, target: Resource) : Bool
+    activate Resource
+    Resource --> Controller : return accessGranted
+    deactivate Resource
+
+    Controller -> PatientDetail : validateFormat(patientDetail: PatientDetail) : Bool
+    activate PatientDetail
+    PatientDetail --> Controller : return isValid
+    deactivate PatientDetail
+
+    Controller -> BloodType : validateType(bloodType: BloodType) : Bool
+    activate BloodType
+    BloodType --> Controller : return isValid
+    deactivate BloodType
+
+    Controller -> State : transitionTo(pre: Pre1, post: Post1) : State
+    activate State
+    State --> Controller : return Post1
+    deactivate State
+
+    Controller -> Database : storeRequest(request: REQ_BBT_01) : Bool [encrypted at rest]
+    activate Database
+    Database --> Controller : return stored
+    deactivate Database
+end
+
+Controller --> API : return results
+API --> Actor : HTTP 200 OK (all requests processed)
+deactivate Controller
+deactivate API
+
+== Error Flow: System Unavailable ==
+
+Actor -> API : Medical_Staff submits transfusion request [TLS]
+activate API
+
+API -> Controller : submitRequest(initiator: Actor, target: Resource, patientDetail: PatientDetail, bloodType: BloodType) : REQ_BBT_01
+activate Controller
+
+Controller -> Database : checkAvailability() : Bool [encrypted at rest]
+activate Database
+
+alt Database Unavailable
+    Database --> Controller : return unavailable
+    deactivate Database
+    Controller --> API : return Error("System unavailable")
+    API --> Actor : HTTP 503 Service Unavailable
+    deactivate Controller
+    deactivate API
+else Database Available
+    Database --> Controller : return available
+    deactivate Database
+    Controller --> API : return Success
+    API --> Actor : HTTP 200 OK
+    deactivate Controller
+    deactivate API
+end
+
+@enduml

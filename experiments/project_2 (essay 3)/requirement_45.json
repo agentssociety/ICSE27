@@ -1,0 +1,99 @@
+{
+  "id": "REQ-INV-DASH-01",
+  "title": "Inventory Dashboard Display",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall display a dashboard that updates in real-time, showing current stock levels, units nearing expiration, and open transfusion requests.",
+  "rationale": "To enable efficient management of inventory, reduce waste, and meet transfusion demands.",
+  "business_value": "Improves operational efficiency, reduces blood wastage, and ensures timely fulfillment of transfusion requests.",
+  "source": {
+    "type": "User Story",
+    "id": 45,
+    "description": "As a blood bank manager I need a dashboard displaying current stock levels, units nearing expiration, and open transfusion requests so that I can efficiently manage inventory, reduce waste, and meet transfusion demands."
+  },
+  "stakeholders": [
+    "Blood Bank Manager",
+    "Inventory Team"
+  ],
+  "acceptance_criteria": [
+    "I see a section titled 'Current Stock Levels' listing each blood type with quantity",
+    "I see a section titled 'Units Nearing Expiration' listing each unit's type, expiration date, and days until expiry",
+    "I see a section titled 'Open Transfusion Requests' listing each request with patient ID, blood type, urgency, and request date"
+  ],
+  "preconditions": [
+    "I am logged in as a blood bank manager"
+  ],
+  "postconditions": [],
+  "functional_constraints": [
+    "The dashboard should update in real-time to reflect current data",
+    "\"Units nearing expiration\" means blood units within a configurable threshold (e.g., 5 days) of their expiration date"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens when there are no units nearing expiration?",
+    "How does the system handle sudden increases in transfusion requests?",
+    "What if a blood unit's expiration date changes while it is still in inventory?"
+  ],
+  "dependencies": [
+    "Blood unit data management system",
+    "Transfusion request management system",
+    "Authentication and authorization system"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Inventory Database",
+      "description": "The requirement interacts with the database to retrieve current stock levels, expiration dates, and transfusion requests."
+    },
+    {
+      "type": "API",
+      "name": "Blood Unit Data API",
+      "description": "The requirement uses this API to fetch real-time data about blood units in inventory."
+    },
+    {
+      "type": "UI",
+      "name": "Web Browser or Internal System",
+      "description": "The dashboard is accessed via a web browser or internal system, requiring the use of appropriate UI components and layouts."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-INV-DASH-01",
+      "description": "Verify that the 'Current Stock Levels' section displays all blood types with their respective quantities.",
+      "expected_result": "The dashboard shows each blood type in inventory along with its current quantity."
+    },
+    {
+      "id": "TC-INV-DASH-02",
+      "description": "Check if the 'Units Nearing Expiration' section lists units within the configurable threshold (e.g., 5 days) of expiration.",
+      "expected_result": "The dashboard correctly identifies and displays blood units that are close to their expiration date."
+    },
+    {
+      "id": "TC-INV-DASH-03",
+      "description": "Test the 'Open Transfusion Requests' section for accuracy in displaying all pending requests.",
+      "expected_result": "The dashboard accurately lists each open transfusion request with patient ID, blood type, urgency, and request date."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T23:35:21.028676",
+  "last_updated": "2026-06-14T23:47:12.368775",
+  "traceability": {
+    "related_requirements": [
+      "REQ-BLOOD-01"
+    ],
+    "design_components": [
+      "BloodUnit",
+      "TransfusionRequest"
+    ],
+    "test_artifacts": []
+  }
+}

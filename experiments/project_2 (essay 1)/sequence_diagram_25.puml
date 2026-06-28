@@ -1,0 +1,129 @@
+@startuml
+title Blood Unit Recording and Expiration Sequence Diagrams
+
+' Layer grouping
+box "Controller" #LightBlue
+participant "BloodUnitController" as Controller
+end box
+
+box "Application" #LightGreen
+participant "BloodUnitService" as Service
+end box
+
+box "Domain" #LightYellow
+participant "BloodUnit" as BU
+participant "BloodUnitDataResource" as BURes
+participant "Actor" as Actor
+end box
+
+box "Infrastructure" #LightCoral
+participant "BloodUnitDB" as DB
+end box
+
+box "External" #LightGray
+participant "DateCalculationAPI" as API
+end box
+
+' Actor definitions
+actor "Inventory Manager" as IM
+
+== FLOW_RECORD ==
+
+IM -> Controller : POST /blood-units (bloodType: ABO, rhFactor: Rh, donationDate: Date)
+note right: HTTP request body contains bloodType, rhFactor, donationDate
+Controller -> Service : recordBloodUnit(bloodType: ABO, rhFactor: Rh, donationDate: Date)
+Service -> Actor : checkPermission(actor: Actor, permission: Permission.WRITE) : boolean
+alt [permission denied]
+    Service --> Controller : PermissionDeniedException
+    Controller --> IM : 403 Forbidden
+else [permission granted]
+    Service -> BU : new BloodUnit(bloodType, rhFactor, donationDate)
+    note left #LightYellow: Constructor validates invariants (date format, required fields)
+    alt [invalid date format]
+        BU --> Service : InvalidDateFormatException
+        Service --> Controller : ValidationErrorResponse (message with guidance)
+        Controller --> IM : 400 Bad Request (invalid date format)
+    else [rhFactor is null]
+        BU --> Service : MissingRhFactorException
+        Service --> Controller : ValidationErrorResponse (message: "Rh factor is required")
+        Controller --> IM : 400 Bad Request (missing Rh factor)
+    else [bloodType is null]
+        BU --> Service : MissingBloodTypeException
+        Service --> Controller : ValidationErrorResponse
+        Controller --> IM : 400 Bad Request (missing blood type)
+    else [validation passes]
+        note over BU #LightYellow : state = BloodUnitRecorded (Post1)
+        Service -> BURes : setOwner(actor: Actor)
+        ' Owner becomes Inventory Manager per BloodUnitDataResource invariant
+        Service -> DB : save(bloodUnit: BloodUnit) [TLS]
+        alt [DB error]
+            DB --> Service : DatabaseException
+            Service --> Controller : InternalServerError
+            Controller --> IM : 500 Internal Server Error
+        else [success]
+            DB --> Service : savedRecord
+            Service --> Controller : BloodUnitDTO (id, bloodType, rhFactor, donationDate)
+            Controller --> IM : 201 Created (body with BloodUnitDTO)
+        end
+    end
+end
+
+== FLOW_EXPIRE (Manual Trigger) ==
+
+IM -> Controller : POST /blood-units/calculate-expiration
+note right: Triggers expiration calculation for all blood units
+Controller -> Service : triggerExpirationCalculation()
+Service -> DB : findAll() [TLS] : List<BloodUnit>
+alt [DB error]
+    DB --> Service : DatabaseException
+    Service --> Controller : InternalServerError
+    Controller --> IM : 500 Internal Server Error
+else [success]
+    DB --> Service : bloodUnits
+    loop for each BloodUnit in bloodUnits
+        Service -> BU : getBloodType() : ABO
+        Service -> BU : getRhFactor() : Rh
+        Service -> BU : getDonationDate() : Date
+        alt [missing bloodType or rhFactor in stored record]
+            note right #LightCoral : Graceful skip – log error, do not proceed
+            BU --> Service : MissingFieldException (handled)
+        else [values present]
+            Service -> API : calculateExpirationDate(donationDate: Date, bloodType: ABO, rhFactor: Rh) : Date [auth]
+            alt [API unreachable or error]
+                note right #LightCoral : Fallback to predefined shelf life table (no system failure)
+                Service -> Service : computeFallbackExpiration(bloodUnit) : Date
+            else [success]
+                API --> Service : expirationDate
+            end
+            Service -> BU : setExpirationDate(expirationDate: Date)
+            alt [expirationDate <= today + threshold (near expiration)]
+                note over BU #LightPink : state = ExpirationFlagged (Post2)
+                BU --> Service : flag = true
+            else
+                note over BU #LightYellow : state = ExpirationCalculated (no flag)
+            end
+            Service -> DB : update(bloodUnit: BloodUnit) [TLS]
+            alt [DB error]
+                DB --> Service : DatabaseException (logged, continue loop)
+            else [success]
+                DB --> Service : ok
+            end
+        end
+    end
+    Service --> Controller : ExpirationReport (updatedCount, skippedCount, errorCount)
+    Controller --> IM : 200 OK (summary)
+end
+
+== FLOW_EXPIRE (Scheduled Trigger) ==
+
+participant "Scheduler" as Scheduler
+
+Scheduler -> Service : triggerExpirationCalculation()
+note right #LightGray : Automated trigger – same logic as manual
+Service -> DB : findAll() [TLS] : List<BloodUnit>
+... (same loop as in manual trigger) ...
+' After completion, optional notification
+Service -> IM : email/report (optional)
+note right #LightGray : Notifies stakeholders about near-expired units
+
+@enduml

@@ -1,0 +1,105 @@
+{
+  "id": "REQ-AUTH-01",
+  "title": "Card and PIN Authentication",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall authenticate users using their card and PIN.",
+  "rationale": "This requirement ensures that user accounts are secure by requiring a valid card and PIN for access.",
+  "business_value": "Improves account security, reducing the risk of unauthorized access.",
+  "source": {
+    "type": "User Story",
+    "id": 79,
+    "description": "As a user I need to authenticate using my card and PIN so that my account is secure."
+  },
+  "stakeholders": [
+    "Security Team",
+    "Customer Support",
+    "IT Department"
+  ],
+  "acceptance_criteria": [
+    "I am granted access to my account upon successful card and PIN authentication.",
+    "My account is automatically locked after a specified number of failed attempts."
+  ],
+  "preconditions": [
+    "The user has a valid card and PIN."
+  ],
+  "postconditions": [
+    "The user's account is authenticated.",
+    "Failed attempts to authenticate are tracked."
+  ],
+  "functional_constraints": [
+    "Authentication must be performed using a card and PIN.",
+    "Multiple failed authentication attempts must lock the account."
+  ],
+  "security_requirements": [
+    "Card and PIN combination must be unique for each user.",
+    "The system must securely store and handle card and PIN data."
+  ],
+  "non_functional_requirements": {
+    "performance": "Authentication process should complete within 2 seconds.",
+    "availability": "The system must be available at least 99.9% of the time.",
+    "scalability": "The system must support up to 10,000 concurrent authentication requests without performance degradation.",
+    "usability": "Error messages should be clear and guide the user on how to resolve the issue."
+  },
+  "edge_cases": [
+    "What happens if the card is expired?",
+    "How does the system handle a PIN that is too short or too long?",
+    "What is the behavior when an invalid card and PIN are entered together?",
+    "How does the system respond to a card that is not recognized?"
+  ],
+  "dependencies": [
+    "Card reader hardware",
+    "Database for storing card and PIN data"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Authentication API",
+      "description": "Interface for authenticating users using their card and PIN."
+    },
+    {
+      "type": "Database",
+      "name": "User Authentication Database",
+      "description": "Stores user card and PIN data for authentication purposes."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-01",
+      "description": "Valid card and PIN entered successfully.",
+      "expected_result": "Access granted to the account."
+    },
+    {
+      "id": "TC-02",
+      "description": "Invalid card but valid PIN entered multiple times.",
+      "expected_result": "Account locked after 3 failed attempts."
+    },
+    {
+      "id": "TC-03",
+      "description": "Valid card and invalid PIN entered multiple times.",
+      "expected_result": "Account locked after 3 failed attempts."
+    },
+    {
+      "id": "TC-04",
+      "description": "Expired card entered.",
+      "expected_result": "Error message indicating the card is expired."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-16T09:52:29.718313",
+  "last_updated": "2026-06-16T10:13:32.893304",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "User",
+      "Account",
+      "Card",
+      "Pin"
+    ],
+    "test_artifacts": []
+  }
+}

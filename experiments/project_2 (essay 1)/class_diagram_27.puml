@@ -1,0 +1,102 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 14
+
+package "Domain Model" {
+    enum ABOGroup {
+        A
+        B
+        AB
+        O
+    }
+
+    enum RhFactor {
+        Positive
+        Negative
+    }
+
+    class TransfusionRequest {
+        - bloodType: ABOGroup
+        - rhFactor: RhFactor
+        + isCompatibleWith(unit: BloodUnit): Bool
+    }
+
+    class BloodUnit {
+        - bloodType: ABOGroup
+        - rhFactor: RhFactor
+        + isCompatibleWith(request: TransfusionRequest): Bool
+  + checkCompatibility(bloodType: ABOGroup, rhFactor: RhFactor) : Compatibility
+    }
+
+    class BloodTypeRequirement {
+        - abo: ABOGroup
+        - rh: RhFactor
+        - isSupported: Bool
+    }
+
+    class Compatibility {
+        - compatibleUnitsAvailable: Bool
+    }
+
+    class RhRecognition {
+        - rhRecognized: Bool
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface Blood_Unit_Inventory_Database {
+        + {abstract} queryCompatibleUnits(abo: ABOGroup, rh: RhFactor): List<BloodUnit>
+        + {abstract} updateInventory(unit: BloodUnit): Bool
+  + findCompatibleUnits(bloodType: ABOGroup, rhFactor: RhFactor) : List<BloodUnit>
+    }
+
+    interface ABO_Blood_Group_API {
+        + {abstract} validateBloodType(abo: ABOGroup): Bool
+        + {abstract} validateRhFactor(rh: RhFactor): Bool
+    }
+}
+
+package "Controllers" {
+    class TransfusionController {
+        - inventory: Blood_Unit_Inventory_Database
+        - aboApi: ABO_Blood_Group_API
+        + processRequest(request: TransfusionRequest): List<BloodUnit>
+    }
+}
+
+package "Exceptions" {
+    class UnsupportedBloodTypeException {
+        + UnsupportedBloodTypeException(message: String)
+    }
+
+    class UnrecognizedRhFactorException {
+        + UnrecognizedRhFactorException(message: String)
+    }
+
+    class NoCompatibleUnitsException {
+        + NoCompatibleUnitsException(message: String)
+    }
+}
+
+' Relationships
+TransfusionRequest --> BloodUnit : "matched to"
+TransfusionController ..> Blood_Unit_Inventory_Database : "uses"
+TransfusionController ..> ABO_Blood_Group_API : "uses"
+TransfusionController --> TransfusionRequest : "processes"
+TransfusionController --> UnsupportedBloodTypeException : "throws"
+TransfusionController --> UnrecognizedRhFactorException : "throws"
+TransfusionController --> NoCompatibleUnitsException : "throws"
+
+' Constraints annotations
+note right of TransfusionRequest
+    bloodType must be one of A, B, AB, O
+    rhFactor must be Positive or Negative
+end note
+
+note right of BloodUnit
+    bloodType must be one of A, B, AB, O
+    rhFactor must be Positive or Negative
+end note
+
+@enduml

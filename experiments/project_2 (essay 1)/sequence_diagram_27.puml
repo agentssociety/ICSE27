@@ -1,0 +1,109 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "TransfusionController" as Controller
+end box
+
+box "Application Layer" #LightGreen
+  participant "TransfusionService" as Service
+end box
+
+box "Domain Layer" #LightYellow
+  participant "BloodUnit" as BloodUnit
+  participant "BloodTypeRequirement" as BloodTypeRequirement
+  participant "Compatibility" as Compatibility
+  participant "RhRecognition" as RhRecognition
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "Blood_Unit_Inventory_Database" as DB
+  participant "ABO_Blood_Group_API" as ABOAPI
+end box
+
+== Main Flow - Successful Transfusion Request ==
+
+Controller -> Service : initiateTransfusionRequest(bloodType: ABOGroup, rhFactor: RhFactor)
+note right: Authenticated channel required [TLS]
+
+Service -> ABOAPI : validateBloodType(bloodType: ABOGroup) : BloodTypeRequirement
+note right: [TLS] [encrypted at rest]
+ABOAPI --> Service : BloodTypeRequirement(abo, rh, isSupported=true)
+
+alt isSupported == true
+  Service -> ABOAPI : recognizeRhFactor(rhFactor: RhFactor) : RhRecognition
+  note right: [TLS] [encrypted at rest]
+  ABOAPI --> Service : RhRecognition(rhRecognized=true)
+  
+  alt rhRecognized == true
+    Service -> DB : findCompatibleUnits(bloodType: ABOGroup, rhFactor: RhFactor) : List<BloodUnit>
+    note right: [TLS] [encrypted at rest] Read permission required
+    DB --> Service : List<BloodUnit>
+    
+    Service -> BloodUnit : checkCompatibility(bloodType: ABOGroup, rhFactor: RhFactor) : Compatibility
+    BloodUnit --> Service : Compatibility(compatibleUnitsAvailable=true)
+    
+    alt compatibleUnitsAvailable == true
+      Service --> Controller : compatibleUnits: List<BloodUnit>
+      note right: State transition: PreIdle -> Post1
+      Controller --> Lab_Technicians : 200 OK [compatible units]
+    else compatibleUnitsAvailable == false
+      Service --> Controller : error: no compatible units
+      note right: State transition: PreIdle -> PreIdle
+      Controller --> Lab_Technicians : 404 Not Found [no compatible units]
+    end
+  else rhRecognized == false
+    Service --> Controller : error: unrecognized Rh factor
+    note right: State transition: PreIdle -> PreIdle
+    Controller --> Lab_Technicians : 400 Bad Request [unrecognized Rh factor]
+  end
+else isSupported == false
+  Service --> Controller : error: unsupported blood type
+  note right: State transition: PreIdle -> PreIdle
+  Controller --> Lab_Technicians : 400 Bad Request [unsupported blood type]
+end
+
+== Error Flow - Authentication Failure ==
+
+Controller -> Service : initiateTransfusionRequest(bloodType: ABOGroup, rhFactor: RhFactor)
+note right: Missing or invalid authentication
+Service --> Controller : error: authentication required
+Controller --> Lab_Technicians : 401 Unauthorized
+
+== Error Flow - Authorization Failure ==
+
+Controller -> Service : initiateTransfusionRequest(bloodType: ABOGroup, rhFactor: RhFactor)
+note right: Authenticated but insufficient permissions
+Service -> ABOAPI : validateBloodType(bloodType: ABOGroup) : BloodTypeRequirement
+ABOAPI --> Service : BloodTypeRequirement(abo, rh, isSupported=true)
+Service -> ABOAPI : recognizeRhFactor(rhFactor: RhFactor) : RhRecognition
+ABOAPI --> Service : RhRecognition(rhRecognized=true)
+Service -> DB : findCompatibleUnits(bloodType: ABOGroup, rhFactor: RhFactor) : List<BloodUnit>
+note right: Read permission check fails
+DB --> Service : error: insufficient permissions
+Service --> Controller : error: access denied
+Controller --> Lab_Technicians : 403 Forbidden
+
+== Error Flow - External API Unavailable ==
+
+Controller -> Service : initiateTransfusionRequest(bloodType: ABOGroup, rhFactor: RhFactor)
+Service -> ABOAPI : validateBloodType(bloodType: ABOGroup) : BloodTypeRequirement
+note right: API timeout or unavailable
+ABOAPI --> Service : error: service unavailable
+Service --> Controller : error: blood group validation failed
+Controller --> Lab_Technicians : 503 Service Unavailable
+
+== Error Flow - Database Connection Failure ==
+
+Controller -> Service : initiateTransfusionRequest(bloodType: ABOGroup, rhFactor: RhFactor)
+Service -> ABOAPI : validateBloodType(bloodType: ABOGroup) : BloodTypeRequirement
+ABOAPI --> Service : BloodTypeRequirement(abo, rh, isSupported=true)
+Service -> ABOAPI : recognizeRhFactor(rhFactor: RhFactor) : RhRecognition
+ABOAPI --> Service : RhRecognition(rhRecognized=true)
+Service -> DB : findCompatibleUnits(bloodType: ABOGroup, rhFactor: RhFactor) : List<BloodUnit>
+note right: Database connection lost
+DB --> Service : error: connection failed
+Service --> Controller : error: database unavailable
+Controller --> Lab_Technicians : 503 Service Unavailable
+
+@enduml

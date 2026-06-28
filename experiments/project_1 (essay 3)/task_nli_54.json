@@ -1,0 +1,23 @@
+{
+  "task_id": 54,
+  "confidence": 0.9141,
+  "evidence": [
+    {
+      "claim": "Items can have their urgency level set or changed as needed.",
+      "fact": "The system can remove the patient with the highest urgency and earliest arrival from the queue.",
+      "score": 0.9728,
+      "user_story_span": "Items can have their urgency level set or changed as needed.",
+      "fact_span": ""
+    },
+    {
+      "claim": "The urgency level uses a numeric scale from 1 to 5, with 1 being lowest and 5 highest.",
+      "fact": "The waiting list is organized using descending severity and ascending check-in timestamp.",
+      "score": 0.8553,
+      "user_story_span": "",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 4,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

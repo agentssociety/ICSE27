@@ -1,0 +1,18 @@
+ATM Withdrawal Safety Backend
+
+A transactional backend that processes ATM cash withdrawal requests
+securely, with a minimal administrative console. It enforces balance
+and limit rules, flags suspicious activity, and guarantees that any
+failed transaction is fully rolled back.
+
+Core features:
+- Authenticate users by card number and PIN before any transaction,
+  locking the account after 3 consecutive failed attempts
+- Decline withdrawals exceeding the account balance or the daily
+  limit per calendar day
+- Process each withdrawal atomically, rolling back all steps
+  completely if any step fails so the balance is unchanged
+- Detect suspicious withdrawal patterns and flag the transactions
+  for administrator review
+- Let administrators review flagged transactions, lock or unlock accounts, and view transaction histories
+- Record every authentication attempt and transaction state change with a timestamp

@@ -1,0 +1,108 @@
+{
+  "id": "REQ-AUTH-01",
+  "title": "Account Lockout After 3 Consecutive Failed PIN Attempts",
+  "type": "Security",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall lock the user's account after three consecutive failed PIN attempts.",
+  "rationale": "To protect the user's financial information from unauthorized access through repeated incorrect PIN entries.",
+  "business_value": "Enhances security and prevents potential fraud by preventing brute force attacks on the user's credentials.",
+  "source": {
+    "type": "User Story",
+    "id": 96,
+    "description": "As a user I need to authenticate using my card and PIN, and have my account locked after 3 consecutive failed attempts So that my account is protected from unauthorized access"
+  },
+  "stakeholders": [
+    "Security Team",
+    "User Experience Team",
+    "Finance Department"
+  ],
+  "acceptance_criteria": [
+    "Given I have inserted my card",
+    "When I enter an incorrect PIN three consecutive times",
+    "Then my account is locked"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "The user's account is locked after three consecutive failed PIN attempts",
+    "No further authentication attempts are allowed until the account is unlocked"
+  ],
+  "functional_constraints": [
+    "The system must accurately count the number of consecutive failed attempts",
+    "The lockout duration and criteria must be configurable for future adjustments"
+  ],
+  "security_requirements": [
+    "User authentication using card and PIN",
+    "Account lockout after three consecutive failed attempts to prevent brute force attacks",
+    "User notification upon account lockout"
+  ],
+  "non_functional_requirements": {
+    "performance": "The system must handle up to 100 concurrent users without performance degradation",
+    "availability": "99.9% uptime guarantee for the authentication process",
+    "scalability": "The system must be able to scale up to accommodate increases in user base",
+    "usability": "Error messages should be clear and provide guidance on how to proceed after lockout"
+  },
+  "edge_cases": [
+    "What happens if a user attempts to authenticate using an expired card?",
+    "How does the system handle simultaneous lockout attempts from different devices?",
+    "Does the system differentiate between incorrect PIN and expired card attempts?"
+  ],
+  "dependencies": [
+    "Card Reader Interface",
+    "PIN Verification Service"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Authentication API",
+      "description": "Interface for initiating authentication and receiving lockout status."
+    },
+    {
+      "type": "Database",
+      "name": "User Data Store",
+      "description": "Stores user credentials and lockout statuses."
+    },
+    {
+      "type": "UI",
+      "name": "Login Screen",
+      "description": "Where users enter their card and PIN for authentication."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-AUTH-01",
+      "description": "User enters correct PIN twice, then incorrect PIN once.",
+      "expected_result": "Account remains unlocked."
+    },
+    {
+      "id": "TC-AUTH-02",
+      "description": "User enters correct PIN three times consecutively.",
+      "expected_result": "No action taken; account remains unlocked."
+    },
+    {
+      "id": "TC-AUTH-03",
+      "description": "User enters incorrect PIN three consecutive times.",
+      "expected_result": "Account is locked."
+    },
+    {
+      "id": "TC-AUTH-04",
+      "description": "User attempts to authenticate with an expired card.",
+      "expected_result": "Authentication fails with appropriate error message."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-17T09:52:44.150448",
+  "last_updated": "2026-06-17T09:58:58.696018",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Card",
+      "Pin",
+      "Account"
+    ],
+    "test_artifacts": []
+  }
+}

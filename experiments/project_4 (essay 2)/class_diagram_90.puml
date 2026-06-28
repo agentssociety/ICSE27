@@ -1,0 +1,187 @@
+@startuml
+!define RECTANGLE class
+
+skinparam backgroundColor #FEFEFE
+skinparam class {
+    BorderColor #2E4057
+    BackgroundColor #F8F9FA
+    FontColor #2E4057
+}
+
+package "Domain Model" {
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+    }
+    
+    class Actor {
+        - mayPerform: Set<Permission>
+  + getPermissions(actorId: String) : Set<Permission>
+    }
+    
+    class Resource {
+        - owner: Actor
+        - accessible: Set<Actor>
+  + checkAccess(actorId: String, accountId: String) : Boolean
+    }
+    
+    class Account {
+        - balance: Integer { constraint: 0..1000 }
+        - dailyLimit: Integer { constraint: 0..1000 }
+        - usedToday: Integer { constraint: 0..dailyLimit }
+  + checkSufficientFunds(balance: Int, amount: Int) : Boolean
+  + checkDailyLimit(usedToday: Int, dailyLimit: Int, amount: Int) : Boolean
+  + updateBalance(amount: Int) : Account
+  + updateUsedToday(amount: Int) : Account
+    }
+    
+    class Transaction {
+        - amount: Integer { constraint: 0..1000 }
+    }
+    
+    enum State {
+        Pre1
+        Pre2
+        Post1
+        Post2
+    }
+    
+    Resource "1" --> "1" Actor : owner
+    Resource "1" --> "*" Actor : accessible
+    Account "1" --> "1" Actor : owned by
+    Account "1" --> "*" Actor : accessible by
+}
+
+package "Application" {
+    class Operation {
+        - initiator: Actor
+        - target: Account
+        - transaction: Transaction
+        - interfaces: List<Interface>
+        - permission: Permission
+        - preState: State
+        - postState: State
+  + createOperation(state: State.Pre2, result: State.Post2)
+  + createOperation(state: State.Pre1, result: State.Post1)
+    }
+    
+    Operation "1" *--> "1" Account
+    Operation "1" --> "1" Transaction
+    Operation "1" --> "1..*" Interface
+    Operation "1" --> "1" State : pre
+    Operation "1" --> "1" State : post
+    Operation "1" --> "1" Permission
+    Operation "1" --> "1" Actor : initiator
+}
+
+package "Infrastructure — Ports" {
+    interface Interface {
+        + {abstract} isAuthenticated(): Boolean
+        + {abstract} isEncrypted(): Boolean
+  + authenticateChannel(channelId: String) : Boolean
+    }
+    
+    interface Account_Database {
+        + {abstract} getBalance(accountId: String): Integer
+        + {abstract} getDailyLimit(accountId: String): Integer
+        + {abstract} getUsedToday(accountId: String): Integer
+        + {abstract} updateBalance(accountId: String, newBalance: Integer): void
+        + {abstract} updateUsedToday(accountId: String, newUsedToday: Integer): void
+    }
+    
+    interface Payment_Processing_System {
+        + {abstract} debit(accountId: String, amount: Integer): Boolean
+    }
+    
+    Account_Database -up-|> Interface
+    Payment_Processing_System -up-|> Interface
+}
+
+package "Exceptions" {
+    class InsufficientFundsException <<exception>> {
+        - accountId: String
+        - requestedAmount: Integer
+        - availableBalance: Integer
+    }
+    
+    class DailyLimitExceededException <<exception>> {
+        - accountId: String
+        - requestedAmount: Integer
+        - remainingLimit: Integer
+    }
+    
+    class AccountNotFoundException <<exception>> {
+        - accountId: String
+    }
+    
+    class InvalidAccountDataException <<exception>> {
+        - accountId: String
+        - reason: String
+    }
+}
+
+package "DTOs" {
+    class AuthorizationRequest <<dto>> {
+        - initiatorId: String
+        - accountId: String
+        - amount: Integer
+        - permission: Permission
+        - interfaceType: String
+    }
+    
+    class AuthorizationResponse <<dto>> {
+        - authorized: Boolean
+        - newBalance: Integer
+        - newUsedToday: Integer
+        - reason: String
+    }
+    
+    class AccountData <<dto>> {
+        - balance: Integer
+        - dailyLimit: Integer
+        - usedToday: Integer
+  + validateAccountData(balance: Int, dailyLimit: Int, usedToday: Int) : Boolean
+    }
+}
+
+note top of Account
+    Invariants:
+    - balance >= 0
+    - dailyLimit >= 0
+    - usedToday >= 0
+    - usedToday <= dailyLimit
+end note
+
+note top of Transaction
+    Invariant:
+    - amount >= 0
+end note
+
+note top of Permission
+    Hierarchy:
+    Read < Write
+    Read < Execute < Admin
+end note
+
+note top of Actor
+    Known subtypes:
+    - Account_Holders
+    - Financial_Institutions
+end note
+
+note top of Resource
+    Invariant:
+    - owner in accessible
+end note
+
+note top of Operation
+    Constraints:
+    - preState != postState
+    - preState must have valid account data
+    - At least one encrypted interface required
+    - At least two interfaces total
+end note
+
+@enduml

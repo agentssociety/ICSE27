@@ -1,0 +1,124 @@
+@startuml
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+
+title REQ_BB_01 – Blood Type Alert Operation
+
+actor "Blood_Bank_Manager" as Manager
+
+box "Controller" #LightBlue
+  participant AlertController
+end box
+
+box "Application" #LightGreen
+  participant BloodTypeAlertService
+end box
+
+box "Domain" #LightYellow
+  participant BloodTypeAlertOperation
+  participant BloodTypeResource
+  participant User
+  participant Permission
+  participant State
+end box
+
+box "Infrastructure" #LightCoral
+  participant InventoryPort
+  participant NotificationPort
+end box
+
+box "External" #LightGray
+  participant Inventory_API
+  participant Email_SMS_Gateway
+end box
+
+== Normal Flow (Stock < 5) ==
+
+Manager -> AlertController: POST /alert { bloodTypes } [TLS]
+note right of AlertController: Authenticated (Admin permission required)
+
+AlertController -> BloodTypeAlertService: initiateAlert(bloodTypes, manager)
+
+BloodTypeAlertService -> BloodTypeAlertOperation: create(manager, bloodTypes)
+
+BloodTypeAlertOperation -> User: hasPermission(Permission.Admin): boolean
+User --> BloodTypeAlertOperation: true
+
+BloodTypeAlertOperation -> BloodTypeResource: isAccessible(manager): boolean
+BloodTypeResource --> BloodTypeAlertOperation: true
+
+BloodTypeAlertOperation --> BloodTypeAlertService: validation ok
+
+BloodTypeAlertService -> InventoryPort: getInventoryLevels(bloodTypes) [TLS]
+InventoryPort -> Inventory_API: GET /inventory?bloodTypes=... [TLS]
+Inventory_API --> InventoryPort: { levels: Map<BloodType, Integer> }
+InventoryPort --> BloodTypeAlertService: inventory data
+
+BloodTypeAlertService -> BloodTypeAlertOperation: checkStock(inventory)
+
+BloodTypeAlertOperation -> BloodTypeAlertOperation: detect stock < 5 for at least one blood type
+BloodTypeAlertOperation --> BloodTypeAlertService: stockLowDetected
+
+BloodTypeAlertService -> NotificationPort: sendAlert(channels: [Email, SMS], message)
+note right of NotificationPort: Must use exactly 2 channels (email + SMS)
+
+NotificationPort -> Email_SMS_Gateway: POST /email [TLS]
+Email_SMS_Gateway --> NotificationPort: 200 OK
+
+NotificationPort -> Email_SMS_Gateway: POST /sms [TLS]
+Email_SMS_Gateway --> NotificationPort: 200 OK
+
+NotificationPort --> BloodTypeAlertService: alerts sent
+
+BloodTypeAlertService -> BloodTypeAlertOperation: updateState(Post1)
+BloodTypeAlertOperation -> State: setState(Post1)
+State --> BloodTypeAlertOperation: ok
+BloodTypeAlertOperation --> BloodTypeAlertService: state changed
+
+BloodTypeAlertService --> AlertController: 200 Alerts sent
+AlertController --> Manager: 200 OK
+
+note right of AlertController: Post1 state reached: alert sent
+
+== Error Flow (Stale Data) ==
+
+Manager -> AlertController: POST /alert { bloodTypes } [TLS]
+note right of AlertController: Authenticated (Admin permission required)
+
+AlertController -> BloodTypeAlertService: initiateAlert(bloodTypes, manager)
+
+BloodTypeAlertService -> BloodTypeAlertOperation: create(manager, bloodTypes)
+
+BloodTypeAlertOperation -> User: hasPermission(Permission.Admin): boolean
+User --> BloodTypeAlertOperation: true
+
+BloodTypeAlertOperation -> BloodTypeResource: isAccessible(manager): boolean
+BloodTypeResource --> BloodTypeAlertOperation: true
+
+BloodTypeAlertOperation --> BloodTypeAlertService: validation ok
+
+BloodTypeAlertService -> InventoryPort: getInventoryLevels(bloodTypes) [TLS]
+InventoryPort -> Inventory_API: GET /inventory?bloodTypes=... [TLS]
+Inventory_API --> InventoryPort: { levels: ..., stale: true }
+InventoryPort --> BloodTypeAlertService: inventory data (flagged stale)
+
+BloodTypeAlertService -> BloodTypeAlertOperation: checkStock(inventory)
+
+BloodTypeAlertOperation -> BloodTypeAlertOperation: detect stale flag
+note right of BloodTypeAlertOperation: Edge case: stale/incorrect data → no state change
+BloodTypeAlertOperation --> BloodTypeAlertService: staleDataDetected
+
+BloodTypeAlertService --> AlertController: 400 Bad Request (stale data)
+AlertController --> Manager: 400 Error: Inventory data stale, alert not sent
+
+note right of AlertController: Pre1 state remains (op.post = op.pre)
+
+== Concurrent Stock Drops ==
+
+note right of Manager
+  When multiple blood types drop below 5 units simultaneously,
+  each drop triggers its own BloodTypeAlertOperation instance.
+  Operations are independent and do not interfere.
+  The same owner (Inventory_Management_Team) is enforced by the accessible set.
+end note
+@enduml

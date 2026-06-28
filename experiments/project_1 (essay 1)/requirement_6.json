@@ -1,0 +1,115 @@
+{
+  "id": "REQ-HA-DASHBOARD-01",
+  "title": "Real-time Patient Dashboard",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall display each patient's urgency level and estimated wait time on a live dashboard, updating automatically in real time without manual refresh.",
+  "rationale": "This requirement ensures that authorized hospital staff can monitor the queue status in real time, allowing for efficient management of resources and improved patient care.",
+  "business_value": "Implementing this requirement will lead to better resource utilization, shorter wait times for patients, and enhanced overall operational efficiency at the hospital.",
+  "source": {
+    "type": "User Story",
+    "id": 6,
+    "description": "As a hospital administrator, I need a live dashboard that displays each patient's urgency level and estimated wait time so that staff can monitor the queue status in real time."
+  },
+  "stakeholders": [
+    "Hospital Administrator",
+    "Authorized Hospital Staff"
+  ],
+  "acceptance_criteria": [
+    "Given the hospital administrator is logged into the system",
+    "When the administrator opens the live dashboard",
+    "Then the dashboard shows each patient's urgency level and estimated wait time",
+    "And the data updates automatically in real time"
+  ],
+  "preconditions": [
+    "The hospital administrator has a valid login credentials"
+  ],
+  "postconditions": [
+    "The live dashboard is displayed with up-to-date information on patients' urgency levels and estimated wait times"
+  ],
+  "functional_constraints": [
+    "The dashboard must update in real time without manual refresh.",
+    "Estimated wait times are calculated based on current queue and resource availability."
+  ],
+  "security_requirements": [
+    "Access to the live dashboard is restricted to authorized hospital staff only."
+  ],
+  "non_functional_requirements": {
+    "performance": "The system shall provide fast response times for data updates to ensure real-time monitoring.",
+    "availability": "The live dashboard must be available 24/7 without significant downtime.",
+    "scalability": "The system should be able to handle an increasing number of patients and staff members without performance degradation.",
+    "usability": "Error handling should be robust, and the interface should be intuitive for authorized users."
+  },
+  "edge_cases": [
+    "What happens if there are no patients in the queue?",
+    "How should the system handle sudden spikes in patient arrivals?",
+    "What if a patient's urgency level changes during their wait time?"
+  ],
+  "dependencies": [
+    "The hospital's patient management system to provide real-time data on patient status and resource availability.",
+    "A reliable backend service for calculating estimated wait times based on current conditions."
+  ],
+  "interfaces": [
+    {
+      "type": "UI",
+      "name": "Live Dashboard Interface",
+      "description": "The user interface for displaying each patient's urgency level and estimated wait time in real-time."
+    },
+    {
+      "type": "API",
+      "name": "Patient Management API",
+      "description": "An API to fetch current patient status and resource availability data from the hospital's patient management system."
+    },
+    {
+      "type": "Backend Service",
+      "name": "Wait Time Estimation Service",
+      "description": "A backend service responsible for calculating estimated wait times based on the current queue and resource availability."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-HA-DASHBOARD-01",
+      "description": "Verify that the live dashboard displays each patient's urgency level and estimated wait time.",
+      "expected_result": "The dashboard shows each patient's urgency level (critical, high, medium, low) and estimated wait time."
+    },
+    {
+      "id": "TC-HA-DASHBOARD-02",
+      "description": "Confirm that the data on the live dashboard updates automatically in real-time.",
+      "expected_result": "The displayed information on patients' urgency levels and estimated wait times changes as new data becomes available without manual refresh."
+    },
+    {
+      "id": "TC-HA-DASHBOARD-03",
+      "description": "Check that unauthorized users cannot access the live dashboard.",
+      "expected_result": "Access to the live dashboard is denied for unauthorized hospital staff, and an appropriate error message is displayed."
+    },
+    {
+      "id": "TC-HA-DASHBOARD-04",
+      "description": "Validate that the system handles cases where there are no patients in the queue.",
+      "expected_result": "The dashboard displays a message indicating that there are no patients waiting, and all other data fields are blank."
+    },
+    {
+      "id": "TC-HA-DASHBOARD-05",
+      "description": "Test the system's response to sudden spikes in patient arrivals.",
+      "expected_result": "The dashboard updates immediately with the new queue status and recalculated estimated wait times for all patients."
+    }
+  ],
+  "traceability": {
+    "related_requirements": [
+      "REQ-TN-01",
+      "REQ-TRIAGE-01"
+    ],
+    "design_components": [
+      "Patient",
+      "UrgencyLevel",
+      "PatientQueue"
+    ],
+    "test_artifacts": []
+  },
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-12T10:11:48.629452",
+  "last_updated": "2026-06-12T10:22:54.596513"
+}

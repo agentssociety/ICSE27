@@ -1,0 +1,258 @@
+@startuml
+skinparam defaultFontName Courier
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+title Blood Unit Management - Sequence Diagrams
+
+box "Controller" #LightBlue
+    participant "Inventory_Management_API" as API
+end box
+
+box "Application" #LightGreen
+    participant "BloodUnitService" as Service
+    participant "AuthorizationService" as Auth
+end box
+
+box "Domain" #LightYellow
+    participant "BloodUnit" as BU
+    participant "Resource" as Res
+    participant "Actor" as Act
+    participant "Permission" as Perm
+    participant "State" as St
+end box
+
+box "Infrastructure" #LightCoral
+    participant "Database" as DB
+    participant "AuditLog" as Log
+end box
+
+box "External" #LightGray
+    participant "Blood_Bank_Manager" as Manager
+    participant "Inventory_Management_Team" as Team
+end box
+
+== Flow: Add Blood Unit (Success) ==
+
+Manager -> API : POST /blood-units (with Write permission)
+activate API
+
+API -> Auth : checkPermission(manager: Actor, "Write": Permission) : Bool
+activate Auth
+Auth --> API : true
+deactivate Auth
+
+API -> Res : isAccessible(manager: Actor) : Bool
+activate Res
+Res --> API : true
+deactivate Res
+
+API -> BU : hasCompleteData() : Bool
+activate BU
+BU --> API : true
+deactivate BU
+
+API -> BU : isExpired() : Bool
+activate BU
+BU --> API : false
+deactivate BU
+
+API -> Service : createBloodUnit(manager: Actor, data: BloodUnitData) : BloodUnit
+activate Service
+Service -> BU : new BloodUnit(id: Int, aboRh: String, collectionDate: Date)
+activate BU
+BU -> St : transition(Pre1 -> PostDone)
+activate St
+St --> BU : ok
+deactivate St
+BU --> Service : BloodUnit created
+deactivate BU
+Service -> DB : save(bloodUnit: BloodUnit) [encrypted at rest]
+activate DB
+DB --> Service : saved
+deactivate DB
+Service -> Log : log("BloodUnit added", manager)
+activate Log
+Log --> Service : logged
+deactivate Log
+Service --> API : 201 Created
+deactivate Service
+API --> Manager : BloodUnit added successfully
+deactivate API
+
+== Flow: Add Blood Unit (Rejection - Incomplete Data) ==
+
+Manager -> API : POST /blood-units (with Write permission)
+activate API
+API -> Auth : checkPermission(manager: Actor, "Write": Permission) : Bool
+activate Auth
+Auth --> API : true
+deactivate Auth
+API -> Res : isAccessible(manager: Actor) : Bool
+activate Res
+Res --> API : true
+deactivate Res
+API -> BU : hasCompleteData() : Bool
+activate BU
+alt hasCompleteData == false
+    BU --> API : false
+    deactivate BU
+    API -> Service : reject("BloodUnit data incomplete")
+    activate Service
+    Service -> St : transition(Pre1 -> Pre1) [state unchanged]
+    activate St
+    St --> Service : ok
+    deactivate St
+    Service --> API : 400 Bad Request
+    deactivate Service
+    API --> Manager : Error: Missing ABO/Rh type or collection date
+    deactivate API
+end
+
+== Flow: Add Blood Unit (Rejection - Expired Unit) ==
+
+Manager -> API : POST /blood-units (with Write permission)
+activate API
+API -> Auth : checkPermission(manager: Actor, "Write": Permission) : Bool
+activate Auth
+Auth --> API : true
+deactivate Auth
+API -> Res : isAccessible(manager: Actor) : Bool
+activate Res
+Res --> API : true
+deactivate Res
+API -> BU : hasCompleteData() : Bool
+activate BU
+BU --> API : true
+deactivate BU
+API -> BU : isExpired() : Bool
+activate BU
+alt isExpired == true
+    BU --> API : true
+    deactivate BU
+    API -> Service : reject("BloodUnit expired")
+    activate Service
+    Service -> St : transition(Pre1 -> Pre1) [state unchanged]
+    activate St
+    St --> Service : ok
+    deactivate St
+    Service --> API : 400 Bad Request
+    deactivate Service
+    API --> Manager : Error: Blood unit is expired
+    deactivate API
+end
+
+== Flow: Add Blood Unit (Rejection - Duplicate ID) ==
+
+Manager -> API : POST /blood-units (with Write permission)
+activate API
+API -> Auth : checkPermission(manager: Actor, "Write": Permission) : Bool
+activate Auth
+Auth --> API : true
+deactivate Auth
+API -> Res : isAccessible(manager: Actor) : Bool
+activate Res
+Res --> API : true
+deactivate Res
+API -> BU : hasCompleteData() : Bool
+activate BU
+BU --> API : true
+deactivate BU
+API -> BU : isExpired() : Bool
+activate BU
+BU --> API : false
+deactivate BU
+API -> Service : createBloodUnit(manager: Actor, data: BloodUnitData) : BloodUnit
+activate Service
+Service -> DB : findById(id: Int) : BloodUnit
+activate DB
+alt duplicate found
+    DB --> Service : BloodUnit exists
+    deactivate DB
+    Service -> St : transition(Pre1 -> Pre1) [state unchanged]
+    activate St
+    St --> Service : ok
+    deactivate St
+    Service --> API : 409 Conflict
+    deactivate Service
+    API --> Manager : Error: Duplicate blood unit ID
+    deactivate API
+else
+    DB --> Service : null
+    deactivate DB
+    Service -> BU : new BloodUnit(id: Int, aboRh: String, collectionDate: Date)
+    activate BU
+    BU -> St : transition(Pre1 -> PostDone)
+    activate St
+    St --> BU : ok
+    deactivate St
+    BU --> Service : BloodUnit created
+    deactivate BU
+    Service -> DB : save(bloodUnit: BloodUnit) [encrypted at rest]
+    activate DB
+    DB --> Service : saved
+    deactivate DB
+    Service -> Log : log("BloodUnit added", manager)
+    activate Log
+    Log --> Service : logged
+    deactivate Log
+    Service --> API : 201 Created
+    deactivate API
+end
+
+== Flow: View All Tracked Units (Success) ==
+
+Team -> API : GET /blood-units (with Read permission)
+activate API
+API -> Auth : checkPermission(team: Actor, "Read": Permission) : Bool
+activate Auth
+Auth --> API : true
+deactivate Auth
+
+note over API, Auth : Channel must be authenticated (authenticated = True)
+
+API -> Res : getAccessibleResources(team: Actor) : List<BloodUnit>
+activate Res
+Res -> DB : queryAllAccessible(teamId: Int) [encrypted at rest]
+activate DB
+DB --> Res : list of BloodUnit resources
+deactivate DB
+Res --> API : accessible blood units
+deactivate Res
+
+API -> Service : listBloodUnits(team: Actor) : List<BloodUnit>
+activate Service
+Service -> St : transition(Pre1 -> PostDone)
+activate St
+St --> Service : ok
+deactivate St
+Service --> API : 200 OK
+deactivate Service
+API --> Team : BloodUnit list returned
+deactivate API
+
+== Flow: View All Tracked Units (Rejection - Unauthenticated Channel) ==
+
+Team -> API : GET /blood-units (with Read permission)
+activate API
+API -> Auth : checkPermission(team: Actor, "Read": Permission) : Bool
+activate Auth
+Auth --> API : true
+deactivate Auth
+
+alt Channel not authenticated
+    API -> Service : reject("Channel not authenticated")
+    activate Service
+    Service -> St : transition(Pre1 -> Pre1) [state unchanged]
+    activate St
+    St --> Service : ok
+    deactivate St
+    Service --> API : 401 Unauthorized
+    deactivate Service
+    API --> Team : Error: Authentication required
+    deactivate API
+end
+
+@enduml

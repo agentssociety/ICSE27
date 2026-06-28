@@ -1,0 +1,105 @@
+{
+  "id": "REQ-ATC-01",
+  "title": "Automated Reassignment and Rescheduling on Runway Closure",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall automatically identify all flights currently scheduled for the closed runway and reassign them to alternative runways if available, or queue and reschedule them with updated times if no alternatives are available.",
+  "rationale": "To manage runway closures efficiently and minimize flight disruptions by leveraging automation capabilities.",
+  "business_value": "Improves operational efficiency of air traffic control during runway closures, ensuring minimal impact on flights and reducing delays.",
+  "source": {
+    "type": "User Story",
+    "id": 69,
+    "description": "As a air traffic controller I need to handle a runway closure by having the system automatically reassign affected flights to alternative runways (if available) or reschedule them So that I can manage runway closures efficiently and minimize flight disruptions"
+  },
+  "stakeholders": [
+    "Air Traffic Control",
+    "Flight Operations",
+    "Passengers"
+  ],
+  "acceptance_criteria": [
+    "Given a runway is marked as closed\nWhen the system processes the closure\nThen it automatically identifies all affected flights scheduled on that runway",
+    "Given affected flights are identified\nWhen there is at least one alternative runway available\nThen the system suggests reassigning those flights to the alternative runways",
+    "Given affected flights are identified\nWhen no alternative runway is available\nThen the system queues those flights and reschedules them with new times"
+  ],
+  "preconditions": [
+    "Runway closure has been officially marked in the system"
+  ],
+  "postconditions": [
+    "All affected flights have either been reassigned to alternative runways or queued/rescheduled with updated times",
+    "Air traffic controller can review and approve or override the system's suggestions"
+  ],
+  "functional_constraints": [
+    "Runway reassignment should consider operational constraints such as runway length, aircraft type",
+    "System must be able to handle increased load during peak hours"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "Response time for identifying and processing flight reassignments within 30 seconds",
+    "availability": "99.9% uptime during runway closures",
+    "scalability": "System should be able to handle up to 1,000 flights simultaneously",
+    "usability": "Error messages should be clear and actionable"
+  },
+  "edge_cases": [
+    "What happens if all alternative runways are also closed?",
+    "How does the system handle flights that cannot be reassigned due to operational constraints?",
+    "What actions should the system take if there is a sudden change in runway status?"
+  ],
+  "dependencies": [
+    "Flight Scheduling System",
+    "Runway Availability Database",
+    "Air Traffic Control Interface"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Flight Scheduling API",
+      "description": "Interface for retrieving and updating flight schedules."
+    },
+    {
+      "type": "Database",
+      "name": "Runway Status Database",
+      "description": "Data source for runway closure status and alternative runway availability."
+    },
+    {
+      "type": "UI",
+      "name": "Air Traffic Control Console",
+      "description": "Interface where air traffic controllers can review and approve reassignments."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-01",
+      "description": "Verify system identifies all flights scheduled on a closed runway.",
+      "expected_result": "The system lists all affected flights correctly."
+    },
+    {
+      "id": "TC-02",
+      "description": "Verify system suggests reassignments for flights to available alternative runways.",
+      "expected_result": "The system presents reassignment suggestions based on operational constraints."
+    },
+    {
+      "id": "TC-03",
+      "description": "Verify system queues and reschedules flights when no alternative runways are available.",
+      "expected_result": "Flights are queued and rescheduled with new times as expected."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T19:50:37.043653",
+  "last_updated": "2026-06-15T19:54:46.194096",
+  "traceability": {
+    "related_requirements": [
+      "REQ-ATC-TIME-SLOTS-01",
+      "REQ-ATC-01"
+    ],
+    "design_components": [
+      "Runway",
+      "Flight",
+      "Slot"
+    ],
+    "test_artifacts": []
+  }
+}

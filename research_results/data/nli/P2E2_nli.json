@@ -1,0 +1,86 @@
+{
+  "run_id": "P2E2",
+  "project": 2,
+  "essay": 2,
+  "n_tasks": 7,
+  "tasks": [
+    {
+      "task_id": 32,
+      "nli_alignment_score": 0.9764,
+      "total_claims": 18,
+      "supported_claims": 8,
+      "spec_extrapolation_rate": 0.5556,
+      "spec_coverage_rate": 0.4444,
+      "n_evidence": 8
+    },
+    {
+      "task_id": 33,
+      "nli_alignment_score": 0.9712,
+      "total_claims": 8,
+      "supported_claims": 4,
+      "spec_extrapolation_rate": 0.5,
+      "spec_coverage_rate": 0.5,
+      "n_evidence": 4
+    },
+    {
+      "task_id": 34,
+      "nli_alignment_score": 0.9935,
+      "total_claims": 10,
+      "supported_claims": 5,
+      "spec_extrapolation_rate": 0.5,
+      "spec_coverage_rate": 0.5,
+      "n_evidence": 5
+    },
+    {
+      "task_id": 35,
+      "nli_alignment_score": 0.9907,
+      "total_claims": 8,
+      "supported_claims": 4,
+      "spec_extrapolation_rate": 0.5,
+      "spec_coverage_rate": 0.5,
+      "n_evidence": 4
+    },
+    {
+      "task_id": 36,
+      "nli_alignment_score": 0.9931,
+      "total_claims": 9,
+      "supported_claims": 5,
+      "spec_extrapolation_rate": 0.4444,
+      "spec_coverage_rate": 0.5556,
+      "n_evidence": 5
+    },
+    {
+      "task_id": 37,
+      "nli_alignment_score": 0.9929,
+      "total_claims": 4,
+      "supported_claims": 3,
+      "spec_extrapolation_rate": 0.25,
+      "spec_coverage_rate": 0.75,
+      "n_evidence": 3
+    },
+    {
+      "task_id": 38,
+      "nli_alignment_score": 0.9838,
+      "total_claims": 17,
+      "supported_claims": 8,
+      "spec_extrapolation_rate": 0.5294,
+      "spec_coverage_rate": 0.4706,
+      "n_evidence": 8
+    }
+  ],
+  "summary": {
+    "mean_nli_alignment_score": 0.9859,
+    "median_nli_alignment_score": 0.9907,
+    "std_nli_alignment_score": 0.0091,
+    "q1": 0.9801,
+    "q3": 0.993,
+    "iqr": 0.0129,
+    "n_outliers": 0,
+    "n_zero_alignment": 0,
+    "total_claims": 74,
+    "supported_claims": 37,
+    "spec_coverage_rate": 0.5,
+    "spec_extrapolation_rate": 0.5,
+    "overall_hallucination_rate": 0.5
+  }
+}

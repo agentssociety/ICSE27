@@ -1,0 +1,153 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classFontSize 13
+
+skinparam classBackgroundColor #FEFEFE
+skinparam interfaceBackgroundColor #E2F0E2
+skinparam enumBackgroundColor #F0E2E2
+skinparam exceptionBackgroundColor #FCE2E2
+
+package "Domain Model" {
+  class PatientQueue {
+    - queueId: UUID
+    - patients: List<Patient>
+    - state: QueueState
+  + readAllPatients() : List<Patient>
+  + updateOrder(sortedPatients)
+  + readAllPatients()
+  + checkForUrgencyChange(originalUrgencies)
+  + failure(e.g., connection lost)
+  + error(e.g., timeout)
+  }
+  class Patient {
+    - patientId: UUID
+    - urgencyLevel: UrgencyLevel
+    - arrivalTime: DateTime
+  + compareBy(urgencyLevel, arrivalTime)
+  }
+  enum UrgencyLevel {
+    CRITICAL
+    HIGH
+    MEDIUM
+    LOW
+  + getHierarchy() : int
+  }
+  enum QueueState {
+    PRE_SORT
+    POST_SORT
+  }
+  PatientQueue *-- "0..*" Patient : contains
+  Patient --> UrgencyLevel
+  note right of UrgencyLevel
+    Hierarchy is consistent
+    throughout sorting
+  end note
+}
+
+package "Application" {
+  interface PatientQueueRepository
+  interface SortingStrategy
+{
+  + sort(patients : List<Patient>)
+  + sort(patients)
+  + sort(patientsSnapshot)
+}
+  class SortPatientQueueService {
+    - repository: PatientQueueRepository
+    - strategy: SortingStrategy
+  }
+  SortPatientQueueService --> PatientQueueRepository
+  SortPatientQueueService --> SortingStrategy
+}
+
+package "Infrastructure — Ports" {
+  class DatabasePatientQueueRepository implements PatientQueueRepository {
+    - dbConnection: Connection
+  }
+  class UrgencySortingStrategy implements SortingStrategy
+  note right of UrgencySortingStrategy
+    Sort by urgency descending,
+    then by arrival time ascending.
+    Patients without arrival time
+    sorted by urgency only or skipped.
+  end note
+}
+
+package "Controllers" {
+  class SortingApiController {
+    - sortingService: SortPatientQueueService
+  }
+  SortingApiController --> SortPatientQueueService : calls
+  note right of SortingApiController
+    Channels: Sorting_API (authenticated, encrypted)
+    Patient_Queue_Database (authenticated, not encrypted)
+  end note
+}
+
+package "DTOs" {
+  class SortingResponse <<dto>> {
+    + sortedQueue: List<PatientDto>
+    + state: QueueState
+  }
+  class PatientDto <<dto>> {
+    + urgencyLevel: UrgencyLevel
+    + arrivalTime: DateTime
+  }
+  SortingResponse *-- "0..*" PatientDto : contains
+}
+
+package "Exceptions" {
+  class SortingConflictException <<exception>> {
+    + message: String
+  }
+  class PowerOutageException <<exception>> {
+    + message: String
+  }
+  class SortingTimeoutException <<exception>> {
+    + message: String
+  }
+  class NotAuthorizedException <<exception>> {
+    + message: String
+  }
+  class NotAuthenticatedException <<exception>> {
+    + message: String
+  }
+}
+
+package "Access Control" {
+  enum Role {
+    HOSPITAL_MANAGEMENT
+    CLINICAL_STAFF
+    PATIENT_CARE_COORDINATORS
+  + hasPermission(Execute) : bool
+  }
+  enum Permission {
+    ADMIN
+    EXECUTE
+    WRITE
+    READ
+  }
+  note right of Permission
+    Partial order: ADMIN > EXECUTE > WRITE > READ
+  end note
+  class User {
+    - userId: UUID
+    - role: Role
+    - permissions: List<Permission>
+  + getRole(actorId) : Role
+  + authenticate(credentials)
+  }
+  class AccessControlService {
+    - permissionLattice: Map<Permission, List<Permission>>
+  }
+  User --> Role
+  AccessControlService --> User : validates
+  AccessControlService --> Permission : checks
+}
+
+' Method/operation signatures are hidden as they will be derived
+' from the sequence diagram and injected afterwards.
+hide methods
+show attributes
+
+@enduml

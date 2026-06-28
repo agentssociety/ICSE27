@@ -1,0 +1,21 @@
+{
+  "run_id": "P1E3",
+  "project": 1,
+  "essay": 3,
+  "n_tasks": 6,
+  "wall_clock_s": 6900.52,
+  "wall_clock_min": 115.0,
+  "pipeline_steps": 199,
+  "phase_backtracks": 27,
+  "phase_reentries": 51,
+  "orch_overhead_pct": 29.6,
+  "sm_delegations": 8,
+  "redelegations": 3,
+  "escalation_zone_pct": 8.5,
+  "total_incidents": 12,
+  "escalated_incidents": 7,
+  "self_fix_rate_sr": 41.7,
+  "SR": 41.7,
+  "PL": 0.8643,
+  "DS": 0.625
+}

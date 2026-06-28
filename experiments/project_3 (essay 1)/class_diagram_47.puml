@@ -1,0 +1,157 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F5F5F5
+skinparam classBorderColor #333333
+skinparam interfaceBackgroundColor #E8F0FE
+skinparam interfaceBorderColor #3366CC
+skinparam enumBackgroundColor #FFF3E0
+skinparam enumBorderColor #FF9800
+skinparam packageBackgroundColor #FAFAFA
+skinparam packageBorderColor #666666
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+
+package "Domain Model" {
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  class Actor {
+    - mayPerform : set of Permission
+  }
+
+  class Resource {
+    - owner : Actor
+    - accessible : set of Actor
+  + createFrom(scheduleData)
+  }
+
+  class Slot {
+    - resource : Resource
+    - isAvailable : Boolean
+    - time : Int
+  + create(time, resource)
+  + create(alternativeTime, resource)
+  + create(calculatedTime, resource)
+  + create(newTime, resource)
+  }
+
+  class State {
+    - description : String
+  + transitionTo(Post1)
+  }
+
+  class Operation {
+    - initiator : Actor
+    - target : set of Resource
+    - channel : set of Interface
+    - grant : Permission
+    - pre : State
+    - post : State
+  + create(initiator, resource, "Admin")
+  }
+
+  class OperationSlot {
+    - op : Operation
+    - slot : Slot
+  + create(operation, newSlot)
+  + create(operation, alternativeSlot)
+  }
+
+  Actor "1" -- "1" Resource : owner
+  Actor "1" -- "*" Resource : accessible
+  Actor "*" -- "*" Permission : mayPerform
+  Operation "1" -- "1" Actor : initiator
+  Operation "1" -- "*" Resource : target
+  Operation "1" -- "1" Permission : grant
+  Operation "1" -- "1" State : pre
+  Operation "1" -- "1" State : post
+  OperationSlot "1" -- "1" Operation : op
+  OperationSlot "1" -- "1" Slot : slot
+  Slot "1" -- "1" Resource : resource
+}
+
+package "Infrastructure — Ports" {
+  interface Interface <<interface>> {
+  }
+
+  Interface <|.. Flight_Schedule_Management_API
+  Interface <|.. Air_Traffic_Control_Console
+
+  class Flight_Schedule_Management_API <<interface>> {
+    + encryption_required : Boolean
+    + authentication_required : Boolean
+  }
+
+  class Air_Traffic_Control_Console <<interface>> {
+    + authentication_required : Boolean
+  + returnError("Insufficient permissions")
+  + returnError("No available slots")
+  + returnSuccess(newSlot)
+  + returnError("Allocation failed - slot overlap detected")
+  + returnError("No available slots in specified timezone")
+  + returnSuccess(alternativeSlot)
+  + returnError("Authentication required - please login")
+  + returnError("Resource not found")
+  }
+}
+
+package "Controllers" {
+  class SlotAllocationController {
+    - operation : Operation
+    - scheduleApi : Flight_Schedule_Management_API
+    - console : Air_Traffic_Control_Console
+  }
+}
+
+package "Exceptions" {
+  class NoAvailableSlotException <<exception>> {
+    + message : String
+  }
+
+  class AuthenticationException <<exception>> {
+    + message : String
+  }
+
+  class AuthorizationException <<exception>> {
+    + message : String
+  }
+}
+
+package "DTOs" {
+  class SlotAllocationRequest <<dto>> {
+    - actorId : String
+    - resourceId : String
+    - referenceTime : Int
+  }
+
+  class SlotAllocationResponse <<dto>> {
+    - success : Boolean
+    - allocatedSlot : Slot
+    - errorMessage : String
+  }
+}
+
+Operation "1" -- "*" Interface : channel
+SlotAllocationController --> Flight_Schedule_Management_API : uses
+SlotAllocationController --> Air_Traffic_Control_Console : uses
+SlotAllocationController --> SlotAllocationRequest : receives
+SlotAllocationController --> SlotAllocationResponse : returns
+SlotAllocationController --> NoAvailableSlotException : throws
+SlotAllocationController --> AuthenticationException : throws
+SlotAllocationController --> AuthorizationException : throws
+
+note top of SlotAllocationController
+  Constraints:
+  - Gap before: new slot start >= existing slot end + 3 min
+  - Gap after: new slot end + 3 min <= next existing slot start
+  - Time modeled as integer minutes
+  - Max 3 slots per operation (NFR)
+  - Min 2 channels per operation (NFR)
+  - Max 1 authenticated channel per operation (NFR)
+end note
+
+@enduml

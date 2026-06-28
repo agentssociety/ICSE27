@@ -1,0 +1,122 @@
+@startuml
+skinparam defaultFontName Courier
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    FontColor Black
+}
+skinparam interface {
+    BackgroundColor LightGray
+    BorderColor Black
+    FontColor Black
+}
+skinparam enum {
+    BackgroundColor LightYellow
+    BorderColor Black
+    FontColor Black
+}
+skinparam package {
+    BackgroundColor White
+    BorderColor Gray
+    FontColor Black
+}
+skinparam note {
+    BackgroundColor LightYellow
+    BorderColor Orange
+    FontColor Black
+}
+
+package "Domain Model" {
+    class Patient {
+        - symptoms : text
+        - urgencyLevel : integer [1..5]
+        - priorityStatus : PriorityStatus
+        - record : PatientRecord
+  + createPatient(symptoms)
+  + validateSymptoms() : boolean
+  + assignDefaultUrgency(4)
+  + setUrgencyLevel(int)
+  + computePriorityStatus() : PriorityStatus
+  + setPriorityStatus(PriorityStatus)
+  + getUrgencyLevel() : int
+  + getPriorityStatus() : PriorityStatus
+  + markHighestPriority()
+    }
+    note left of Patient::urgencyLevel
+        "Must be assigned based on standardized assessment by triage nurse"
+    end note
+    note left of Patient::symptoms
+        "Must be validated before urgencyLevel assignment"
+    end note
+
+    class PatientRecord {
+        - owner : TriageNurse
+        - accessible : Set of MedicalStaff or PatientCareTeam
+  + updateRecord(urgency, priority)
+  + failure(database timeout)
+    }
+    note left of PatientRecord::owner
+        "owner always in accessible, owner is TriageNurse"
+    end note
+    note left of PatientRecord::accessible
+        "Only TriageNurse, MedicalStaff, PatientCareTeam"
+    end note
+
+    class TriageNurse {
+        - permissions : Permission
+    }
+    class MedicalStaff {
+        - permissions : Permission
+  + notify(patient ID, priority = highest)
+  + notify(patient ID, priority = high)
+    }
+    class PatientCareTeam {
+        - permissions : Permission
+    }
+    class HealthcareFacilityManagement {
+        - permissions : Permission
+    }
+
+    enum PriorityStatus {
+        highest
+        high
+        medium
+        low
+        lowest
+    }
+
+    enum Permission {
+        Read
+        Write
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface TriageNurseInterface {
+        - encrypted : boolean
+        - authenticated : boolean
+    }
+    interface PatientInformationDatabase {
+        - encrypted : boolean
+        - authenticated : boolean
+    }
+}
+
+' Relationships
+Patient *-- PatientRecord : "has"
+TriageNurse "1" --> "0..*" Patient : "evaluates and assigns\ndurgencyLevel"
+TriageNurse "1" --> "1" PatientRecord : "owns"
+MedicalStaff "0..*" --> "0..*" PatientRecord : "can read"
+PatientCareTeam "0..*" --> "0..*" PatientRecord : "can read"
+Patient .right.> PriorityStatus : priorityStatus
+TriageNurse .right.> Permission : permissions
+MedicalStaff .right.> Permission : permissions
+PatientCareTeam .right.> Permission : permissions
+HealthcareFacilityManagement .right.> Permission : permissions
+
+' Notes for security constraints
+note top of PatientRecord
+    "Accessible only by TriageNurse, MedicalStaff, PatientCareTeam\nWrite permission requires owning resource or Admin"
+end note
+
+@enduml

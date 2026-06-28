@@ -1,0 +1,30 @@
+{
+  "task_id": 75,
+  "confidence": 0.9954,
+  "evidence": [
+    {
+      "claim": "The user has a schedule with existing slots.",
+      "fact": "It assigns time windows to arriving and departing planes while ensuring no two aircraft occupy the same runway slot simultaneously.",
+      "score": 0.9977,
+      "user_story_span": "a schedule with existing slots",
+      "fact_span": "assigns time windows to arriving and departing planes"
+    },
+    {
+      "claim": "The system detects and prevents gap violations.",
+      "fact": "The system prevents gap-violating assignments on the same runway.",
+      "score": 0.9954,
+      "user_story_span": "",
+      "fact_span": "prevents gap-violating assignments on the same runway"
+    },
+    {
+      "claim": "The system detects and prevents slot overlaps.",
+      "fact": "The system prevents gap-violating assignments on the same runway.",
+      "score": 0.993,
+      "user_story_span": "detect and prevent slot overlaps",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 10,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

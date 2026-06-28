@@ -1,0 +1,37 @@
+{
+  "task_id": 52,
+  "confidence": 0.9737,
+  "evidence": [
+    {
+      "claim": "The system allows viewing status per runway.",
+      "fact": "The system shows a slot timetable per runway.",
+      "score": 0.9977,
+      "user_story_span": "showing all allocated time slots, flight details, and status",
+      "fact_span": "shows a slot timetable per runway"
+    },
+    {
+      "claim": "The system allows viewing flight details per runway.",
+      "fact": "The system shows a slot timetable per runway.",
+      "score": 0.9956,
+      "user_story_span": "showing all allocated time slots, flight details, and status",
+      "fact_span": "shows a slot timetable per runway"
+    },
+    {
+      "claim": "The timetable must include allocated time slots.",
+      "fact": "This system assigns departure and arrival slots while enforcing a minimum separation interval between consecutive uses of the same runway.",
+      "score": 0.9793,
+      "user_story_span": "allocated time slots",
+      "fact_span": ""
+    },
+    {
+      "claim": "The user is an air traffic controller accessing the runway management system.",
+      "fact": "An airport slot coordinator that handles time allocation for inbound and outbound aircraft across two active runways, with built-in conflict detection and emergency override.",
+      "score": 0.9221,
+      "user_story_span": "an air traffic controller accessing the runway management system",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 11,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

@@ -1,0 +1,71 @@
+
+classDiagram
+    class Patient {
+        -int id
+        -str name
+        -str symptoms
+        -int urgency  # 1 (critical) to 5 (non-urgent)
+        -datetime triage_time
+        -datetime arrival_time
+        -int waiting_seconds  # computed
+        +__init__(id, name, symptoms, urgency, triage_time, arrival_time)
+        +to_dict() dict
+    }
+    class TriageRuleEngine {
+        -dict symptom_urgency_map  # e.g., {'chest pain': 1, 'fever': 3}
+        -list default_rules
+        +__init__(rule_file: str)
+        +assign_urgency(symptoms: str) int
+        +load_rules()
+    }
+    class QueueManager {
+        -list _queue  # sorted list of Patient objects
+        -int _next_id
+        -Lock _lock
+        -Database db  # SQLite connection
+        +__init__(db)
+        +add_patient(name: str, symptoms: str, manual_urgency: Optional[int]) Patient
+        +dequeue() Patient
+        +re_triage(patient_id: int, new_urgency: int) Patient
+        +get_queue() list[dict]
+        +get_patient(patient_id: int) Patient
+        +_sort_queue()
+        +save_state()
+        +load_state()
+    }
+    class Database {
+        -sqlite3.Connection conn
+        +__init__(db_path: str)
+        +create_tables()
+        +insert_patient(patient: Patient)
+        +update_patient(patient: Patient)
+        +delete_patient(patient_id: int)
+        +fetch_all() list
+        +close()
+    }
+    class DashboardAPI {
+        -QueueManager queue
+        +__init__(queue)
+        +get_queue_data() dict  # includes computed waiting times
+        +get_stats() dict
+    }
+    class FastAPIApp {
+        -TriageRuleEngine rule_engine
+        -QueueManager queue_manager
+        -DashboardAPI dashboard
+        +start()
+        +register_routes()
+        +on_event('startup')
+        +on_event('shutdown')
+        -async def post_register(patient_data) dict
+        -async def post_dequeue() dict
+        -async def post_re_triage(patient_id, new_urgency) dict
+        -async def get_queue() dict
+    }
+    FastAPIApp --> TriageRuleEngine
+    FastAPIApp --> QueueManager
+    FastAPIApp --> DashboardAPI
+    QueueManager --> Database
+    QueueManager --> Patient
+    TriageRuleEngine --> Patient : assigns urgency
+    DashboardAPI --> QueueManager

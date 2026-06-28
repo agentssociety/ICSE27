@@ -1,0 +1,180 @@
+@startuml
+skinparam backgroundColor white
+skinparam classFontSize 12
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+  
+  class Actor {
+    mayPerform: Set Permission
+  + checkPermission(initiator: Actor, requiredPermission: Permission) : Bool
+  }
+
+  class Security_Team {
+    <<extends Actor>>
+    mayPerform includes Admin
+  + checkPermission(initiator: Security_Team, requiredPermission: Permission) : Bool
+  }
+
+  class Finance_Team {
+    <<extends Actor>>
+    mayPerform includes Write
+  + checkPermission(initiator: Finance_Team, requiredPermission: Permission) : Bool
+  }
+
+  class Operations_Team {
+    <<extends Actor>>
+    mayPerform includes Read, Write, Execute
+  + checkPermission(initiator: Operations_Team, requiredPermission: Permission) : Bool
+  }
+
+  class Resource {
+    owner: Actor
+    accessible: Set Actor
+    note: owner always in accessible
+  + checkAccessibility(initiator: Actor, target: Resource) : Bool
+  + checkAccessibility(initiator: Security_Team, target: Transaction_Database) : Bool
+  + checkAccessibility(initiator: Finance_Team, target: Transaction_Database) : Bool
+  + checkAccessibility(initiator: Operations_Team, target: Transaction_Database) : Bool
+  + checkAccessibility(initiator: Actor, target: Transaction_Database) : Bool
+  }
+
+  class Interface {
+    kind: IfaceKind
+    encrypted: bool
+    authenticated: bool
+  }
+
+  class Withdrawal_API {
+    <<extends Interface>>
+    kind = API
+    encrypted = True
+    authenticated = True
+  }
+
+  class Transaction_Database {
+    <<extends Interface>>
+    kind = Database
+    encrypted = True
+    authenticated = True
+  }
+
+  class REQ_SEC_01 {
+    initiator: Actor
+    target: Set Resource
+    channel: Set Interface
+    grant: Permission
+    pre: State
+    post: State
+    note: pre != post
+    note: post in Post1
+    note: grant in initiator.mayPerform
+    note: initiator in target.accessible
+    note: some c: channel | c.authenticated = True
+  + submitWithdrawal(amount: Int, userId: UserID, initiator: Actor) : REQ_SEC_01
+  + submitWithdrawal(amount: Int, userId: UserID, initiator: Security_Team) : REQ_SEC_01
+  + submitWithdrawal(amount: Int, userId: UserID, initiator: Finance_Team) : REQ_SEC_01
+  + submitWithdrawal(amount: Int, userId: UserID, initiator: Operations_Team) : REQ_SEC_01
+  }
+
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  enum State {
+    PreIdle
+    Post1
+  + setPreState(PreIdle)
+  + setPostState(PreIdle)
+  + setPostState(Post1)
+  }
+
+  enum IfaceKind {
+    API
+    Database
+  }
+
+  Security_Team --|> Actor
+  Finance_Team --|> Actor
+  Operations_Team --|> Actor
+
+  Withdrawal_API --|> Interface
+  Transaction_Database --|> Interface
+
+  Actor --> "0..*" Permission : mayPerform
+  Resource --> "1" Actor : owner
+  Resource --> "0..*" Actor : accessible
+  Interface --> "1" IfaceKind : kind
+  Interface --> "1" bool : encrypted
+  Interface --> "1" bool : authenticated
+
+  REQ_SEC_01 *-- "1" Actor : initiator
+  REQ_SEC_01 *-- "1..*" Resource : target
+  REQ_SEC_01 *-- "1..*" Interface : channel
+  REQ_SEC_01 *-- "1" Permission : grant
+  REQ_SEC_01 *-- "1" State : pre
+  REQ_SEC_01 *-- "1" State : post
+}
+
+package "Application" {
+  
+  class WithdrawalTransaction {
+    amount: Int
+    timestamp: Time
+    userId: UserID
+  + createTransaction(amount: Int, timestamp: Time, userId: UserID) : WithdrawalTransaction
+  }
+
+  class Account {
+    accountId: AccountID
+    balance: Money
+    owner: Actor
+  + updateBalance(accountId: AccountID, amount: Int) : Money
+  }
+
+  class FlaggedTransaction {
+    transaction: WithdrawalTransaction
+    reason: String
+    reviewStatus: ReviewStatus
+  + createFlaggedTransaction(transaction: WithdrawalTransaction, reason: String) : FlaggedTransaction
+  + createFlaggedTransaction(transaction: WithdrawalTransaction, reason: "Rapid successive withdrawals") : FlaggedTransaction
+  + createFlaggedTransaction(transaction: WithdrawalTransaction, reason: "Unusual amount pattern") : FlaggedTransaction
+  + createFlaggedTransaction(transaction: WithdrawalTransaction, reason: "Suspicious pattern detected") : FlaggedTransaction
+  + createFlaggedTransaction(transaction: WithdrawalTransaction, reason: "Concurrent rapid withdrawals") : FlaggedTransaction
+  + createFlaggedTransaction(transaction: WithdrawalTransaction, reason: "Suspicious pattern") : FlaggedTransaction
+  }
+
+  class SuspiciousPattern {
+    patternType: PatternType
+    threshold: Int
+    active: bool
+  + evaluatePattern(transaction: WithdrawalTransaction, initiator: Actor, target: Resource) : Bool
+  + evaluatePattern(transaction: WithdrawalTransaction, initiator: Security_Team, target: Transaction_Database) : Bool
+  + evaluatePattern(transaction: WithdrawalTransaction, initiator: Finance_Team, target: Transaction_Database) : Bool
+  + evaluatePattern(transaction: WithdrawalTransaction, initiator: Operations_Team, target: Transaction_Database) : Bool
+  + evaluatePattern(transaction: WithdrawalTransaction, initiator: Actor, target: Transaction_Database) : Bool
+  }
+
+  enum ReviewStatus {
+    Pending
+    Approved
+    Rejected
+  }
+
+  enum PatternType {
+    RapidSuccessive
+    UnusualAmount
+    GeographicAnomaly
+  }
+
+  Account --> "1" Actor : owner
+
+  FlaggedTransaction ..> WithdrawalTransaction : wraps
+  SuspiciousPattern ..> WithdrawalTransaction : detects
+}
+
+hide empty members
+@enduml

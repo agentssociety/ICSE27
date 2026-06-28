@@ -1,0 +1,16 @@
+{
+  "task_id": 69,
+  "confidence": 0.9676,
+  "evidence": [
+    {
+      "claim": "When the interaction occurs, the system processes the closure.",
+      "fact": "The system automatically reassigns future flights from a closed runway to the other runway.",
+      "score": 0.9676,
+      "user_story_span": "When the system processes the closure",
+      "fact_span": "The system automatically reassigns future flights from a closed runway to the other runway."
+    }
+  ],
+  "total_claims": 10,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

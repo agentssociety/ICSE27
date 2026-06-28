@@ -1,0 +1,152 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classAttributeFontSize 10
+skinparam stereotypeFontSize 10
+
+package "Domain Model" {
+  class Runway {
+    - id: String
+    - operatingHours: TimeRange
+    {field} {constraint} "Each runway has a unique identifier"
+    {field} {constraint} "Operating hours define when slots can be scheduled"
+  + getOperatingHours() : OperatingHours
+  }
+
+  class Slot {
+    - flightId: String
+    - scheduledTime: DateTime
+    - status: SlotStatus
+    - updatedTime: DateTime [optional]
+    - emergencyFlag: boolean
+    {field} {constraint} "Status is one of: ON_TIME, DELAYED, EMERGENCY"
+    {field} {constraint} "If status == DELAYED then updatedTime != null and updatedTime > scheduledTime"
+  + getStatus() : SlotStatus
+  + setUpdatedTime(newScheduledTime: DateTime)
+  + setStatus(SlotStatus.DELAYED)
+  + createEmergencySlot(flightId: String, scheduledTime: DateTime) : Slot
+  }
+
+  class Flight {
+    - flightId: String
+    - emergencyFlag: boolean
+    {field} {constraint} "flightId is unique"
+  }
+
+  class RunwayScheduleDB {
+    - slots: List<Slot>
+    - runwayMappings: Map<String, List<Slot>>
+    {field} {constraint} "Owned by Air_Traffic_Controllers; accessible to Air_Traffic_Controllers and Operations_Management_Team"
+  }
+
+  enum SlotStatus {
+    ON_TIME
+    DELAYED
+    EMERGENCY
+  }
+
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+
+  class EmergencyStatus {
+    - active: boolean
+  + isActive() : Boolean
+  }
+
+  Runway "1" *-- "0..*" Slot : contains
+  Slot "1" --> "1" Flight : flightId
+  RunwayScheduleDB --> "many" Slot : slots (by runway)
+  RunwayScheduleDB --> "many" Runway : runwayMappings
+}
+
+package "Infrastructure — Ports" {
+  interface FlightInformationAPIPort {
+    <<interface>>
+    {field} {constraint} "encrypted=true, authenticated=true, rateLimit=unknown"
+  }
+
+  interface RunwayScheduleDatabasePort {
+    <<interface>>
+    {field} {constraint} "encrypted=false, authenticated=false, concurrencySupport=true"
+  + checkAccess(controllerId: String, permission: Permission) : Boolean
+  + getRunwayById(runwayId: String) : Runway
+  + getSlotsByRunway(runwayId: String) : List<Slot>
+  + checkAccess(operatorId: String, permission: Permission) : Boolean
+  + getSlotById(slotId: String) : Slot
+  + updateSlot(slot: Slot) : Boolean
+  + checkPermission(operatorId: String, permission: Permission) : Boolean
+  + insertSlot(slot: Slot, priority: Integer) : Boolean
+  + beginTransaction()
+  + updateSlotWithLock(slot: Slot) : Boolean
+  + rollbackTransaction()
+  + commitTransaction()
+  }
+}
+
+package "Controllers" {
+  class SlotTimetableController {
+    <<controller>>
+    - flightInfoAPI: FlightInformationAPIPort
+    - runwayScheduleDB: RunwayScheduleDatabasePort
+  }
+
+  SlotTimetableController ..> FlightInformationAPIPort : uses
+  SlotTimetableController ..> RunwayScheduleDatabasePort : uses
+}
+
+package "DTOs" {
+  class SlotTimetableEntryDTO {
+    <<dto>>
+    + flightId: String
+    + scheduledTime: DateTime
+    + status: SlotStatus
+    + updatedTime: DateTime [optional]
+    + emergencyFlag: boolean
+  }
+
+  class ErrorDTO {
+    <<dto>>
+    + message: String
+    + code: int
+  }
+
+  SlotTimetableController ..> SlotTimetableEntryDTO : uses
+  SlotTimetableController ..> ErrorDTO : uses
+}
+
+package "Exceptions" {
+  class ApiUnavailableException {
+    <<exception>>
+  }
+
+  class UnauthorizedOperationException {
+    <<exception>>
+  }
+
+  class NoScheduledSlotsException {
+    <<exception>>
+  }
+
+  class DatabaseException {
+    <<exception>>
+  }
+
+  SlotTimetableController ..> ApiUnavailableException : throws
+  SlotTimetableController ..> UnauthorizedOperationException : throws
+  SlotTimetableController ..> NoScheduledSlotsException : throws
+  SlotTimetableController ..> DatabaseException : throws
+}
+
+' Dependencies from domain to enums (implicitly used in attributes)
+' Already shown via attribute types
+
+' EmergencyStatus is used globally
+RunwayScheduleDB --> EmergencyStatus : controls
+
+' Permission enum is referenced by security rules (not shown as direct relationship)
+@enduml

@@ -1,0 +1,286 @@
+{
+  "detected_cycles": [],
+  "removed_edges_to_break_cycles": [],
+  "relationship_corrections": [
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "\"1\" *-- \"*\"",
+        "right": "Permission"
+      },
+      "corrected": {
+        "left": "Actor",
+        "arrow": "\"1\" -- \"*\"",
+        "right": "Permission"
+      },
+      "reason": "Composition (many left, one right) is incorrect; an Actor has many Permissions, so undirected association with one-to-many is appropriate. Id 1 already shows the correct association."
+    },
+    {
+      "original": {
+        "left": "AlternativeRunway",
+        "arrow": "\"*\" ..>",
+        "right": "AircraftType"
+      },
+      "corrected": {
+        "left": "AlternativeRunway",
+        "arrow": "\"*\" -- \"*\"",
+        "right": "AircraftType"
+      },
+      "reason": "Dependency with cardinality is misplaced; many AlternativeRunways can accommodate many AircraftTypes, so many-to-many association is more accurate."
+    },
+    {
+      "original": {
+        "left": "AlternativeRunway",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "Runway"
+      },
+      "corrected": {
+        "left": "AlternativeRunway",
+        "arrow": "\"*\" -- \"1\"",
+        "right": "Runway"
+      },
+      "reason": "One-to-one is too restrictive; a closed runway can have many alternative runways, so many alternative runways associated with one runway (a runway has many alternatives)."
+    },
+    {
+      "original": {
+        "left": "Flight",
+        "arrow": "\"1\" -- \"0..*\"",
+        "right": "Slot"
+      },
+      "corrected": {
+        "left": "Flight",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "Slot"
+      },
+      "reason": "Each flight has exactly one active slot at a time; the existing zero-to-many multiplicity contradicts the one-to-one relationship in id 10. Corrected to one-to-one."
+    },
+    {
+      "original": {
+        "left": "Flight",
+        "arrow": "\"1\" -- \"0..1\"",
+        "right": "CriticalFlight"
+      },
+      "corrected": {
+        "left": "CriticalFlight",
+        "arrow": "--|>",
+        "right": "Flight"
+      },
+      "reason": "A critical flight is a subtype of Flight, not an associated entity. Swapped classes and used inheritance to reflect that CriticalFlight extends Flight."
+    },
+    {
+      "original": {
+        "left": "Flight",
+        "arrow": "\"1\" -- \"0..1\"",
+        "right": "EmergencyStateMarker"
+      },
+      "corrected": {
+        "left": "Flight",
+        "arrow": "\"1\" *-- \"1\"",
+        "right": "EmergencyStateMarker"
+      },
+      "reason": "Each flight owns one emergency state marker as part of its lifecycle; one-to-one composition (Flight contains EmergencyStateMarker) is more appropriate than association."
+    },
+    {
+      "original": {
+        "left": "FlightAssignment",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "TimeSlot"
+      },
+      "corrected": {
+        "left": "FlightAssignment",
+        "arrow": "\"1\" ..> \"1\"",
+        "right": "TimeSlot"
+      },
+      "reason": "The direct Flight-Slot association (id 10) already models the allocation; FlightAssignment should only depend on TimeSlot, not have a separate association, to avoid redundancy."
+    },
+    {
+      "original": {
+        "left": "Operation",
+        "arrow": "\"1\" *-- \"1\"",
+        "right": "Interface"
+      },
+      "corrected": {
+        "left": "Operation",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "Interface"
+      },
+      "reason": "An Operation uses an Interface, but composition implies ownership; directed association is more appropriate for a usage relationship."
+    },
+    {
+      "original": {
+        "left": "Resource",
+        "arrow": "\"1\" *-- \"*\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "Resource",
+        "arrow": "\"*\" -- \"*\"",
+        "right": "Actor"
+      },
+      "reason": "A Resource is not composed of Actors; many Actors can use many Resources, so many-to-many association is correct."
+    },
+    {
+      "original": {
+        "left": "Resource",
+        "arrow": "\"1\" *-- \"1\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "Resource",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "Actor"
+      },
+      "reason": "Composition is incorrect; a simple one-to-one association between Resource and Actor (e.g., a resource currently assigned to one actor) is more plausible."
+    },
+    {
+      "original": {
+        "left": "Slot",
+        "arrow": "\"0..1\" -- \"1\"",
+        "right": "Runway"
+      },
+      "corrected": {
+        "left": "Slot",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "Runway"
+      },
+      "reason": "Each slot is assigned to exactly one runway; the zero-or-one multiplicity on Slot side is incorrect\u2014a slot cannot exist without a runway."
+    }
+  ],
+  "architecture_corrections": [
+    {
+      "kind": "wrong_class_type",
+      "description": "FlightDataStore is declared as an interface but is used as a concrete data store for Flight entities.",
+      "fix": {
+        "action": "change_class_type",
+        "details": {
+          "class": "FlightDataStore",
+          "new_kind": "class"
+        }
+      }
+    },
+    {
+      "kind": "wrong_class_type",
+      "description": "RunwaySlotDB is declared as an interface but is used as a concrete database for runway slot data.",
+      "fix": {
+        "action": "change_class_type",
+        "details": {
+          "class": "RunwaySlotDB",
+          "new_kind": "class"
+        }
+      }
+    },
+    {
+      "kind": "wrong_class_type",
+      "description": "TimetableUI is declared as an interface but represents a concrete user interface component.",
+      "fix": {
+        "action": "change_class_type",
+        "details": {
+          "class": "TimetableUI",
+          "new_kind": "class"
+        }
+      }
+    },
+    {
+      "kind": "wrong_inheritance",
+      "description": "CriticalFlight inherits from Flight, but the domain describes emergency as a state of a flight, not a separate entity.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "relation": "CriticalFlight --|> Flight",
+          "reason": "Emergency should be a state/attribute of Flight, not a subclass."
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "FlightAssignment should have a direct association with Flight, not just a dependency on TimeSlot.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "left": "FlightAssignment",
+          "arrow": "\"1\" --> \"1\"",
+          "right": "Flight",
+          "meaning": "directed association"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Runway should have a direct association with TimeSlot to support slot allocation per runway.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "left": "Runway",
+          "arrow": "\"1\" -- \"*\"",
+          "right": "TimeSlot",
+          "meaning": "association"
+        }
+      }
+    },
+    {
+      "kind": "duplicate_concept",
+      "description": "Slot and TimeSlot appear to represent the same concept (a time slot for a flight). They should be merged.",
+      "fix": {
+        "action": "merge_classes",
+        "details": {
+          "classes": [
+            "Slot",
+            "TimeSlot"
+          ],
+          "target": "TimeSlot"
+        }
+      }
+    },
+    {
+      "kind": "other_correction",
+      "description": "EmergencyStateMarker is a composition inside Flight, but emergency is a state that should be an attribute or enum, not a separate class.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "relation": "Flight *-- EmergencyStateMarker",
+          "reason": "Emergency state should be modeled as an attribute or enum value of Flight."
+        }
+      }
+    }
+  ],
+  "architecture_suggestions": [
+    {
+      "kind": "add_aggregate_root",
+      "affected_classes": [
+        "Flight",
+        "TimeSlot",
+        "Runway"
+      ],
+      "suggestion": "Consider introducing an aggregate root 'Schedule' that manages the allocation of TimeSlots to Flights on Runways, encapsulating the slot allocation and gap enforcement logic."
+    },
+    {
+      "kind": "introduce_value_object",
+      "affected_classes": [
+        "Flight"
+      ],
+      "suggestion": "Introduce a value object 'FlightNumber' to encapsulate the flight number format and validation, rather than using a primitive string."
+    },
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "AlternativeRunway"
+      ],
+      "suggestion": "Rename 'AlternativeRunway' to 'RunwayAssignment' or 'RunwayReassignment' to better reflect its role in handling runway closures."
+    },
+    {
+      "kind": "split_class",
+      "affected_classes": [
+        "Operation"
+      ],
+      "suggestion": "The 'Operation' class appears to be a generic permission/resource wrapper. Consider splitting it into more specific domain concepts like 'FlightOperation' and 'RunwayOperation'."
+    },
+    {
+      "kind": "extract_base_class",
+      "affected_classes": [
+        "FlightDataStore",
+        "RunwaySlotDB"
+      ],
+      "suggestion": "Extract a common base interface 'Repository' for FlightDataStore and RunwaySlotDB to unify data access patterns."
+    }
+  ]
+}

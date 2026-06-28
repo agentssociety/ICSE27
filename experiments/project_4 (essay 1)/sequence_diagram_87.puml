@@ -1,0 +1,161 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam sequenceArrowThickness 2
+skinparam ParticipantPadding 20
+skinparam BoxPadding 10
+
+box "Controller Layer" #LightBlue
+participant "Actor" as Actor
+participant "Security_Auditors" as SecAud
+participant "System_Administrators" as SysAdm
+participant "Compliance_Team" as CompTeam
+end box
+
+box "Application Layer" #LightGreen
+participant "REQ_AUTH_01" as Op
+participant "AuditLogEntry" as LogEntry
+end box
+
+box "Domain Layer" #LightYellow
+participant "Resource" as Res
+participant "Permission" as Perm
+participant "State" as St
+end box
+
+box "Infrastructure Layer" #LightCoral
+participant "LoggingDatabasePort" as DBPort
+participant "CentralLoggingServicePort" as CLSPort
+participant "Logging_Database" as DB
+end box
+
+== FLOW-AUTH-LOG : Authentication Attempt Logging ==
+
+Actor -> Op : initiateOperation(initiator: Actor, target: Resource, channel: Interface, grant: Permission, pre: State, post: State) : REQ_AUTH_01
+note right: Operation must have exactly one initiator, at least one target, at least one channel
+
+alt Permission Check Failed
+    Op -> Perm : isGrantInMayPerform(initiator: Actor, grant: Permission) : Boolean
+    Perm --> Op : false
+    Op --> Actor : return Error("Initiator lacks required permission")
+else Access Check Failed
+    Op -> Res : isInitiatorInAccessible(initiator: Actor, target: Resource) : Boolean
+    Res --> Op : false
+    Op --> Actor : return Error("Initiator not in target.accessible set")
+else Authenticated Channel Check Failed
+    Op -> Op : validateAuthenticatedChannel(channel: Interface) : Boolean
+    note right: At least one channel must have authenticated = True
+    Op --> Actor : return Error("No authenticated channel available")
+else Heavy Load - Unauthenticated Channel
+    Op -> Op : checkHeavyLoadCondition() : Boolean
+    alt Heavy Load and Unauthenticated Channel
+        Op --> Actor : return Error("Operation not allowed under heavy load with unauthenticated channel")
+        note right: post state equals pre state
+    end
+else All Checks Pass
+    Op -> Op : transitionState(pre: Pre1, post: Post1) : State
+    note right: State transitions from Pre1 (system operational) to Post1 (authentication attempts logged)
+
+    Op -> DBPort : storeLogEntry(operation: REQ_AUTH_01, loggedBy: Security_Auditors, timestamp: Int) : Boolean
+    note right: [encrypted at rest] [authenticated]
+
+    alt Log Storage Failed
+        DBPort --> Op : false
+        Op -> Op : rollbackStateTransition() : void
+        note right: Operation must not proceed without recording
+        Op --> Actor : return Error("Log storage failed - Write permission required")
+    else Log Storage Succeeded
+        DBPort --> Op : true
+        Op -> LogEntry : createAuditLogEntry(operation: REQ_AUTH_01, loggedBy: Security_Auditors, timestamp: Int) : AuditLogEntry
+        LogEntry --> Op : entry
+        Op --> Actor : return Success(AuditLogEntry)
+    end
+end
+
+== FLOW-ACCOUNT-LOCK : Account Lock/Unlock State Change Logging ==
+
+Actor -> Op : initiateOperation(initiator: Actor, target: Resource, channel: Interface, grant: Admin, pre: Pre1, post: State) : REQ_AUTH_01
+
+alt Initiator Not Authorized
+    Op -> Op : validateInitiatorRole(initiator: Actor) : Boolean
+    note right: Only Security_Auditors or System_Administrators can modify logs
+    alt Initiator is Compliance_Team or other
+        Op --> Actor : return Error("Only authorized actors can modify logs")
+    end
+else Security_Auditors Owns Resource
+    Op -> Res : isOwner(initiator: Security_Auditors, target: Resource) : Boolean
+    Res --> Op : true
+    Op -> Op : transitionState(pre: Pre1, post: Post2) : State
+    note right: State transitions to Post2 (secure, tamper-evident format)
+    Op -> DBPort : storeSecureLogEntry(operation: REQ_AUTH_01, loggedBy: Security_Auditors, timestamp: Int) : Boolean
+    note right: [encrypted at rest] [authenticated] [tamper-evident]
+    alt Secure Log Storage Failed
+        DBPort --> Op : false
+        Op -> Op : rollbackStateTransition() : void
+        Op --> Actor : return Error("Secure log storage failed")
+    else Secure Log Storage Succeeded
+        DBPort --> Op : true
+        Op -> LogEntry : createAuditLogEntry(operation: REQ_AUTH_01, loggedBy: Security_Auditors, timestamp: Int) : AuditLogEntry
+        LogEntry --> Op : entry
+        Op --> Actor : return Success(AuditLogEntry)
+    end
+else System_Administrators Owns Resource
+    Op -> Res : isOwner(initiator: System_Administrators, target: Resource) : Boolean
+    Res --> Op : true
+    Op -> Op : transitionState(pre: Pre1, post: Post1) : State
+    note right: State transitions to Post1 (authentication attempts logged)
+    Op -> DBPort : storeLogEntry(operation: REQ_AUTH_01, loggedBy: Security_Auditors, timestamp: Int) : Boolean
+    note right: [encrypted at rest] [authenticated]
+    alt Log Storage Failed
+        DBPort --> Op : false
+        Op -> Op : rollbackStateTransition() : void
+        Op --> Actor : return Error("Log storage failed")
+    else Log Storage Succeeded
+        DBPort --> Op : true
+        Op -> LogEntry : createAuditLogEntry(operation: REQ_AUTH_01, loggedBy: Security_Auditors, timestamp: Int) : AuditLogEntry
+        LogEntry --> Op : entry
+        Op --> Actor : return Success(AuditLogEntry)
+    end
+end
+
+== Central Logging Service Integration ==
+
+Op -> CLSPort : sendAuditLogEntry(entry: AuditLogEntry) : Boolean
+note right: [TLS] [authenticated]
+
+alt Central Logging Service Unavailable
+    CLSPort --> Op : false
+    Op -> DBPort : storePendingSyncEntry(entry: AuditLogEntry) : Boolean
+    note right: Queue for later sync
+    DBPort --> Op : true
+    Op --> Actor : return Warning("Logged locally, pending sync to central service")
+else Central Logging Service Available
+    CLSPort --> Op : true
+    Op --> Actor : return Success("Audit log entry sent to central service")
+end
+
+== Error Handling Summary ==
+
+alt Permission Check Failed
+    Actor -> Op : initiateOperation(...)
+    Op --> Actor : return Error("Initiator lacks required permission")
+else Access Check Failed
+    Actor -> Op : initiateOperation(...)
+    Op --> Actor : return Error("Initiator not in target.accessible set")
+else Authenticated Channel Check Failed
+    Actor -> Op : initiateOperation(...)
+    Op --> Actor : return Error("No authenticated channel available")
+else Heavy Load - Unauthenticated Channel
+    Actor -> Op : initiateOperation(...)
+    Op --> Actor : return Error("Operation not allowed under heavy load with unauthenticated channel")
+else Log Storage Failed
+    Actor -> Op : initiateOperation(...)
+    Op --> Actor : return Error("Log storage failed - Write permission required")
+else Unauthorized Role
+    Actor -> Op : initiateOperation(...)
+    Op --> Actor : return Error("Only authorized actors can modify logs")
+else Central Logging Unavailable
+    Actor -> Op : initiateOperation(...)
+    Op --> Actor : return Warning("Logged locally, pending sync to central service")
+end
+
+@enduml

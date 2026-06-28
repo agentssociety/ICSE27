@@ -1,0 +1,228 @@
+@startuml
+title Project 7 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+note as RelationshipCorrections
+  <b>Relationship cardinalities corrected by LLM review</b>
+  Actor "1" -- "1" Resource → Actor "1" -- "*" Resource
+    Reason: An air traffic controller manages multiple resources (runways, slots), not exactly one.
+  Flight "1" *-- "many" AircraftMovementLog → Flight "1" --* "many" AircraftMovementLog
+    Reason: One flight can have multiple log entries; the composition arrow should have many on the right.
+  Operation "1" -- "1" Actor → Operation "1" -- "*" Actor
+    Reason: An operation can be performed by many actors, not exactly one.
+  Operation "1" -- "1" Permission → Operation "1" -- "*" Permission
+    Reason: An operation may require multiple permissions, not exactly one.
+  Operation "1" -- "1" State → Operation "1" -- "*" State
+    Reason: An operation can have multiple states over time, not exactly one.
+  Runway *-- Slot → Runway "1" --* "*" Slot
+    Reason: One runway has many slots; the composition arrow should have many on the right.
+  System "1" *-- "*" Slot → System "1" --* "*" Slot
+    Reason: The system owns many slots; the composition arrow should have many on the right.
+end note
+
+note as ArchitectureCorrections
+  <b>Architecture mistakes corrected automatically</b>
+  [wrong_class_type] The class 'Interface' is a generic term and likely represents a UI interface, not a domain entity. It should be removed from the domain model.
+    Fix applied: remove_relation
+  [wrong_class_type] The classes 'Actor', 'Operation', 'Permission', 'State', 'System' are generic and not specific to the flight registration and slot allocation domain. They should be removed or moved to a common/shared kernel.
+    Fix applied: move_class
+  [wrong_inheritance] Inheritance arrows from Actor to Air_Traffic_Controllers, Flight_Schedule_Managers, Operations_Management are marked as 'association' but the arrow '<|--' indicates generalization. The meaning should be 'generalization' or the arrow should be replaced with a simple line if not true inheritance.
+    Fix applied: change_class_type
+  [wrong_inheritance] Inheritance arrow from EmergencyFlight to Flight is marked as 'association' but should be 'generalization'.
+    Fix applied: change_class_type
+  [missing_relationship] The model lacks an explicit relationship to represent runway closure handling (Task #50). Flights should be associated with a closure event or a reassignment process.
+    Fix applied: add_relation
+  [duplicate_concept] Multiple associations between the same classes (e.g., Flight to Slot with different multiplicities) are redundant. Consolidate to one meaningful association.
+    Fix applied: remove_relation
+end note
+
+package "Task #46\nFlight Registration\nSystem" {
+  class Flight <<main>> <<level0>>
+  class Actor
+  class AircraftMovementLog
+  interface AircraftMovementLogDatabase
+  class Interface
+  class Operation
+  enum Permission
+  class Resource
+  enum State
+}
+
+package "Task #47\nSlot Allocation\nAlgorithm" {
+  class Slot <<main>> <<level1>>
+  class Air_Traffic_Control_Console
+  class OperationSlot
+}
+
+package "Task #48\nArrival Priority\nHandling" {
+  note as TaskSummary48
+    No new domain model classes
+    Uses: Flight, Slot
+  end note
+}
+
+package "Task #49\nOverlap Detection and\nPrevention" {
+  note as TaskSummary49
+    No new domain model classes
+    Uses: Flight, Slot
+  end note
+}
+
+package "Task #50\nRunway Closure\nManagement" {
+  class Runway <<main>> <<level2>>
+  class System
+}
+
+package "Task #51\nEmergency Flight\nHandling" {
+  class EmergencyFlight <<main>> <<level0>>
+  class FlightQueue
+}
+
+package "Task #52\nRunway Slot Timetable\nDisplay" {
+  note as TaskSummary52
+    No new domain model classes
+    Uses: Runway, Slot, Flight
+  end note
+}
+
+package "Shared / Cross-Task Classes\n[not owned by a single task]" <<Rectangle>> {
+  class Air_Traffic_Controllers <<shared>>
+  note right of Air_Traffic_Controllers : "appears only in relations; not owned by any task"
+  class Allocation <<shared>>
+  note right of Allocation : "appears only in relations; not owned by any task"
+  class Flight_Schedule_Managers <<shared>>
+  note right of Flight_Schedule_Managers : "appears only in relations; not owned by any task"
+  class Operations_Management <<shared>>
+  note right of Operations_Management : "appears only in relations; not owned by any task"
+  interface SafetyConstraintsModule <<shared>>
+  note right of SafetyConstraintsModule : "appears only in relations; not owned by any task"
+  class Sector <<shared>>
+  note right of Sector : "appears only in relations; not owned by any task"
+}
+
+Actor "*" -- "*" Permission
+Actor "*" --> "*" Resource
+Actor "1" -- "*" Resource
+Actor "1" --> "*" Resource
+Actor -- Operation
+Actor -- Permission
+Actor --> Permission
+Actor <|-- Air_Traffic_Controllers
+Actor <|-- Flight_Schedule_Managers
+Actor <|-- Operations_Management
+AircraftMovementLogDatabase -- Flight
+AircraftMovementLogDatabase --|> Interface
+Allocation --> "1" Flight
+Allocation --> "1" Slot
+EmergencyFlight --|> Flight
+Flight "1" --* "many" AircraftMovementLog
+Flight --> Slot
+Flight --> "1" Slot
+FlightQueue *-- Flight
+FlightQueue --> Slot
+Interface <|.. Air_Traffic_Control_Console
+Operation "1" -- "*" Actor
+Operation "1" -- "*" Interface
+Operation "1" -- "*" Permission
+Operation "1" -- "*" Resource
+Operation "1" -- "*" State
+Operation -- Interface
+Operation --> Actor
+Operation --> Permission
+Operation --> Resource
+Operation --> State
+Operation ..> State
+OperationSlot "1" -- "1" Operation
+OperationSlot "1" -- "1" Slot
+Resource -- Actor
+Resource --> Actor
+Resource <|-- Runway
+Runway "1" -- "*" Flight
+Runway "1" --* "*" Slot
+Runway --> "*" Slot
+SafetyConstraintsModule ..> Allocation
+SafetyConstraintsModule ..> Flight
+SafetyConstraintsModule ..> Slot
+Slot "1" -- "1" Resource
+Slot --> Flight
+System "1" --* "*" Slot
+note right of Flight #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [introduce_value_object] Consider introducing a\nvalue object for 'ScheduledTime' or 'TimeSlot'\nto encapsulate time-related constraints (e.g.,\n5-minute slots with 3-minute gaps). This would\nimprove consistency and reduce primitive\nobsession.
+end note
+
+note right of Slot #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [introduce_value_object] Consider introducing a\nvalue object for 'ScheduledTime' or 'TimeSlot'\nto encapsulate time-related constraints (e.g.,\n5-minute slots with 3-minute gaps). This would\nimprove consistency and reduce primitive\nobsession.
+end note
+
+note right of Allocation #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [add_aggregate_root] Make 'Allocation' an\naggregate root that enforces invariants like no\noverlapping slots and priority handling. The\ncurrent model has scattered references; a\ndedicated aggregate can centralize allocation\nlogic.
+end note
+
+note right of Flight #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [add_aggregate_root] Make 'Allocation' an\naggregate root that enforces invariants like no\noverlapping slots and priority handling. The\ncurrent model has scattered references; a\ndedicated aggregate can centralize allocation\nlogic.
+end note
+
+note right of Slot #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [add_aggregate_root] Make 'Allocation' an\naggregate root that enforces invariants like no\noverlapping slots and priority handling. The\ncurrent model has scattered references; a\ndedicated aggregate can centralize allocation\nlogic.
+end note
+
+note right of Air_Traffic_Control_Console #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [rename_for_clarity] Rename\n'Air_Traffic_Control_Console' to 'Console' or\n'ATCConsole' for brevity, and rename\n'AircraftMovementLogDatabase' to\n'FlightLogRepository' to reflect its role as a\nrepository interface.
+end note
+
+note right of AircraftMovementLogDatabase #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [rename_for_clarity] Rename\n'Air_Traffic_Control_Console' to 'Console' or\n'ATCConsole' for brevity, and rename\n'AircraftMovementLogDatabase' to\n'FlightLogRepository' to reflect its role as a\nrepository interface.
+end note
+
+note right of Operation #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [split_class] The 'Operation' class seems to mix\nconcerns (permissions, actors, resources).\nConsider splitting it into separate domain\nconcepts such as 'FlightOperation' or\n'SlotOperation' to align with ubiquitous\nlanguage.
+end note
+
+@enduml

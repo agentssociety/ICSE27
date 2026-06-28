@@ -1,0 +1,88 @@
+{
+  "id": "REQ-SCHED-01",
+  "title": "Allocate 5-minute slots with a 3-minute gap between successive slots",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall allocate time slots that are exactly 5 minutes long with a 3-minute gap inserted after each slot before the next slot begins.",
+  "rationale": "This requirement ensures there is adequate buffer time between appointments, improving patient or customer experience and reducing operational stress.",
+  "business_value": "Improves efficiency and satisfaction by providing sufficient time for patients or customers to transition between appointments without feeling rushed.",
+  "source": {
+    "type": "User Story",
+    "id": 73,
+    "description": "As a scheduler, I need to allocate 5-minute slots with a 3-minute gap between successive slots so that there is adequate buffer time between appointments."
+  },
+  "stakeholders": [
+    "Scheduler",
+    "Customer Support",
+    "Operational Team"
+  ],
+  "acceptance_criteria": [
+    "Each slot is 5 minutes long",
+    "There is a 3-minute gap between the end of one slot and the start of the next"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "Time slots are created with the specified duration and gap",
+    "The scheduling system operates without errors related to slot allocation"
+  ],
+  "functional_constraints": [
+    "Slot duration must be exactly 5 minutes",
+    "Gap between slots must be exactly 3 minutes"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "None specified",
+    "availability": "None specified",
+    "scalability": "None specified",
+    "usability": "Error handling for invalid slot configurations, clear display of available slots"
+  },
+  "edge_cases": [
+    "What happens if a user tries to create overlapping slots?",
+    "How should the system handle requests for slot durations other than 5 minutes?",
+    "What is the behavior when there are no available time slots between the end of one slot and the start of the next?"
+  ],
+  "dependencies": [],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Scheduling Database",
+      "description": "The system interacts with a database to store and retrieve time slot information."
+    },
+    {
+      "type": "API",
+      "name": "Scheduling API",
+      "description": "The requirement involves creating slots through an API that can be invoked by the scheduling application or other services."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-SCHED-01",
+      "description": "Create a single slot and verify its duration.",
+      "expected_result": "A time slot of exactly 5 minutes is created without any gaps."
+    },
+    {
+      "id": "TC-SCHED-02",
+      "description": "Create multiple slots with the specified gap and verify their durations.",
+      "expected_result": "Each slot is 5 minutes long, and there is a 3-minute gap between consecutive slots."
+    },
+    {
+      "id": "TC-SCHED-03",
+      "description": "Attempt to create overlapping slots and verify error handling.",
+      "expected_result": "The system rejects the request and provides an appropriate error message."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T22:40:58.907383",
+  "last_updated": "2026-06-15T22:48:07.290889",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Slot"
+    ],
+    "test_artifacts": []
+  }
+}

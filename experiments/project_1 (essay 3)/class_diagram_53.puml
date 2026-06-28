@@ -1,0 +1,165 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam class {
+    BackgroundColor #F8F8F8
+    BorderColor #333333
+    FontColor #333333
+}
+skinparam interface {
+    BackgroundColor #E8F0FE
+    BorderColor #333333
+}
+skinparam enum {
+    BackgroundColor #FFF3E0
+    BorderColor #333333
+}
+
+package "Domain Model" {
+    class Patient {
+        - username: String
+        - authentication: UserAuthenticationSystem
+  + inputSymptoms(description: String, language: String)
+  + displayConfirmation("Symptoms recorded successfully")
+  + displayMessage("Symptom entry updated")
+  + displayError("Unable to record symptoms. Please try again.")
+  + displayError("You don't have permission to record symptoms")
+  + retryOnReconnection()
+  + displayMessage("Existing symptom entry updated")
+    }
+    
+    class Symptom {
+        - description: String
+        - language: String
+        - timestamp: DateTime
+        - patientId: String
+  + create(description: String, language: String, patientId: UserId) : Symptom
+    }
+    
+    class SymptomRecord {
+        - recordId: String
+        - symptomData: String
+        - patientId: String
+        - storedAt: DateTime
+  + mapToRecord(symptom: Symptom) : SymptomRecord
+  + setEncryptedAtRest()
+    }
+    
+    class UserAuthenticationSystem {
+        - sessionToken: String
+        - userId: String
+  + authenticate(sessionToken: Token) : UserId
+    }
+    
+    enum Permission {
+        WRITE
+        READ
+        ADMIN
+  + checkWritePermission(patientId: UserId) : boolean
+    }
+    
+    enum SymptomState {
+        PRE1
+        PRE2
+        POST1
+        POST2
+        NETWORK_FAILURE
+  + transitionTo(NEW) : SymptomState
+  + transitionTo(RECORDED) : SymptomState
+  + transitionTo(UPDATED) : SymptomState
+    }
+}
+
+package "Infrastructure — Ports" <<interface>> {
+    interface SymptomRegistrationAPI {
+        <<interface>>
+    }
+    
+    interface PatientDatabase {
+        <<interface>>
+  + store(symptomRecord: SymptomRecord) : RecordId
+  + store(symptomRecord: SymptomRecord)
+  + update(existingRecord: SymptomRecord) : RecordId
+    }
+    
+    interface PatientUI {
+        <<interface>>
+  + displayError("Please log in to record symptoms")
+  + displayError("Session expired. Please log in again.")
+  + displayError("Network connection failed. Symptoms will be saved when connection is restored.")
+  + displayError("Unable to connect. Please try again later.")
+    }
+}
+
+package "Controllers" {
+    class SymptomController {
+        - patientDatabase: PatientDatabase
+        - symptomRegistrationAPI: SymptomRegistrationAPI
+    }
+}
+
+package "DTOs" {
+    class SymptomRequestDTO {
+        <<dto>>
+        - description: String
+        - language: String
+        - patientId: String
+    }
+    
+    class SymptomResponseDTO {
+        <<dto>>
+        - recordId: String
+        - message: String
+        - state: SymptomState
+    }
+    
+    class ErrorResponseDTO {
+        <<dto>>
+        - errorCode: String
+        - message: String
+        - suggestedActions: String[]
+    }
+}
+
+package "Exceptions" {
+    class AuthenticationException {
+        <<exception>>
+    }
+    
+    class NetworkFailureException {
+        <<exception>>
+    }
+    
+    class DuplicateEntryException {
+        <<exception>>
+    }
+}
+
+' Relationships
+Patient "1" -- "0..*" Symptom : registers >
+Symptom "1" -- "0..1" SymptomRecord : mapped_to >
+SymptomRecord "0..1" --o "1" PatientDatabase : stored_in >
+Patient "1" --o "1" UserAuthenticationSystem : authenticates_via >
+
+SymptomRegistrationAPI --|> SymptomController : implements
+SymptomRegistrationAPI ..> SymptomRequestDTO : uses
+SymptomRegistrationAPI ..> SymptomResponseDTO : returns
+
+PatientUI ..> SymptomRequestDTO : creates
+PatientUI ..> SymptomResponseDTO : displays
+PatientUI ..> ErrorResponseDTO : shows
+
+PatientDatabase ..> SymptomRecord : persists
+
+SymptomController --> PatientDatabase : uses
+SymptomController --> SymptomRegistrationAPI : exposes
+
+note top of Patient : "Must be logged in to register symptoms"
+note top of Symptom : "Must be recorded accurately and securely"
+note top of SymptomRecord : "Stored encrypted at rest in Patient Database"
+note top of UserAuthenticationSystem : "Required for patient login"
+
+note right of SymptomRegistrationAPI : "Must require authentication\nMust be encrypted in transit"
+note right of PatientDatabase : "Encrypted at rest\nSupports concurrent writes"
+note right of PatientUI : "Response time < 5s\nError messages suggest next steps"
+
+@enduml

@@ -1,0 +1,141 @@
+@startuml
+skinparam defaultFontName Arial
+skinparam classBackgroundColor #F5F5F5
+skinparam interfaceBackgroundColor #E8F0FE
+skinparam enumBackgroundColor #FFF3CD
+skinparam noteBackgroundColor #FFFFE0
+skinparam arrowColor #333333
+skinparam classBorderColor #333333
+skinparam interfaceBorderColor #333333
+skinparam enumBorderColor #333333
+
+package "Domain Model" {
+  enum Permission {
+    Read
+    Write
+    Admin
+    Execute
+  }
+
+  enum State {
+    Pre1
+    Pre2
+    Post1
+    Post2
+  + transitionTo(pre: State, post: State) : State
+  + transitionTo(pre: Pre1, post: Post1) : State
+  }
+
+  class Actor {
+    + mayPerform : Set(Permission)
+  }
+  note left of Actor
+    <<invariant>>
+    Blood_Bank_Technicians : mayPerform = {Read, Write, Admin, Execute}
+    Medical_Staff : mayPerform = {Read, Write, Admin}
+  end note
+
+  class Resource {
+    + owner : Actor
+    + accessible : Set(Actor)
+  + checkAccess(initiator: Actor, target: Resource) : Bool
+  }
+  note left of Resource
+    <<invariant>>
+    owner in accessible
+  end note
+
+  class Transfusion_Requests_Resource extends Resource {
+    // no additional attributes
+  }
+  note left of Transfusion_Requests_Resource
+    <<invariant>>
+    owner = Blood_Bank_Technicians
+    accessible = {Blood_Bank_Technicians, Medical_Staff}
+  end note
+
+  class PatientDetail {
+    + isAlphanumeric : Bool
+  + validateFormat(patientDetail: PatientDetail) : Bool
+  }
+
+  class BloodType {
+    + isValid : Bool
+  + validateType(bloodType: BloodType) : Bool
+  }
+}
+
+package "Infrastructure — Ports" {
+  enum IfaceKind {
+    API
+    Database
+  }
+
+  interface Interface {
+    + kind : IfaceKind
+    + encrypted : Bool
+    + authenticated : Bool
+  }
+
+  interface Transfusion_Request_Submission_API extends Interface {
+    // no additional attributes
+  }
+  note right of Transfusion_Request_Submission_API
+    <<invariant>>
+    kind = API
+    encrypted = True
+    authenticated = True
+  end note
+
+  interface Transfusion_Requests_Database extends Interface {
+    // no additional attributes
+  }
+  note right of Transfusion_Requests_Database
+    <<invariant>>
+    kind = Database
+    encrypted = True
+    authenticated = True
+  end note
+}
+
+package "Application" {
+  class REQ_BBT_01 {
+    + initiator : Actor
+    + target : Set(Resource)
+    + channel : Set(Interface)
+    + grant : Permission
+    + pre : State
+    + post : State
+  + submitRequest(initiator: Actor, target: Resource, patientDetail: PatientDetail, bloodType: BloodType) : REQ_BBT_01
+  + submitMultipleRequests(requests: List<REQ_BBT_01>) : List<Result>
+  }
+  note left of REQ_BBT_01
+    <<invariant>>
+    - some channel (non-empty)
+    - some target (non-empty)
+    - grant in initiator.mayPerform
+    - initiator in target.accessible (for all target)
+    - pre != post
+    - at least one channel with authenticated = True
+    - post in {Post1, Post2}
+  end note
+}
+
+' Associations for REQ_BBT_01
+REQ_BBT_01 "1" --> "1" Actor : initiator
+REQ_BBT_01 "*" --> "*" Resource : target
+REQ_BBT_01 "*" --> "*" Interface : channel
+REQ_BBT_01 "1" --> "1" Permission : grant
+REQ_BBT_01 "1" --> "1" State : pre
+REQ_BBT_01 "1" --> "1" State : post
+
+' Associations for Resource
+Resource "1" --> "1" Actor : owner
+Resource "*" --> "*" Actor : accessible
+
+' Inheritances
+Transfusion_Requests_Resource --|> Resource
+Transfusion_Request_Submission_API --|> Interface
+Transfusion_Requests_Database --|> Interface
+
+@enduml

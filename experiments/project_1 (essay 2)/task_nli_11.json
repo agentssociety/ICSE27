@@ -1,0 +1,51 @@
+{
+  "task_id": 11,
+  "confidence": 0.9912,
+  "evidence": [
+    {
+      "claim": "Taking a patient removes them from the queue.",
+      "fact": "Taking a patient removes them from the queue.",
+      "score": 0.9988,
+      "user_story_span": "",
+      "fact_span": "Taking a patient removes them from the queue."
+    },
+    {
+      "claim": "The system provides the patient at the top of the queue.",
+      "fact": "The system lets a physician take the patient at the head of the queue.",
+      "score": 0.9984,
+      "user_story_span": "",
+      "fact_span": "The system lets a physician take the patient at the head of the queue."
+    },
+    {
+      "claim": "The physician has access to the queue system.",
+      "fact": "The system lets a physician take the patient at the head of the queue.",
+      "score": 0.9976,
+      "user_story_span": "",
+      "fact_span": "The system lets a physician take the patient at the head of the queue."
+    },
+    {
+      "claim": "The queue is sorted by patient urgency.",
+      "fact": "The queue sorts patients primarily by their urgency level, and secondarily by arrival time within that level.",
+      "score": 0.9972,
+      "user_story_span": "",
+      "fact_span": "The queue sorts patients primarily by their urgency level, and secondarily by arrival time within that level."
+    },
+    {
+      "claim": "The system allows the physician to take the next patient from the top of the sorted queue.",
+      "fact": "When a doctor is ready to see a patient, they pull the person at the top of the list, which clears them from the queue.",
+      "score": 0.9871,
+      "user_story_span": "take the next patient from the top of the sorted queue",
+      "fact_span": "pull the person at the top of the list"
+    },
+    {
+      "claim": "When the interaction occurs, the physician requests the next patient.",
+      "fact": "A physician can take the next patient from the front of the queue, removing that person from the waiting list.",
+      "score": 0.9682,
+      "user_story_span": "When the physician requests the next patient",
+      "fact_span": "take the next patient from the front of the queue"
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 6,
+  "threshold": 0.6
+}

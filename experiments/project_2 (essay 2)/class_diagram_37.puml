@@ -1,0 +1,112 @@
+@startuml
+skinparam classFontName Arial
+skinparam classFontSize 12
+skinparam packageFontSize 14
+skinparam packageBorderColor #4A4A4A
+skinparam classBorderColor #4A4A4A
+skinparam classHeaderBackgroundColor #F0F0F0
+
+package "Domain Model" {
+    class Resource {
+        - id: String
+    }
+
+    class BloodType {
+        - id: String
+    }
+
+    class State {
+        - name: String
+    }
+
+    class InventoryState {
+        - state: State
+        - levels: Map<BloodType, Integer>
+        - thresholds: Map<BloodType, Integer>
+    }
+
+    class Alert {
+        - bloodType: BloodType
+        - currentLevel: Integer
+    }
+
+    Resource <|-- BloodType
+    InventoryState "1" --> "*" BloodType : maps levels/thresholds
+    InventoryState "1" --> "1" State : belongs to
+}
+
+package "Application" {
+    interface InventoryService {
+        + checkInventoryLevels(): List<Alert>
+        + updateStock(bloodType: BloodType, quantity: Integer): void
+    }
+
+    interface NotificationService {
+        + sendAlert(alert: Alert): void
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface InventoryDatabase {
+        + getCurrentLevels(): Map<BloodType, Integer>
+        + updateStock(bloodType: BloodType, quantity: Integer): void
+    }
+
+    interface NotificationAPI {
+        + sendAlert(alert: Alert): void
+    }
+}
+
+package "Controllers" {
+    class InventoryController {
+        - inventoryService: InventoryService
+        - notificationService: NotificationService
+        + monitorInventory(): void
+    }
+}
+
+package "Exceptions" {
+    class InventoryException <<exception>> {
+        - message: String
+        - cause: Throwable
+    }
+
+    class DatabaseUnavailableException <<exception>> {
+        - message: String
+    }
+
+    class NotificationFailedException <<exception>> {
+        - message: String
+        - retryCount: Integer
+    }
+}
+
+package "DTOs" {
+    class InventoryLevelDTO <<dto>> {
+        - bloodTypeId: String
+        - currentLevel: Integer
+        - threshold: Integer
+    }
+
+    class AlertDTO <<dto>> {
+        - bloodTypeId: String
+        - currentLevel: Integer
+        - timestamp: DateTime
+    }
+}
+
+InventoryService ..> InventoryDatabase : uses
+InventoryService ..> NotificationAPI : uses
+InventoryController --> InventoryService
+InventoryController --> NotificationService
+InventoryService ..> Alert : creates
+InventoryService ..> InventoryException : throws
+InventoryService ..> DatabaseUnavailableException : throws
+NotificationService ..> NotificationFailedException : throws
+InventoryLevelDTO --> BloodType : references
+AlertDTO --> BloodType : references
+
+note top of InventoryState : threshold fixed at 5 units
+note top of InventoryState : levels must never drop below zero
+
+@enduml

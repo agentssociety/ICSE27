@@ -1,0 +1,190 @@
+@startuml
+skinparam classFontSize 12
+skinparam packageFontSize 14
+skinparam defaultTextAlignment center
+skinparam backgroundColor #FEFEFE
+
+package "Domain Model" {
+    enum Permission {
+        + Read
+        + Write
+        + Admin
+    }
+
+    enum State {
+        + PreIdle
+        + Post1
+  + setState(State.Post1)
+    }
+
+    enum IfaceKind {
+        + API
+        + Database
+    }
+
+    class Slot {
+        - timePeriod: DateTime
+        - status: SlotStatus
+        + {abstract} isAllocated(): Boolean
+  + isSlotAccessible(slot: Slot, actor: Actor)
+  + allocateForArrival(flightRequest: FlightRequest)
+  + allocateForDeparture(flightRequest: FlightRequest)
+    }
+
+    enum SlotStatus {
+        + free
+        + allocated
+  + setStatus(SlotStatus.allocated)
+    }
+
+    class FlightRequest {
+        - flightId: String
+        - type: FlightType
+        - requestedSlot: Slot
+        + {abstract} isUniqueFlightId(): Boolean
+    }
+
+    enum FlightType {
+        + arrival
+        + departure
+    }
+
+    class SlotAllocationOperation {
+        - initiator: Actor
+        - grant: Permission
+        - target: Slot
+        - channel: Interface
+        - preState: State
+        - postState: State
+        + {abstract} validatePreconditions(): Boolean
+        + {abstract} execute(): void
+        + {abstract} ensureStateTransition(): void
+  + createOperation(initiator: Actor, grant: Permission.Write, target: Slot, channel: API)
+  + validatePreState(preState: State.PreIdle)
+  + setPostState(State.Post1)
+  + createOperation(initiator: Actor, grant: Permission.Read, target: Slot, channel: API)
+  + validatePreState(preState: State.Post1)
+  + validateSurgePermission(slot: Slot, permission: Permission.Write)
+  + validateNoDoubleBooking(slot: Slot, flightType: FlightType.arrival)
+    }
+}
+
+package "Actors" {
+    class Actor {
+        - name: String
+        - permissions: Permission[*]
+        - accessibleSlots: Slot[*]
+        + {abstract} hasPermission(p: Permission): Boolean
+        + {abstract} canAccess(slot: Slot): Boolean
+  + getAccessibleSlots(actor: Actor)
+    }
+
+    class "Airport Slot Coordinator Team" as Coordinator {
+        + permissions: Read, Write, Admin
+    }
+
+    class "Air Traffic Control Department" as ATC {
+        + permissions: Read
+    }
+
+    class "Safety Compliance Officer" as SafetyOfficer {
+        + permissions: Read
+    }
+
+    class "Operations Management" as OpsManagement {
+        + permissions: Read, Write
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface "Slot Allocation API" as SlotAPI {
+        + {abstract} allocateArrival(flightRequest: FlightRequest): SlotAllocationOperation
+        + {abstract} allocateDeparture(flightRequest: FlightRequest): SlotAllocationOperation
+        + {abstract} authenticate(caller: Actor): Boolean
+    }
+
+    interface "Slot Request Database" as SlotDB {
+        + {abstract} storeFlightRequest(request: FlightRequest): void
+        + {abstract} querySlotByTimePeriod(period: DateTime): Slot
+        + {abstract} updateSlotStatus(slot: Slot, status: SlotStatus): void
+    }
+
+    class Interface {
+        - kind: IfaceKind
+        - encrypted: Boolean
+        - authenticated: Boolean
+    }
+}
+
+package "Exceptions" {
+    class AuthenticationException <<exception>> {
+        - message: String
+        - timestamp: DateTime
+    }
+
+    class AuthorizationException <<exception>> {
+        - message: String
+        - permissionRequired: Permission
+    }
+
+    class SlotUnavailableException <<exception>> {
+        - message: String
+        - slot: Slot
+    }
+
+    class InvalidStateTransitionException <<exception>> {
+        - message: String
+        - fromState: State
+        - toState: State
+    }
+
+    class DoubleBookingException <<exception>> {
+        - message: String
+        - conflictingRequests: FlightRequest[*]
+    }
+}
+
+' Relationships
+
+' Slot ownership and access
+Slot --> Actor : "owned by"
+Slot --> Actor : "accessible by"
+
+' SlotAllocationOperation relationships
+SlotAllocationOperation --> Slot : "targets"
+SlotAllocationOperation --> Actor : "initiated by"
+SlotAllocationOperation --> Permission : "requires"
+SlotAllocationOperation --> Interface : "uses"
+
+' Interface classification
+Interface --> IfaceKind : "classified as"
+
+' Actor permissions
+Actor --> Permission : "may perform"
+
+' Interface types
+SlotAPI -up-|> Interface
+SlotDB -up-|> Interface
+
+' Actor inheritance
+Coordinator -up-|> Actor
+ATC -up-|> Actor
+SafetyOfficer -up-|> Actor
+OpsManagement -up-|> Actor
+
+' Exception relationships (using notes for constraints)
+note top of SlotAllocationOperation
+    Invariants:
+    1. preState != postState
+    2. Arrival operations complete before departure for same time period
+    3. At least one channel must require authentication
+    4. Initiator must have required permission
+end note
+
+note top of Slot
+    Invariants:
+    1. Only one flight request per slot at a time
+    2. Owner must have access to the slot
+end note
+
+@enduml

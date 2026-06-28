@@ -1,0 +1,95 @@
+{
+  "id": "REQ-FRAUD-01",
+  "title": "Detect Suspicious Transaction Patterns",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall detect suspicious transaction patterns such as multiple rapid withdrawals.",
+  "rationale": "To identify potential fraudulent activities and prevent financial loss by flagging transactions for manual review.",
+  "business_value": "Improves fraud detection, reduces the risk of unauthorized transactions, and protects customers' financial security.",
+  "source": {
+    "type": "User Story",
+    "id": 92,
+    "description": "As a fraud analyst I need the system to detect suspicious transaction patterns such as multiple rapid withdrawals So that I can flag them for review and prevent potential fraud"
+  },
+  "stakeholders": [
+    "Fraud Analysts",
+    "IT Team",
+    "Security Officers"
+  ],
+  "acceptance_criteria": [
+    "Given a user initiates multiple rapid withdrawals",
+    "When the system detects this pattern",
+    "Then the transactions are flagged for review"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "Transactions that meet the suspicious pattern criteria are queued for manual review by fraud analysts."
+  ],
+  "functional_constraints": [
+    "The system must monitor transaction frequency and speed in real-time.",
+    "Multiple rapid withdrawals within a predefined time frame should trigger a detection mechanism."
+  ],
+  "security_requirements": [
+    "All transactions, including flagged ones, must be securely stored for audit purposes.",
+    "Fraud analysts must have appropriate access controls to review flagged transactions."
+  ],
+  "non_functional_requirements": {
+    "performance": "The system must respond within 5 seconds or less to detect suspicious patterns.",
+    "availability": "The system should be available 99.9% of the time.",
+    "scalability": "The system must be able to handle up to 1,000 transactions per minute during peak times.",
+    "usability": "The user interface for reviewing flagged transactions must be intuitive and error-free."
+  },
+  "edge_cases": [
+    "What happens if the transaction volume exceeds the system's capacity?",
+    "How does the system handle transactions that occur simultaneously from multiple locations?",
+    "What are the implications of a network outage on detecting and flagging rapid withdrawals?"
+  ],
+  "dependencies": [
+    "Real-time transaction data stream",
+    "Fraud detection algorithms",
+    "User interface for fraud analysts"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Transaction Monitoring API",
+      "description": "The system will use this API to receive real-time transaction data and monitor for suspicious patterns."
+    },
+    {
+      "type": "UI",
+      "name": "Fraud Analyst Dashboard",
+      "description": "This interface will be used by fraud analysts to review flagged transactions and update the system status."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-01",
+      "description": "Multiple rapid withdrawals within a predefined time frame are detected.",
+      "expected_result": "The system flags all transactions in the sequence for review."
+    },
+    {
+      "id": "TC-02",
+      "description": "Normal transaction volume is monitored with no suspicious activity.",
+      "expected_result": "The system detects no flagged transactions."
+    },
+    {
+      "id": "TC-03",
+      "description": "Network outage during transaction monitoring.",
+      "expected_result": "The system logs the outage and resumes operation when network is restored, without missing any transactions."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-16T21:44:33.269474",
+  "last_updated": "2026-06-16T22:06:35.762628",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Transaction"
+    ],
+    "test_artifacts": []
+  }
+}

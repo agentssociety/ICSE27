@@ -1,0 +1,3471 @@
+{
+  "main.lifespan": {
+    "file": "main.py",
+    "line": 26,
+    "end_line": 32,
+    "class": null,
+    "name": "lifespan",
+    "calls": [
+      "src.config.database.create_tables"
+    ],
+    "called_by": []
+  },
+  "main.health": {
+    "file": "main.py",
+    "line": 59,
+    "end_line": 60,
+    "class": null,
+    "name": "health",
+    "calls": [],
+    "called_by": []
+  },
+  "migrations.env.run_migrations_offline": {
+    "file": "migrations/env.py",
+    "line": 21,
+    "end_line": 25,
+    "class": null,
+    "name": "run_migrations_offline",
+    "calls": [
+      "migrations.env.run_migrations"
+    ],
+    "called_by": [
+      "migrations.env.run_migrations"
+    ]
+  },
+  "migrations.env.run_migrations_online": {
+    "file": "migrations/env.py",
+    "line": 28,
+    "end_line": 39,
+    "class": null,
+    "name": "run_migrations_online",
+    "calls": [
+      "migrations.env.run_migrations"
+    ],
+    "called_by": [
+      "migrations.env.run_migrations"
+    ]
+  },
+  "migrations.env.run_migrations": {
+    "file": "migrations/env.py",
+    "line": 42,
+    "end_line": 46,
+    "class": null,
+    "name": "run_migrations",
+    "calls": [
+      "migrations.env.run_migrations_offline",
+      "migrations.env.run_migrations_online"
+    ],
+    "called_by": [
+      "migrations.env.run_migrations_offline",
+      "migrations.env.run_migrations_online"
+    ]
+  },
+  "src.api.actor.actor_router._repo": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.list_actors": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_actors",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.get_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_actor",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.create_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_actor",
+    "calls": [
+      "src.domain.slot.Slot.Slot.create"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.update_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_actor",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.delete_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_actor",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.flight.flight_router._repo": {
+    "file": "src/api/flight/flight_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.flight.flight_router.list_flights": {
+    "file": "src/api/flight/flight_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_flights",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.flight.flight_router.get_flight": {
+    "file": "src/api/flight/flight_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_flight",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": [
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_flight_found",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_flight_not_found",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_flight_negative_id",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_delete_flight"
+    ]
+  },
+  "src.api.flight.flight_router.create_flight": {
+    "file": "src/api/flight/flight_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_flight",
+    "calls": [
+      "src.domain.slot.Slot.Slot.create"
+    ],
+    "called_by": []
+  },
+  "src.api.flight.flight_router.update_flight": {
+    "file": "src/api/flight/flight_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_flight",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": [
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_update_flight",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_update_flight_not_found"
+    ]
+  },
+  "src.api.flight.flight_router.delete_flight": {
+    "file": "src/api/flight/flight_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_flight",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": [
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_delete_flight",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_delete_flight_not_found"
+    ]
+  },
+  "src.api.interface.interface_router._repo": {
+    "file": "src/api/interface/interface_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.interface.interface_router.list_interfaces": {
+    "file": "src/api/interface/interface_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_interfaces",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.interface.interface_router.get_interface": {
+    "file": "src/api/interface/interface_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_interface",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.interface.interface_router.create_interface": {
+    "file": "src/api/interface/interface_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_interface",
+    "calls": [
+      "src.domain.slot.Slot.Slot.create"
+    ],
+    "called_by": []
+  },
+  "src.api.interface.interface_router.update_interface": {
+    "file": "src/api/interface/interface_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_interface",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.interface.interface_router.delete_interface": {
+    "file": "src/api/interface/interface_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_interface",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router._repo": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.list_resources": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_resources",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.get_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_resource",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.create_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_resource",
+    "calls": [
+      "src.domain.slot.Slot.Slot.create"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.update_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_resource",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.delete_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_resource",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.runway.runway_router._repo": {
+    "file": "src/api/runway/runway_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.runway.runway_router.list_runways": {
+    "file": "src/api/runway/runway_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_runways",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.runway.runway_router.get_runway": {
+    "file": "src/api/runway/runway_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_runway",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.runway.runway_router.create_runway": {
+    "file": "src/api/runway/runway_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_runway",
+    "calls": [
+      "src.domain.slot.Slot.Slot.create"
+    ],
+    "called_by": [
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_create_runway",
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_get_runway_found",
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_get_all_runways",
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_close_runway_and_reassign_no_alternatives",
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_close_runway_and_reassign_with_alternatives",
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_delete_runway"
+    ]
+  },
+  "src.api.runway.runway_router.update_runway": {
+    "file": "src/api/runway/runway_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_runway",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.runway.runway_router.delete_runway": {
+    "file": "src/api/runway/runway_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_runway",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": [
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_delete_runway"
+    ]
+  },
+  "src.api.slot.slot_router._repo": {
+    "file": "src/api/slot/slot_router.py",
+    "line": 13,
+    "end_line": 14,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.slot.slot_router.list_slots": {
+    "file": "src/api/slot/slot_router.py",
+    "line": 18,
+    "end_line": 19,
+    "class": null,
+    "name": "list_slots",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.slot.slot_router.get_slot": {
+    "file": "src/api/slot/slot_router.py",
+    "line": 23,
+    "end_line": 27,
+    "class": null,
+    "name": "get_slot",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": [
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_get_slot_found",
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_get_slot_not_found",
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_get_slot_negative_id",
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_delete_slot"
+    ]
+  },
+  "src.api.slot.slot_router.create_slot": {
+    "file": "src/api/slot/slot_router.py",
+    "line": 31,
+    "end_line": 32,
+    "class": null,
+    "name": "create_slot",
+    "calls": [
+      "src.domain.slot.Slot.Slot.create"
+    ],
+    "called_by": []
+  },
+  "src.api.slot.slot_router.update_slot": {
+    "file": "src/api/slot/slot_router.py",
+    "line": 36,
+    "end_line": 40,
+    "class": null,
+    "name": "update_slot",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": [
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_update_slot"
+    ]
+  },
+  "src.api.slot.slot_router.delete_slot": {
+    "file": "src/api/slot/slot_router.py",
+    "line": 44,
+    "end_line": 46,
+    "class": null,
+    "name": "delete_slot",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": [
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_delete_slot"
+    ]
+  },
+  "src.config.database.get_db": {
+    "file": "src/config/database.py",
+    "line": 24,
+    "end_line": 29,
+    "class": null,
+    "name": "get_db",
+    "calls": [
+      "src.domain.runway.Runway.Runway.close"
+    ],
+    "called_by": []
+  },
+  "src.config.database.create_tables": {
+    "file": "src/config/database.py",
+    "line": 32,
+    "end_line": 34,
+    "class": null,
+    "name": "create_tables",
+    "calls": [],
+    "called_by": [
+      "main.lifespan"
+    ]
+  },
+  "src.config.dependencies.get_actor_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 14,
+    "end_line": 15,
+    "class": null,
+    "name": "get_actor_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_flight_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 17,
+    "end_line": 18,
+    "class": null,
+    "name": "get_flight_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_interface_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "get_interface_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_resource_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 23,
+    "end_line": 24,
+    "class": null,
+    "name": "get_resource_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_runway_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 26,
+    "end_line": 27,
+    "class": null,
+    "name": "get_runway_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.flight_exceptions.AmbiguousFlightClassificationException.__init__": {
+    "file": "src/domain/exceptions/flight_exceptions.py",
+    "line": 14,
+    "end_line": 16,
+    "class": "AmbiguousFlightClassificationException",
+    "name": "__init__",
+    "calls": [
+      "src.domain.exceptions.flight_exceptions.AmbiguousFlightClassificationException.__str__"
+    ],
+    "called_by": []
+  },
+  "src.domain.exceptions.flight_exceptions.AmbiguousFlightClassificationException.__str__": {
+    "file": "src/domain/exceptions/flight_exceptions.py",
+    "line": 18,
+    "end_line": 19,
+    "class": "AmbiguousFlightClassificationException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": [
+      "src.domain.exceptions.flight_exceptions.AmbiguousFlightClassificationException.__init__"
+    ]
+  },
+  "src.domain.exceptions.shared_exceptions.ApiUnavailableException.__init__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 17,
+    "end_line": 18,
+    "class": "ApiUnavailableException",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.ApiUnavailableException.__str__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 20,
+    "end_line": 21,
+    "class": "ApiUnavailableException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.AuthenticationException.__init__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 24,
+    "end_line": 27,
+    "class": "AuthenticationException",
+    "name": "__init__",
+    "calls": [
+      "src.domain.exceptions.shared_exceptions.AuthenticationException.__str__"
+    ],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.AuthenticationException.__str__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 29,
+    "end_line": 30,
+    "class": "AuthenticationException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": [
+      "src.domain.exceptions.shared_exceptions.AuthenticationException.__init__"
+    ]
+  },
+  "src.domain.exceptions.shared_exceptions.AuthenticationFailedException.__init__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 33,
+    "end_line": 34,
+    "class": "AuthenticationFailedException",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.AuthenticationFailedException.__str__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 36,
+    "end_line": 37,
+    "class": "AuthenticationFailedException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.AuthenticationRequiredException.__init__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 40,
+    "end_line": 42,
+    "class": "AuthenticationRequiredException",
+    "name": "__init__",
+    "calls": [
+      "src.domain.exceptions.shared_exceptions.AuthenticationRequiredException.__str__"
+    ],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.AuthenticationRequiredException.__str__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 44,
+    "end_line": 45,
+    "class": "AuthenticationRequiredException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": [
+      "src.domain.exceptions.shared_exceptions.AuthenticationRequiredException.__init__"
+    ]
+  },
+  "src.domain.exceptions.shared_exceptions.AuthorizationException.__init__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 48,
+    "end_line": 51,
+    "class": "AuthorizationException",
+    "name": "__init__",
+    "calls": [
+      "src.domain.exceptions.shared_exceptions.AuthorizationException.__str__"
+    ],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.AuthorizationException.__str__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 53,
+    "end_line": 54,
+    "class": "AuthorizationException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": [
+      "src.domain.exceptions.shared_exceptions.AuthorizationException.__init__"
+    ]
+  },
+  "src.domain.exceptions.shared_exceptions.DatabaseException.__init__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 57,
+    "end_line": 58,
+    "class": "DatabaseException",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.DatabaseException.__str__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 60,
+    "end_line": 61,
+    "class": "DatabaseException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.DoubleBookingException.__init__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 64,
+    "end_line": 67,
+    "class": "DoubleBookingException",
+    "name": "__init__",
+    "calls": [
+      "src.domain.exceptions.shared_exceptions.DoubleBookingException.__str__"
+    ],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.DoubleBookingException.__str__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 69,
+    "end_line": 70,
+    "class": "DoubleBookingException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": [
+      "src.domain.exceptions.shared_exceptions.DoubleBookingException.__init__"
+    ]
+  },
+  "src.domain.exceptions.shared_exceptions.InsufficientPermissionException.__init__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 73,
+    "end_line": 76,
+    "class": "InsufficientPermissionException",
+    "name": "__init__",
+    "calls": [
+      "src.domain.exceptions.shared_exceptions.InsufficientPermissionException.__str__"
+    ],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.InsufficientPermissionException.__str__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 78,
+    "end_line": 79,
+    "class": "InsufficientPermissionException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": [
+      "src.domain.exceptions.shared_exceptions.InsufficientPermissionException.__init__"
+    ]
+  },
+  "src.domain.exceptions.shared_exceptions.InvalidStateTransitionException.__init__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 82,
+    "end_line": 86,
+    "class": "InvalidStateTransitionException",
+    "name": "__init__",
+    "calls": [
+      "src.domain.exceptions.shared_exceptions.InvalidStateTransitionException.__str__"
+    ],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.InvalidStateTransitionException.__str__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 88,
+    "end_line": 89,
+    "class": "InvalidStateTransitionException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": [
+      "src.domain.exceptions.shared_exceptions.InvalidStateTransitionException.__init__"
+    ]
+  },
+  "src.domain.exceptions.shared_exceptions.ResourceNotAccessibleException.__init__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 92,
+    "end_line": 95,
+    "class": "ResourceNotAccessibleException",
+    "name": "__init__",
+    "calls": [
+      "src.domain.exceptions.shared_exceptions.ResourceNotAccessibleException.__str__"
+    ],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.ResourceNotAccessibleException.__str__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 97,
+    "end_line": 98,
+    "class": "ResourceNotAccessibleException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": [
+      "src.domain.exceptions.shared_exceptions.ResourceNotAccessibleException.__init__"
+    ]
+  },
+  "src.domain.exceptions.shared_exceptions.UnauthorizedException.__init__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 101,
+    "end_line": 102,
+    "class": "UnauthorizedException",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.UnauthorizedException.__str__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 104,
+    "end_line": 105,
+    "class": "UnauthorizedException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.UnauthorizedOperationException.__init__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 108,
+    "end_line": 109,
+    "class": "UnauthorizedOperationException",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.shared_exceptions.UnauthorizedOperationException.__str__": {
+    "file": "src/domain/exceptions/shared_exceptions.py",
+    "line": 111,
+    "end_line": 112,
+    "class": "UnauthorizedOperationException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.slot_exceptions.NoScheduledSlotsException.__init__": {
+    "file": "src/domain/exceptions/slot_exceptions.py",
+    "line": 17,
+    "end_line": 18,
+    "class": "NoScheduledSlotsException",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.slot_exceptions.NoScheduledSlotsException.__str__": {
+    "file": "src/domain/exceptions/slot_exceptions.py",
+    "line": 20,
+    "end_line": 21,
+    "class": "NoScheduledSlotsException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.slot_exceptions.SlotOverlapException.__init__": {
+    "file": "src/domain/exceptions/slot_exceptions.py",
+    "line": 24,
+    "end_line": 25,
+    "class": "SlotOverlapException",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.slot_exceptions.SlotOverlapException.__str__": {
+    "file": "src/domain/exceptions/slot_exceptions.py",
+    "line": 27,
+    "end_line": 28,
+    "class": "SlotOverlapException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.exceptions.slot_exceptions.SlotUnavailableException.__init__": {
+    "file": "src/domain/exceptions/slot_exceptions.py",
+    "line": 31,
+    "end_line": 34,
+    "class": "SlotUnavailableException",
+    "name": "__init__",
+    "calls": [
+      "src.domain.exceptions.slot_exceptions.SlotUnavailableException.__str__"
+    ],
+    "called_by": []
+  },
+  "src.domain.exceptions.slot_exceptions.SlotUnavailableException.__str__": {
+    "file": "src/domain/exceptions/slot_exceptions.py",
+    "line": 36,
+    "end_line": 37,
+    "class": "SlotUnavailableException",
+    "name": "__str__",
+    "calls": [],
+    "called_by": [
+      "src.domain.exceptions.slot_exceptions.SlotUnavailableException.__init__"
+    ]
+  },
+  "src.domain.runway.Runway.State.transitionTo": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 44,
+    "end_line": 45,
+    "class": "State",
+    "name": "transitionTo",
+    "calls": [],
+    "called_by": [
+      "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_state_transition"
+    ]
+  },
+  "src.domain.runway.Runway.Pre2.detectCondition": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 55,
+    "end_line": 56,
+    "class": "Pre2",
+    "name": "detectCondition",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.runway.Runway.Pre2.transitionTo": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 58,
+    "end_line": 59,
+    "class": "Pre2",
+    "name": "transitionTo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.runway.Runway.Post1.applyState": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 64,
+    "end_line": 65,
+    "class": "Post1",
+    "name": "applyState",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.runway.Runway.Post2.applyState": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 70,
+    "end_line": 71,
+    "class": "Post2",
+    "name": "applyState",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.runway.Runway.Post3.applyState": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 76,
+    "end_line": 77,
+    "class": "Post3",
+    "name": "applyState",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.runway.Runway.FlightSchedule.reassignFlights": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 90,
+    "end_line": 96,
+    "class": "FlightSchedule",
+    "name": "reassignFlights",
+    "calls": [],
+    "called_by": [
+      "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_flight_schedule_reassign"
+    ]
+  },
+  "src.domain.runway.Runway.FlightSchedule.markFlightDelayed": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 98,
+    "end_line": 104,
+    "class": "FlightSchedule",
+    "name": "markFlightDelayed",
+    "calls": [],
+    "called_by": [
+      "src.domain.runway.Runway.FlightSchedule.updateFlightDelay",
+      "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_flight_schedule_mark_delayed"
+    ]
+  },
+  "src.domain.runway.Runway.FlightSchedule.updateFlightDelay": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 106,
+    "end_line": 108,
+    "class": "FlightSchedule",
+    "name": "updateFlightDelay",
+    "calls": [
+      "src.domain.runway.Runway.FlightSchedule.markFlightDelayed"
+    ],
+    "called_by": []
+  },
+  "src.domain.runway.Runway.FlightSchedule.markFlightsAsDelayed": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 110,
+    "end_line": 115,
+    "class": "FlightSchedule",
+    "name": "markFlightsAsDelayed",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.runway.Runway.DelayCalculation.calculateDelay": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 120,
+    "end_line": 124,
+    "class": "DelayCalculation",
+    "name": "calculateDelay",
+    "calls": [],
+    "called_by": [
+      "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_delay_calculation"
+    ]
+  },
+  "src.domain.runway.Runway.Airport_Operations_Manager.displaySuccess": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 131,
+    "end_line": 132,
+    "class": "Airport_Operations_Manager",
+    "name": "displaySuccess",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.runway.Runway.Airport_Operations_Manager.displayError": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 134,
+    "end_line": 135,
+    "class": "Airport_Operations_Manager",
+    "name": "displayError",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.runway.Runway.Airport_Operations_Manager.displayMessage": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 137,
+    "end_line": 138,
+    "class": "Airport_Operations_Manager",
+    "name": "displayMessage",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.runway.Runway.Flight_Control_Center.displayDelays": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 145,
+    "end_line": 146,
+    "class": "Flight_Control_Center",
+    "name": "displayDelays",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.runway.Runway.Flight_Control_Center.displayError": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 148,
+    "end_line": 149,
+    "class": "Flight_Control_Center",
+    "name": "displayError",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.runway.Runway.Runway.close": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 165,
+    "end_line": 167,
+    "class": "Runway",
+    "name": "close",
+    "calls": [],
+    "called_by": [
+      "src.config.database.get_db",
+      "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_close_runway",
+      "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_open_runway"
+    ]
+  },
+  "src.domain.runway.Runway.Runway.open": {
+    "file": "src/domain/runway/Runway.py",
+    "line": 169,
+    "end_line": 171,
+    "class": "Runway",
+    "name": "open",
+    "calls": [],
+    "called_by": [
+      "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_open_runway"
+    ]
+  },
+  "src.domain.slot.Slot.Slot.__init__": {
+    "file": "src/domain/slot/Slot.py",
+    "line": 31,
+    "end_line": 47,
+    "class": "Slot",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.slot.Slot.Slot.checkOverlap": {
+    "file": "src/domain/slot/Slot.py",
+    "line": 49,
+    "end_line": 54,
+    "class": "Slot",
+    "name": "checkOverlap",
+    "calls": [],
+    "called_by": [
+      "src.service.slot.slot_service.SlotServiceImpl.allocate_arrival_first",
+      "tests.unit.slot.test_slot_domain.TestSlotDomain.test_check_overlap_detects_overlap",
+      "tests.unit.slot.test_slot_domain.TestSlotDomain.test_check_overlap_no_overlap"
+    ]
+  },
+  "src.domain.slot.Slot.Slot.checkAdjacentGap": {
+    "file": "src/domain/slot/Slot.py",
+    "line": 56,
+    "end_line": 70,
+    "class": "Slot",
+    "name": "checkAdjacentGap",
+    "calls": [],
+    "called_by": [
+      "src.service.slot.slot_service.SlotServiceImpl.allocate_slot",
+      "tests.unit.slot.test_slot_domain.TestSlotDomain.test_check_adjacent_gap_enough_gap",
+      "tests.unit.slot.test_slot_domain.TestSlotDomain.test_check_adjacent_gap_not_enough_gap"
+    ]
+  },
+  "src.domain.slot.Slot.Slot.create": {
+    "file": "src/domain/slot/Slot.py",
+    "line": 72,
+    "end_line": 95,
+    "class": "Slot",
+    "name": "create",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.create_actor",
+      "src.api.flight.flight_router.create_flight",
+      "src.api.interface.interface_router.create_interface",
+      "src.api.resource.resource_router.create_resource",
+      "src.api.runway.runway_router.create_runway",
+      "src.api.slot.slot_router.create_slot",
+      "src.service.flight.flight_service.FlightServiceImpl.register_flight",
+      "src.service.runway.runway_service.RunwayService.create_runway",
+      "src.service.slot.slot_service.SlotServiceImpl.allocate_slot",
+      "src.service.slot.slot_service.SlotServiceImpl.allocate_arrival_first",
+      "tests.unit.slot.test_slot_domain.TestSlotDomain.test_create_method_valid",
+      "tests.unit.slot.test_slot_domain.TestSlotDomain.test_create_method_invalid_duration"
+    ]
+  },
+  "src.domain.slot.Slot.Slot.verifyAllocations": {
+    "file": "src/domain/slot/Slot.py",
+    "line": 97,
+    "end_line": 113,
+    "class": "Slot",
+    "name": "verifyAllocations",
+    "calls": [],
+    "called_by": [
+      "tests.unit.slot.test_slot_domain.TestSlotDomain.test_verify_allocations_valid",
+      "tests.unit.slot.test_slot_domain.TestSlotDomain.test_verify_allocations_invalid_duration",
+      "tests.unit.slot.test_slot_domain.TestSlotDomain.test_verify_allocations_empty"
+    ]
+  },
+  "src.domain.slot.Slot.Resource.isAccessible": {
+    "file": "src/domain/slot/Slot.py",
+    "line": 127,
+    "end_line": 128,
+    "class": "Resource",
+    "name": "isAccessible",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.slot.Slot.Operation.create": {
+    "file": "src/domain/slot/Slot.py",
+    "line": 135,
+    "end_line": 136,
+    "class": "Operation",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.__init__": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyActorRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyActorRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.get_actor",
+      "src.api.flight.flight_router.get_flight",
+      "src.api.interface.interface_router.get_interface",
+      "src.api.resource.resource_router.get_resource",
+      "src.api.runway.runway_router.get_runway",
+      "src.api.slot.slot_router.get_slot",
+      "src.service.flight.flight_service.FlightServiceImpl.get_flight",
+      "src.service.slot.slot_service.SlotServiceImpl.get_slot",
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_get_runway_found",
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_get_runway_not_found",
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_delete_runway"
+    ]
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyActorRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.list_actors",
+      "src.api.flight.flight_router.list_flights",
+      "src.api.interface.interface_router.list_interfaces",
+      "src.api.resource.resource_router.list_resources",
+      "src.api.runway.runway_router.list_runways",
+      "src.api.slot.slot_router.list_slots",
+      "src.service.flight.flight_service.FlightServiceImpl.get_all_flights",
+      "src.service.slot.slot_service.SlotServiceImpl.get_all_slots",
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_get_all_runways"
+    ]
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.create": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyActorRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyActorRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.update_actor",
+      "src.api.flight.flight_router.update_flight",
+      "src.api.interface.interface_router.update_interface",
+      "src.api.resource.resource_router.update_resource",
+      "src.api.runway.runway_router.update_runway",
+      "src.api.slot.slot_router.update_slot",
+      "src.service.flight.flight_service.FlightServiceImpl.update_flight",
+      "src.service.runway.runway_service.RunwayService.update_runway",
+      "src.service.slot.slot_service.SlotServiceImpl.update_slot"
+    ]
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyActorRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.delete_actor",
+      "src.api.flight.flight_router.delete_flight",
+      "src.api.interface.interface_router.delete_interface",
+      "src.api.resource.resource_router.delete_resource",
+      "src.api.runway.runway_router.delete_runway",
+      "src.api.slot.slot_router.delete_slot",
+      "src.service.flight.flight_service.FlightServiceImpl.delete_flight",
+      "src.service.runway.runway_service.RunwayService.delete_runway",
+      "src.service.slot.slot_service.SlotServiceImpl.delete_slot",
+      "tests.unit.flight.test_flight_api.TestFlightAPI.test_delete_flight",
+      "tests.unit.flight.test_flight_api.TestFlightAPI.test_delete_flight_not_found",
+      "tests.unit.runway.test_runway_api.TestRunwayAPI.test_delete_runway",
+      "tests.unit.runway.test_runway_api.TestRunwayAPI.test_delete_runway_not_found",
+      "tests.unit.slot.test_slot_api.TestSlotAPI.test_delete_slot",
+      "tests.unit.slot.test_slot_api.TestSlotAPI.test_delete_slot_not_found"
+    ]
+  },
+  "src.infra.flight.flight_repo_impl.SQLAlchemyFlightRepository.__init__": {
+    "file": "src/infra/flight/flight_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyFlightRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.flight.flight_repo_impl.SQLAlchemyFlightRepository.get_by_id": {
+    "file": "src/infra/flight/flight_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyFlightRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.flight.flight_repo_impl.SQLAlchemyFlightRepository.get_all": {
+    "file": "src/infra/flight/flight_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyFlightRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.flight.flight_repo_impl.SQLAlchemyFlightRepository.create": {
+    "file": "src/infra/flight/flight_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyFlightRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.flight.flight_repo_impl.SQLAlchemyFlightRepository.update": {
+    "file": "src/infra/flight/flight_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyFlightRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.flight.flight_repo_impl.SQLAlchemyFlightRepository.delete": {
+    "file": "src/infra/flight/flight_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyFlightRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.interface.interface_repo_impl.SQLAlchemyInterfaceRepository.__init__": {
+    "file": "src/infra/interface/interface_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyInterfaceRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.interface.interface_repo_impl.SQLAlchemyInterfaceRepository.get_by_id": {
+    "file": "src/infra/interface/interface_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyInterfaceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.interface.interface_repo_impl.SQLAlchemyInterfaceRepository.get_all": {
+    "file": "src/infra/interface/interface_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyInterfaceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.interface.interface_repo_impl.SQLAlchemyInterfaceRepository.create": {
+    "file": "src/infra/interface/interface_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyInterfaceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.interface.interface_repo_impl.SQLAlchemyInterfaceRepository.update": {
+    "file": "src/infra/interface/interface_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyInterfaceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.interface.interface_repo_impl.SQLAlchemyInterfaceRepository.delete": {
+    "file": "src/infra/interface/interface_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyInterfaceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.__init__": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.get_by_id": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.get_all": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.create": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.update": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.delete": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.runway.runway_repo_impl.SQLAlchemyRunwayRepository.__init__": {
+    "file": "src/infra/runway/runway_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyRunwayRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.runway.runway_repo_impl.SQLAlchemyRunwayRepository.get_by_id": {
+    "file": "src/infra/runway/runway_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyRunwayRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.runway.runway_repo_impl.SQLAlchemyRunwayRepository.get_all": {
+    "file": "src/infra/runway/runway_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyRunwayRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.runway.runway_repo_impl.SQLAlchemyRunwayRepository.create": {
+    "file": "src/infra/runway/runway_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyRunwayRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.runway.runway_repo_impl.SQLAlchemyRunwayRepository.update": {
+    "file": "src/infra/runway/runway_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyRunwayRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.runway.runway_repo_impl.SQLAlchemyRunwayRepository.delete": {
+    "file": "src/infra/runway/runway_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyRunwayRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.slot.slot_repo_impl.SQLAlchemySlotRepository.__init__": {
+    "file": "src/infra/slot/slot_repo_impl.py",
+    "line": 13,
+    "end_line": 14,
+    "class": "SQLAlchemySlotRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.slot.slot_repo_impl.SQLAlchemySlotRepository.get_by_id": {
+    "file": "src/infra/slot/slot_repo_impl.py",
+    "line": 16,
+    "end_line": 18,
+    "class": "SQLAlchemySlotRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.slot.slot_repo_impl.SQLAlchemySlotRepository.get_all": {
+    "file": "src/infra/slot/slot_repo_impl.py",
+    "line": 20,
+    "end_line": 22,
+    "class": "SQLAlchemySlotRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.slot.slot_repo_impl.SQLAlchemySlotRepository.create": {
+    "file": "src/infra/slot/slot_repo_impl.py",
+    "line": 24,
+    "end_line": 29,
+    "class": "SQLAlchemySlotRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.slot.slot_repo_impl.SQLAlchemySlotRepository.update": {
+    "file": "src/infra/slot/slot_repo_impl.py",
+    "line": 31,
+    "end_line": 40,
+    "class": "SQLAlchemySlotRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.slot.slot_repo_impl.SQLAlchemySlotRepository.delete": {
+    "file": "src/infra/slot/slot_repo_impl.py",
+    "line": 42,
+    "end_line": 48,
+    "class": "SQLAlchemySlotRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.slot.slot_repo_impl.SQLAlchemySlotRepository.get_slots_by_time_range": {
+    "file": "src/infra/slot/slot_repo_impl.py",
+    "line": 50,
+    "end_line": 55,
+    "class": "SQLAlchemySlotRepository",
+    "name": "get_slots_by_time_range",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.slot.slot_repo_impl.SQLAlchemySlotRepository.get_all_slots": {
+    "file": "src/infra/slot/slot_repo_impl.py",
+    "line": 57,
+    "end_line": 59,
+    "class": "SQLAlchemySlotRepository",
+    "name": "get_all_slots",
+    "calls": [],
+    "called_by": [
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_get_all_slots"
+    ]
+  },
+  "src.repository.actor.actor_repository.ActorRepository.get_by_id": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "ActorRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.get_all": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "ActorRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.create": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "ActorRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.update": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "ActorRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.delete": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "ActorRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.flight.flight_repository.FlightRepository.get_by_id": {
+    "file": "src/repository/flight/flight_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "FlightRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.flight.flight_repository.FlightRepository.get_all": {
+    "file": "src/repository/flight/flight_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "FlightRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.flight.flight_repository.FlightRepository.create": {
+    "file": "src/repository/flight/flight_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "FlightRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.flight.flight_repository.FlightRepository.update": {
+    "file": "src/repository/flight/flight_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "FlightRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.flight.flight_repository.FlightRepository.delete": {
+    "file": "src/repository/flight/flight_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "FlightRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.interface.interface_repository.InterfaceRepository.get_by_id": {
+    "file": "src/repository/interface/interface_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "InterfaceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.interface.interface_repository.InterfaceRepository.get_all": {
+    "file": "src/repository/interface/interface_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "InterfaceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.interface.interface_repository.InterfaceRepository.create": {
+    "file": "src/repository/interface/interface_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "InterfaceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.interface.interface_repository.InterfaceRepository.update": {
+    "file": "src/repository/interface/interface_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "InterfaceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.interface.interface_repository.InterfaceRepository.delete": {
+    "file": "src/repository/interface/interface_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "InterfaceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.get_by_id": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "ResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.get_all": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "ResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.create": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "ResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.update": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "ResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.delete": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "ResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.runway.runway_repository.RunwayRepository.get_by_id": {
+    "file": "src/repository/runway/runway_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "RunwayRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.runway.runway_repository.RunwayRepository.get_all": {
+    "file": "src/repository/runway/runway_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "RunwayRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.runway.runway_repository.RunwayRepository.create": {
+    "file": "src/repository/runway/runway_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "RunwayRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.runway.runway_repository.RunwayRepository.update": {
+    "file": "src/repository/runway/runway_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "RunwayRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.runway.runway_repository.RunwayRepository.delete": {
+    "file": "src/repository/runway/runway_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "RunwayRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.slot.slot_repository.SlotRepository.get_by_id": {
+    "file": "src/repository/slot/slot_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "SlotRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.slot.slot_repository.SlotRepository.get_all": {
+    "file": "src/repository/slot/slot_repository.py",
+    "line": 14,
+    "end_line": 14,
+    "class": "SlotRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.slot.slot_repository.SlotRepository.create": {
+    "file": "src/repository/slot/slot_repository.py",
+    "line": 16,
+    "end_line": 16,
+    "class": "SlotRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.slot.slot_repository.SlotRepository.update": {
+    "file": "src/repository/slot/slot_repository.py",
+    "line": 18,
+    "end_line": 18,
+    "class": "SlotRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.slot.slot_repository.SlotRepository.delete": {
+    "file": "src/repository/slot/slot_repository.py",
+    "line": 20,
+    "end_line": 20,
+    "class": "SlotRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.slot.slot_repository.SlotRepository.get_slots_by_time_range": {
+    "file": "src/repository/slot/slot_repository.py",
+    "line": 22,
+    "end_line": 22,
+    "class": "SlotRepository",
+    "name": "get_slots_by_time_range",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.slot.slot_repository.SlotRepository.get_all_slots": {
+    "file": "src/repository/slot/slot_repository.py",
+    "line": 24,
+    "end_line": 24,
+    "class": "SlotRepository",
+    "name": "get_all_slots",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.flight.flight_service.FlightService.register_flight": {
+    "file": "src/service/flight/flight_service.py",
+    "line": 12,
+    "end_line": 14,
+    "class": "FlightService",
+    "name": "register_flight",
+    "calls": [],
+    "called_by": [
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_register_flight_success",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_register_flight_empty_number",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_register_flight_empty_origin",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_flight_found",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_all_flights",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_all_flights_with_skip_limit",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_update_flight",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_delete_flight"
+    ]
+  },
+  "src.service.flight.flight_service.FlightService.get_flight": {
+    "file": "src/service/flight/flight_service.py",
+    "line": 16,
+    "end_line": 18,
+    "class": "FlightService",
+    "name": "get_flight",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.flight.flight_service.FlightService.get_all_flights": {
+    "file": "src/service/flight/flight_service.py",
+    "line": 20,
+    "end_line": 22,
+    "class": "FlightService",
+    "name": "get_all_flights",
+    "calls": [],
+    "called_by": [
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_all_flights",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_all_flights_with_skip_limit",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_all_flights_negative_skip",
+      "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_all_flights_zero_limit"
+    ]
+  },
+  "src.service.flight.flight_service.FlightService.update_flight": {
+    "file": "src/service/flight/flight_service.py",
+    "line": 24,
+    "end_line": 26,
+    "class": "FlightService",
+    "name": "update_flight",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.flight.flight_service.FlightService.delete_flight": {
+    "file": "src/service/flight/flight_service.py",
+    "line": 28,
+    "end_line": 30,
+    "class": "FlightService",
+    "name": "delete_flight",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.flight.flight_service.FlightServiceImpl.__init__": {
+    "file": "src/service/flight/flight_service.py",
+    "line": 36,
+    "end_line": 39,
+    "class": "FlightServiceImpl",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.flight.flight_service.FlightServiceImpl.register_flight": {
+    "file": "src/service/flight/flight_service.py",
+    "line": 41,
+    "end_line": 50,
+    "class": "FlightServiceImpl",
+    "name": "register_flight",
+    "calls": [
+      "src.domain.slot.Slot.Slot.create"
+    ],
+    "called_by": []
+  },
+  "src.service.flight.flight_service.FlightServiceImpl.get_flight": {
+    "file": "src/service/flight/flight_service.py",
+    "line": 52,
+    "end_line": 55,
+    "class": "FlightServiceImpl",
+    "name": "get_flight",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.service.flight.flight_service.FlightServiceImpl.get_all_flights": {
+    "file": "src/service/flight/flight_service.py",
+    "line": 57,
+    "end_line": 62,
+    "class": "FlightServiceImpl",
+    "name": "get_all_flights",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.service.flight.flight_service.FlightServiceImpl.update_flight": {
+    "file": "src/service/flight/flight_service.py",
+    "line": 64,
+    "end_line": 67,
+    "class": "FlightServiceImpl",
+    "name": "update_flight",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.service.flight.flight_service.FlightServiceImpl.delete_flight": {
+    "file": "src/service/flight/flight_service.py",
+    "line": 69,
+    "end_line": 72,
+    "class": "FlightServiceImpl",
+    "name": "delete_flight",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.service.runway.runway_service.RunwayService.__init__": {
+    "file": "src/service/runway/runway_service.py",
+    "line": 13,
+    "end_line": 16,
+    "class": "RunwayService",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.runway.runway_service.RunwayService.close_runway_and_reassign": {
+    "file": "src/service/runway/runway_service.py",
+    "line": 18,
+    "end_line": 47,
+    "class": "RunwayService",
+    "name": "close_runway_and_reassign",
+    "calls": [
+      "src.service.runway.runway_service.RunwayService.get_by_id"
+    ],
+    "called_by": [
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_close_runway_and_reassign_no_alternatives",
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_close_runway_and_reassign_with_alternatives",
+      "tests.unit.runway.test_runway_service.TestRunwayService.test_close_runway_not_found"
+    ]
+  },
+  "src.service.runway.runway_service.RunwayService.mark_flights_delayed": {
+    "file": "src/service/runway/runway_service.py",
+    "line": 49,
+    "end_line": 51,
+    "class": "RunwayService",
+    "name": "mark_flights_delayed",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.runway.runway_service.RunwayService.calculate_delay": {
+    "file": "src/service/runway/runway_service.py",
+    "line": 53,
+    "end_line": 55,
+    "class": "RunwayService",
+    "name": "calculate_delay",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.runway.runway_service.RunwayService.get_by_id": {
+    "file": "src/service/runway/runway_service.py",
+    "line": 57,
+    "end_line": 60,
+    "class": "RunwayService",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": [
+      "src.service.runway.runway_service.RunwayService.close_runway_and_reassign"
+    ]
+  },
+  "src.service.runway.runway_service.RunwayService.get_all": {
+    "file": "src/service/runway/runway_service.py",
+    "line": 62,
+    "end_line": 67,
+    "class": "RunwayService",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.runway.runway_service.RunwayService.create_runway": {
+    "file": "src/service/runway/runway_service.py",
+    "line": 69,
+    "end_line": 70,
+    "class": "RunwayService",
+    "name": "create_runway",
+    "calls": [
+      "src.domain.slot.Slot.Slot.create"
+    ],
+    "called_by": []
+  },
+  "src.service.runway.runway_service.RunwayService.update_runway": {
+    "file": "src/service/runway/runway_service.py",
+    "line": 72,
+    "end_line": 75,
+    "class": "RunwayService",
+    "name": "update_runway",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.service.runway.runway_service.RunwayService.delete_runway": {
+    "file": "src/service/runway/runway_service.py",
+    "line": 77,
+    "end_line": 80,
+    "class": "RunwayService",
+    "name": "delete_runway",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.service.slot.slot_service.SlotService.allocate_slot": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 14,
+    "end_line": 16,
+    "class": "SlotService",
+    "name": "allocate_slot",
+    "calls": [],
+    "called_by": [
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_allocate_slot_success",
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_allocate_slot_end_before_start",
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_allocate_slot_invalid_duration",
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_allocate_slot_gap_violation",
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_get_slot_found",
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_get_all_slots",
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_update_slot",
+      "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_delete_slot"
+    ]
+  },
+  "src.service.slot.slot_service.SlotService.allocate_arrival_first": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 18,
+    "end_line": 20,
+    "class": "SlotService",
+    "name": "allocate_arrival_first",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.slot.slot_service.SlotService.prioritize_emergency_flight": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 22,
+    "end_line": 24,
+    "class": "SlotService",
+    "name": "prioritize_emergency_flight",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.slot.slot_service.SlotService.get_slot": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 26,
+    "end_line": 28,
+    "class": "SlotService",
+    "name": "get_slot",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.slot.slot_service.SlotService.get_all_slots": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 30,
+    "end_line": 32,
+    "class": "SlotService",
+    "name": "get_all_slots",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.slot.slot_service.SlotService.update_slot": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 34,
+    "end_line": 36,
+    "class": "SlotService",
+    "name": "update_slot",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.slot.slot_service.SlotService.delete_slot": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 38,
+    "end_line": 40,
+    "class": "SlotService",
+    "name": "delete_slot",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.slot.slot_service.SlotServiceImpl.__init__": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 46,
+    "end_line": 49,
+    "class": "SlotServiceImpl",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.slot.slot_service.SlotServiceImpl.allocate_slot": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 51,
+    "end_line": 74,
+    "class": "SlotServiceImpl",
+    "name": "allocate_slot",
+    "calls": [
+      "src.service.slot.slot_service.SlotServiceImpl.get_all_slots",
+      "src.domain.slot.Slot.Slot.checkAdjacentGap",
+      "src.domain.slot.Slot.Slot.create"
+    ],
+    "called_by": []
+  },
+  "src.service.slot.slot_service.SlotServiceImpl.allocate_arrival_first": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 76,
+    "end_line": 121,
+    "class": "SlotServiceImpl",
+    "name": "allocate_arrival_first",
+    "calls": [
+      "src.domain.slot.Slot.Slot.create",
+      "src.service.slot.slot_service.SlotServiceImpl.get_all_slots",
+      "src.domain.slot.Slot.Slot.checkOverlap"
+    ],
+    "called_by": []
+  },
+  "src.service.slot.slot_service.SlotServiceImpl.get_slot": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 123,
+    "end_line": 126,
+    "class": "SlotServiceImpl",
+    "name": "get_slot",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.service.slot.slot_service.SlotServiceImpl.get_all_slots": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 128,
+    "end_line": 133,
+    "class": "SlotServiceImpl",
+    "name": "get_all_slots",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": [
+      "src.service.slot.slot_service.SlotServiceImpl.allocate_slot",
+      "src.service.slot.slot_service.SlotServiceImpl.allocate_arrival_first"
+    ]
+  },
+  "src.service.slot.slot_service.SlotServiceImpl.update_slot": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 135,
+    "end_line": 138,
+    "class": "SlotServiceImpl",
+    "name": "update_slot",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.service.slot.slot_service.SlotServiceImpl.delete_slot": {
+    "file": "src/service/slot/slot_service.py",
+    "line": 140,
+    "end_line": 143,
+    "class": "SlotServiceImpl",
+    "name": "delete_slot",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "tests.integration.conftest.test_conftest_placeholder": {
+    "file": "tests/integration/conftest.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_conftest_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_api_contracts.test_test_api_contracts_placeholder": {
+    "file": "tests/integration/test_api_contracts.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_api_contracts_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_flight_flow.test_test_flight_flow_placeholder": {
+    "file": "tests/integration/test_flight_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_flight_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_runway_flow.test_test_runway_flow_placeholder": {
+    "file": "tests/integration/test_runway_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_runway_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_slot_flow.test_test_slot_flow_placeholder": {
+    "file": "tests/integration/test_slot_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_slot_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_api.mock_repo": {
+    "file": "tests/unit/flight/test_flight_api.py",
+    "line": 13,
+    "end_line": 15,
+    "class": null,
+    "name": "mock_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_api.client": {
+    "file": "tests/unit/flight/test_flight_api.py",
+    "line": 19,
+    "end_line": 39,
+    "class": null,
+    "name": "client",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_api.override_get_db": {
+    "file": "tests/unit/flight/test_flight_api.py",
+    "line": 27,
+    "end_line": 28,
+    "class": null,
+    "name": "override_get_db",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_api.override_repo": {
+    "file": "tests/unit/flight/test_flight_api.py",
+    "line": 35,
+    "end_line": 36,
+    "class": null,
+    "name": "override_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_api.TestFlightAPI.test_create_flight": {
+    "file": "tests/unit/flight/test_flight_api.py",
+    "line": 45,
+    "end_line": 65,
+    "class": "TestFlightAPI",
+    "name": "test_create_flight",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_api.TestFlightAPI.test_list_flights": {
+    "file": "tests/unit/flight/test_flight_api.py",
+    "line": 67,
+    "end_line": 75,
+    "class": "TestFlightAPI",
+    "name": "test_list_flights",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_api.TestFlightAPI.test_get_flight_found": {
+    "file": "tests/unit/flight/test_flight_api.py",
+    "line": 77,
+    "end_line": 83,
+    "class": "TestFlightAPI",
+    "name": "test_get_flight_found",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_api.TestFlightAPI.test_get_flight_not_found": {
+    "file": "tests/unit/flight/test_flight_api.py",
+    "line": 85,
+    "end_line": 88,
+    "class": "TestFlightAPI",
+    "name": "test_get_flight_not_found",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_api.TestFlightAPI.test_update_flight": {
+    "file": "tests/unit/flight/test_flight_api.py",
+    "line": 90,
+    "end_line": 96,
+    "class": "TestFlightAPI",
+    "name": "test_update_flight",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_api.TestFlightAPI.test_update_flight_not_found": {
+    "file": "tests/unit/flight/test_flight_api.py",
+    "line": 98,
+    "end_line": 101,
+    "class": "TestFlightAPI",
+    "name": "test_update_flight_not_found",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_api.TestFlightAPI.test_delete_flight": {
+    "file": "tests/unit/flight/test_flight_api.py",
+    "line": 103,
+    "end_line": 106,
+    "class": "TestFlightAPI",
+    "name": "test_delete_flight",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_api.TestFlightAPI.test_delete_flight_not_found": {
+    "file": "tests/unit/flight/test_flight_api.py",
+    "line": 108,
+    "end_line": 111,
+    "class": "TestFlightAPI",
+    "name": "test_delete_flight_not_found",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_domain.TestFlightDomain.test_create_flight": {
+    "file": "tests/unit/flight/test_flight_domain.py",
+    "line": 12,
+    "end_line": 22,
+    "class": "TestFlightDomain",
+    "name": "test_create_flight",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_domain.TestFlightDomain.test_flight_id_creation": {
+    "file": "tests/unit/flight/test_flight_domain.py",
+    "line": 24,
+    "end_line": 26,
+    "class": "TestFlightDomain",
+    "name": "test_flight_id_creation",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_domain.TestFlightDomain.test_flight_created_event": {
+    "file": "tests/unit/flight/test_flight_domain.py",
+    "line": 28,
+    "end_line": 30,
+    "class": "TestFlightDomain",
+    "name": "test_flight_created_event",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_domain.TestFlightDomain.test_flight_updated_event": {
+    "file": "tests/unit/flight/test_flight_domain.py",
+    "line": 32,
+    "end_line": 34,
+    "class": "TestFlightDomain",
+    "name": "test_flight_updated_event",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.FakeFlightRepository.__init__": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 14,
+    "end_line": 16,
+    "class": "FakeFlightRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.FakeFlightRepository.get_by_id": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 18,
+    "end_line": 22,
+    "class": "FakeFlightRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.FakeFlightRepository.get_all": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 24,
+    "end_line": 26,
+    "class": "FakeFlightRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.FakeFlightRepository.create": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 28,
+    "end_line": 39,
+    "class": "FakeFlightRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.FakeFlightRepository.update": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 41,
+    "end_line": 49,
+    "class": "FakeFlightRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.FakeFlightRepository.delete": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 51,
+    "end_line": 55,
+    "class": "FakeFlightRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.setup_method": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 61,
+    "end_line": 63,
+    "class": "TestFlightServiceImpl",
+    "name": "setup_method",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_register_flight_success": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 65,
+    "end_line": 74,
+    "class": "TestFlightServiceImpl",
+    "name": "test_register_flight_success",
+    "calls": [
+      "src.service.flight.flight_service.FlightService.register_flight"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_register_flight_empty_number": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 76,
+    "end_line": 84,
+    "class": "TestFlightServiceImpl",
+    "name": "test_register_flight_empty_number",
+    "calls": [
+      "src.service.flight.flight_service.FlightService.register_flight"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_register_flight_empty_origin": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 86,
+    "end_line": 94,
+    "class": "TestFlightServiceImpl",
+    "name": "test_register_flight_empty_origin",
+    "calls": [
+      "src.service.flight.flight_service.FlightService.register_flight"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_flight_found": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 96,
+    "end_line": 106,
+    "class": "TestFlightServiceImpl",
+    "name": "test_get_flight_found",
+    "calls": [
+      "src.service.flight.flight_service.FlightService.register_flight",
+      "src.api.flight.flight_router.get_flight"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_flight_not_found": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 108,
+    "end_line": 110,
+    "class": "TestFlightServiceImpl",
+    "name": "test_get_flight_not_found",
+    "calls": [
+      "src.api.flight.flight_router.get_flight"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_flight_negative_id": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 112,
+    "end_line": 114,
+    "class": "TestFlightServiceImpl",
+    "name": "test_get_flight_negative_id",
+    "calls": [
+      "src.api.flight.flight_router.get_flight"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_all_flights": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 116,
+    "end_line": 122,
+    "class": "TestFlightServiceImpl",
+    "name": "test_get_all_flights",
+    "calls": [
+      "src.service.flight.flight_service.FlightService.register_flight",
+      "src.service.flight.flight_service.FlightService.get_all_flights"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_all_flights_with_skip_limit": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 124,
+    "end_line": 131,
+    "class": "TestFlightServiceImpl",
+    "name": "test_get_all_flights_with_skip_limit",
+    "calls": [
+      "src.service.flight.flight_service.FlightService.register_flight",
+      "src.service.flight.flight_service.FlightService.get_all_flights"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_all_flights_negative_skip": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 133,
+    "end_line": 135,
+    "class": "TestFlightServiceImpl",
+    "name": "test_get_all_flights_negative_skip",
+    "calls": [
+      "src.service.flight.flight_service.FlightService.get_all_flights"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_get_all_flights_zero_limit": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 137,
+    "end_line": 139,
+    "class": "TestFlightServiceImpl",
+    "name": "test_get_all_flights_zero_limit",
+    "calls": [
+      "src.service.flight.flight_service.FlightService.get_all_flights"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_update_flight": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 141,
+    "end_line": 150,
+    "class": "TestFlightServiceImpl",
+    "name": "test_update_flight",
+    "calls": [
+      "src.service.flight.flight_service.FlightService.register_flight",
+      "src.api.flight.flight_router.update_flight"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_update_flight_not_found": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 152,
+    "end_line": 155,
+    "class": "TestFlightServiceImpl",
+    "name": "test_update_flight_not_found",
+    "calls": [
+      "src.api.flight.flight_router.update_flight"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_delete_flight": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 157,
+    "end_line": 164,
+    "class": "TestFlightServiceImpl",
+    "name": "test_delete_flight",
+    "calls": [
+      "src.service.flight.flight_service.FlightService.register_flight",
+      "src.api.flight.flight_router.delete_flight",
+      "src.api.flight.flight_router.get_flight"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_delete_flight_not_found": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 166,
+    "end_line": 168,
+    "class": "TestFlightServiceImpl",
+    "name": "test_delete_flight_not_found",
+    "calls": [
+      "src.api.flight.flight_router.delete_flight"
+    ],
+    "called_by": []
+  },
+  "tests.unit.flight.test_flight_service.TestFlightServiceImpl.test_constructor_none_repo": {
+    "file": "tests/unit/flight/test_flight_service.py",
+    "line": 170,
+    "end_line": 172,
+    "class": "TestFlightServiceImpl",
+    "name": "test_constructor_none_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_api.mock_repo": {
+    "file": "tests/unit/runway/test_runway_api.py",
+    "line": 13,
+    "end_line": 15,
+    "class": null,
+    "name": "mock_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_api.client": {
+    "file": "tests/unit/runway/test_runway_api.py",
+    "line": 19,
+    "end_line": 37,
+    "class": null,
+    "name": "client",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_api.override_get_db": {
+    "file": "tests/unit/runway/test_runway_api.py",
+    "line": 26,
+    "end_line": 27,
+    "class": null,
+    "name": "override_get_db",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_api.override_repo": {
+    "file": "tests/unit/runway/test_runway_api.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "override_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_api.TestRunwayAPI.test_create_runway": {
+    "file": "tests/unit/runway/test_runway_api.py",
+    "line": 43,
+    "end_line": 48,
+    "class": "TestRunwayAPI",
+    "name": "test_create_runway",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_api.TestRunwayAPI.test_list_runways": {
+    "file": "tests/unit/runway/test_runway_api.py",
+    "line": 50,
+    "end_line": 57,
+    "class": "TestRunwayAPI",
+    "name": "test_list_runways",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_api.TestRunwayAPI.test_get_runway_found": {
+    "file": "tests/unit/runway/test_runway_api.py",
+    "line": 59,
+    "end_line": 63,
+    "class": "TestRunwayAPI",
+    "name": "test_get_runway_found",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_api.TestRunwayAPI.test_get_runway_not_found": {
+    "file": "tests/unit/runway/test_runway_api.py",
+    "line": 65,
+    "end_line": 68,
+    "class": "TestRunwayAPI",
+    "name": "test_get_runway_not_found",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_api.TestRunwayAPI.test_update_runway": {
+    "file": "tests/unit/runway/test_runway_api.py",
+    "line": 70,
+    "end_line": 74,
+    "class": "TestRunwayAPI",
+    "name": "test_update_runway",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_api.TestRunwayAPI.test_delete_runway": {
+    "file": "tests/unit/runway/test_runway_api.py",
+    "line": 76,
+    "end_line": 79,
+    "class": "TestRunwayAPI",
+    "name": "test_delete_runway",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_api.TestRunwayAPI.test_delete_runway_not_found": {
+    "file": "tests/unit/runway/test_runway_api.py",
+    "line": 81,
+    "end_line": 84,
+    "class": "TestRunwayAPI",
+    "name": "test_delete_runway_not_found",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_create_runway": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 17,
+    "end_line": 22,
+    "class": "TestRunwayDomain",
+    "name": "test_create_runway",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_close_runway": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 24,
+    "end_line": 28,
+    "class": "TestRunwayDomain",
+    "name": "test_close_runway",
+    "calls": [
+      "src.domain.runway.Runway.Runway.close"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_open_runway": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 30,
+    "end_line": 35,
+    "class": "TestRunwayDomain",
+    "name": "test_open_runway",
+    "calls": [
+      "src.domain.runway.Runway.Runway.close",
+      "src.domain.runway.Runway.Runway.open"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_runway_id_creation": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 37,
+    "end_line": 39,
+    "class": "TestRunwayDomain",
+    "name": "test_runway_id_creation",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_runway_created_event": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 41,
+    "end_line": 43,
+    "class": "TestRunwayDomain",
+    "name": "test_runway_created_event",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_runway_updated_event": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 45,
+    "end_line": 47,
+    "class": "TestRunwayDomain",
+    "name": "test_runway_updated_event",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_flight_schedule_reassign": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 49,
+    "end_line": 56,
+    "class": "TestRunwayDomain",
+    "name": "test_flight_schedule_reassign",
+    "calls": [
+      "src.domain.runway.Runway.FlightSchedule.reassignFlights"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_flight_schedule_mark_delayed": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 58,
+    "end_line": 62,
+    "class": "TestRunwayDomain",
+    "name": "test_flight_schedule_mark_delayed",
+    "calls": [
+      "src.domain.runway.Runway.FlightSchedule.markFlightDelayed"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_delay_calculation": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 64,
+    "end_line": 68,
+    "class": "TestRunwayDomain",
+    "name": "test_delay_calculation",
+    "calls": [
+      "src.domain.runway.Runway.DelayCalculation.calculateDelay"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_airport_ops_manager": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 70,
+    "end_line": 72,
+    "class": "TestRunwayDomain",
+    "name": "test_airport_ops_manager",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_flight_control_center": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 74,
+    "end_line": 76,
+    "class": "TestRunwayDomain",
+    "name": "test_flight_control_center",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_passenger_services": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 78,
+    "end_line": 80,
+    "class": "TestRunwayDomain",
+    "name": "test_passenger_services",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_runway_closure_request": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 82,
+    "end_line": 85,
+    "class": "TestRunwayDomain",
+    "name": "test_runway_closure_request",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_domain.TestRunwayDomain.test_state_transition": {
+    "file": "tests/unit/runway/test_runway_domain.py",
+    "line": 87,
+    "end_line": 91,
+    "class": "TestRunwayDomain",
+    "name": "test_state_transition",
+    "calls": [
+      "src.domain.runway.Runway.State.transitionTo"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.FakeRunwayRepository.__init__": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 13,
+    "end_line": 15,
+    "class": "FakeRunwayRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.FakeRunwayRepository.get_by_id": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 17,
+    "end_line": 21,
+    "class": "FakeRunwayRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.FakeRunwayRepository.get_all": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 23,
+    "end_line": 25,
+    "class": "FakeRunwayRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.FakeRunwayRepository.create": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 27,
+    "end_line": 35,
+    "class": "FakeRunwayRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.FakeRunwayRepository.update": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 37,
+    "end_line": 45,
+    "class": "FakeRunwayRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.FakeRunwayRepository.delete": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 47,
+    "end_line": 51,
+    "class": "FakeRunwayRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.TestRunwayService.setup_method": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 57,
+    "end_line": 59,
+    "class": "TestRunwayService",
+    "name": "setup_method",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.TestRunwayService.test_create_runway": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 61,
+    "end_line": 65,
+    "class": "TestRunwayService",
+    "name": "test_create_runway",
+    "calls": [
+      "src.api.runway.runway_router.create_runway"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.TestRunwayService.test_get_runway_found": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 67,
+    "end_line": 70,
+    "class": "TestRunwayService",
+    "name": "test_get_runway_found",
+    "calls": [
+      "src.api.runway.runway_router.create_runway",
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.TestRunwayService.test_get_runway_not_found": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 72,
+    "end_line": 74,
+    "class": "TestRunwayService",
+    "name": "test_get_runway_not_found",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.TestRunwayService.test_get_all_runways": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 76,
+    "end_line": 80,
+    "class": "TestRunwayService",
+    "name": "test_get_all_runways",
+    "calls": [
+      "src.api.runway.runway_router.create_runway",
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.TestRunwayService.test_close_runway_and_reassign_no_alternatives": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 82,
+    "end_line": 85,
+    "class": "TestRunwayService",
+    "name": "test_close_runway_and_reassign_no_alternatives",
+    "calls": [
+      "src.api.runway.runway_router.create_runway",
+      "src.service.runway.runway_service.RunwayService.close_runway_and_reassign"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.TestRunwayService.test_close_runway_and_reassign_with_alternatives": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 87,
+    "end_line": 92,
+    "class": "TestRunwayService",
+    "name": "test_close_runway_and_reassign_with_alternatives",
+    "calls": [
+      "src.api.runway.runway_router.create_runway",
+      "src.service.runway.runway_service.RunwayService.close_runway_and_reassign"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.TestRunwayService.test_close_runway_not_found": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 94,
+    "end_line": 96,
+    "class": "TestRunwayService",
+    "name": "test_close_runway_not_found",
+    "calls": [
+      "src.service.runway.runway_service.RunwayService.close_runway_and_reassign"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.TestRunwayService.test_delete_runway": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 98,
+    "end_line": 101,
+    "class": "TestRunwayService",
+    "name": "test_delete_runway",
+    "calls": [
+      "src.api.runway.runway_router.create_runway",
+      "src.api.runway.runway_router.delete_runway",
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "tests.unit.runway.test_runway_service.TestRunwayService.test_constructor_none_repo": {
+    "file": "tests/unit/runway/test_runway_service.py",
+    "line": 103,
+    "end_line": 105,
+    "class": "TestRunwayService",
+    "name": "test_constructor_none_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_api.mock_repo": {
+    "file": "tests/unit/slot/test_slot_api.py",
+    "line": 14,
+    "end_line": 16,
+    "class": null,
+    "name": "mock_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_api.client": {
+    "file": "tests/unit/slot/test_slot_api.py",
+    "line": 20,
+    "end_line": 38,
+    "class": null,
+    "name": "client",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_api.override_get_db": {
+    "file": "tests/unit/slot/test_slot_api.py",
+    "line": 27,
+    "end_line": 28,
+    "class": null,
+    "name": "override_get_db",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_api.override_repo": {
+    "file": "tests/unit/slot/test_slot_api.py",
+    "line": 34,
+    "end_line": 35,
+    "class": null,
+    "name": "override_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_api.TestSlotAPI.test_create_slot": {
+    "file": "tests/unit/slot/test_slot_api.py",
+    "line": 44,
+    "end_line": 65,
+    "class": "TestSlotAPI",
+    "name": "test_create_slot",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_api.TestSlotAPI.test_list_slots": {
+    "file": "tests/unit/slot/test_slot_api.py",
+    "line": 67,
+    "end_line": 74,
+    "class": "TestSlotAPI",
+    "name": "test_list_slots",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_api.TestSlotAPI.test_get_slot_found": {
+    "file": "tests/unit/slot/test_slot_api.py",
+    "line": 76,
+    "end_line": 82,
+    "class": "TestSlotAPI",
+    "name": "test_get_slot_found",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_api.TestSlotAPI.test_get_slot_not_found": {
+    "file": "tests/unit/slot/test_slot_api.py",
+    "line": 84,
+    "end_line": 87,
+    "class": "TestSlotAPI",
+    "name": "test_get_slot_not_found",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_api.TestSlotAPI.test_update_slot": {
+    "file": "tests/unit/slot/test_slot_api.py",
+    "line": 89,
+    "end_line": 95,
+    "class": "TestSlotAPI",
+    "name": "test_update_slot",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_api.TestSlotAPI.test_delete_slot": {
+    "file": "tests/unit/slot/test_slot_api.py",
+    "line": 97,
+    "end_line": 100,
+    "class": "TestSlotAPI",
+    "name": "test_delete_slot",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_api.TestSlotAPI.test_delete_slot_not_found": {
+    "file": "tests/unit/slot/test_slot_api.py",
+    "line": 102,
+    "end_line": 105,
+    "class": "TestSlotAPI",
+    "name": "test_delete_slot_not_found",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_create_slot_defaults": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 12,
+    "end_line": 19,
+    "class": "TestSlotDomain",
+    "name": "test_create_slot_defaults",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_slot_duration_correct": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 21,
+    "end_line": 25,
+    "class": "TestSlotDomain",
+    "name": "test_slot_duration_correct",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_check_overlap_detects_overlap": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 27,
+    "end_line": 37,
+    "class": "TestSlotDomain",
+    "name": "test_check_overlap_detects_overlap",
+    "calls": [
+      "src.domain.slot.Slot.Slot.checkOverlap"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_check_overlap_no_overlap": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 39,
+    "end_line": 49,
+    "class": "TestSlotDomain",
+    "name": "test_check_overlap_no_overlap",
+    "calls": [
+      "src.domain.slot.Slot.Slot.checkOverlap"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_check_adjacent_gap_enough_gap": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 51,
+    "end_line": 61,
+    "class": "TestSlotDomain",
+    "name": "test_check_adjacent_gap_enough_gap",
+    "calls": [
+      "src.domain.slot.Slot.Slot.checkAdjacentGap"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_check_adjacent_gap_not_enough_gap": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 63,
+    "end_line": 73,
+    "class": "TestSlotDomain",
+    "name": "test_check_adjacent_gap_not_enough_gap",
+    "calls": [
+      "src.domain.slot.Slot.Slot.checkAdjacentGap"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_verify_allocations_valid": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 75,
+    "end_line": 84,
+    "class": "TestSlotDomain",
+    "name": "test_verify_allocations_valid",
+    "calls": [
+      "src.domain.slot.Slot.Slot.verifyAllocations"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_verify_allocations_invalid_duration": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 86,
+    "end_line": 91,
+    "class": "TestSlotDomain",
+    "name": "test_verify_allocations_invalid_duration",
+    "calls": [
+      "src.domain.slot.Slot.Slot.verifyAllocations"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_verify_allocations_empty": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 93,
+    "end_line": 98,
+    "class": "TestSlotDomain",
+    "name": "test_verify_allocations_empty",
+    "calls": [
+      "src.domain.slot.Slot.Slot.verifyAllocations"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_create_method_valid": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 100,
+    "end_line": 110,
+    "class": "TestSlotDomain",
+    "name": "test_create_method_valid",
+    "calls": [
+      "src.domain.slot.Slot.Slot.create"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_create_method_invalid_duration": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 112,
+    "end_line": 121,
+    "class": "TestSlotDomain",
+    "name": "test_create_method_invalid_duration",
+    "calls": [
+      "src.domain.slot.Slot.Slot.create"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_slot_id_creation": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 123,
+    "end_line": 125,
+    "class": "TestSlotDomain",
+    "name": "test_slot_id_creation",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_slot_created_event": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 127,
+    "end_line": 129,
+    "class": "TestSlotDomain",
+    "name": "test_slot_created_event",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_domain.TestSlotDomain.test_slot_updated_event": {
+    "file": "tests/unit/slot/test_slot_domain.py",
+    "line": 131,
+    "end_line": 133,
+    "class": "TestSlotDomain",
+    "name": "test_slot_updated_event",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.FakeSlotRepository.__init__": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "FakeSlotRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.FakeSlotRepository.get_by_id": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 19,
+    "end_line": 23,
+    "class": "FakeSlotRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.FakeSlotRepository.get_all": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 25,
+    "end_line": 27,
+    "class": "FakeSlotRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.FakeSlotRepository.create": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 29,
+    "end_line": 41,
+    "class": "FakeSlotRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.FakeSlotRepository.update": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 43,
+    "end_line": 51,
+    "class": "FakeSlotRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.FakeSlotRepository.delete": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 53,
+    "end_line": 57,
+    "class": "FakeSlotRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.FakeSlotRepository.get_slots_by_time_range": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 59,
+    "end_line": 66,
+    "class": "FakeSlotRepository",
+    "name": "get_slots_by_time_range",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.FakeSlotRepository.get_all_slots": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 68,
+    "end_line": 69,
+    "class": "FakeSlotRepository",
+    "name": "get_all_slots",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.TestSlotServiceImpl.setup_method": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 75,
+    "end_line": 77,
+    "class": "TestSlotServiceImpl",
+    "name": "setup_method",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_allocate_slot_success": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 79,
+    "end_line": 86,
+    "class": "TestSlotServiceImpl",
+    "name": "test_allocate_slot_success",
+    "calls": [
+      "src.service.slot.slot_service.SlotService.allocate_slot"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_allocate_slot_end_before_start": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 88,
+    "end_line": 94,
+    "class": "TestSlotServiceImpl",
+    "name": "test_allocate_slot_end_before_start",
+    "calls": [
+      "src.service.slot.slot_service.SlotService.allocate_slot"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_allocate_slot_invalid_duration": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 96,
+    "end_line": 102,
+    "class": "TestSlotServiceImpl",
+    "name": "test_allocate_slot_invalid_duration",
+    "calls": [
+      "src.service.slot.slot_service.SlotService.allocate_slot"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_allocate_slot_gap_violation": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 104,
+    "end_line": 117,
+    "class": "TestSlotServiceImpl",
+    "name": "test_allocate_slot_gap_violation",
+    "calls": [
+      "src.service.slot.slot_service.SlotService.allocate_slot"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_get_slot_found": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 119,
+    "end_line": 127,
+    "class": "TestSlotServiceImpl",
+    "name": "test_get_slot_found",
+    "calls": [
+      "src.service.slot.slot_service.SlotService.allocate_slot",
+      "src.api.slot.slot_router.get_slot"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_get_slot_not_found": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 129,
+    "end_line": 131,
+    "class": "TestSlotServiceImpl",
+    "name": "test_get_slot_not_found",
+    "calls": [
+      "src.api.slot.slot_router.get_slot"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_get_slot_negative_id": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 133,
+    "end_line": 135,
+    "class": "TestSlotServiceImpl",
+    "name": "test_get_slot_negative_id",
+    "calls": [
+      "src.api.slot.slot_router.get_slot"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_get_all_slots": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 137,
+    "end_line": 149,
+    "class": "TestSlotServiceImpl",
+    "name": "test_get_all_slots",
+    "calls": [
+      "src.service.slot.slot_service.SlotService.allocate_slot",
+      "src.infra.slot.slot_repo_impl.SQLAlchemySlotRepository.get_all_slots"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_update_slot": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 151,
+    "end_line": 159,
+    "class": "TestSlotServiceImpl",
+    "name": "test_update_slot",
+    "calls": [
+      "src.service.slot.slot_service.SlotService.allocate_slot",
+      "src.api.slot.slot_router.update_slot"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_delete_slot": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 161,
+    "end_line": 168,
+    "class": "TestSlotServiceImpl",
+    "name": "test_delete_slot",
+    "calls": [
+      "src.service.slot.slot_service.SlotService.allocate_slot",
+      "src.api.slot.slot_router.delete_slot",
+      "src.api.slot.slot_router.get_slot"
+    ],
+    "called_by": []
+  },
+  "tests.unit.slot.test_slot_service.TestSlotServiceImpl.test_constructor_none_repo": {
+    "file": "tests/unit/slot/test_slot_service.py",
+    "line": 170,
+    "end_line": 172,
+    "class": "TestSlotServiceImpl",
+    "name": "test_constructor_none_repo",
+    "calls": [],
+    "called_by": []
+  }
+}

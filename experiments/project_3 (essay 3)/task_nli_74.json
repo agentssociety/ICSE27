@@ -1,0 +1,16 @@
+{
+  "task_id": 74,
+  "confidence": 0.998,
+  "evidence": [
+    {
+      "claim": "Arrival slots are allocated before departure slots.",
+      "fact": "The system gives arrivals priority over departures.",
+      "score": 0.998,
+      "user_story_span": "",
+      "fact_span": "The system gives arrivals priority over departures."
+    }
+  ],
+  "total_claims": 1,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

@@ -1,0 +1,84 @@
+{
+  "id": "REQ-NURS-01",
+  "title": "Sort Patient Queue by Urgency and Arrival Time",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall sort the patient queue first by urgency level (lowest number first) and then by arrival time (earliest first).",
+  "rationale": "This requirement ensures that patients with the highest urgency are seen first, improving the efficiency and effectiveness of triage operations.",
+  "business_value": "Improves patient care outcomes by ensuring critical patients receive timely attention.",
+  "source": {
+    "type": "User Story",
+    "id": 9,
+    "description": "As a triage nurse I need the queue to be sorted first by urgency level (lowest number first) and then by arrival time (earliest first) so that the most critical patients are seen first."
+  },
+  "stakeholders": [
+    "Triage Nurse Team",
+    "Clinical Leadership"
+  ],
+  "acceptance_criteria": [
+    "patients are ordered by urgency level ascending (lowest number first)",
+    "for patients with the same urgency level, they are ordered by arrival time ascending (earliest first)"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "the patient queue is sorted according to the specified criteria"
+  ],
+  "functional_constraints": [
+    "sorting must be done in real-time or near-real-time for immediate effect",
+    "all patients must be included in the sorting process"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "sorting should complete within 10 seconds for a queue of up to 500 patients",
+    "availability": "the system must be available 99.9% of the time",
+    "scalability": "the system must support an increase in patient volume by 50% without performance degradation",
+    "usability": "error messages should clearly indicate issues with sorting and provide guidance on how to resolve them"
+  },
+  "edge_cases": [
+    "What if there are no patients in the queue?",
+    "What happens when a patient's urgency level is null or undefined?",
+    "How should the system handle extremely high patient volumes?",
+    "What if two patients have the same urgency level and arrival time?"
+  ],
+  "dependencies": [],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Patient Queue Database",
+      "description": "The requirement interacts with the database to retrieve and sort patient data."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-NURS-01",
+      "description": "Verify sorting by urgency level ascending.",
+      "expected_result": "Patients are sorted based on their urgency levels in ascending order (lowest number first)."
+    },
+    {
+      "id": "TC-NURS-02",
+      "description": "Verify secondary sorting by arrival time for patients with the same urgency level.",
+      "expected_result": "For patients with identical urgency levels, they are further sorted by their arrival times in ascending order (earliest first)."
+    },
+    {
+      "id": "TC-NURS-03",
+      "description": "Test behavior when a patient's urgency level is null or undefined.",
+      "expected_result": "The system should handle missing or invalid urgency levels gracefully and not crash."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-12T21:59:12.218031",
+  "last_updated": "2026-06-12T22:03:41.741544",
+  "traceability": {
+    "related_requirements": [
+      "REQ-TRIAGE-01"
+    ],
+    "design_components": [
+      "Patient"
+    ],
+    "test_artifacts": []
+  }
+}

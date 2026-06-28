@@ -1,0 +1,30 @@
+{
+  "task_id": 1,
+  "confidence": 0.9972,
+  "evidence": [
+    {
+      "claim": "The system allows registration of a new patient with their symptoms.",
+      "fact": "The system supports registering incoming patients with their presenting symptoms.",
+      "score": 0.9991,
+      "user_story_span": "",
+      "fact_span": ""
+    },
+    {
+      "claim": "Symptoms will be collected during registration.",
+      "fact": "The system supports registering incoming patients with their presenting symptoms.",
+      "score": 0.9976,
+      "user_story_span": "",
+      "fact_span": ""
+    },
+    {
+      "claim": "The patient will be placed in a queue for medical attention.",
+      "fact": "The system lets a physician take the patient at the head of the queue.",
+      "score": 0.995,
+      "user_story_span": "",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

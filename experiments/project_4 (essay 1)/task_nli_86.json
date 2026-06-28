@@ -1,0 +1,30 @@
+{
+  "task_id": 86,
+  "confidence": 0.997,
+  "evidence": [
+    {
+      "claim": "The system allows viewing the full transaction history of any user.",
+      "fact": "The system offers a feature enabling authorized users to browse the complete past activity of any account holder.",
+      "score": 0.9989,
+      "user_story_span": "view the full transaction history of any user",
+      "fact_span": "browse the complete past activity of any account holder"
+    },
+    {
+      "claim": "The admin has access to a user management interface.",
+      "fact": "An administrator can disable a user's access or re-enable it through a control in the management panel.",
+      "score": 0.9961,
+      "user_story_span": "The admin has access to a user management interface.",
+      "fact_span": ""
+    },
+    {
+      "claim": "Transaction history includes all financial or activity logs for a selected user.",
+      "fact": "Using the admin interface, an operator can look at every withdrawal, attempted access, and balance change for a specific account.",
+      "score": 0.996,
+      "user_story_span": "Transaction history includes all financial or activity logs for a selected user.",
+      "fact_span": "every withdrawal, attempted access, and balance change"
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

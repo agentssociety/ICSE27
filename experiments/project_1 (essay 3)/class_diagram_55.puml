@@ -1,0 +1,45 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F0F0F0
+skinparam interfaceBackgroundColor #E0F0FF
+skinparam enumBackgroundColor #FFF0E0
+skinparam noteBackgroundColor #FFFFF0
+
+package "Domain Model" {
+  class Queue {
+    - items : List<QueueItem>
+    note right: items are sorted by urgency descending\nthen timestamp ascending\nempty queue is valid
+  + sortItems(items: List<QueueItem>) : List<QueueItem>
+  + findItemById(itemId: String) : QueueItem
+  }
+
+  class QueueItem {
+    - id : String
+    - urgency : UrgencyLevel
+    - timestamp : DateTime
+    note right: urgency must be one of {high, medium, low}\ntimestamp must be non-null
+  + compareUrgency(item1: QueueItem, item2: QueueItem) : int
+  + compareTimestamp(item1: QueueItem, item2: QueueItem) : int
+  + compareId(item1: QueueItem, item2: QueueItem) : int
+  + updateUrgency(newUrgency: UrgencyLevel) : void
+  }
+
+  enum UrgencyLevel {
+    high
+    medium
+    low
+  + getUrgencyOrder(urgency: UrgencyLevel) : int
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface "Queue Storage" as QueueStorage
+  note right of QueueStorage: encrypted: optional\nauthenticated: required
+}
+
+' Relationships
+Queue "1" --* "0..*" QueueItem : contains
+QueueItem "1" --> "1" UrgencyLevel : has
+
+@enduml

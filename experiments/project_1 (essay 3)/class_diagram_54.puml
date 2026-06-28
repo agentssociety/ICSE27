@@ -1,0 +1,113 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam classBorderColor #333333
+skinparam classHeaderBackgroundColor #EEEEEE
+
+package "Domain Model" {
+  enum UrgencyLevel {
+    U1
+    U2
+    U3
+    U4
+    U5
+  + validateUrgencyLevel(value: String) : Bool
+  }
+
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  class Actor {
+    - mayPerform : set Permission
+  + hasPermission(permission: Permission) : Bool
+  }
+
+  class Resource {
+    - owner : Actor
+    - accessible : set Actor
+    - urgency : UrgencyLevel [optional]
+    .. invariants ..
+    owner must be in accessible set
+  + findResource(resourceId: String) : Resource
+  + isInAccessibleSet(actor: Actor) : Bool
+  + setUrgency(urgency: UrgencyLevel) : Resource
+  + validateOwnerInAccessible()
+  + saveState()
+  + checkVersion(resource: Resource) : Bool
+  }
+
+  class State {
+  + getPreState() : State
+  + transitionTo(Post1) : Bool
+  + updateState()
+  + getPostState() : State
+  }
+
+  class Interface {
+    - kind : IfaceKind
+    - encrypted : Bool
+    - authenticated : Bool
+  }
+
+  enum IfaceKind {
+  }
+
+  Resource "1" -- "1" Actor : owned by
+  Resource "1" -- "many" Actor : accessible by
+  Resource "1" o-- "0..1" UrgencyLevel : has urgency
+}
+
+package "Application" {
+  class REQ_ITEM_URGENCY_01 {
+    - initiator : Actor
+    - target : set Resource
+    - channel : set Interface
+    - grant : Permission
+    - urgency : UrgencyLevel
+    - pre : State
+    - post : State
+    .. invariants ..
+    at least one channel required
+    at least one target required
+    initiator must have the grant permission
+    initiator must be in target.accessible
+    pre and post must be different
+    at least one channel must have authenticated = True
+    target.urgency must equal the operation's urgency
+  + assignUrgency(initiatorId: String, targetId: String, urgencyValue: UrgencyLevel)
+  + assignUrgency(initiatorId: "", targetId: String, urgencyValue: UrgencyLevel)
+  + validateRequiredParams()
+  }
+
+  REQ_ITEM_URGENCY_01 "1" -- "1" Actor : initiated by
+  REQ_ITEM_URGENCY_01 "1" -- "many" Resource : targets
+  REQ_ITEM_URGENCY_01 "1" -- "many" Interface : uses channel
+  REQ_ITEM_URGENCY_01 "1" -- "1" Permission : requires
+  REQ_ITEM_URGENCY_01 "1" -- "1" UrgencyLevel : assigns
+  REQ_ITEM_URGENCY_01 "1" -- "1" State : precondition
+  REQ_ITEM_URGENCY_01 "1" -- "1" State : postcondition
+}
+
+package "Infrastructure — Ports" {
+  interface Item_Management_API {
+    + encrypted : Bool = true
+    + authenticated : Bool = true
+  }
+}
+
+package "Controllers" {
+}
+
+package "DTOs" {
+}
+
+package "Exceptions" {
+}
+
+@enduml

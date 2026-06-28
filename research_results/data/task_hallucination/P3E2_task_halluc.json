@@ -1,0 +1,20 @@
+{
+  "run_id": "P3E2",
+  "project": 3,
+  "essay": 2,
+  "n_created": 7,
+  "n_kept": 7,
+  "n_deleted": 0,
+  "task_deletion_rate": 0.0,
+  "n_duplicate_deleted": 0,
+  "deleted_tasks": [],
+  "kept_tasks": [
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71
+  ]
+}

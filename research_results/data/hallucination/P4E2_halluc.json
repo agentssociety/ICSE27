@@ -1,0 +1,37 @@
+{
+  "run_id": "P4E2",
+  "project": 4,
+  "essay": 2,
+  "n_tasks": 8,
+  "code_structural_issues": {
+    "files_scanned": 110,
+    "total_routes": 6,
+    "orphan_routes": 2,
+    "unused_imports": 92,
+    "schema_mismatches": 0
+  },
+  "code_hallucination": {
+    "files_scanned": 110,
+    "total_routes": 6,
+    "orphan_routes": 2,
+    "unused_imports": 92,
+    "schema_mismatches": 0
+  },
+  "task_spec_extrapolation": {
+    "total_claims": 81,
+    "supported_claims": 35,
+    "n_tasks_with_nli": 8,
+    "overall_extrapolation_rate": 0.5679,
+    "mean_task_extrapolation": 0.5406,
+    "overall_coverage_rate": 0.4321,
+    "mean_task_coverage": 0.4594,
+    "overall_rate": 0.5679
+  },
+  "task_hallucination": {
+    "total_claims": 81,
+    "supported_claims": 35,
+    "n_tasks_with_nli": 8,
+    "overall_rate": 0.5679,
+    "mean_task_rate": 0.5406
+  }
+}

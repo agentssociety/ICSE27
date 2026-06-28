@@ -1,0 +1,113 @@
+{
+  "id": "REQ-ATC-TIMETABLE-01",
+  "title": "View Runway Slot Timetable",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall display a runway slot timetable that shows all allocated slots with clear indicators for delays and emergencies.",
+  "rationale": "To maintain situational awareness of runway allocations, delays, and emergencies.",
+  "business_value": "Improves decision-making by providing real-time visibility into runway usage and potential issues.",
+  "source": {
+    "type": "User Story",
+    "id": 71,
+    "description": "As a air traffic controller I need view a runway slot timetable that shows all allocated slots with clear indicators for delays and emergencies So that maintain situational awareness"
+  },
+  "stakeholders": [
+    "Air Traffic Controllers",
+    "Flight Operations Team",
+    "Operations Management"
+  ],
+  "acceptance_criteria": [
+    "The timetable displays all allocated slots per runway.",
+    "Delayed flights are highlighted by delay duration.",
+    "Emergency flights are marked with a special marker.",
+    "The timetable can be filtered by runway and time."
+  ],
+  "preconditions": [
+    "The air traffic controller is logged into the system.",
+    "Flight data for the relevant time period is available."
+  ],
+  "postconditions": [
+    "All allocated slots per runway are visible.",
+    "Delays are clearly indicated with duration.",
+    "Emergencies are marked with a special marker.",
+    "Filtering by runway and time works as expected."
+  ],
+  "functional_constraints": [
+    "The system must process and display data in real-time.",
+    "Filters should return results within 2 seconds for each request."
+  ],
+  "security_requirements": [
+    "All sensitive information should be encrypted during transmission and at rest.",
+    "Access to the timetable is restricted to authorized air traffic controllers only."
+  ],
+  "non_functional_requirements": {
+    "performance": "Response time of less than 500 milliseconds for data retrieval and filtering.",
+    "availability": "99.9% uptime with no more than one hour of downtime per month.",
+    "scalability": "The system should be able to handle up to 1,000 runway slots simultaneously without performance degradation.",
+    "usability": "Error messages should be clear and actionable, with a user-friendly interface for filtering."
+  },
+  "edge_cases": [
+    "What happens if there are no allocated slots for a runway?",
+    "How does the system handle flights that are both delayed and emergencies?",
+    "What if the flight data is inconsistent or incomplete?",
+    "What if the user filters by a non-existent runway?"
+  ],
+  "dependencies": [
+    "Flight Data Management System",
+    "Real-time Data Processing Service"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "FlightDataAPI",
+      "description": "The system uses this API to fetch real-time flight data for the runway slot timetable."
+    },
+    {
+      "type": "Database",
+      "name": "RunwaySlotDB",
+      "description": "The system interacts with this database to store and retrieve runway slot information."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ATC-TIMETABLE-01",
+      "description": "Verify the display of all allocated slots per runway.",
+      "expected_result": "All allocated slots are visible with clear labels indicating their status (normal, delayed, emergency)."
+    },
+    {
+      "id": "TC-ATC-TIMETABLE-02",
+      "description": "Check the highlighting of delayed flights.",
+      "expected_result": "Delayed flights are clearly highlighted by the duration of the delay."
+    },
+    {
+      "id": "TC-ATC-TIMETABLE-03",
+      "description": "Validate emergency flight markers.",
+      "expected_result": "Emergency flights are marked with a special marker indicating their status."
+    },
+    {
+      "id": "TC-ATC-TIMETABLE-04",
+      "description": "Test runway filtering functionality.",
+      "expected_result": "Filtering by runway returns the correct set of slots for that runway."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T19:52:43.630689",
+  "last_updated": "2026-06-15T19:54:48.599750",
+  "traceability": {
+    "related_requirements": [
+      "REQ-ATC-01",
+      "REQ-ATC-TIME-SLOTS-01",
+      "REQ-ATC-01"
+    ],
+    "design_components": [
+      "Runway",
+      "Slot",
+      "Flight"
+    ],
+    "test_artifacts": []
+  }
+}

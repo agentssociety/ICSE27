@@ -1,0 +1,105 @@
+{
+  "id": "REQ-BLD-RES-01",
+  "title": "Automated Blood Unit Reservation and Release",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall automatically reserve matched blood units for pending transfusion requests and release reservations after 24 hours if not issued.",
+  "rationale": "To ensure that blood units are reserved efficiently and only held until necessary, preventing unnecessary storage and freeing up resources for other urgent requests.",
+  "business_value": "Improves the efficiency of blood supply management by reducing wastage and ensuring timely availability of blood units for critical patients.",
+  "source": {
+    "type": "User Story",
+    "id": 35,
+    "description": "As a blood bank system, I need to automatically reserve matched blood units for pending transfusion requests and release reservations after 24 hours if not issued, so that units are not unnecessarily held and can be made available for other urgent requests."
+  },
+  "stakeholders": [
+    "Blood Bank Management",
+    "Clinical Staff",
+    "IT Team"
+  ],
+  "acceptance_criteria": [
+    "A blood unit is reserved for a pending transfusion request.",
+    "24 hours have elapsed without the unit being issued.",
+    "The reservation is automatically released and the unit is marked as available for other requests."
+  ],
+  "preconditions": [
+    "There are pending transfusion requests in the system.",
+    "Blood units of compatible types are available in stock."
+  ],
+  "postconditions": [
+    "The reserved blood unit is no longer held by the reservation system.",
+    "The reserved blood unit becomes immediately available for other requests."
+  ],
+  "functional_constraints": [
+    "Reservations are made based on blood type and compatibility matching.",
+    "The 24-hour release timer starts from the time of reservation."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The system should handle reservations and releases within a specified time frame without significant delays.",
+    "availability": "The system must be available for at least 99.9% of the time during regular business hours.",
+    "scalability": "The system should be able to manage an increasing number of requests and reservations as the blood bank grows.",
+    "usability": "Error handling should be clear and user-friendly, providing feedback on reservation status."
+  },
+  "edge_cases": [
+    "What happens if a transfusion request is issued within the 24-hour period?",
+    "How does the system handle multiple reservations for the same blood unit?",
+    "What if there are no compatible blood units available during the reservation period?"
+  ],
+  "dependencies": [
+    "Blood type and compatibility matching algorithm",
+    "Transfusion request management system",
+    "Inventory management system"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Reservation API",
+      "description": "Used by the transfusion request management system to initiate, check status, and release reservations."
+    },
+    {
+      "type": "Database",
+      "name": "Blood Inventory Database",
+      "description": "Stores information about available blood units and their compatibility with different types."
+    },
+    {
+      "type": "UI",
+      "name": "Admin Dashboard",
+      "description": "For monitoring reservations and managing system settings."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-BLD-RES-01",
+      "description": "Test reservation of a blood unit for a transfusion request.",
+      "expected_result": "The reservation is successfully created and the blood unit is marked as reserved."
+    },
+    {
+      "id": "TC-BLD-RES-02",
+      "description": "Test release of a reservation after 24 hours without an issued transfusion request.",
+      "expected_result": "The reservation is automatically released and the blood unit becomes available for other requests."
+    },
+    {
+      "id": "TC-BLD-RES-03",
+      "description": "Test handling of multiple reservations for the same blood unit.",
+      "expected_result": "Each reservation is handled independently, with separate timers and statuses."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T20:13:19.076257",
+  "last_updated": "2026-06-14T20:15:39.993655",
+  "traceability": {
+    "related_requirements": [
+      "REQ-BLOOD-01"
+    ],
+    "design_components": [
+      "Reservation",
+      "BloodUnit",
+      "TransfusionRequest"
+    ],
+    "test_artifacts": []
+  }
+}

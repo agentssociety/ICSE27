@@ -1,0 +1,16 @@
+{
+  "task_id": 47,
+  "confidence": 0.968,
+  "evidence": [
+    {
+      "claim": "The 'earliest available' slot is calculated based on current time or a given reference time.",
+      "fact": "The allocated slot is at or after the flight's estimated time.",
+      "score": 0.968,
+      "user_story_span": "",
+      "fact_span": "The allocated slot is at or after the flight's estimated time."
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

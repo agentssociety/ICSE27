@@ -1,0 +1,30 @@
+{
+  "task_id": 67,
+  "confidence": 0.9873,
+  "evidence": [
+    {
+      "claim": "Arriving flights are considered higher priority than departing flights when slot conflicts occur.",
+      "fact": "The system gives arrivals priority over departures when competing for the same slot.",
+      "score": 0.9989,
+      "user_story_span": "Arriving flights are considered higher priority than departing flights when slot conflicts occur.",
+      "fact_span": "The system gives arrivals priority over departures when competing for the same slot."
+    },
+    {
+      "claim": "There is a slot conflict between an arriving flight and a departing flight.",
+      "fact": "The system gives arrivals priority over departures when competing for the same slot.",
+      "score": 0.9967,
+      "user_story_span": "",
+      "fact_span": "The system gives arrivals priority over departures when competing for the same slot."
+    },
+    {
+      "claim": "The arriving flight is assigned the conflicting slot.",
+      "fact": "The system gives arrivals priority over departures when competing for the same slot.",
+      "score": 0.9662,
+      "user_story_span": "",
+      "fact_span": "The system gives arrivals priority over departures when competing for the same slot."
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

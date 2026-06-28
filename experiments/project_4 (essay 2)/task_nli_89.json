@@ -1,0 +1,16 @@
+{
+  "task_id": 89,
+  "confidence": 0.9896,
+  "evidence": [
+    {
+      "claim": "The system locks the account after three consecutive failed PIN attempts.",
+      "fact": "The security mechanism disables further login attempts after three consecutive incorrect PIN entries.",
+      "score": 0.9896,
+      "user_story_span": "my account to be locked after three consecutive failed PIN attempts",
+      "fact_span": "disables further login attempts after three consecutive incorrect PIN entries"
+    }
+  ],
+  "total_claims": 4,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

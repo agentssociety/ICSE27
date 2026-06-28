@@ -1,0 +1,101 @@
+{
+  "id": "REQ-PATIENT-Q-01",
+  "title": "Sort Patient Queue by Urgency and Arrival Time",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall sort the patient queue first by urgency level (highest first) and then by arrival time (earliest first).",
+  "rationale": "This requirement ensures that patients receive timely care based on their urgency level and the order in which they arrived, prioritizing critical cases.",
+  "business_value": "By correctly sorting the patient queue, the system can improve patient satisfaction and ensure efficient use of healthcare resources.",
+  "source": {
+    "type": "User Story",
+    "id": 3,
+    "description": "As a system I need to sort the patient queue first by urgency level (highest first) and then by arrival time (earliest first) So that patients are seen in the correct order"
+  },
+  "stakeholders": [
+    "Hospital Management",
+    "Clinical Staff",
+    "Patient Care Coordinators"
+  ],
+  "acceptance_criteria": [
+    "The queue is ordered with the highest urgency patients first",
+    "Patients with the same urgency level are ordered by earliest arrival time first"
+  ],
+  "preconditions": [
+    "The patient queue contains multiple patients with different urgency levels and arrival times"
+  ],
+  "postconditions": [
+    "The sorting function has been applied to the patient queue"
+  ],
+  "functional_constraints": [
+    "The urgency level hierarchy must be defined and consistent throughout the sorting process.",
+    "Arrival times must be recorded accurately for each patient."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "Sorting operations should complete within a reasonable time frame, typically less than 5 seconds for queues with up to 100 patients.",
+    "availability": "The system must be available 99.9% of the time, with no downtime during critical sorting operations.",
+    "scalability": "The system should be able to scale horizontally to handle an increasing number of patients without significant performance degradation.",
+    "usability": "Error handling should provide clear feedback on any issues encountered during the sorting process."
+  },
+  "edge_cases": [
+    "What if there are patients without recorded arrival times?",
+    "How should the system handle ties in both urgency and arrival time?",
+    "What happens if the urgency levels change during the sorting process?",
+    "How should the system handle a queue with only one patient?",
+    "What if there is a power outage during the sorting operation?"
+  ],
+  "dependencies": [
+    "Urgency level hierarchy definition",
+    "Accurate arrival time recording system"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Patient Queue Database",
+      "description": "The system will interact with the patient queue database to retrieve and update patient information, including urgency levels and arrival times."
+    },
+    {
+      "type": "API",
+      "name": "Sorting API",
+      "description": "A custom API within the system that handles the sorting logic based on urgency levels and arrival times. This API will be invoked when the queue needs to be sorted."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-PATIENT-Q-01",
+      "description": "Sort queue with patients having different urgency levels.",
+      "expected_result": "The queue is ordered by highest urgency first."
+    },
+    {
+      "id": "TC-PATIENT-Q-02",
+      "description": "Sort queue with patients having the same urgency level but different arrival times.",
+      "expected_result": "Patients with the earliest arrival time are prioritized within the same urgency level."
+    },
+    {
+      "id": "TC-PATIENT-Q-03",
+      "description": "Handle patient without recorded arrival times during sorting.",
+      "expected_result": "The system should ignore patients without recorded arrival times and sort based on urgency only."
+    },
+    {
+      "id": "TC-PATIENT-Q-04",
+      "description": "Sort queue with a single patient.",
+      "expected_result": "The single patient remains at the front of the queue."
+    }
+  ],
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "PatientQueue",
+      "Patient",
+      "UrgencyLevel"
+    ],
+    "test_artifacts": []
+  },
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-12T10:09:03.425485Z",
+  "last_updated": "2026-06-12T10:22:44.147399Z"
+}

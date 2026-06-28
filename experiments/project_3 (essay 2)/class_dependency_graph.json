@@ -1,0 +1,10 @@
+{
+  "Flight": [
+    "TimeSlot",
+    "Runway"
+  ],
+  "TimeSlot": [
+    "Runway"
+  ],
+  "Runway": []
+}

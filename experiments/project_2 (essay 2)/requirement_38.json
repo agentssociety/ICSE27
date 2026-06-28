@@ -1,0 +1,107 @@
+{
+  "id": "REQ-BB-DAS-01",
+  "title": "Dashboard displaying current stock levels, expiration warnings, and transfusion requests",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall display a digital dashboard that updates in real time showing current stock levels per ABO/Rh type, units nearing expiration, and open transfusion requests.",
+  "rationale": "To provide blood bank managers with a quick visual overview of the blood bank's status to ensure timely management actions.",
+  "business_value": "Improves operational efficiency by allowing managers to make informed decisions quickly based on up-to-date data.",
+  "source": {
+    "type": "User Story",
+    "id": 38,
+    "description": "As a blood bank manager I need a dashboard displaying current stock levels per ABO/Rh type, units nearing expiration, and open transfusion requests so that I can have a quick visual overview of blood bank status."
+  },
+  "stakeholders": [
+    "Blood Bank Manager"
+  ],
+  "acceptance_criteria": [
+    "The dashboard displays current stock levels per ABO/Rh type.",
+    "Units nearing expiration are highlighted on the dashboard.",
+    "Open transfusion requests are listed on the dashboard."
+  ],
+  "preconditions": [
+    "The blood bank has current inventory data.",
+    "Units nearing expiration have been identified in the inventory system.",
+    "There are open transfusion requests in the transfusion request system."
+  ],
+  "postconditions": [
+    "The blood bank manager can access the dashboard from standard devices.",
+    "The dashboard is updated in real time with current stock levels, expiration warnings, and transfusion requests."
+  ],
+  "functional_constraints": [],
+  "security_requirements": [
+    "Data is securely transmitted between systems (inventory system, transfusion request system, dashboard).",
+    "Access to the dashboard is restricted to authorized blood bank managers.",
+    "User authentication mechanisms are in place to verify user identities."
+  ],
+  "non_functional_requirements": {
+    "performance": "The dashboard updates every minute.",
+    "availability": "99.9% uptime during regular business hours.",
+    "scalability": "The system can handle up to 100 simultaneous users without performance degradation.",
+    "usability": "Error messages are clear and actionable, with a user-friendly interface."
+  },
+  "edge_cases": [
+    "What happens when there is no inventory data available?",
+    "How does the system handle large volumes of transfusion requests?",
+    "What if a user tries to access the dashboard from an unauthorized device?"
+  ],
+  "dependencies": [
+    "Inventory System",
+    "Transfusion Request System"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Inventory API",
+      "description": "The system will consume data about current stock levels and expiration dates from this API."
+    },
+    {
+      "type": "API",
+      "name": "Transfusion Request API",
+      "description": "The system will consume data about open transfusion requests from this API."
+    },
+    {
+      "type": "UI",
+      "name": "Dashboard Interface",
+      "description": "This interface displays current stock levels, expiration warnings, and transfusion requests to the blood bank manager."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-BB-DAS-01",
+      "description": "Verify that the dashboard displays correct current stock levels per ABO/Rh type.",
+      "expected_result": "The dashboard shows accurate and up-to-date stock levels for all ABO/Rh types."
+    },
+    {
+      "id": "TC-BB-DAS-02",
+      "description": "Test expiration warning functionality on the dashboard.",
+      "expected_result": "Units nearing expiration are clearly highlighted with an appropriate visual indicator."
+    },
+    {
+      "id": "TC-BB-DAS-03",
+      "description": "Confirm that open transfusion requests are listed correctly on the dashboard.",
+      "expected_result": "All open transfusion requests are displayed in a clear and organized manner."
+    },
+    {
+      "id": "TC-BB-DAS-04",
+      "description": "Check access control for unauthorized users trying to access the dashboard.",
+      "expected_result": "Unauthorized users receive an appropriate error message or are denied access."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T20:17:22.368102",
+  "last_updated": "2026-06-14T20:37:05.404500",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "BloodBankDashboard",
+      "InventoryItem",
+      "TransfusionRequest"
+    ],
+    "test_artifacts": []
+  }
+}

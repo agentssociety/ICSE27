@@ -1,0 +1,226 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F5F5F5
+skinparam classBorderColor #333333
+skinparam interfaceBackgroundColor #E8F0FE
+skinparam interfaceBorderColor #1A73E8
+skinparam enumBackgroundColor #E6F4EA
+skinparam enumBorderColor #34A853
+skinparam packageBackgroundColor #FAFAFA
+skinparam packageBorderColor #666666
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+
+package "Domain Model" {
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+    }
+
+    class Actor {
+        - mayPerform: Set<Permission>
+    }
+
+    class TransfusionServiceUser {
+        - mayPerform: Set<Permission>
+    }
+
+    class ClinicalStaff {
+        - mayPerform: Set<Permission>
+    }
+
+    class ITDepartment {
+        - mayPerform: Set<Permission>
+    }
+
+    class Resource {
+        - owner: Actor
+        - accessible: Set<Actor>
+    }
+
+    class BloodUnitAPI {
+        - kind: String
+        - encrypted: Boolean
+        - authenticated: Boolean
+    }
+
+    class TransfusionRequestDatabase {
+        - kind: String
+        - encrypted: Boolean
+        - authenticated: Boolean
+    }
+
+    class Interface {
+        - kind: IfaceKind
+        - encrypted: Boolean
+        - authenticated: Boolean
+    }
+
+    class IfaceKind <<enum>> {
+        REST
+        SQL
+        SOAP
+        GraphQL
+    }
+
+    class State {
+        - name: String
+        - description: String
+        - isStartState: Boolean
+        - isGoalState: Boolean
+  + setPreState(Pre1, Pre2, Pre3)
+  + setPostState(Post1, Post2, Post3)
+    }
+
+    class REQ_TRANSFUSION_MATCH_01 {
+        - initiator: Actor
+        - target: Set<Resource>
+        - channel: Set<Interface>
+        - grant: Permission
+        - pre: State
+        - post: State
+  + create(requestData, initiator=Staff, grant=Write, target=TransfusionRequestDatabase)
+  + validatePermissions()
+  + verifyPreconditions()
+  + recordMatchedUnits(compatibleUnits)
+    }
+
+    Actor <|-- TransfusionServiceUser
+    Actor <|-- ClinicalStaff
+    Actor <|-- ITDepartment
+    Actor o-- Permission : mayPerform
+    Resource o-- Actor : owner
+    Resource o-- Actor : accessible
+    Resource <|-- BloodUnitAPI
+    Resource <|-- TransfusionRequestDatabase
+    REQ_TRANSFUSION_MATCH_01 --> Actor : initiator
+    REQ_TRANSFUSION_MATCH_01 --> Resource : target
+    REQ_TRANSFUSION_MATCH_01 --> Interface : channel
+    REQ_TRANSFUSION_MATCH_01 --> Permission : grant
+    REQ_TRANSFUSION_MATCH_01 --> State : pre
+    REQ_TRANSFUSION_MATCH_01 --> State : post
+}
+
+package "Application" {
+    class TransfusionMatchingService {
+        - aboRhRules: ABORhCompatibilityRules
+        - bloodUnitRepository: BloodUnitRepository
+        - transfusionRequestRepository: TransfusionRequestRepository
+    }
+
+    class ABORhCompatibilityRules {
+        - rules: Map<String, List<String>>
+  + checkCompatibility(patientBloodType, bloodUnitTypes)
+  + checkCompatibility(patientBloodType, requestedUnit.bloodType)
+    }
+
+    class TransfusionRequest {
+        - requestId: String
+        - patientId: String
+        - patientABORh: String
+        - requestedUnits: List<String>
+        - status: RequestStatus
+        - matchedUnits: List<String>
+        - excludedUnits: List<String>
+    }
+
+    enum RequestStatus {
+        SUBMITTED
+        PROCESSING
+        MATCHED
+        DENIED
+        COMPLETED
+    }
+
+    TransfusionMatchingService --> ABORhCompatibilityRules
+    TransfusionMatchingService --> TransfusionRequest
+}
+
+package "Infrastructure — Ports" {
+    interface BloodUnitRepository {
+        + findCompatibleUnits(patientABORh: String): List<BloodUnit>
+        + getUnitById(unitId: String): BloodUnit
+    }
+
+    interface TransfusionRequestRepository {
+        + save(request: TransfusionRequest): void
+        + findById(requestId: String): TransfusionRequest
+    }
+
+    class BloodUnit {
+        - unitId: String
+        - bloodType: String
+        - rhFactor: String
+        - available: Boolean
+    }
+
+    BloodUnitRepository --> BloodUnit
+}
+
+package "Controllers" {
+    class TransfusionRequestController {
+        - transfusionMatchingService: TransfusionMatchingService
+    }
+}
+
+package "DTOs" {
+    class TransfusionRequestDTO <<dto>> {
+        - patientId: String
+        - patientABORh: String
+        - requestedUnits: List<String>
+    }
+
+    class TransfusionResponseDTO <<dto>> {
+        - requestId: String
+        - matchedUnits: List<String>
+        - excludedUnits: List<String>
+        - status: String
+    }
+
+    class ErrorDTO <<dto>> {
+        - errorCode: String
+        - message: String
+        - details: Map<String, String>
+    }
+}
+
+package "Exceptions" {
+    class PatientABOUnknownException <<exception>> {
+        - patientId: String
+    }
+
+    class IncompatibleBloodUnitException <<exception>> {
+        - unitId: String
+        - reason: String
+    }
+
+    class InsufficientCompatibleUnitsException <<exception>> {
+        - patientABORh: String
+    }
+
+    class UnauthorizedAccessException <<exception>> {
+        - actorId: String
+        - requiredPermission: Permission
+    }
+}
+
+TransfusionRequestController --> TransfusionMatchingService
+TransfusionRequestController --> TransfusionRequestDTO
+TransfusionRequestController --> TransfusionResponseDTO
+TransfusionRequestController --> ErrorDTO
+TransfusionMatchingService --> BloodUnitRepository
+TransfusionMatchingService --> TransfusionRequestRepository
+TransfusionMatchingService --> PatientABOUnknownException
+TransfusionMatchingService --> IncompatibleBloodUnitException
+TransfusionMatchingService --> InsufficientCompatibleUnitsException
+TransfusionMatchingService --> UnauthorizedAccessException
+
+note top of TransfusionMatchingService : "Matching must complete within 5 seconds\nHandles at least 100 simultaneous requests"
+note top of BloodUnitAPI : "Must be encrypted (TLS 1.2+)\nMust be authenticated\nAccess restricted to authorized ClinicalStaff and TransfusionServiceUsers"
+note top of TransfusionRequestDatabase : "Must be encrypted (TLS 1.2+)\nMust be authenticated\nAccess restricted to ClinicalStaff and TransfusionServiceUsers"
+note top of Interface : "Must have at least one authenticated channel"
+note top of REQ_TRANSFUSION_MATCH_01 : "initiator must hold required permission\ninitiator must be authorized for target\npre != post\npost must be one of Post1, Post2, Post3\nat least one channel must be authenticated"
+
+@enduml

@@ -1,0 +1,11 @@
+SQLAlchemy
+psycopg2-binary
+alembic
+fastapi
+flight-exceptions
+pydantic
+pydantic-settings
+pytest
+shared-exceptions
+slot-exceptions
+uvicorn

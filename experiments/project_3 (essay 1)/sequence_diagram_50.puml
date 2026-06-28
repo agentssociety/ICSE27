@@ -1,0 +1,132 @@
+@startuml
+title Runway Reassignment on Closure - Sequence Diagram
+
+' Participants - using exact domain class names
+actor "AirTrafficControlTeam" as ATC
+actor "FlightOperationsManagement" as FOM
+actor "SafetyComplianceOffice" as SCO
+
+box "Controller" #LightBlue
+participant "System" as System
+end box
+
+box "Domain" #LightGreen
+participant "Runway" as Runway
+participant "Flight" as Flight
+participant "Slot" as Slot
+participant "Aircraft" as Aircraft
+participant "TrafficData" as TrafficData
+participant "SeparationRule" as SeparationRule
+participant "Resource" as Resource
+participant "Permission" as Permission
+participant "State" as State
+end box
+
+box "Infrastructure" #LightYellow
+participant "AircraftAndTrafficDatabase" as AircraftDB
+participant "SeparationRulesDatabase" as SepRulesDB
+end box
+
+box "External" #LightCoral
+participant "RunwayStatusAPI" as RunwayAPI
+end box
+
+== Main Flow: Automatic Reassignment on Runway Closure ==
+
+' 1. Runway closure notification (Pre1)
+RunwayAPI -> System : [TLS] notifyRunwayClosure(runwayId, status: CLOSED)
+note left: Pre1: Runway closure declared
+System -> System : authenticate(initiator=System) \n secure channel
+System -> State : recordPreCondition(Pre1)
+State -> State : setPreState(Pre1)
+
+' Authorization check on Runway resource
+System -> Resource : checkAccess(resource=Runway, actor=System)
+Resource -> Permission : getPermission(actor, resource)
+Permission -> Resource : level
+Resource -> System : allowed: boolean
+note right: Must be Write/Execute
+
+' 2. Query affected flights (Pre2)
+System -> AircraftDB : [TLS, auth] queryFlightsOnRunway(runwayId)
+activate AircraftDB
+AircraftDB -> System : flights: List<Flight>
+note right: Pre2: flights scheduled for closed runway
+deactivate AircraftDB
+System -> State : recordPreCondition(Pre2)
+State -> State : setPreState(Pre2)
+
+' 3. Find alternative runways (Pre3)
+System -> Runway : findAlternativeRunways(aircraftType, requiredCapacity)
+activate Runway
+Runway -> Runway : filterByConfiguration(aircraftType)
+Runway -> Runway : filterByStatus(OPEN)
+Runway -> System : alternatives: List<Runway>
+deactivate Runway
+note right: Pre3: alternative runways exist
+
+' Loop over affected flights
+loop for each flight in affectedFlights
+    System -> Aircraft : getAircraft(flight.aircraftType)
+    activate Aircraft
+    Aircraft -> System : aircraftInfo: Aircraft
+    deactivate Aircraft
+
+    alt successful reassignment path
+        System -> Runway : checkCompatibility(flight, alternativeRunway)
+        Runway -> Aircraft : isCompatible(aircraftType, configuration)
+        Aircraft -> Runway : boolean
+        Runway -> System : compatible: Yes
+
+        ' Separation rule check
+        System -> SeparationRule : validateSeparation(flight, proposedSlot, runway, existingSlots)
+        activate SeparationRule
+        SeparationRule -> SepRulesDB : [TLS, auth] getWakeTurbulenceRules()
+        SeparationRule -> SepRulesDB : getMinimumSeparation(aircraftCategory, precedentCategory)
+        SeparationRule -> System : valid: boolean
+        deactivate SeparationRule
+
+        alt separation valid
+            System -> Flight : assignToRunway(alternativeRunway.id, newDepartureTime)
+            note right: Flight departure time updated with delay
+            System -> Slot : createSlot(time, runway, flight)
+            System -> TrafficData : updateCurrentAssignments(flight, runway)
+            System -> State : recordPostCondition(Post2:SeparationMaintained)
+        else separation invalid
+            System -> System : handleConflict() \n adjust schedule
+            ' Could retry with different slot
+        end
+
+    else no alternative runway available
+        System -> System : rerouteToExternalAirport(flight)
+        System -> ATC : notifyNoAlternative(flight)
+        note right: Error: no alternative runway
+
+    else aircraft too large for all alternatives
+        System -> System : holdFlightUntilAvailable(flight)
+        System -> ATC : notifyAircraftTooLarge(flight)
+        note right: Error: aircraft too large
+
+    else multiple runway closures simultaneously
+        ' complex constraint solving
+        System -> System : solveComplexConstraints(flights, availableRunways)
+        System -> System : updateAllAssignments()
+        System -> State : recordPostCondition(Post2)
+    end
+end
+
+' Final separation verification
+System -> SeparationRule : verifyAllAssignments()
+SeparationRule -> System : compliance: boolean
+note right: Post2 confirmed
+
+' Output updated schedules (Post1)
+System -> FOM : notifyUpdatedSchedules(flights)
+System -> SCO : notifySeparationCompliance(complianceReport)
+System -> State : recordPostCondition(Post1)
+State -> State : setPostState(Post1)
+
+' Notify ATC of final status
+System -> ATC : notifyReassignmentComplete(summaryReport)
+
+@enduml

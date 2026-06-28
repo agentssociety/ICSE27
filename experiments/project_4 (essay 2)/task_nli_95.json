@@ -1,0 +1,23 @@
+{
+  "task_id": 95,
+  "confidence": 0.992,
+  "evidence": [
+    {
+      "claim": "When an interaction occurs, the system processes the event.",
+      "fact": "It automatically logs each login attempt and any modification to transaction status, storing the precise moment it occurred.",
+      "score": 0.997,
+      "user_story_span": "When the system processes the event",
+      "fact_span": "automatically logs each login attempt"
+    },
+    {
+      "claim": "The system maintains an audit log that records all security-relevant events with precise timestamps.",
+      "fact": "The system maintains a chronological record of every authentication event and transaction state change, each annotated with the exact time.",
+      "score": 0.987,
+      "user_story_span": "maintain an audit log that records all security-relevant events with precise timestamps",
+      "fact_span": "a chronological record of every authentication event and transaction state change, each annotated with the exact time"
+    }
+  ],
+  "total_claims": 15,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

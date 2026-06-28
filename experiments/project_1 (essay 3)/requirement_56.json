@@ -1,0 +1,89 @@
+{
+  "id": "REQ-QUEUE-01",
+  "title": "Automatically Reorder Queue on Change",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall automatically reorder the queue when a change occurs (addition, removal, or modification of an item).",
+  "rationale": "To ensure that the queue always reflects the updated order based on changes detected.",
+  "business_value": "Improves the accuracy and reliability of the queue data, enhancing user experience and operational efficiency.",
+  "source": {
+    "type": "User Story",
+    "id": 56,
+    "description": "As a user I need the system to reorder the queue when a change occurs So that the queue reflects the updated order based on the change"
+  },
+  "stakeholders": [
+    "System Developers",
+    "Operations Team",
+    "User Interface Team"
+  ],
+  "acceptance_criteria": [
+    "Given the queue has items in a specific order",
+    "When a change is made to the queue",
+    "Then the queue is automatically reordered according to the defined rules"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "The queue reflects the updated order based on the detected change"
+  ],
+  "functional_constraints": [
+    "The system must detect additions, removals, and modifications of items in the queue",
+    "The system must reorder the queue automatically upon detecting a change"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": {},
+    "availability": {},
+    "scalability": {},
+    "usability": {}
+  },
+  "edge_cases": [
+    "What happens if the system detects a change while it is in the process of reordering?",
+    "How should the system handle changes made during periods of high concurrency?",
+    "What are the implications of detecting and handling a large number of concurrent changes?"
+  ],
+  "dependencies": [],
+  "interfaces": [
+    {
+      "type": "Internal System",
+      "name": "Queue Management System",
+      "description": "The requirement interacts with the internal system responsible for managing the queue data."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-QUEUE-01",
+      "description": "Add an item to the queue and verify it is placed correctly.",
+      "expected_result": "The new item should be added to the correct position in the queue based on predefined rules."
+    },
+    {
+      "id": "TC-QUEUE-02",
+      "description": "Remove an item from the queue and verify its absence.",
+      "expected_result": "The removed item should no longer appear in the queue."
+    },
+    {
+      "id": "TC-QUEUE-03",
+      "description": "Modify an existing item's position in the queue.",
+      "expected_result": "The modified item should be moved to its new position according to the updated rules."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T17:33:04.517967",
+  "last_updated": "2026-06-15T17:39:54.601244",
+  "traceability": {
+    "related_requirements": [
+      "REQ-QUEUE-01",
+      "REQ-ITEM-URGENCY-01",
+      "REQ-SYM-01"
+    ],
+    "design_components": [
+      "Queue",
+      "Patient",
+      "UrgencyLevel"
+    ],
+    "test_artifacts": []
+  }
+}

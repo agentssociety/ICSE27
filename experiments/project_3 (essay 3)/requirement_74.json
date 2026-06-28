@@ -1,0 +1,85 @@
+{
+  "id": "REQ-APC-01",
+  "title": "Prioritize Arrivals Over Departures When Allocating Slots",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allocate arrival slots before departure slots when there are competing requests for the same time period.",
+  "rationale": "This requirement is necessary to ensure that landing aircraft receive preferential handling over departing ones, aligning with safety and operational priorities at an airport.",
+  "business_value": "By prioritizing arrivals, the system will enhance the efficiency and safety of airport operations by ensuring that critical incoming flights are handled first, reducing delays and improving overall air traffic management.",
+  "source": {
+    "type": "User Story",
+    "id": 74,
+    "description": "As a airport slot coordinator I need to prioritize arrivals over departures when allocating slots So that landing aircraft receive preferential handling over departing ones"
+  },
+  "stakeholders": [
+    "Airport Slot Coordinator Team",
+    "Air Traffic Control Department",
+    "Safety Compliance Officer",
+    "Operations Management"
+  ],
+  "acceptance_criteria": [
+    "Given multiple slot requests for the same time period",
+    "When the slot allocation is being processed",
+    "Then arrival slots are allocated before departure slots"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "Arrival slots have been allocated before departure slots"
+  ],
+  "functional_constraints": [
+    "The system must enforce prioritization of arrivals over departures during slot allocation"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": {},
+    "availability": {},
+    "scalability": {},
+    "usability": {}
+  },
+  "edge_cases": [
+    "What if there are equal number of arrival and departure requests for the same time period?",
+    "How should the system handle sudden surge in either arrivals or departures?"
+  ],
+  "dependencies": [
+    "Airport Slot Management System",
+    "Air Traffic Control Interface"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Slot Allocation API",
+      "description": "Interface for the slot allocation process, where arrival slots are allocated before departure slots."
+    },
+    {
+      "type": "Database",
+      "name": "Slot Request Database",
+      "description": "Stores information about all incoming and outgoing flight requests."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-APC-01",
+      "description": "Verify that arrival slots are allocated before departure slots when there are multiple requests for the same time period.",
+      "expected_result": "Arrival slots should be allocated first, followed by departure slots."
+    },
+    {
+      "id": "TC-APC-02",
+      "description": "Test system behavior with an equal number of arrival and departure requests during peak hours.",
+      "expected_result": "System should allocate arrival slots first, then departure slots if necessary."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T22:41:12.349422",
+  "last_updated": "2026-06-15T22:48:10.175571",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Slot"
+    ],
+    "test_artifacts": []
+  }
+}

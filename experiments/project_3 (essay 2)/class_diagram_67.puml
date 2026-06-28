@@ -1,0 +1,125 @@
+@startuml
+skinparam classBackgroundColor #FEFEFE
+skinparam classBorderColor #333333
+skinparam packageBackgroundColor #F8F8F8
+skinparam packageBorderColor #666666
+skinparam noteBackgroundColor #FFFFCC
+skinparam noteBorderColor #999999
+
+package "Domain Model" {
+  abstract class Actor {
+    + mayPerform: Set<Permission>
+  }
+  class Air_Traffic_Controllers extends Actor {
+  }
+  class Operations_Management extends Actor {
+  }
+  class Flight_Service_Providers extends Actor {
+  }
+  class Resource {
+    + owner: Actor
+    + accessible: Set<Actor>
+  + isAccessible(initiator)
+  + getCapacity()
+  }
+  note right of Resource::owner
+    Invariant: owner in accessible
+  end note
+  abstract class Interface {
+    + kind: IfaceKind
+    + encrypted: Boolean
+    + authenticated: Boolean
+  }
+  class Flight_Request_API extends Interface {
+  }
+  note right of Flight_Request_API
+    Invariant: kind = API
+  end note
+  class Slot_Allocation_Database extends Interface {
+  }
+  note right of Slot_Allocation_Database
+    Invariant: kind = Database
+  end note
+  enum IfaceKind {
+    API
+    Database
+  }
+  abstract class State {
+  }
+  class Pre1 extends State {
+  }
+  note right of Pre1
+    Precondition: set of arrival and departure requests for a given time window
+  end note
+  class Post1 extends State {
+  }
+  note right of Post1
+    Postcondition: all arrival slots placed before any departure slots adjusted
+  end note
+  abstract class Permission {
+  }
+  class Read extends Permission {
+  }
+  class Write extends Permission {
+  }
+  class Execute extends Permission {
+  }
+  class Admin extends Permission {
+  }
+  class Capacity {
+    + max: Integer
+  + getMax()
+  }
+  note right of Capacity
+    Invariant: max = 1
+  end note
+}
+
+package "Application" {
+  class REQ_AC_01 {
+    + initiator: Actor
+    + target: Set<Resource>
+    + channel: Set<Interface>
+    + grant: Permission
+    + pre: State
+    + post: State
+  + create(initiator, target, channel, grant, pre, post)
+  }
+  note right of REQ_AC_01
+    Invariants:
+    - some channel
+    - some target
+    - grant in initiator.mayPerform
+    - initiator in target.accessible
+    - pre != post
+    - some c: channel | c.authenticated = True
+    - post in Post1
+  end note
+}
+
+' Relationships
+Actor <|-- Air_Traffic_Controllers
+Actor <|-- Operations_Management
+Actor <|-- Flight_Service_Providers
+Interface <|-- Flight_Request_API
+Interface <|-- Slot_Allocation_Database
+State <|-- Pre1
+State <|-- Post1
+Permission <|-- Read
+Permission <|-- Write
+Permission <|-- Execute
+Permission <|-- Admin
+
+REQ_AC_01 "1" --> "1" Actor : initiator
+REQ_AC_01 "1" --> "1..*" Resource : target
+REQ_AC_01 "1" --> "1..*" Interface : channel
+REQ_AC_01 "1" --> "1" Permission : grant
+REQ_AC_01 "1" --> "1" State : pre
+REQ_AC_01 "1" --> "1" State : post
+
+Resource "1" --> "1" Actor : owner
+Resource "1" --> "*" Actor : accessible
+
+Permission "1" --> "0..*" Permission : stronger
+
+@enduml

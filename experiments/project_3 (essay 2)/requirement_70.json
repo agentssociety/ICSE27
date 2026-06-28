@@ -1,0 +1,93 @@
+{
+  "id": "REQ-ATC-01",
+  "title": "Assign Emergency Flight Priority Slot",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall assign an immediate priority slot to a flight marked as an emergency, overriding normal scheduling rules.",
+  "rationale": "To ensure that emergency flights are accommodated without delay and can be prioritized over other scheduled flights.",
+  "business_value": "Improves operational efficiency by ensuring critical flights are handled promptly, reducing the risk of delays or safety issues.",
+  "source": {
+    "type": "User Story",
+    "id": 70,
+    "description": "As a air traffic controller I need to declare an emergency for a flight and have the system assign an immediate priority slot overriding normal scheduling rules So that the emergency flight can be prioritized and accommodated without delay"
+  },
+  "stakeholders": [
+    "Air Traffic Control Operations",
+    "Flight Dispatch",
+    "Safety Management"
+  ],
+  "acceptance_criteria": [
+    "The system assigns an immediate priority slot to a flight marked as an emergency.",
+    "Other scheduled slots are automatically adjusted to accommodate the emergency flight."
+  ],
+  "preconditions": [
+    "A flight is identified in the system with a valid identifier.",
+    "The air traffic controller has the necessary permissions to mark a flight as an emergency."
+  ],
+  "postconditions": [
+    "The emergency flight has been assigned a priority slot.",
+    "Other scheduled flights have been adjusted to accommodate the emergency flight."
+  ],
+  "functional_constraints": [
+    "The system must override normal scheduling rules when marking a flight as an emergency.",
+    "All other scheduled slots must be automatically adjusted in real-time upon assignment of an emergency slot."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The system must respond within [specific time frame] to mark a flight as an emergency and assign a priority slot.",
+    "availability": "The system must be available 99.9% of the time during operational hours.",
+    "scalability": "The system must support up to [number] simultaneous flights without degrading performance.",
+    "usability": "Error handling for invalid flight identifiers should provide clear, actionable feedback."
+  },
+  "edge_cases": [
+    "What happens if a flight is already in an emergency state and another emergency declaration is made?",
+    "How does the system handle simultaneous declarations of multiple emergencies?",
+    "What is the impact on other critical flights when an emergency slot is assigned?"
+  ],
+  "dependencies": [
+    "The flight management system must be able to receive and process emergency declarations.",
+    "The database must support real-time updates for slot assignments."
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Emergency Declaration API",
+      "description": "Used by the air traffic controller to mark a flight as an emergency."
+    },
+    {
+      "type": "Database",
+      "name": "Flight Management Database",
+      "description": "Stores flight information and slot assignments."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ATC-01",
+      "description": "Marking a flight as an emergency when no other flights are scheduled.",
+      "expected_result": "The system assigns the highest priority slot to the emergency flight."
+    },
+    {
+      "id": "TC-ATC-02",
+      "description": "Handling multiple simultaneous emergency declarations.",
+      "expected_result": "All emergency flights receive priority slots and other slots are adjusted accordingly."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T19:51:37.624411",
+  "last_updated": "2026-06-15T19:54:48.599750",
+  "traceability": {
+    "related_requirements": [
+      "REQ-ATC-TIME-SLOTS-01",
+      "REQ-ATC-01"
+    ],
+    "design_components": [
+      "Flight",
+      "Slot"
+    ],
+    "test_artifacts": []
+  }
+}

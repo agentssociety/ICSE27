@@ -1,0 +1,175 @@
+@startuml PackageArchitecture
+!pragma layout smetana
+scale 0.75
+
+title Package Architecture — Project 6
+
+skinparam {
+  BackgroundColor transparent
+  ComponentBorderColor #AAAAAA
+  ComponentFontSize 11
+  PackageFontSize 12
+  PackageFontStyle bold
+  ArrowColor #666666
+  ArrowThickness 1
+  Shadowing false
+}
+
+skinparam package<<Domain>> {
+  BackgroundColor #E1F5E1
+}
+skinparam package<<DTO>> {
+  BackgroundColor #E3F2FD
+}
+skinparam package<<Repository>> {
+  BackgroundColor #FCE4EC
+}
+skinparam package<<ORM>> {
+  BackgroundColor #FFF3E0
+}
+skinparam package<<Infra>> {
+  BackgroundColor #F3E5F5
+}
+skinparam package<<Service>> {
+  BackgroundColor #E0F2F1
+}
+skinparam package<<API>> {
+  BackgroundColor #FFF9C4
+}
+skinparam package<<UI>> {
+  BackgroundColor #F1F8E9
+}
+skinparam package<<Tests>> {
+  BackgroundColor #EEEEEE
+}
+skinparam package<<Config>> {
+  BackgroundColor #C8E6C9
+}
+skinparam package<<Docs>> {
+  BackgroundColor #BBDEFB
+}
+skinparam package<<Shared>> {
+  BackgroundColor #F5F5F5
+}
+
+package "Domain layer" <<Domain>> {
+  [domain.blood_unit] as domain_blood_unit
+  [domain.reservation] as domain_reservation
+  [domain.transfusion_request] as domain_transfusion_request
+}
+
+package "DTO layer" <<DTO>> {
+  [dto.blood_unit] as dto_blood_unit
+  [dto.reservation] as dto_reservation
+  [dto.transfusion_request] as dto_transfusion_request
+}
+
+package "Repository layer" <<Repository>> {
+  [repository.blood_unit] as repository_blood_unit
+  [repository.reservation] as repository_reservation
+  [repository.transfusion_request] as repository_transfusion_request
+}
+
+package "ORM layer" <<ORM>> {
+  [orm.blood_unit] as orm_blood_unit
+  [orm.reservation] as orm_reservation
+  [orm.transfusion_request] as orm_transfusion_request
+}
+
+package "Infra layer" <<Infra>> {
+  [infra.blood_unit] as infra_blood_unit
+  [infra.reservation] as infra_reservation
+  [infra.transfusion_request] as infra_transfusion_request
+}
+
+package "Service layer" <<Service>> {
+  [service.blood_unit] as service_blood_unit
+  [service.reservation] as service_reservation
+  [service.transfusion_request] as service_transfusion_request
+}
+
+package "API layer" <<API>> {
+  [api.blood_unit] as api_blood_unit
+  [api.reservation] as api_reservation
+  [api.transfusion_request] as api_transfusion_request
+}
+
+package "Config layer" <<Config>> {
+  [config.settings] as config_settings
+}
+
+package "Docs layer" <<Docs>> {
+  [docs.api_and_deployment] as docs_api_and_deployment
+}
+
+package "Tests layer" <<Tests>> {
+  [tests.integration] as tests_integration
+  [tests.unit.blood_unit] as tests_unit_blood_unit
+  [tests.unit.reservation] as tests_unit_reservation
+  [tests.unit.transfusion_request] as tests_unit_transfusion_request
+}
+
+' ── Dependencies ──
+dto_blood_unit --> domain_blood_unit
+repository_blood_unit --> domain_blood_unit
+orm_blood_unit --> domain_blood_unit
+infra_blood_unit --> domain_blood_unit
+infra_blood_unit --> repository_blood_unit
+infra_blood_unit --> orm_blood_unit
+service_blood_unit --> domain_blood_unit
+service_blood_unit --> repository_blood_unit
+service_blood_unit --> dto_blood_unit
+api_blood_unit --> service_blood_unit
+api_blood_unit --> dto_blood_unit
+dto_transfusion_request --> domain_transfusion_request
+repository_transfusion_request --> domain_transfusion_request
+orm_transfusion_request --> domain_transfusion_request
+infra_transfusion_request --> domain_transfusion_request
+infra_transfusion_request --> repository_transfusion_request
+infra_transfusion_request --> orm_transfusion_request
+service_transfusion_request --> domain_transfusion_request
+service_transfusion_request --> repository_transfusion_request
+service_transfusion_request --> dto_transfusion_request
+api_transfusion_request --> service_transfusion_request
+api_transfusion_request --> dto_transfusion_request
+dto_reservation --> domain_reservation
+repository_reservation --> domain_reservation
+orm_reservation --> domain_reservation
+infra_reservation --> domain_reservation
+infra_reservation --> repository_reservation
+infra_reservation --> orm_reservation
+service_reservation --> domain_reservation
+service_reservation --> repository_reservation
+service_reservation --> dto_reservation
+service_reservation --> service_blood_unit
+service_reservation --> service_transfusion_request
+api_reservation --> service_reservation
+api_reservation --> dto_reservation
+tests_unit_blood_unit --> domain_blood_unit
+tests_unit_blood_unit --> service_blood_unit
+tests_unit_blood_unit --> api_blood_unit
+tests_unit_transfusion_request --> domain_transfusion_request
+tests_unit_transfusion_request --> service_transfusion_request
+tests_unit_transfusion_request --> api_transfusion_request
+tests_unit_reservation --> domain_reservation
+tests_unit_reservation --> service_reservation
+tests_unit_reservation --> api_reservation
+tests_integration --> api_blood_unit
+tests_integration --> api_transfusion_request
+tests_integration --> api_reservation
+
+legend right
+  **Layers (top → bottom)**
+  Domain → DTO → Repository → ORM → Infra
+  → Service → API → UI
+  Shared: cross-cutting utilities
+  Tests: mirrors every layer
+  Config / Docs: support concerns
+  ----
+  Packages: 27
+  Tasks: 7
+  Domain classes: 3
+  Generated: 2026-06-14 20:22 UTC
+end legend
+
+@enduml

@@ -1,0 +1,95 @@
+{
+  "id": "REQ-BBT-01",
+  "title": "Accept and Record Transfusion Requests",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall accept transfusion requests from medical staff, including patient details and required blood type, and store the request for further processing.",
+  "rationale": "To ensure that all transfusion requests are properly documented and can be processed efficiently.",
+  "business_value": "Improves patient safety by ensuring timely and accurate documentation of transfusion requests, reducing errors in medical procedures.",
+  "source": {
+    "type": "User Story",
+    "id": 40,
+    "description": "As a blood bank technician I need to accept and record transfusion requests from medical staff, including patient details and required blood type so that transfusion requests are properly documented and can be processed."
+  },
+  "stakeholders": [
+    "Blood Bank Technicians",
+    "Medical Staff"
+  ],
+  "acceptance_criteria": [
+    "A medical staff submits a transfusion request with patient details and required blood type.",
+    "The blood bank technician accepts and records the request.",
+    "The request is stored in the system."
+  ],
+  "preconditions": [
+    "Medical staff are authorized to submit requests.",
+    "System is operational and accessible."
+  ],
+  "postconditions": [
+    "Request is recorded with accurate patient details and required blood type.",
+    "Request is stored for further processing."
+  ],
+  "functional_constraints": [
+    "The system must handle concurrent request submissions efficiently."
+  ],
+  "security_requirements": [
+    "All patient details are encrypted in transit and at rest."
+  ],
+  "non_functional_requirements": {
+    "performance": "The system shall respond to request submission within 5 seconds.",
+    "availability": "The system shall be available 99.9% of the time.",
+    "scalability": "The system must support up to 100 requests per minute.",
+    "usability": "Error messages should be clear and actionable."
+  },
+  "edge_cases": [
+    "Patient details contain non-alphanumeric characters.",
+    "Required blood type is invalid or unsupported.",
+    "Multiple requests submitted simultaneously."
+  ],
+  "dependencies": [
+    "Medical staff authorization system",
+    "Database for storing transfusion requests"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Transfusion Request Submission API",
+      "description": "Interface for medical staff to submit transfusion requests."
+    },
+    {
+      "type": "Database",
+      "name": "Transfusion Requests Database",
+      "description": "Storage location for recorded transfusion requests."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-BBT-01",
+      "description": "Submit a valid transfusion request with all required details.",
+      "expected_result": "Request is accepted, stored in the database, and marked as pending for processing."
+    },
+    {
+      "id": "TC-BBT-02",
+      "description": "Attempt to submit a request with missing patient details.",
+      "expected_result": "Error message displayed indicating missing information."
+    },
+    {
+      "id": "TC-BBT-03",
+      "description": "Submit multiple requests simultaneously.",
+      "expected_result": "All requests are accepted and stored in the database within 5 seconds."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T23:31:18.125724",
+  "last_updated": "2026-06-14T23:46:53.227393",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "TransfusionRequest"
+    ],
+    "test_artifacts": []
+  }
+}

@@ -1,0 +1,62 @@
+
+classDiagram
+    class Flight:
+        -flight_id: str
+        -flight_type: str  # "arrival" or "departure"
+        -estimated_time: datetime
+        -is_emergency: bool
+        -is_delayed: bool
+        -assigned_slot: Optional[Slot]
+        +__init__(flight_id: str, flight_type: str, estimated_time: datetime, is_emergency: bool = False)
+        +mark_delayed()
+        +__lt__(other: Flight) bool
+
+    class Slot:
+        -runway: int  # 1 or 2
+        -start_time: datetime
+        -end_time: datetime
+        -flight: Optional[Flight]
+        +__init__(runway: int, start_time: datetime)
+        +is_available() bool
+        +assign_flight(flight: Flight)
+        +release()
+
+    class Runway:
+        -runway_id: int
+        -is_open: bool
+        -slots: List[Slot]
+        -schedule: Dict[datetime, Slot]
+        +__init__(runway_id: int)
+        +close()
+        +open()
+        +get_next_available_slot(after_time: datetime) Optional[Slot]
+        +get_slots_in_range(start: datetime, end: datetime) List[Slot]
+
+    class Scheduler:
+        -runways: List[Runway]
+        -flight_queue: List[Flight]
+        -emergency_queue: List[Flight]
+        +__init__()
+        +register_flight(flight: Flight) bool
+        +allocate_slot(flight: Flight) Optional[Slot]
+        +handle_emergency(flight: Flight) Slot
+        +close_runway(runway_id: int) List[Flight]
+        +reassign_flights(flights: List[Flight])
+        +get_timetable(runway_id: int) List[Slot]
+        +_find_earliest_slot(flight: Flight) Optional[Slot]
+        +_displace_flights(emergency_slot: Slot) List[Flight]
+        +_re_queue_flights(flights: List[Flight])
+
+    class App:
+        -scheduler: Scheduler
+        +__init__()
+        +register_flight_route()
+        +close_runway_route()
+        +declare_emergency_route()
+        +get_timetable_route()
+
+    Scheduler --> Runway
+    Scheduler --> Flight
+    Runway --> Slot
+    Slot --> Flight
+    App --> Scheduler

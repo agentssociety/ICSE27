@@ -1,0 +1,107 @@
+{
+  "id": "REQ-BLOOD-01",
+  "title": "Reserve and Auto-Release Blood Units Based on Pending Requests",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall reserve specific blood units for pending requests and automatically release them after a defined period or when no longer needed.",
+  "rationale": "To ensure efficient allocation of blood units and prevent waste due to delayed processing of requests.",
+  "business_value": "Improves operational efficiency by reducing the time from request to availability of blood units, thereby ensuring timely treatment for patients.",
+  "source": {
+    "type": "User Story",
+    "id": 42,
+    "description": "As a blood bank manager I need to reserve specific blood units for pending requests and automatically release them after a defined period or when no longer needed So that blood units are efficiently allocated and not wasted"
+  },
+  "stakeholders": [
+    "Blood Bank Manager",
+    "IT Team",
+    "Stakeholder Committee"
+  ],
+  "acceptance_criteria": [
+    "Given a pending request for a specific blood type and components\nWhen the system reserves the matching blood units\nThen those units are marked as reserved and unavailable for other requests",
+    "Given a reservation timeout period is configured\nWhen the timeout expires for a reserved unit\nThen that unit is automatically released and becomes available",
+    "Given a pending request is cancelled\nWhen the cancellation is processed\nThen all units reserved for that request are released"
+  ],
+  "preconditions": [
+    "A pending request exists with a specified blood type and component requirements",
+    "The system has access to the necessary inventory of blood units",
+    "The reservation timeout period is configured in the system settings"
+  ],
+  "postconditions": [
+    "All reserved blood units are marked as unavailable for other requests",
+    "Unused or expired reserved blood units are automatically released and made available again",
+    "All units previously reserved for a cancelled request are returned to the inventory pool"
+  ],
+  "functional_constraints": [
+    "The system must accurately track and manage the reservation status of each blood unit",
+    "The automatic release mechanism must respect both timeout expiration and cancellation events",
+    "The system must handle multiple simultaneous reservations and ensure no conflicts arise"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The system must process reservation requests within a reasonable time frame to avoid bottlenecks",
+    "availability": "The system must be available with at least 99.9% uptime during peak blood request periods",
+    "scalability": "The system must be able to scale up to accommodate an increase in the number of pending requests and inventory units without significant performance degradation",
+    "usability": "Error messages should be clear and actionable, and the user interface should provide visual feedback on reservation statuses"
+  },
+  "edge_cases": [
+    "What happens when a reservation timeout period is set to zero?",
+    "How should the system handle simultaneous requests for the same blood type and components?",
+    "What if the inventory does not have enough units to meet multiple concurrent reservations?"
+  ],
+  "dependencies": [
+    "Blood Inventory Management System",
+    "User Interface (UI) for Blood Bank Managers"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Blood Inventory Database",
+      "description": "The system interacts with this database to retrieve and update blood unit information, reservation statuses, and inventory levels."
+    },
+    {
+      "type": "API",
+      "name": "Inventory Management API",
+      "description": "This API is used to communicate with the Blood Inventory Management System to check availability and update inventory after a reservation or release."
+    },
+    {
+      "type": "UI",
+      "name": "Blood Bank Manager Interface",
+      "description": "The system interfaces with this UI to allow blood bank managers to view pending requests, manage reservations, and receive notifications about the status of their reservations."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-BLOOD-01",
+      "description": "Reserve a single blood unit for a pending request with a timeout period.",
+      "expected_result": "The system should mark the reserved unit as unavailable and set a timer based on the configured timeout period."
+    },
+    {
+      "id": "TC-BLOOD-02",
+      "description": "Release a reserved unit after the reservation timeout expires.",
+      "expected_result": "The system should automatically release the reserved unit and make it available for other requests."
+    },
+    {
+      "id": "TC-BLOOD-03",
+      "description": "Cancel a pending request and release all associated reserved units.",
+      "expected_result": "All units previously reserved for the cancelled request should be returned to the inventory pool and marked as available."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T23:33:07.776380",
+  "last_updated": "2026-06-14T23:47:00.900084",
+  "traceability": {
+    "related_requirements": [
+      "REQ-BLOOD-01"
+    ],
+    "design_components": [
+      "Reservation",
+      "TransfusionRequest",
+      "BloodUnit"
+    ],
+    "test_artifacts": []
+  }
+}

@@ -1,0 +1,152 @@
+@startuml
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+
+package "Domain Model" {
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  enum IfaceKind {
+    API
+    Database
+  }
+
+  class State {
+    +name: String
+  + checkStateChange(pre: State, post: State) : Boolean
+  + transitionState(Reserved -> Available) : State
+  + checkStateChange(Reserved, Canceled) : Boolean
+  + transitionState(Reserved -> Canceled) : State
+  + transitionState(Reserved -> Canceled)
+  }
+
+  class Actor {
+    +mayPerform: Set<Permission>
+  + checkPermission(initiator: Actor, grant: Permission) : Boolean
+  + checkPermission(CT, Write) : Boolean
+  + checkPermission(BBM, Admin) : Boolean
+  }
+
+  class Resource {
+    +owner: Actor
+    +accessible: Set<Actor>
+    {field} owner_always_accessible: owner in accessible
+  + checkAccess(initiator: Actor, target: Resource) : Boolean
+  + checkAccess(CT, resource) : Boolean
+  }
+
+  class Interface {
+    +kind: IfaceKind
+    +encrypted: Boolean
+    +authenticated: Boolean
+  + checkAuthentication(channel: Interface) : Boolean
+  + checkAuthentication(channel) : Boolean
+  }
+
+  class Scheduling_API <<interface>> {
+    {field} kind = API
+  }
+
+  class Blood_Inventory_Database <<interface>> {
+    {field} kind = Database
+  + queryReservation(unitId: String) : State
+  + releaseReservation(unitId: String) : Status
+  + updateReservationStatus(unitId, Canceled) : Status
+  + updateReservationStatus(unitId, Canceled)
+  }
+
+  class REQ_BB_01 {
+    +initiator: Actor
+    +target: Set<Resource>
+    +channel: Set<Interface>
+    +grant: Permission
+    +pre: State
+    +post: State
+    {field} inv_operation_requires_channel: some channel
+    {field} inv_operation_requires_target: some target
+    {field} inv_initiator_is_authorized: grant in initiator.mayPerform
+    {field} inv_resource_access_control: initiator in target.accessible
+    {field} at_least_one_state_change: some op | pre != post
+    {field} inv_authenticated_channel_required: some c: channel | c.authenticated = True
+  + createOperation(initiator=ITS, target=resource, \n grant=Execute, pre=Reserved, post=Available)
+  + authorized(grant in ITS.mayPerform)
+  + accessible(ITS in target.accessible)
+  + authenticated(true)
+  + valid(pre != post)
+  + createOperation(initiator=CT, target=resource, \n grant=Write, pre=Reserved, post=Canceled)
+  + createOperation(initiator=BBM, target=resource, \n grant=Admin, pre=Reserved, post=Canceled)
+  + createOperation(initiator=ITS, target=resource, \n grant=Admin, pre=Reserved, post=Canceled)
+  }
+
+  class CancellationRecord {
+    +op: REQ_BB_01
+    +resource: Resource
+    +time: State
+  + createCancellationRecord(op, resource, time=State) : CancellationRecord
+  }
+
+  class OverlapRecord {
+    +resource: Resource
+    +first: REQ_BB_01
+    +second: REQ_BB_01
+  + recordOverlap(resource, first_op, second_op)
+  }
+
+  class OutageRecord {
+    +op: REQ_BB_01
+    +reason: Boolean
+  + createOutageRecord(op=null, reason=ChannelInsecure) : OutageRecord
+  + createOutageRecord(op=null, reason=SystemOutage) : OutageRecord
+  }
+}
+
+package "Actors" {
+  class Blood_Bank_Manager {
+  }
+
+  class Clinical_Team {
+  }
+
+  class IT_Support {
+  + error(INVALID_CHANNEL)
+  }
+}
+
+' Relationships
+Actor <|-- Blood_Bank_Manager
+Actor <|-- Clinical_Team
+Actor <|-- IT_Support
+
+Interface <|-- Scheduling_API
+Interface <|-- Blood_Inventory_Database
+
+REQ_BB_01 "1" --> "1" Actor : initiator
+REQ_BB_01 "1" --> "*" Resource : target
+REQ_BB_01 "1" --> "*" Interface : channel
+REQ_BB_01 "1" --> "1" Permission : grant
+REQ_BB_01 "1" --> "1" State : pre
+REQ_BB_01 "1" --> "1" State : post
+
+Resource "1" --> "1" Actor : owner
+Resource "1" --> "*" Actor : accessible
+
+Actor "1" --> "*" Permission : mayPerform
+
+CancellationRecord "1" --> "1" REQ_BB_01 : op
+CancellationRecord "1" --> "1" Resource : resource
+CancellationRecord "1" --> "1" State : time
+
+OverlapRecord "1" --> "1" Resource : resource
+OverlapRecord "1" --> "1" REQ_BB_01 : first
+OverlapRecord "1" --> "1" REQ_BB_01 : second
+
+OutageRecord "1" --> "1" REQ_BB_01 : op
+OutageRecord "1" --> "1" Boolean : reason
+
+@enduml

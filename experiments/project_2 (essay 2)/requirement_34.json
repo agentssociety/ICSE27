@@ -1,0 +1,98 @@
+{
+  "id": "REQ-BBT-01",
+  "title": "Exact ABO/Rh Match First",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall prioritize blood units with exact ABO/Rh matches over other compatible types when matching transfusion requests.",
+  "rationale": "This ensures that only valid cross-matches are considered, which is crucial for patient safety.",
+  "business_value": "Improves the accuracy and safety of blood transfusions by ensuring compatibility before unit utilization.",
+  "source": {
+    "type": "User Story",
+    "id": 34,
+    "description": "As a blood bank technician, I need to match transfusion requests to compatible blood units, prioritizing exact ABO/Rh type matches first, then selecting units with the closest expiry date among compatible types."
+  },
+  "stakeholders": [
+    "Blood Bank Technicians",
+    "Clinical Staff",
+    "Patient Safety Committee"
+  ],
+  "acceptance_criteria": [
+    "Given a transfusion request for a specific ABO/Rh type, when matching blood units are searched, then the system should first return units with exact ABO/Rh match sorted by closest expiry date.",
+    "Given a transfusion request with no exact ABO/Rh match available, when compatible types are considered, then the system should select units with the closest expiry date among compatible types.",
+    "Given a blood unit that has not passed cross-match validation, when matching units are evaluated, then that unit should be excluded from the results."
+  ],
+  "preconditions": [
+    "The system has access to up-to-date blood unit inventory with ABO/Rh type, expiry date, and cross-match status.",
+    "The transfusion request includes a specific ABO/Rh type."
+  ],
+  "postconditions": [
+    "Only valid cross-matched units are considered for the transfusion request.",
+    "Units are prioritized based on exact ABO/Rh match and then by the closest expiry date among compatible types."
+  ],
+  "functional_constraints": [
+    "Exact matches must be given priority over other compatible types.",
+    "Cross-match validation status must be checked before considering a unit for matching."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The system should process transfusion requests and return matching units within a specified time frame.",
+    "availability": "The system must be available during peak blood transfusion hours to ensure timely matches are made.",
+    "scalability": "The system should be able to handle an increase in the number of transfusion requests and inventory size without performance degradation.",
+    "usability": "Error handling should be clear and user-friendly, providing information on why a match was not found or how to correct it."
+  },
+  "edge_cases": [
+    "What happens if there are no compatible blood units available?",
+    "How does the system handle simultaneous requests for the same exact ABO/Rh type?",
+    "What if a transfusion request is made before cross-match validation has been completed?"
+  ],
+  "dependencies": [
+    "Blood unit inventory data with ABO/Rh type, expiry date, and cross-match status",
+    "Cross-match validation system to ensure units are valid"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Blood Unit Inventory API",
+      "description": "The system will query this API to retrieve the current inventory of blood units."
+    },
+    {
+      "type": "Database",
+      "name": "Transfusion Request Database",
+      "description": "The system will store and update transfusion requests and their matching results in this database."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-BBT-01",
+      "description": "Exact ABO/Rh match available with multiple units, one having the closest expiry date.",
+      "expected_result": "The system should return the exact ABO/Rh match unit first and then other compatible types sorted by expiry date."
+    },
+    {
+      "id": "TC-BBT-02",
+      "description": "No exact ABO/Rh match available, but compatible types exist with varying expiry dates.",
+      "expected_result": "The system should return the compatible type with the closest expiry date."
+    },
+    {
+      "id": "TC-BBT-03",
+      "description": "A blood unit has not passed cross-match validation and is included in inventory.",
+      "expected_result": "The system should exclude this unit from matching results."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T20:12:40.835580",
+  "last_updated": "2026-06-14T20:15:37.955571",
+  "traceability": {
+    "related_requirements": [
+      "REQ-BLOOD-01"
+    ],
+    "design_components": [
+      "BloodUnit",
+      "TransfusionRequest"
+    ],
+    "test_artifacts": []
+  }
+}

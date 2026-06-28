@@ -1,0 +1,176 @@
+{
+  "run_id": "P1E2",
+  "project": 1,
+  "essay": 2,
+  "n_tasks": 6,
+  "wall_clock_s": 6041.7,
+  "pipeline_steps": 246,
+  "total_incidents": 19,
+  "fixed_incidents": 15,
+  "escalated_incidents": 4,
+  "self_fix_rate_pct": 78.9,
+  "by_phase": {
+    "ARCHITECTURE": {
+      "fixed": 0,
+      "escalated": 2
+    },
+    "TESTING": {
+      "fixed": 15,
+      "escalated": 2
+    }
+  },
+  "incidents": [
+    {
+      "line_num": 4797,
+      "timestamp": "2026-06-12 22:01:23.952",
+      "phase": "ARCHITECTURE",
+      "error_type": "SYNTAX",
+      "outcome": "FAIL_ESCALATED",
+      "message": "1 file(s) still have errors after auto-fix: ['src/domain/patient/Patient.py']"
+    },
+    {
+      "line_num": 5430,
+      "timestamp": "2026-06-12 22:03:21.171",
+      "phase": "ARCHITECTURE",
+      "error_type": "GENERAL",
+      "outcome": "FAIL_ESCALATED",
+      "message": "[tracer] tool fill_deterministic_scaffold failed: UnboundLocalError: cannot access local variable 'domain_class_list' where it is not associated with a value"
+    },
+    {
+      "line_num": 7343,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/patient/test_patient_domain.py::TestPatientDomain::test_create_patient_record"
+    },
+    {
+      "line_num": 7344,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/patient/test_patient_domain.py::TestPatientDomain::test_create_symptom_data"
+    },
+    {
+      "line_num": 7345,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/patient/test_patient_domain.py::TestPatientDomain::test_create_queue_entry"
+    },
+    {
+      "line_num": 7348,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/patient/test_patient_api.py::TestPatientAPI::test_list_patients_empty"
+    },
+    {
+      "line_num": 7349,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/patient/test_patient_api.py::TestPatientAPI::test_create_patient"
+    },
+    {
+      "line_num": 7668,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/patient/test_patient_domain.py::TestPatientDomain::test_create_patient_record"
+    },
+    {
+      "line_num": 7669,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/patient/test_patient_domain.py::TestPatientDomain::test_create_symptom_data"
+    },
+    {
+      "line_num": 7670,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/patient/test_patient_domain.py::TestPatientDomain::test_create_queue_entry"
+    },
+    {
+      "line_num": 7674,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/patient/test_patient_api.py::TestPatientAPI::test_list_patients_empty"
+    },
+    {
+      "line_num": 7675,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/patient/test_patient_api.py::TestPatientAPI::test_create_patient"
+    },
+    {
+      "line_num": 7913,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/patient/test_patient_api.py::TestPatientAPI::test_create_and_retrieve"
+    },
+    {
+      "line_num": 8370,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/patient/test_patient_api.py::TestPatientAPI::test_create_and_retrieve"
+    },
+    {
+      "line_num": 11499,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/patient/test_patient_service.py::TestPatientService::test_reorder_queue_assigns_correct_positions"
+    },
+    {
+      "line_num": 12341,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/patient/test_patient_api.py::TestPatientAPI::test_dashboard_empty"
+    },
+    {
+      "line_num": 12342,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/patient/test_patient_api.py::TestPatientAPI::test_dashboard_shows_patients"
+    },
+    {
+      "line_num": 12393,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/patient/test_patient_api.py::TestPatientAPI::test_dashboard_empty"
+    },
+    {
+      "line_num": 12394,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/patient/test_patient_api.py::TestPatientAPI::test_dashboard_shows_patients"
+    }
+  ]
+}

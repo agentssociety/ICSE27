@@ -1,0 +1,37 @@
+{
+  "task_id": 33,
+  "confidence": 0.9712,
+  "evidence": [
+    {
+      "claim": "The system accepts transfusion requests specifying required blood type.",
+      "fact": "It pairs a request with a compatible blood unit by exact type match, then by nearest expiration date.",
+      "score": 0.9939,
+      "user_story_span": "accept transfusion requests specifying required blood type",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system accepts transfusion requests specifying required quantity.",
+      "fact": "A transfusion order is a demand for a particular blood type and Rh with a given unit count.",
+      "score": 0.9902,
+      "user_story_span": "accept transfusion requests specifying required blood type, Rh factor, and quantity",
+      "fact_span": "a given unit count"
+    },
+    {
+      "claim": "The system accepts transfusion requests specifying required Rh factor.",
+      "fact": "A transfusion order is a demand for a particular blood type and Rh with a given unit count.",
+      "score": 0.9886,
+      "user_story_span": "accept transfusion requests specifying required blood type, Rh factor, and quantity",
+      "fact_span": "a particular blood type and Rh"
+    },
+    {
+      "claim": "The system does not store invalid requests.",
+      "fact": "The system excludes expired units from matching.",
+      "score": 0.9121,
+      "user_story_span": "the request is not stored",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

@@ -1,0 +1,91 @@
+{
+  "id": "REQ-SEC-01",
+  "title": "Detection and Flagging of Suspicious Withdrawal Patterns",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Critical",
+  "version": "1.0",
+  "description": "The system shall detect suspicious withdrawal patterns, such as rapid successive withdrawals or unusual amounts, and flag these patterns for review.",
+  "rationale": "To ensure the security of cash disbursements by promptly identifying potential fraudulent activities that could compromise the integrity of the settlement engine.",
+  "business_value": "This requirement enhances the reliability and security of the settlement engine, reducing the risk of unauthorized transactions and protecting financial assets.",
+  "source": {
+    "type": "User Story",
+    "id": 99,
+    "description": "As a system I need to detect suspicious withdrawal patterns (e.g., rapid successive withdrawals, unusual amounts) So that they can be flagged for review"
+  },
+  "stakeholders": [
+    "Security Team",
+    "Finance Team",
+    "Operations Team"
+  ],
+  "acceptance_criteria": [
+    "When a withdrawal pattern involves rapid successive withdrawals or unusual amounts, then the pattern is flagged for review."
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "The suspicious withdrawal pattern has been identified and flagged for review."
+  ],
+  "functional_constraints": [
+    "Detection must be based on criteria like rapid successive withdrawals or unusual amounts.",
+    "Flagged patterns will be subject to manual or automated review."
+  ],
+  "security_requirements": [
+    "The system shall detect suspicious withdrawal patterns without false positives or negatives.",
+    "Pattern detection and flagging mechanisms must operate within a secure environment."
+  ],
+  "non_functional_requirements": {
+    "performance": "Detection of suspicious patterns should be completed within 100 milliseconds for real-time processing.",
+    "availability": "The system must be available 99.9% of the time to ensure continuous monitoring.",
+    "scalability": "The system shall handle up to 1,000 withdrawal requests per second without performance degradation.",
+    "usability": "Error handling should provide clear and actionable feedback for flagged patterns."
+  },
+  "edge_cases": [
+    "Concurrent rapid successive withdrawals from multiple users",
+    "Withdrawal patterns involving unusual amounts that are not fraudulent (e.g., large transactions by legitimate users)",
+    "System under heavy load during withdrawal processing"
+  ],
+  "dependencies": [
+    "Secure settlement engine infrastructure",
+    "User authentication and authorization system",
+    "Data storage for transaction records"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Withdrawal API",
+      "description": "Interface through which withdrawal requests are submitted to the system."
+    },
+    {
+      "type": "Database",
+      "name": "Transaction Database",
+      "description": "Stores historical transaction data for pattern detection."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-SEC-01",
+      "description": "Multiple rapid successive withdrawals from a single user",
+      "expected_result": "Pattern flagged and submitted for review"
+    },
+    {
+      "id": "TC-SEC-02",
+      "description": "Large transaction by a legitimate user",
+      "expected_result": "No pattern flagged, normal processing continues"
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-17T09:56:38.565112",
+  "last_updated": "2026-06-17T09:59:12.438290",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "FlaggedTransaction",
+      "SuspiciouPattern",
+      "WithdrawalTransaction",
+      "Account"
+    ],
+    "test_artifacts": []
+  }
+}

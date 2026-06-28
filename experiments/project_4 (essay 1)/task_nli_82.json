@@ -1,0 +1,23 @@
+{
+  "task_id": 82,
+  "confidence": 0.9652,
+  "evidence": [
+    {
+      "claim": "Atomicity ensures that if any part of the withdrawal fails, the entire operation is rolled back.",
+      "fact": "The entire withdrawal sequence is executed as a single indivisible unit, ensuring that if anything goes wrong all changes are reversed immediately.",
+      "score": 0.9967,
+      "user_story_span": "Atomicity ensures that if any part of the withdrawal fails, the entire operation is rolled back.",
+      "fact_span": "The entire withdrawal sequence is executed as a single indivisible unit, ensuring that if anything goes wrong all changes are reversed immediately."
+    },
+    {
+      "claim": "The user's account balance should never be left in an inconsistent state.",
+      "fact": "A user's money is never lost or duplicated due to partial failures, because the system reverts every alteration when an error occurs.",
+      "score": 0.9337,
+      "user_story_span": "The user's account balance should never be left in an inconsistent state.",
+      "fact_span": "A user's money is never lost or duplicated due to partial failures, because the system reverts every alteration when an error occurs."
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

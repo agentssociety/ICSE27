@@ -1,0 +1,135 @@
+@startuml
+!pragma layout smetana
+
+box "Controller" #LightCyan
+  participant "TransfusionController" as Controller
+end box
+
+box "Application" #LightGreen
+  participant "TransfusionService" as Service
+end box
+
+box "Domain" #LightYellow
+  participant "REQ_TRANSFUSION_MATCH_01" as Operation
+  participant "ABORhCompatibilityRules" as Rules
+  participant "BloodUnit" as BloodUnit
+  participant "State" as State
+end box
+
+box "Infrastructure" #LightGray
+  database "TransfusionRequestDatabase" as DB
+end box
+
+box "External" #LightPink
+  participant "BloodUnitAPI" as API
+end box
+
+actor "ClinicalStaff" as Staff
+
+== Main Flow: Submit and Match ==
+
+Staff -> Controller : POST /transfusion-request (TLS 1.2+)
+note right: JSON body includes patientBloodType, requestDetails
+
+Controller -> Controller : authenticateRequest()
+note right: Validate JWT, check TLS required
+
+Controller -> Service : submitTransfusionRequest(requestData)
+
+Service -> Operation : create(requestData, initiator=Staff, grant=Write, target=TransfusionRequestDatabase)
+Service -> Operation : validatePermissions()
+note right: Checks: initiator.mayPerform contains grant AND initiator in target.accessible
+
+alt Validation fails
+  Service --> Controller : PermissionDenied
+  Controller --> Staff : HTTP 403 Forbidden
+  note right: Not authorized for operation
+else Valid
+  Service -> Operation : verifyPreconditions()
+  note right: Pre1: ABO/Rh data available, Pre2: authorized user, Pre3: database not empty
+
+  alt Precondition fails (e.g., database empty)
+    Operation --> Service : PreconditionError("No blood units available")
+    Service --> Controller : ErrorResponse
+    Controller --> Staff : HTTP 503 Service Unavailable
+    note right: "Blood unit database is empty"
+  else Preconditions OK
+    Service -> Rules : checkCompatibility(patientBloodType, bloodUnitTypes)
+    note right: Uses ABO/Rh compatibility rules
+
+    alt Patient ABO/Rh type unknown
+      Rules --> Service : UnknownBloodTypeError
+      Service --> Controller : ErrorResponse
+      Controller --> Staff : HTTP 422 Unprocessable Entity
+      note right: "Patient's ABO/Rh type is unknown"
+    else Known type
+      Service -> API : GET /blood-units?type=compatible&bloodType={patient} [TLS]
+      API --> Service : compatibleUnits: List<BloodUnit>
+
+      alt Insufficient compatible units
+        Service --> Service : checkUnitCount(compatibleUnits)
+        note right: Must have at least one compatible unit
+        Service --> Controller : ErrorResponse
+        Controller --> Staff : HTTP 409 Conflict
+        note right: "No compatible blood units available"
+      else Sufficient units
+        Service -> Operation : recordMatchedUnits(compatibleUnits)
+        Operation -> DB : INSERT transfusion_request (SQL over TLS)
+        DB --> Operation : stored
+        note right: Request recorded with matched units, incompatible excluded
+        Operation -> State : setPreState(Pre1, Pre2, Pre3)
+        Operation -> State : setPostState(Post1, Post2, Post3)
+        note right: State transition: pre != post, goals achieved
+
+        Operation --> Service : success
+        Service --> Controller : Response(requestId, matchedUnits, status=SUCCESS)
+        Controller --> Staff : HTTP 201 Created
+        note right: Body includes requestId and list of compatible blood units
+      end
+    end
+  end
+end
+
+== Error: Incompatible Blood Units Requested ==
+
+Staff -> Controller : POST /transfusion-request (requests specific incompatible unit)
+Controller -> Service : submitTransfusionRequest(requestData)
+Service -> Rules : checkCompatibility(patientBloodType, requestedUnit.bloodType)
+note right: Requested unit is incompatible
+
+Rules --> Service : IncompatibleUnitError
+Service --> Controller : ErrorResponse
+Controller --> Staff : HTTP 422 Unprocessable Entity
+note right: "Incompatible blood unit requested - excluded"
+note right: Incompatible units excluded per Post3
+
+== Error: Insufficient Compatible Units (edge case) ==
+
+' This is already covered inside main flow alt, but also as standalone flow:
+Staff -> Controller : POST /transfusion-request (normal request but no matches)
+Controller -> Service : submitTransfusionRequest
+Service -> API : GET /blood-units?type=compatible&bloodType={patient}
+API --> Service : [] (empty list)
+Service -> Service : checkUnitCount([])
+alt Empty list
+  Service --> Controller : ErrorResponse
+  Controller --> Staff : HTTP 409 Conflict
+  note right: "Insufficient compatible units - transfusion denied"
+end
+
+== Security Check on Authorization ==
+
+note right of Operation
+  REQ_TRANSFUSION_MATCH_01 invariants:
+  - initiator must hold required permission (Write)
+  - initiator must be authorized for target (TransfusionRequestDatabase)
+  - at least one channel authenticated (TLS)
+  - pre != post enforced
+end note
+
+note right of Controller
+  All channels use TLS 1.2+ encryption and authentication
+  HIPAA compliance enforced
+end note
+
+@enduml

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Schedule - Runway {{ runway_id }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Runway {{ runway_id }} Timetable</h1>
+        <p class="status {{ 'open' if runway_status == 'Open' else 'closed' }}">
+            Status: {{ runway_status }}
+        </p>
+
+        {% if slots %}
+        <table class="timetable">
+            <thead>
+                <tr>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Flight ID</th>
+                    <th>Type</th>
+                    <th>Emergency</th>
+                    <th>Delayed</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for slot in slots %}
+                <tr class="{{ 'emergency' if slot.flight and slot.flight.is_emergency else ('delayed' if slot.flight and slot.flight.is_delayed else '') }}">
+                    <td>{{ slot.start_time }}</td>
+                    <td>{{ slot.end_time }}</td>
+                    <td>
+                        {% if slot.flight %}
+                            {{ slot.flight.flight_id }}
+                        {% else %}
+                            <span class="free">— Free —</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if slot.flight %}
+                            {{ slot.flight.flight_type | capitalize }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if slot.flight and slot.flight.is_emergency %}
+                            <span class="badge badge-emergency">Emergency</span>
+                        {% else %}
+                            No
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if slot.flight and slot.flight.is_delayed %}
+                            <span class="badge badge-delayed">Delayed</span>
+                        {% else %}
+                            No
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-flights">No flights scheduled in the next 24 hours.</p>
+        {% endif %}
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

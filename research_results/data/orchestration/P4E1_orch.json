@@ -1,0 +1,21 @@
+{
+  "run_id": "P4E1",
+  "project": 4,
+  "essay": 1,
+  "n_tasks": 8,
+  "wall_clock_s": 18933.96,
+  "wall_clock_min": 315.6,
+  "pipeline_steps": 460,
+  "phase_backtracks": 50,
+  "phase_reentries": 94,
+  "orch_overhead_pct": 23.5,
+  "sm_delegations": 14,
+  "redelegations": 9,
+  "escalation_zone_pct": 30.2,
+  "total_incidents": 33,
+  "escalated_incidents": 10,
+  "self_fix_rate_sr": 69.7,
+  "SR": 69.7,
+  "PL": 0.8913,
+  "DS": 0.3571
+}

@@ -1,0 +1,170 @@
+@startuml
+title Transaction Authorization Flow
+
+box "Controller Layer" #LightBlue
+  participant "OperationController" as OC
+end box
+
+box "Application Layer" #LightGreen
+  participant "TransactionService" as TS
+  participant "AuthorizationService" as AS
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Account" as ACC
+  participant "Transaction" as TXN
+  participant "Operation" as OP
+  participant "Actor" as ACT
+  participant "Resource" as RES
+  participant "AccountData" as AD
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "Account_Database" as DB
+  participant "Payment_Processing_System" as PPS
+  participant "Interface" as IF
+end box
+
+== Main Flow - Successful Transaction ==
+
+ACT -> OC : initiateTransaction(actorId: String, accountId: String, amount: Int)
+OC -> TS : processTransaction(actorId: String, accountId: String, amount: Int)
+
+TS -> AS : authorizeTransaction(actorId: String, accountId: String, amount: Int)
+
+AS -> ACT : getPermissions(actorId: String) : Set<Permission>
+AS -> RES : checkAccess(actorId: String, accountId: String) : Boolean
+
+alt Access Denied
+    AS --> TS : return Error("Access Denied")
+    TS --> OC : return Error("Access Denied")
+    OC --> ACT : return 403 Forbidden
+end
+
+AS -> DB : getAccountData(accountId: String) : AccountData [TLS]
+
+alt Account Not Found
+    DB --> AS : return null
+    AS --> TS : return Error("Account Not Found")
+    TS --> OC : return Error("Account Not Found")
+    OC --> ACT : return 404 Not Found
+end
+
+AS -> AD : validateAccountData(balance: Int, dailyLimit: Int, usedToday: Int) : Boolean
+
+alt Invalid Account Data
+    AD --> AS : return false
+    AS --> TS : return Error("Invalid Account Data")
+    TS --> OC : return Error("Invalid Account Data")
+    OC --> ACT : return 422 Unprocessable Entity
+end
+
+AS -> ACC : checkSufficientFunds(balance: Int, amount: Int) : Boolean
+AS -> ACC : checkDailyLimit(usedToday: Int, dailyLimit: Int, amount: Int) : Boolean
+
+alt Insufficient Funds
+    ACC --> AS : return false
+    AS -> OP : createOperation(state: State.Pre2, result: State.Post2)
+    AS --> TS : return Error("Insufficient Funds")
+    TS --> OC : return Error("Insufficient Funds")
+    OC --> ACT : return 402 Payment Required
+end
+
+alt Daily Limit Exceeded
+    ACC --> AS : return false
+    AS -> OP : createOperation(state: State.Pre2, result: State.Post2)
+    AS --> TS : return Error("Daily Limit Exceeded")
+    TS --> OC : return Error("Daily Limit Exceeded")
+    OC --> ACT : return 429 Too Many Requests
+end
+
+AS -> ACC : updateBalance(amount: Int) : Account
+note right: balance' = balance - amount
+AS -> ACC : updateUsedToday(amount: Int) : Account
+note right: usedToday' = usedToday + amount
+
+AS -> DB : saveAccount(account: Account) [TLS, encrypted at rest]
+AS -> PPS : debitFunds(accountId: String, amount: Int) [TLS]
+
+alt Payment Processing Failed
+    PPS --> AS : return Error("Payment Processing Failed")
+    AS -> DB : rollbackAccount(accountId: String) [TLS]
+    AS --> TS : return Error("Payment Processing Failed")
+    TS --> OC : return Error("Payment Processing Failed")
+    OC --> ACT : return 502 Bad Gateway
+end
+
+AS -> OP : createOperation(state: State.Pre1, result: State.Post1)
+AS --> TS : return Success(transactionId: String)
+TS --> OC : return Success(transactionId: String)
+OC --> ACT : return 200 OK
+
+== Error Flow - Corrupted Account Data ==
+
+ACT -> OC : initiateTransaction(actorId: String, accountId: String, amount: Int)
+OC -> TS : processTransaction(actorId: String, accountId: String, amount: Int)
+TS -> AS : authorizeTransaction(actorId: String, accountId: String, amount: Int)
+
+AS -> DB : getAccountData(accountId: String) : AccountData [TLS]
+
+alt Account Data Missing
+    DB --> AS : return null
+    AS --> TS : return Error("Account Not Found")
+    TS --> OC : return Error("Account Not Found")
+    OC --> ACT : return 404 Not Found
+end
+
+AS -> AD : validateAccountData(balance: Int, dailyLimit: Int, usedToday: Int) : Boolean
+
+alt Corrupted Data - Negative Balance
+    AD --> AS : return false
+    AS --> TS : return Error("Corrupted Account Data")
+    TS --> OC : return Error("Corrupted Account Data")
+    OC --> ACT : return 500 Internal Server Error
+end
+
+alt Corrupted Data - usedToday > dailyLimit
+    AD --> AS : return false
+    AS --> TS : return Error("Corrupted Account Data")
+    TS --> OC : return Error("Corrupted Account Data")
+    OC --> ACT : return 500 Internal Server Error
+end
+
+== Error Flow - Unauthenticated Interface ==
+
+ACT -> OC : initiateTransaction(actorId: String, accountId: String, amount: Int)
+OC -> IF : authenticateChannel(channelId: String) : Boolean
+
+alt Unauthenticated Channel
+    IF --> OC : return false
+    OC --> ACT : return 401 Unauthorized
+end
+
+OC -> TS : processTransaction(actorId: String, accountId: String, amount: Int)
+TS -> AS : authorizeTransaction(actorId: String, accountId: String, amount: Int)
+
+AS -> ACT : getPermissions(actorId: String) : Set<Permission>
+
+alt Insufficient Permissions
+    ACT --> AS : return empty set
+    AS --> TS : return Error("Insufficient Permissions")
+    TS --> OC : return Error("Insufficient Permissions")
+    OC --> ACT : return 403 Forbidden
+end
+
+== Error Flow - Resource Not Accessible ==
+
+ACT -> OC : initiateTransaction(actorId: String, accountId: String, amount: Int)
+OC -> TS : processTransaction(actorId: String, accountId: String, amount: Int)
+TS -> AS : authorizeTransaction(actorId: String, accountId: String, amount: Int)
+
+AS -> RES : checkAccess(actorId: String, accountId: String) : Boolean
+
+alt Actor Not in Accessible Set
+    RES --> AS : return false
+    AS --> TS : return Error("Resource Not Accessible")
+    TS --> OC : return Error("Resource Not Accessible")
+    OC --> ACT : return 403 Forbidden
+end
+
+@enduml

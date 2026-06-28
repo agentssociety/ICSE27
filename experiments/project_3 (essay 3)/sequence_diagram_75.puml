@@ -1,0 +1,142 @@
+@startuml
+title Slot Creation and Modification – Full Sequence
+
+' Layer grouping with exact domain class names
+box "External" #LightBlue
+  actor Scheduler
+  participant "SchedulerInterface" as UI
+end box
+
+box "Controller" #LightGreen
+  participant "ScheduleController" as Controller
+end box
+
+box "Application" #LightYellow
+  participant "ScheduleService" as Service
+end box
+
+box "Domain" #LightCoral
+  participant "Slot" as Slot
+  participant "Schedule" as Schedule
+  participant "ScheduleData" as ScheduleData
+  participant "Role" as Role
+  participant "Permission" as Permission
+  participant "ScheduleState" as State
+  note right of State: enum values: Pre1, Post1, Post2
+end box
+
+box "Infrastructure" #LightGray
+  participant "ScheduleDatabase" as DB
+end box
+
+== CREATE_SLOT Flow ==
+
+alt Authentication fails (invalid token / expired session)
+  Scheduler -> UI: Submit slot creation request
+  UI -> Controller: POST /slots [TLS]
+  Controller -> UI: 401 Unauthorized
+  UI -> Scheduler: Display error: "Authentication required"
+else Authentication succeeds (token valid)
+
+  alt Initiator lacks Write permission OR not in accessible set
+    Scheduler -> UI: Submit slot creation request
+    UI -> Controller: POST /slots [TLS]
+    Controller -> Service: createSlot(request, initiator)
+    Service -> Role: checkPermission(initiator, Permission.Write)
+    Role --> Service: false
+    Service -> ScheduleData: isAccessibleBy(initiator)
+    ScheduleData --> Service: false
+    Service --> Controller: ForbiddenException
+    Controller -> UI: 403 Forbidden
+    UI -> Scheduler: Display error: "Insufficient permissions"
+  else Initiator has Write permission and is accessible
+
+    Scheduler -> UI: Submit slot creation request
+    UI -> Controller: POST /slots [TLS]
+    Controller -> Service: createSlot(slotData, initiator)
+    Service -> DB: retrieveAllSlots() [encrypted at rest]
+    DB --> Service: list of existing slots
+    Service -> Schedule: checkOverlap(newSlot, existingSlots)
+    alt Overlap detected
+      Schedule --> Service: OverlapConflict
+      Service --> Controller: ConflictException
+      Controller -> UI: 409 Conflict
+      UI -> Scheduler: Display error: "Slot overlaps with existing slot"
+      note over Schedule: State remains Pre1 (no change)
+    else No overlap
+      Service -> Slot: createSlot(slotData)
+      Slot --> Service: slot
+      Service -> Schedule: addSlot(slot)
+      note over Schedule: State transitions to Post1
+      Service -> ScheduleData: updateContents(schedule)
+      Service -> DB: saveSlot(slot) [encrypted at rest]
+      DB --> Service: success
+      Service --> Controller: Slot created
+      Controller -> UI: 201 Created (slot details)
+      UI -> Scheduler: Display success: "Slot created"
+    end
+  end
+end
+
+== MODIFY_SLOT Flow ==
+
+alt Authentication fails (invalid token / expired session)
+  Scheduler -> UI: Submit slot modification request
+  UI -> Controller: PUT /slots/{id} [TLS]
+  Controller -> UI: 401 Unauthorized
+  UI -> Scheduler: Display error: "Authentication required"
+else Authentication succeeds (token valid)
+
+  alt Initiator lacks Write permission OR not in accessible set
+    Scheduler -> UI: Submit slot modification request
+    UI -> Controller: PUT /slots/{id} [TLS]
+    Controller -> Service: modifySlot(slotId, modifications, initiator)
+    Service -> Role: checkPermission(initiator, Permission.Write)
+    Role --> Service: false
+    Service -> ScheduleData: isAccessibleBy(initiator)
+    ScheduleData --> Service: false
+    Service --> Controller: ForbiddenException
+    Controller -> UI: 403 Forbidden
+    UI -> Scheduler: Display error: "Insufficient permissions"
+  else Initiator has Write permission and is accessible
+
+    Scheduler -> UI: Submit slot modification request
+    UI -> Controller: PUT /slots/{id} [TLS]
+    Controller -> Service: modifySlot(slotId, modifications, initiator)
+
+    ' Retrieve the existing slot
+    Service -> DB: retrieveSlot(slotId) [encrypted at rest]
+    alt Slot not found
+      DB --> Service: null
+      Service --> Controller: NotFoundException
+      Controller -> UI: 404 Not Found
+      UI -> Scheduler: Display error: "Slot not found"
+    else Slot found
+      DB --> Service: existing slot
+      ' Get all other slots for overlap check
+      Service -> DB: retrieveAllSlotsExcluding(slotId) [encrypted at rest]
+      DB --> Service: other slots
+      Service -> Schedule: checkOverlap(modifiedSlot, otherSlots)
+      alt Overlap detected
+        Schedule --> Service: OverlapConflict
+        Service --> Controller: ConflictException
+        Controller -> UI: 409 Conflict
+        UI -> Scheduler: Display error: "Modified slot overlaps with existing slot"
+        note over Schedule: State remains Pre1
+      else No overlap
+        Service -> Slot: updateSlot(existingSlot, modifications)
+        Slot --> Service: updatedSlot
+        Service -> Schedule: updateSlot(updatedSlot)
+        note over Schedule: State remains Post1 (or Pre1 if no slots before? – invariant ensures at least one)
+        Service -> ScheduleData: updateContents(schedule)
+        Service -> DB: updateSlot(updatedSlot) [encrypted at rest]
+        DB --> Service: success
+        Service --> Controller: Slot modified
+        Controller -> UI: 200 OK (updated slot details)
+        UI -> Scheduler: Display success: "Slot modified"
+      end
+    end
+  end
+end
+
+@enduml

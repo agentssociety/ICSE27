@@ -1,0 +1,108 @@
+@startuml
+skinparam classFontSize 12
+skinparam packageFontSize 14
+skinparam packageBorderColor #666666
+skinparam classBorderColor #333333
+skinparam classFontColor #000000
+skinparam stereotypeFontSize 10
+
+package "Domain Model" {
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  + checkPermission(BU, "Read") : Boolean
+  + checkPermission(BU, "Write") : Boolean
+  + checkPermission(BU, "Execute") : Boolean
+  + checkPermission(CS, "Read") : Boolean
+  }
+
+  enum IfaceKind {
+    Database
+    Service
+  }
+
+  abstract class Actor {
+    + mayPerform: set Permission
+  }
+
+  class Bank_Users extends Actor {
+  }
+
+  class Customer_Support extends Actor {
+  }
+
+  class IT_Team extends Actor {
+  }
+
+  abstract class State {
+  }
+
+  class Pre1 extends State {
+    + "represents: user has active account with positive balance"
+  }
+
+  class Pre2 extends State {
+    + "represents: system tracks cumulative daily withdrawal total"
+  }
+
+  class Post1 extends State {
+    + "represents: user receives decline message indicating amount exceeds balance or daily limit"
+  }
+
+  class Resource {
+    + owner: one Actor
+    + accessible: set Actor
+    + "invariant: owner_always_accessible: owner in accessible"
+  + checkAccessibility(IT) : Boolean
+  }
+
+  abstract class Interface {
+    + kind: one IfaceKind
+    + encrypted: one Bool
+    + authenticated: one Bool
+  }
+
+  class Account_Balance_Database extends Interface {
+    + "invariant: kind = Database"
+  }
+
+  class Daily_Withdrawal_Tracking_Service extends Interface {
+    + "invariant: kind = Service"
+  }
+}
+
+package "Application" {
+  class REQ_BAL_01 {
+    + initiator: one Actor
+    + target: some Resource
+    + channel: some Interface
+    + grant: one Permission
+    + pre: one State
+    + post: one State
+    + "invariant: inv_operation_requires_channel: some channel"
+    + "invariant: inv_operation_requires_target: some target"
+    + "invariant: inv_initiator_is_authorized: grant in initiator.mayPerform"
+    + "invariant: inv_resource_access_control: initiator in target.accessible"
+    + "invariant: inv_state_must_change: pre != post"
+    + "invariant: inv_authenticated_channel_required: some c: channel | c.authenticated = True"
+    + "invariant: postconditions_must_reach_defined_states: post in Post1"
+    + "invariant: nfr_fact_usability_interface_limit: #channel <= 3"
+    + "invariant: nfr_fact_usability_single_initiator: one initiator"
+    + "invariant: nfr_fact_usability_distinct_channel_kinds: all disj c1, c2: channel | c1.kind != c2.kind"
+  }
+}
+
+' Relationships
+REQ_BAL_01 "1" --> "1" Actor : initiator
+REQ_BAL_01 "1" --> "1..*" Resource : target
+REQ_BAL_01 "1" --> "1..*" Interface : channel
+REQ_BAL_01 "1" --> "1" Permission : grant
+REQ_BAL_01 "1" --> "1" State : pre
+REQ_BAL_01 "1" --> "1" State : post
+
+Resource "1" --> "1" Actor : owner
+Resource "1" --> "1..*" Actor : accessible
+
+@enduml

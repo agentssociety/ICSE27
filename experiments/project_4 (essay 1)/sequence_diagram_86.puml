@@ -1,0 +1,92 @@
+@startuml
+!theme plain
+skinparam participantpadding 20
+skinparam boxpadding 10
+
+box "Controller" #LightBlue
+    participant UserManagementAPI
+end box
+
+box "Application" #LightYellow
+    participant TransactionHistoryService
+end box
+
+box "Domain" #LightGreen
+    participant "Actor" as Actor
+    participant "Resource" as Resource
+    participant "User" as User
+    participant "Transaction" as Transaction
+    participant "Permission" as PermissionEnum
+    participant "State" as StateEnum
+end box
+
+box "Infrastructure" #LightCoral
+    database TransactionLogDB
+end box
+
+actor "Admin" as Admin
+
+== Main Flow - Successful retrieval with transactions ==
+
+Admin -> UserManagementAPI : GET /users/{userId}/transactions \n(authenticated session, precondition: LoggedInAsAdmin)
+UserManagementAPI -> TransactionHistoryService : retrieveTransactionHistory(userId : String) : Response
+TransactionHistoryService -> Resource : getById(userId : String) : Resource
+Resource --> TransactionHistoryService : resource (User object)
+
+TransactionHistoryService -> Actor : hasPermission(admin : Actor, resource : Resource, permission : Permission.Admin) : boolean
+note right: Validate admin holds Admin permission
+Actor --> TransactionHistoryService : true
+
+TransactionHistoryService -> Resource : isAccessible(actor : Admin) : boolean
+note right: Check admin in resource.accessible set
+Resource --> TransactionHistoryService : true
+
+TransactionHistoryService -> TransactionLogDB : fetchTransactions(userId : String) : List<Transaction> [TLS encrypted]
+TransactionLogDB --> TransactionHistoryService : transactions (list of Transaction)
+
+TransactionHistoryService -> TransactionHistoryService : formatResponse(transactions)
+TransactionHistoryService --> UserManagementAPI : response (200 OK, JSON list)
+UserManagementAPI --> Admin : HTTP 200 OK \n{ "transactions": [...] }
+
+== Alternate: User has no transactions ==
+
+TransactionHistoryService -> TransactionLogDB : fetchTransactions(userId : String) : List<Transaction>
+TransactionLogDB --> TransactionHistoryService : empty list
+
+TransactionHistoryService -> TransactionHistoryService : formatEmptyResponse()
+TransactionHistoryService --> UserManagementAPI : response (200 OK, empty message)
+UserManagementAPI --> Admin : HTTP 200 OK \n{ "transactions": [], "message": "No transactions found" }
+
+== Error: Admin lacks Admin permission ==
+
+TransactionHistoryService -> Actor : hasPermission(admin : Actor, resource : Resource, permission : Permission.Admin) : boolean
+Actor --> TransactionHistoryService : false
+
+TransactionHistoryService --> UserManagementAPI : error (403 Forbidden)
+UserManagementAPI --> Admin : HTTP 403 Forbidden \n{ "error": "Insufficient permissions" }
+
+== Error: Admin not in resource accessible set ==
+
+TransactionHistoryService -> Actor : hasPermission(admin : Actor, resource : Resource, permission : Permission.Admin) : boolean
+Actor --> TransactionHistoryService : true
+
+TransactionHistoryService -> Resource : isAccessible(actor : Admin) : boolean
+Resource --> TransactionHistoryService : false
+
+TransactionHistoryService --> UserManagementAPI : error (403 Forbidden)
+UserManagementAPI --> Admin : HTTP 403 Forbidden \n{ "error": "Access denied to this user's history" }
+
+== Error: Resource not found ==
+
+TransactionHistoryService -> Resource : getById(userId : String) : Resource
+Resource --> TransactionHistoryService : null
+
+TransactionHistoryService --> UserManagementAPI : error (404 Not Found)
+UserManagementAPI --> Admin : HTTP 404 Not Found \n{ "error": "User not found" }
+
+== State Transitions Note ==
+
+note over Resource : Precondition: resource exists, hasTransactions flag may be set.
+note over TransactionHistoryService : Postcondition: PostDone (viewing history recorded in logs)
+
+@enduml

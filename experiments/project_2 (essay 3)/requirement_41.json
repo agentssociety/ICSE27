@@ -1,0 +1,100 @@
+{
+  "id": "REQ-TRANSFUSION-MATCH-01",
+  "title": "Automated Blood Unit Matching based on ABO/Rh Compatibility Rules",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall automatically match transfusion requests to compatible blood units based on ABO/Rh compatibility rules in real-time.",
+  "rationale": "To ensure safe and efficient blood allocation without manual cross-checking, reducing the risk of medical errors and improving operational efficiency.",
+  "business_value": "Improves patient safety by ensuring only compatible blood is administered, thereby reducing potential adverse reactions. Enhances operational efficiency through automated processing.",
+  "source": {
+    "type": "User Story",
+    "id": 41,
+    "description": "As a transfusion service user, I need the system to automatically match transfusion requests to compatible blood units based on ABO/Rh compatibility rules so that I can ensure safe and efficient blood allocation without manual cross-checking."
+  },
+  "stakeholders": [
+    "Transfusion Service Users",
+    "Clinical Staff",
+    "IT Department"
+  ],
+  "acceptance_criteria": [
+    "Given a transfusion request for a patient with a specific ABO/Rh type",
+    "When the system processes the request",
+    "Then it should only return blood units that are ABO/Rh compatible with the patient"
+  ],
+  "preconditions": [
+    "The system must have access to up-to-date and accurate ABO/Rh compatibility data for all available blood units",
+    "A transfusion request is submitted by a user authorized to make such requests",
+    "The system's database of blood units is not empty"
+  ],
+  "postconditions": [
+    "The system returns only compatible blood units that are safe for the patient to receive",
+    "The transfusion request is recorded in the system with details of the matched blood unit(s)",
+    "Any incompatible blood units are excluded from consideration"
+  ],
+  "functional_constraints": [
+    "The matching process must be completed within a maximum response time of 5 seconds",
+    "The system must handle at least 100 simultaneous transfusion requests without performance degradation"
+  ],
+  "security_requirements": [
+    "Access to the ABO/Rh compatibility data must be restricted to authorized personnel only",
+    "All data transmitted between the user interface and the backend database must be encrypted using TLS 1.2 or higher",
+    "The system must comply with HIPAA regulations for patient data protection"
+  ],
+  "non_functional_requirements": {
+    "performance": "The system must have a response time of less than 5 seconds for all match requests",
+    "availability": "The system must be available 99.9% of the time",
+    "scalability": "The system must be able to scale to support up to 10,000 active users and handle 200 concurrent transfusion requests",
+    "usability": "Error messages must be clear and actionable, and the user interface should provide real-time feedback on matching status"
+  },
+  "edge_cases": [
+    "What happens if a patient has unknown ABO/Rh type?",
+    "How does the system handle requests for incompatible blood units?",
+    "What if there are insufficient compatible blood units available?"
+  ],
+  "dependencies": [
+    "Access to up-to-date and accurate ABO/Rh compatibility data",
+    "Authorization system for transfusion requests",
+    "Database of available blood units"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Blood Unit API",
+      "description": "The system will interact with a Blood Unit API to retrieve and update information about available blood units."
+    },
+    {
+      "type": "Database",
+      "name": "Transfusion Request Database",
+      "description": "The system will store and manage transfusion requests in this database."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-TRANSFUSION-MATCH-01",
+      "description": "Verify matching of a request for AB+ blood.",
+      "expected_result": "The system returns only AB+ and ABO/Rh compatible units."
+    },
+    {
+      "id": "TC-TRANSFUSION-MATCH-02",
+      "description": "Verify handling of an unknown ABO/Rh type request.",
+      "expected_result": "The system should return an error message indicating the patient's ABO/Rh type is unknown."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T23:31:46.701610",
+  "last_updated": "2026-06-14T23:46:56.458560",
+  "traceability": {
+    "related_requirements": [
+      "REQ-BLOOD-01"
+    ],
+    "design_components": [
+      "TransfusionRequest",
+      "BloodUnit"
+    ],
+    "test_artifacts": []
+  }
+}

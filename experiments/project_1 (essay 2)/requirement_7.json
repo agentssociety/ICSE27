@@ -1,0 +1,104 @@
+{
+  "id": "REQ-TRIAGE-01",
+  "title": "Register New Patient with Symptoms",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall accept patient symptoms during registration and add the patient to the evaluation queue for assessment.",
+  "rationale": "This requirement ensures that patients are properly registered with their symptoms, allowing them to be prioritized and evaluated appropriately in the healthcare system.",
+  "business_value": "Improves patient flow and efficiency by ensuring timely assessment and treatment based on symptom severity.",
+  "source": {
+    "type": "User Story",
+    "id": 7,
+    "description": "As a triage nurse, I need to register a new patient with their symptoms so that they can be added to the queue for evaluation."
+  },
+  "stakeholders": [
+    "Triage Nurses",
+    "Medical Staff",
+    "System Administrators"
+  ],
+  "acceptance_criteria": [
+    "The system shall display a registration form for new patients.",
+    "The system shall accept input of patient symptoms during the registration process.",
+    "The system shall add the newly registered patient to an evaluation queue."
+  ],
+  "preconditions": [
+    "A triage nurse is logged into the system with appropriate permissions.",
+    "There are available slots in the evaluation queue."
+  ],
+  "postconditions": [
+    "The new patient's symptom information is stored in the system.",
+    "The new patient is listed as a pending evaluation in the queue."
+  ],
+  "functional_constraints": [
+    "Symptom input must be validated against predefined criteria to ensure accuracy and relevance.",
+    "Patient information must be securely stored and accessible only by authorized personnel."
+  ],
+  "security_requirements": [
+    "All patient data shall be encrypted both at rest and in transit.",
+    "Access to the registration system is restricted to authorized triage nurses and medical staff."
+  ],
+  "non_functional_requirements": {
+    "performance": "The registration process must complete within 30 seconds under normal conditions.",
+    "availability": "The system must be available 99.5% of the time during peak hours.",
+    "scalability": "The system shall handle up to 1,000 new patient registrations per hour without significant performance degradation.",
+    "usability": "Error messages shall be clear and actionable; the interface shall be intuitive with minimal form fields."
+  },
+  "edge_cases": [
+    "What if the triage nurse enters invalid symptom information?",
+    "How should the system handle a situation where no symptoms are provided?",
+    "What happens if the evaluation queue is full?",
+    "What if multiple patients are registered simultaneously?"
+  ],
+  "dependencies": [
+    "Symptom validation service",
+    "Evaluation queue management system"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Symptom Validation API",
+      "description": "The registration process must validate symptom input using the Symptom Validation API to ensure accuracy and relevance."
+    },
+    {
+      "type": "Database",
+      "name": "Patient Database",
+      "description": "The system must store new patient information in the Patient Database, including their symptoms."
+    },
+    {
+      "type": "System",
+      "name": "Evaluation Queue System",
+      "description": "The newly registered patient must be added to the Evaluation Queue using the Evaluation Queue Management System."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-TRIAGE-01",
+      "description": "Register a new patient with valid symptoms.",
+      "expected_result": "Patient is successfully added to the evaluation queue and symptom information stored."
+    },
+    {
+      "id": "TC-TRIAGE-02",
+      "description": "Attempt to register a new patient without providing any symptoms.",
+      "expected_result": "Error message displayed indicating that symptoms are required."
+    },
+    {
+      "id": "TC-TRIAGE-03",
+      "description": "Simulate simultaneous registration of multiple patients.",
+      "expected_result": "All patients are successfully added to the evaluation queue in a timely manner."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-12T21:57:48.090459",
+  "last_updated": "2026-06-12T22:03:37.056761",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Patient"
+    ],
+    "test_artifacts": []
+  }
+}

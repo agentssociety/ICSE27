@@ -1,0 +1,65 @@
+{
+  "task_id": 25,
+  "confidence": 0.9312,
+  "evidence": [
+    {
+      "claim": "The system allows to track blood units by type",
+      "fact": "The application tracks blood units by ABO type.",
+      "score": 0.9958,
+      "user_story_span": "track blood units by type, Rh factor, and donation date",
+      "fact_span": "tracks blood units by ABO type"
+    },
+    {
+      "claim": "The blood type is recorded for each unit",
+      "fact": "The application tracks blood units by ABO type.",
+      "score": 0.9951,
+      "user_story_span": "its blood type, Rh factor, and donation date are recorded",
+      "fact_span": "tracks blood units by ABO type"
+    },
+    {
+      "claim": "The system allows to track blood units by Rh factor",
+      "fact": "The application tracks blood units by Rh factor.",
+      "score": 0.994,
+      "user_story_span": "track blood units by type, Rh factor, and donation date",
+      "fact_span": "tracks blood units by Rh factor"
+    },
+    {
+      "claim": "When a blood unit is received, it is logged into the system",
+      "fact": "The application tracks blood units by collection date.",
+      "score": 0.9882,
+      "user_story_span": "Given a blood unit is received",
+      "fact_span": "tracks blood units by collection date"
+    },
+    {
+      "claim": "The system can flag units near or past expiration",
+      "fact": "It automatically monitors the expiry of blood units and removes outdated ones from circulation.",
+      "score": 0.9721,
+      "user_story_span": "Then the system can flag units near or past expiration",
+      "fact_span": "monitors the expiry of blood units"
+    },
+    {
+      "claim": "When a blood unit is received, the expiration date is calculated",
+      "fact": "The expiry of a blood unit is fixed at 42 days after collection.",
+      "score": 0.9517,
+      "user_story_span": "When the expiration date is calculated",
+      "fact_span": "expiry of a blood unit is fixed at 42 days after collection"
+    },
+    {
+      "claim": "Blood units are categorized by type (e.g., A, B, AB, O)",
+      "fact": "The application tracks blood units by ABO type.",
+      "score": 0.8654,
+      "user_story_span": "Blood units are categorized by type (e.g., A, B, AB, O)",
+      "fact_span": "tracks blood units by ABO type"
+    },
+    {
+      "claim": "The donation date is recorded for each unit",
+      "fact": "The application tracks blood units by collection date.",
+      "score": 0.6872,
+      "user_story_span": "Donation date is recorded for each unit",
+      "fact_span": "tracks blood units by collection date"
+    }
+  ],
+  "total_claims": 12,
+  "supported_claims": 8,
+  "threshold": 0.6
+}

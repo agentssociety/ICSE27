@@ -1,0 +1,222 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  enum State {
+    Pre1
+    Pre2
+    Post1
+    Post2
+    Post3
+    Post4
+  + validateState(Pre1)
+  + transitionState(Post1)
+  + validateState(Pre2)
+  + transitionState(Post2)
+  + validateTransition(pre: State, post: State)
+  + applyTransition(newState: State)
+  }
+
+  class Actor {
+    - role: String { Air_Traffic_Controllers, Flight_Operations_Team, Operations_Management }
+    - mayPerform: Set<Permission>
+  + authenticateUser(credentials) : Bool
+  + checkPermission(Read, RunwaySlotData)
+  + checkPermission(Write, RunwaySlotData)
+  + returnFalse()
+  }
+
+  class RunwaySlotData {
+    - owner: Actor
+    - accessible: Set<Actor>
+    .. invariants ..
+    { owner in accessible }
+  }
+
+  class FlightData {
+    - owner: Actor
+    - accessible: Set<Actor>
+    .. invariants ..
+    { owner in accessible }
+  }
+
+  class Resource {
+    - owner: Actor
+    - accessible: Set<Actor>
+    .. invariants ..
+    { owner in accessible }
+  + checkAccessibility(actor: Actor, resource: Resource)
+  + checkResourceExists(resourceId: String)
+  }
+
+  RunwaySlotData --|> Resource
+  FlightData --|> Resource
+  Resource "1" *-- "1" Actor : owner
+  Resource "1" *-- "*" Actor : accessible
+  Actor "1" *-- "*" Permission : mayPerform
+}
+
+package "Infrastructure — Ports" {
+  interface Interface {
+    - kind: String { API, Database }
+    - encrypted: Bool
+    - authenticated: Bool
+  + openEncryptedChannel()
+  }
+
+  interface FlightDataAPI <<interface>> {
+    .. invariants ..
+    { kind = API }
+  }
+
+  interface RunwaySlotDB <<interface>> {
+    .. invariants ..
+    { kind = Database }
+  }
+
+  interface TimetableUI <<interface>> {
+    .. invariants ..
+    { kind = UI }
+  + returnError(401, "Unauthorized")
+  + returnError(403, "Forbidden")
+  + returnError(412, "Precondition failed")
+  + returnEmptyList()
+  + displayEmptyTimetable()
+  + returnError(404, "Flight data not found")
+  + markSlotWithError(slotId)
+  + highlightByDuration(delayDuration: Int)
+  + markEmergency(slotId)
+  + showBothIndicators(slotId)
+  + renderTimetable()
+  + displayMessage("No slots found for specified runway")
+  + filterAndDisplay(slotList)
+  + returnSuccess()
+  + confirmUpdate()
+  + returnError("Update failed")
+  + displayError("Failed to update slot data")
+  + returnError(403, "Actor not in resource accessible set")
+  + returnError(404, "Target resource not found")
+  }
+
+  FlightDataAPI --|> Interface
+  RunwaySlotDB --|> Interface
+  TimetableUI --|> Interface
+}
+
+package "Application" {
+  class Operation {
+    - initiator: Actor
+    - target: Resource
+    - channel: Interface
+    - grant: Permission
+    - pre: State
+    - post: State
+    .. invariants ..
+    { pre != post }
+    { initiator in target.accessible }
+    { grant in initiator.mayPerform }
+  + createOperation(initiator: Actor, target: Resource, permission: Read, pre: Pre1)
+  + returnError("Precondition failed")
+  + createOperation(initiator: Actor, target: Resource, permission: Write, pre: Pre2)
+  + returnError("State must change")
+  + returnSuccess()
+  }
+
+  Operation "1" *-- "1" Actor : initiator
+  Operation "1" *-- "1" Resource : target
+  Operation "1" *-- "1" Interface : channel
+  Operation "1" *-- "1" Permission : grant
+  Operation "1" *-- "1" State : pre
+  Operation "1" *-- "1" State : post
+}
+
+package "Exceptions" {
+  class ResourceNotFoundException <<exception>> {
+    - resourceType: String
+    - resourceId: String
+  }
+
+  class AccessDeniedException <<exception>> {
+    - actor: Actor
+    - requiredPermission: Permission
+  }
+
+  class InconsistentDataException <<exception>> {
+    - details: String
+  }
+
+  class OperationFailedException <<exception>> {
+    - reason: String
+  }
+}
+
+package "DTOs" {
+  class TimetableRequestDTO <<dto>> {
+    - runwayFilter: String
+    - timeRangeStart: DateTime
+    - timeRangeEnd: DateTime
+  }
+
+  class TimetableResponseDTO <<dto>> {
+    - slots: List<SlotDTO>
+    - totalCount: Integer
+  }
+
+  class SlotDTO <<dto>> {
+    - slotId: String
+    - runway: String
+    - time: DateTime
+    - flightId: String
+    - delayDuration: Integer
+    - isEmergency: Bool
+    - isDelayed: Bool
+  }
+
+  class UpdateSlotRequestDTO <<dto>> {
+    - slotId: String
+    - newDelay: Integer
+    - newEmergencyStatus: Bool
+  }
+
+  TimetableResponseDTO "1" *-- "*" SlotDTO : slots
+}
+
+package "Controllers" {
+  class TimetableController {
+    - flightDataAPI: FlightDataAPI
+    - runwaySlotDB: RunwaySlotDB
+    - ui: TimetableUI
+  }
+
+  class SlotUpdateController {
+    - runwaySlotDB: RunwaySlotDB
+  }
+
+  TimetableController "1" *-- "1" FlightDataAPI
+  TimetableController "1" *-- "1" RunwaySlotDB
+  TimetableController "1" *-- "1" TimetableUI
+  SlotUpdateController "1" *-- "1" RunwaySlotDB
+}
+
+note top of Resource
+  Each Resource has exactly one owner
+  and a set of accessible Actors
+end note
+
+note top of Operation
+  Operation state must change (pre != post)
+  Initiator must be in target.accessible
+  Initiator must have required permission
+end note
+
+@enduml

@@ -1,0 +1,262 @@
+@startuml
+title Project 2 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+note as RelationshipCorrections
+  <b>Relationship cardinalities corrected by LLM review</b>
+  PatientQueue *-- Patient → PatientQueue --* Patient
+    Reason: A PatientQueue contains many patients, so the correct PlantUML arrow is '--*' (one on left, many on right), not '*--'.
+  Queue *-- Patient → Queue --* Patient
+    Reason: A Queue contains many patients, so the correct arrow is '--*' (one on left, many on right), not '*--'.
+end note
+
+note as ArchitectureCorrections
+  <b>Architecture mistakes corrected automatically</b>
+  [wrong_class_type] Evaluation_Queue_System is declared as an interface but appears to be a concrete system component.
+    Fix applied: change_class_type
+  [duplicate_concept] PatientQueue and Queue both represent the same concept (a queue of patients) and should be merged.
+    Fix applied: merge_classes
+  [duplicate_concept] PatientDatabase and Patient_Database are duplicate interfaces for the same concept.
+    Fix applied: merge_classes
+  [duplicate_concept] Patient_Queue_Database and PatientQueueData are redundant; PatientQueueData should be the data entity, not a separate database interface.
+    Fix applied: merge_classes
+  [missing_relationship] TriageNurse should have a relationship to UrgencyLevel to assign it to a Patient, but no such relationship exists.
+    Fix applied: add_relation
+  [missing_relationship] Physician should have a relationship to PatientQueue to take the next patient, but currently only has a directed association to PatientQueue (which is fine), but the model lacks a 'take next' operation; consider adding a dependency from Physician to QueueEntry.
+    Fix applied: add_relation
+  [wrong_inheritance] Live_Dashboard_Interface inherits from Interface, but Interface is a generic class; this inheritance is meaningless and should be removed.
+    Fix applied: remove_relation
+  [wrong_inheritance] Pre1, Pre2, Pre3, Post1, Post2 inherit from State, but State is an enum; enums cannot be base classes for inheritance.
+    Fix applied: change_class_type
+end note
+
+package "Task #7\nPatient Registration\nwith Symptoms" {
+  class Patient <<main>> <<level0>>
+  class Actor
+  class DataAtRestEncryption
+  interface Evaluation_Queue_System
+  class PatientRecord
+  interface Patient_Database
+  class QueueEntry
+  class Resource
+  class SymptomData
+}
+
+package "Task #8\nUrgency Level Assignment\n(1-5)" {
+  note as TaskSummary8
+    No new domain model classes
+    Uses: Patient
+  end note
+}
+
+package "Task #9\nQueue Sorting by Urgency\nand Time" {
+  note as TaskSummary9
+    No new domain model classes
+    Uses: Patient
+  end note
+}
+
+package "Task #10\nQueue Reordering on New\nPatient or Re-triage" {
+  note as TaskSummary10
+    No new domain model classes
+    Uses: Patient
+  end note
+}
+
+package "Task #11\nPhysician Takes Next\nPatient" {
+  note as TaskSummary11
+    No new domain model classes
+    Uses: Patient
+  end note
+}
+
+package "Task #12\nLive Dashboard with\nUrgency and Wait Time" {
+  note as TaskSummary12
+    No new domain model classes
+    Uses: Patient
+  end note
+}
+
+package "Shared / Cross-Task Classes\n[not owned by a single task]" <<Rectangle>> {
+  class Clinical_Leadership <<shared>>
+  note right of Clinical_Leadership : "appears only in relations; not owned by any task"
+  class Hospital_Management <<shared>>
+  note right of Hospital_Management : "appears only in relations; not owned by any task"
+  class IT_Team <<shared>>
+  note right of IT_Team : "appears only in relations; not owned by any task"
+  class Interface <<shared>>
+  note right of Interface : "appears only in relations; not owned by any task"
+  class Live_Dashboard_Interface <<shared>>
+  note right of Live_Dashboard_Interface : "appears only in relations; not owned by any task"
+  interface PatientDatabase <<shared>>
+  note right of PatientDatabase : "appears only in relations; not owned by any task"
+  class PatientQueue <<shared>>
+  note right of PatientQueue : "appears only in relations; not owned by any task"
+  class PatientQueueData <<shared>>
+  note right of PatientQueueData : "appears only in relations; not owned by any task"
+  class PatientQueueSortOperation <<shared>>
+  note right of PatientQueueSortOperation : "appears only in relations; not owned by any task"
+  interface Patient_Queue_Database <<shared>>
+  note right of Patient_Queue_Database : "appears only in relations; not owned by any task"
+  enum Permission <<shared>>
+  note right of Permission : "appears only in relations; not owned by any task"
+  class Physician <<shared>>
+  note right of Physician : "appears only in relations; not owned by any task"
+  class Physicians <<shared>>
+  note right of Physicians : "appears only in relations; not owned by any task"
+  class Post1 <<shared>>
+  note right of Post1 : "appears only in relations; not owned by any task"
+  class Post2 <<shared>>
+  note right of Post2 : "appears only in relations; not owned by any task"
+  class Pre1 <<shared>>
+  note right of Pre1 : "appears only in relations; not owned by any task"
+  class Pre2 <<shared>>
+  note right of Pre2 : "appears only in relations; not owned by any task"
+  class Pre3 <<shared>>
+  note right of Pre3 : "appears only in relations; not owned by any task"
+  class Queue <<shared>>
+  note right of Queue : "appears only in relations; not owned by any task"
+  class REQ_DASH_01 <<shared>>
+  note right of REQ_DASH_01 : "appears only in relations; not owned by any task"
+  enum State <<shared>>
+  note right of State : "appears only in relations; not owned by any task"
+  class TriageNurse <<shared>>
+  note right of TriageNurse : "appears only in relations; not owned by any task"
+  class Triage_Nurse_Team <<shared>>
+  note right of Triage_Nurse_Team : "appears only in relations; not owned by any task"
+  class Triage_Nurses <<shared>>
+  note right of Triage_Nurses : "appears only in relations; not owned by any task"
+  enum UrgencyLevel <<shared>>
+  note right of UrgencyLevel : "appears only in relations; not owned by any task"
+}
+
+Actor "1" -- "0..*" Resource
+Actor "1" -- "1..*" Resource
+Clinical_Leadership --> PatientQueueData
+DataAtRestEncryption "1" -- "1" Resource
+Evaluation_Queue_System ..> QueueEntry
+Live_Dashboard_Interface --|> Interface
+Patient "1" --> "0..1" Queue
+Patient --> UrgencyLevel
+PatientQueue --* Patient
+PatientQueueData "1" -- "*" Patient
+PatientQueueSortOperation --> PatientQueueData
+PatientQueueSortOperation --> Patient_Queue_Database
+PatientQueueSortOperation --> Permission
+PatientQueueSortOperation --> State
+PatientQueueSortOperation --> Triage_Nurse_Team
+PatientRecord --|> Resource
+Patient_Database ..> PatientRecord
+Patient_Database ..> SymptomData
+Patient_Queue_Database ..> PatientQueueData
+Physician --> PatientQueue
+Post1 --|> State
+Post2 --|> State
+Pre1 --|> State
+Pre2 --|> State
+Pre3 --|> State
+Queue --* Patient
+Queue ..> PatientDatabase
+QueueEntry --|> Resource
+REQ_DASH_01 "1" --> "1" Permission
+REQ_DASH_01 "1" --> "1" State
+REQ_DASH_01 "1" --> "1..*" Interface
+REQ_DASH_01 "1" --> "1..*" Resource
+SymptomData --|> Resource
+TriageNurse "1" --> "0..*" Patient
+Triage_Nurse_Team --> PatientQueueData
+note right of UrgencyLevel #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [introduce_value_object] Consider making\nUrgencyLevel a value object with validation\n(1-5) instead of a plain enum to enforce domain\nrules.
+end note
+
+note right of SymptomData #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [introduce_value_object] Consider making\nSymptomData a value object to encapsulate\nsymptom details and ensure immutability.
+end note
+
+note right of Patient #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [add_aggregate_root] Consider making Patient an\naggregate root that owns its UrgencyLevel and\nQueueEntry, ensuring consistency during re-\ntriage.
+end note
+
+note right of QueueEntry #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [add_aggregate_root] Consider making Patient an\naggregate root that owns its UrgencyLevel and\nQueueEntry, ensuring consistency during re-\ntriage.
+end note
+
+note right of UrgencyLevel #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [add_aggregate_root] Consider making Patient an\naggregate root that owns its UrgencyLevel and\nQueueEntry, ensuring consistency during re-\ntriage.
+end note
+
+note right of PatientQueueSortOperation #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [rename_for_clarity] Rename to\n'QueueSortService' to better reflect its role as\na domain service that sorts the queue.
+end note
+
+note right of Triage_Nurse_Team #FDFDE0
+  <b>SUGGESTION #5 (not applied)</b>
+  [rename_for_clarity] Merge Triage_Nurse_Team and\nTriage_Nurses into a single class 'TriageNurse'\n(already exists) to avoid duplication.
+end note
+
+note right of Triage_Nurses #FDFDE0
+  <b>SUGGESTION #5 (not applied)</b>
+  [rename_for_clarity] Merge Triage_Nurse_Team and\nTriage_Nurses into a single class 'TriageNurse'\n(already exists) to avoid duplication.
+end note
+
+note right of Physician #FDFDE0
+  <b>SUGGESTION #6 (not applied)</b>
+  [extract_base_class] Extract a common base class\n'Staff' for Physician and TriageNurse to share\ncommon attributes (e.g., name, role).
+end note
+
+note right of TriageNurse #FDFDE0
+  <b>SUGGESTION #6 (not applied)</b>
+  [extract_base_class] Extract a common base class\n'Staff' for Physician and TriageNurse to share\ncommon attributes (e.g., name, role).
+end note
+
+note right of Live_Dashboard_Interface #FDFDE0
+  <b>SUGGESTION #7 (not applied)</b>
+  [general] Consider renaming to 'LiveDashboard'\nand making it a concrete class that depends on\nPatientQueue and WaitTimeCalculator.
+end note
+
+@enduml

@@ -1,0 +1,123 @@
+@startuml
+!theme plain
+
+title Blood Unit Management System - Sequence Diagrams
+
+box "External" #LightBlue
+  actor Actor
+  participant InventoryManagementUI as UI
+end box
+
+box "Controller" #LightGreen
+  participant BloodUnitController as Controller
+end box
+
+box "Application" #LightYellow
+  participant BloodUnitService as Service
+end box
+
+box "Domain" #LightPink
+  participant BloodUnit as BU
+  participant Permission as Perm
+  participant ABOType as ABO
+  participant RhFactor as Rh
+  participant BloodUnitStatus as Status
+end box
+
+box "Infrastructure" #LightCyan
+  participant BloodUnitDatabase as DB
+end box
+
+== Input Blood Unit ==
+
+Actor -> UI : POST /blood-units [TLS]
+note right: BloodBankManager role required
+UI -> Controller : inputBloodUnit(uniqueID: String, abo: ABOType, rh: RhFactor, collectionDate: Date) : Response
+
+alt Missing collection date
+  Controller -> Controller : validate(collectionDate != null)
+  Controller --> UI : 400 Bad Request (Missing collection date)
+  note right: No state change
+else Invalid ABO/Rh
+  Controller -> Controller : validate(abo in {A,B,AB,O} and rh in {+,-})
+  Controller --> UI : 400 Bad Request (Invalid ABO/Rh)
+  note right: No state change
+else Duplicate uniqueID
+  Controller -> DB : exists(uniqueID) [TLS]
+  DB --> Controller : true
+  Controller --> UI : 409 Conflict (Duplicate uniqueID)
+  note right: Operation rejected
+else Happy path
+  Controller -> Controller : checkPermission(Actor, Permission.Write)
+  note right: Authorization check
+  Controller -> Service : inputBloodUnit(uniqueID, abo, rh, collectionDate) : BloodUnit
+  Service -> BU : createBloodUnit(uniqueID, abo, rh, collectionDate) : BloodUnit
+  note right: State transition: null -> available
+  BU -> BU : setExpiryDate(collectionDate + 42 days)
+  note right: Constraint: expiryDate = collectionDate + 42 days
+  BU -> BU : setStatus(BloodUnitStatus.available)
+  Service -> DB : save(bloodUnit) [TLS, encrypted at rest]
+  DB --> Service : success
+  Service --> Controller : BloodUnit
+  Controller --> UI : 201 Created (BloodUnit created)
+  note right: Post1: uniqueID assigned, Post2: ABO/Rh recorded, Post3: expiry stored
+end
+
+== Change Blood Unit Status ==
+
+Actor -> UI : PUT /blood-units/{id}/status [TLS]
+note right: ClinicalStaff or InventoryManagementTeam
+UI -> Controller : changeStatus(uniqueID: String, newStatus: BloodUnitStatus) : Response
+
+alt Unit not found
+  Controller -> DB : findById(uniqueID) [TLS]
+  DB --> Controller : null
+  Controller --> UI : 404 Not Found (Unit not found)
+else Unit already expired
+  Controller -> DB : findById(uniqueID) [TLS]
+  DB --> Controller : BloodUnit (status=expired)
+  Controller -> Controller : validate(currentStatus != expired)
+  Controller --> UI : 400 Bad Request (Unit already expired)
+else Happy path (status change allowed)
+  Controller -> DB : findById(uniqueID) [TLS]
+  DB --> Controller : BloodUnit (status=available or issued)
+  Controller -> Controller : checkPermission(Actor, Permission.Write)
+  Controller -> Service : changeStatus(bloodUnit, newStatus) : BloodUnit
+  Service -> BU : setStatus(newStatus)
+  note right: State transition: available -> issued or issued -> available
+  Service -> DB : update(bloodUnit) [TLS, encrypted at rest]
+  DB --> Service : success
+  Service -> Service : logChange(uniqueID, oldStatus, newStatus)
+  note right: Constraint: status changes must be logged
+  Service --> Controller : BloodUnit
+  Controller --> UI : 200 OK (Status updated)
+  note right: Post4: status tracked throughout lifecycle
+end
+
+== Check and Flag Expired Units ==
+
+Actor -> UI : GET /blood-units/expired [TLS]
+note right: InventoryManagementTeam or BloodBankManager
+UI -> Controller : checkExpiredUnits(currentDate: Date) : List<BloodUnit>
+
+Controller -> DB : findAll() [TLS]
+DB --> Controller : List<BloodUnit>
+
+alt No expired units
+  Controller -> Controller : filter(expiryDate < currentDate) -> empty
+  Controller --> UI : 200 OK (No expired units)
+  note right: No state change
+else Some expired units
+  Controller -> Controller : filter(expiryDate < currentDate) -> expiredUnits
+  loop for each expired unit
+    Controller -> Service : flagExpired(bloodUnit)
+    Service -> BU : setStatus(BloodUnitStatus.expired)
+    note right: State transition: available/issued -> expired
+    Service -> DB : update(bloodUnit) [TLS, encrypted at rest]
+    DB --> Service : success
+  end
+  Controller --> UI : 200 OK (Expired units flagged)
+  note right: Post5: expired units flagged/removed from inventory
+end
+
+@enduml

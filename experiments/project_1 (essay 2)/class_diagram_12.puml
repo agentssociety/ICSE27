@@ -1,0 +1,139 @@
+@startuml
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam class {
+    BackgroundColor #F0F8FF
+    BorderColor #4682B4
+    FontColor #000000
+}
+skinparam enum {
+    BackgroundColor #E6E6FA
+    BorderColor #6A5ACD
+}
+skinparam interface {
+    BackgroundColor #FFF0F5
+    BorderColor #DB7093
+}
+skinparam note {
+    BackgroundColor #FFFFE0
+    BorderColor #DAA520
+}
+
+package "Domain Model" {
+    class Actor {
+        mayPerform: set Permission
+    }
+    class Triage_Nurses
+    class Physicians
+    class Hospital_Management
+    class IT_Team
+
+    class Resource {
+        owner: one Actor
+        accessible: set Actor
+  + isAccessible(initiator: Actor) : Bool
+    }
+
+    class Interface {
+        kind: one IfaceKind
+        encrypted: one Bool
+        authenticated: one Bool
+  + isAuthenticated() : Bool
+    }
+
+    class State
+
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+    }
+
+    enum IfaceKind {
+        API
+        UI
+    }
+
+    enum Bool {
+        True
+        False
+    }
+
+    class Pre1
+{
+  + isEnabled() : Bool
+}
+    class Pre2
+{
+  + isTriaged() : Bool
+}
+    class Pre3
+{
+  + isCalculated() : Bool
+}
+    class Post1
+    class Post2
+}
+
+package "Application" {
+    class REQ_DASH_01 {
+        initiator: one Actor
+        target: some Resource
+        channel: some Interface
+        grant: one Permission
+        pre: one State
+        post: one State
+  + create(initiator, target, channel, grant) : REQ_DASH_01
+  + transitionToPostState()
+  + setPostState(Post1)
+  + setPostState(Post2)
+  + create(initiator, target, channel, grant)
+  + setPreState(Pre1)
+  + setPreState(Pre2)
+    }
+    note right of REQ_DASH_01
+        Invariants:
+        - inv_operation_requires_channel: some op.channel
+        - inv_operation_requires_target: some op.target
+        - inv_initiator_is_authorized: grant in initiator.mayPerform
+        - inv_resource_access_control: initiator in target.accessible
+        - inv_state_must_change: pre != post
+        - inv_authenticated_channel_required: some c: op.channel | c.authenticated = True
+    end note
+}
+
+package "Infrastructure — Ports" {
+    class Patient_Data_API
+    class Live_Dashboard_Interface
+}
+
+' Inheritance relationships
+Triage_Nurses --|> Actor
+Physicians --|> Actor
+Hospital_Management --|> Actor
+IT_Team --|> Actor
+
+Pre1 --|> State
+Pre2 --|> State
+Pre3 --|> State
+Post1 --|> State
+Post2 --|> State
+
+Patient_Data_API --|> Interface
+Live_Dashboard_Interface --|> Interface
+
+' Association relationships
+REQ_DASH_01 "1" --> "1" Actor : initiator
+REQ_DASH_01 "1" --> "1..*" Resource : target
+REQ_DASH_01 "1" --> "1..*" Interface : channel
+REQ_DASH_01 "1" --> "1" Permission : grant
+REQ_DASH_01 "1" --> "1" State : pre
+REQ_DASH_01 "1" --> "1" State : post
+
+Resource "1" --> "1" Actor : owner
+Resource "1" --> "0..*" Actor : accessible
+
+@enduml

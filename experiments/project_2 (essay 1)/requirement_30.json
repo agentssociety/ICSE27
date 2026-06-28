@@ -1,0 +1,94 @@
+{
+  "id": "REQ-BB-01",
+  "title": "Blood Stock Alert System",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall raise an alert to the blood bank manager when the stock of any blood type falls below 5 units.",
+  "rationale": "To ensure timely replenishment of blood supplies before a shortage occurs, reducing the risk of patient treatment delays or shortages.",
+  "business_value": "Improves patient care by preventing potential shortages and ensuring timely availability of necessary blood types for treatments.",
+  "source": {
+    "type": "User Story",
+    "id": 30,
+    "description": "As a blood bank manager, I need the system to raise an alert when stock of any blood type drops below 5 units so that I can replenish supplies before a shortage occurs."
+  },
+  "stakeholders": [
+    "Blood Bank Manager",
+    "Inventory Management Team"
+  ],
+  "acceptance_criteria": [
+    "The system raises an alert when the stock of any blood type falls below 5 units.",
+    "Alerts can be sent via email, SMS, or in-app notification."
+  ],
+  "preconditions": [
+    "The blood bank has inventory levels for each blood type."
+  ],
+  "postconditions": [
+    "The system sends an alert to the blood bank manager."
+  ],
+  "functional_constraints": [
+    "Alerts are triggered only when stock falls below 5 units.",
+    "All blood types must be tracked."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens if the inventory data is delayed or incorrect?",
+    "How does the system handle simultaneous stock drops for different blood types?"
+  ],
+  "dependencies": [
+    "Inventory tracking system",
+    "Email/SMS gateway service",
+    "In-app notification system"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Inventory API",
+      "description": "The system will call this API to get the current inventory levels of each blood type."
+    },
+    {
+      "type": "External System",
+      "name": "Email/SMS Gateway",
+      "description": "The system will use this external service to send alerts via email, SMS or in-app notifications."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-BB-01",
+      "description": "Test alert functionality with inventory at threshold level.",
+      "expected_result": "An alert is raised for each blood type that has exactly 5 units of stock."
+    },
+    {
+      "id": "TC-BB-02",
+      "description": "Test alert functionality with inventory below threshold level.",
+      "expected_result": "An alert is raised for each blood type that has less than 5 units of stock."
+    },
+    {
+      "id": "TC-BB-03",
+      "description": "Test alert functionality with inventory above threshold level.",
+      "expected_result": "No alerts are raised as all blood types have more than 5 units of stock."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T14:49:47.730727",
+  "last_updated": "2026-06-14T14:50:57.561986",
+  "traceability": {
+    "related_requirements": [
+      "REQ-INV-01"
+    ],
+    "design_components": [
+      "Alert",
+      "BloodUnit"
+    ],
+    "test_artifacts": []
+  }
+}

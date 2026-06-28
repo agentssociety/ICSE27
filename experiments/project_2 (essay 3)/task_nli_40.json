@@ -1,0 +1,37 @@
+{
+  "task_id": 40,
+  "confidence": 0.9952,
+  "evidence": [
+    {
+      "claim": "Transfusion requests include required blood type.",
+      "fact": "A clinician can submit a transfusion order indicating the blood type, Rh requirement, and quantity.",
+      "score": 0.9987,
+      "user_story_span": "transfusion requests from medical staff, including patient details and required blood type",
+      "fact_span": "the blood type"
+    },
+    {
+      "claim": "Medical staff submit transfusion requests.",
+      "fact": "A clinician can submit a transfusion order indicating the blood type, Rh requirement, and quantity.",
+      "score": 0.9981,
+      "user_story_span": "medical staff submits a transfusion request",
+      "fact_span": "submit a transfusion order"
+    },
+    {
+      "claim": "The system stores the request for further processing.",
+      "fact": "The application holds units for a pending issue and reverts the hold to available stock after one day without confirmation.",
+      "score": 0.9934,
+      "user_story_span": "the request is stored in the system",
+      "fact_span": ""
+    },
+    {
+      "claim": "Each request includes required blood type.",
+      "fact": "Transfusion requests specify blood type.",
+      "score": 0.9906,
+      "user_story_span": "Each request includes patient details (e.g., name, ID) and required blood type",
+      "fact_span": "Transfusion requests specify blood type"
+    }
+  ],
+  "total_claims": 11,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

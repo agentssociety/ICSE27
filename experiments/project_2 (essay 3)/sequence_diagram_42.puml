@@ -1,0 +1,167 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "BloodBankManagerUI" as UI
+end box
+
+box "Application Layer" #LightGreen
+  participant "ReservationService" as Service
+  participant "TimeoutScheduler" as Scheduler
+end box
+
+box "Domain Layer" #LightYellow
+  participant "BloodUnit" as BU
+  participant "Reservation" as Res
+  participant "TransfusionRequest" as TR
+  participant "SystemClock" as Clock
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "BloodInventoryDatabase" as DB
+  participant "InventoryManagementAPI" as API
+end box
+
+== Reserve Blood Unit ==
+
+UI -> Service : reserveBloodUnit(requestId: String, bloodType: String, components: Set<ComponentType>) : Reservation
+note right: Requires Write permission (BloodBankManager only)
+
+Service -> API : checkAvailability(bloodType: String, components: Set<ComponentType>) : Boolean
+note right: [TLS encrypted] [authenticated]
+
+alt Insufficient inventory
+  API --> Service : return false
+  Service --> UI : return error "Insufficient inventory"
+  UI -> UI : display error to BloodBankManager
+else Inventory available
+  API --> Service : return true
+  
+  Service -> DB : beginTransaction()
+  note right: Atomic check-and-reserve
+  
+  Service -> API : reserveUnit(bloodType: String, components: Set<ComponentType>) : BloodUnit
+  note right: [TLS encrypted] [authenticated]
+  
+  alt Race condition - unit already reserved
+    API --> Service : return error "Unit already reserved"
+    Service -> DB : rollback()
+    Service --> UI : return error "Concurrent reservation detected"
+  else Unit successfully reserved
+    API --> Service : return bloodUnit: BloodUnit
+    
+    Service -> BU : setStatus(status: BloodUnitStatus.RESERVED)
+    note right: State transition: Available -> Reserved
+    Service -> BU : setReservedFor(requestId: String)
+    
+    Service -> Clock : getCurrentTimestamp() : Timestamp
+    Clock --> Service : timestamp
+    
+    alt timeoutDuration == 0
+      Service -> Res : create(request: TransfusionRequest, unit: BloodUnit, reservedAt: Timestamp, timeoutDuration: 0)
+      Service -> BU : setStatus(status: BloodUnitStatus.AVAILABLE)
+      note right: Immediate release
+      Service -> BU : clearReservedFor()
+      Service -> DB : deleteReservation(reservationId: String)
+      Service -> DB : commit()
+      Service --> UI : return error "Zero timeout - immediate release"
+    else timeoutDuration > 0
+      Service -> Res : create(request: TransfusionRequest, unit: BloodUnit, reservedAt: Timestamp, timeoutDuration: Duration)
+      Service -> DB : saveReservation(reservation: Reservation)
+      Service -> DB : updateBloodUnitStatus(unitId: String, status: BloodUnitStatus.RESERVED)
+      Service -> DB : commit()
+      
+      Service -> Scheduler : scheduleTimeout(reservationId: String, timeoutDuration: Duration)
+      note right: Schedule auto-release handler
+      
+      Service --> UI : return reservation: Reservation
+      UI -> UI : display success to BloodBankManager
+    end
+  end
+end
+
+== Auto Release on Timeout ==
+
+Scheduler -> Service : handleTimeout(reservationId: String)
+note right: Triggered by SystemClock
+
+Service -> DB : beginTransaction()
+Service -> DB : loadReservation(reservationId: String) : Reservation
+DB --> Service : reservation: Reservation
+
+alt Reservation not found
+  Service -> DB : rollback()
+  Service --> Scheduler : return error "Reservation already released"
+else Reservation found
+  Service -> DB : loadBloodUnit(unitId: String) : BloodUnit
+  DB --> Service : bloodUnit: BloodUnit
+  
+  alt BloodUnit status != RESERVED
+    Service -> DB : rollback()
+    Service --> Scheduler : return error "Unit already released"
+  else BloodUnit status == RESERVED
+    Service -> BU : setStatus(status: BloodUnitStatus.AVAILABLE)
+    note right: State transition: Reserved -> Available
+    Service -> BU : clearReservedFor()
+    
+    Service -> DB : updateBloodUnitStatus(unitId: String, status: BloodUnitStatus.AVAILABLE)
+    Service -> DB : deleteReservation(reservationId: String)
+    Service -> DB : commit()
+    
+    Service --> Scheduler : return success
+  end
+end
+
+== Release on Cancellation ==
+
+UI -> Service : cancelRequest(requestId: String)
+note right: Requires Write permission (BloodBankManager only)
+
+Service -> DB : beginTransaction()
+note right: Atomic release of all associated units
+
+Service -> DB : loadTransfusionRequest(requestId: String) : TransfusionRequest
+DB --> Service : request: TransfusionRequest
+
+alt Request not found
+  Service -> DB : rollback()
+  Service --> UI : return error "Request not found"
+else Request status != PENDING
+  Service -> DB : rollback()
+  Service --> UI : return error "Request already cancelled or fulfilled"
+else Request status == PENDING
+  Service -> DB : loadReservationsByRequest(requestId: String) : List<Reservation>
+  DB --> Service : reservations: List<Reservation>
+  
+  alt No reservations found
+    Service -> TR : setStatus(status: TransfusionRequestStatus.CANCELLED)
+    Service -> DB : updateRequestStatus(requestId: String, status: TransfusionRequestStatus.CANCELLED)
+    Service -> DB : commit()
+    Service --> UI : return success
+  else Reservations found
+    loop for each reservation in reservations
+      Service -> DB : loadBloodUnit(unitId: String) : BloodUnit
+      DB --> Service : bloodUnit: BloodUnit
+      
+      Service -> BU : setStatus(status: BloodUnitStatus.AVAILABLE)
+      note right: State transition: Reserved -> Available
+      Service -> BU : clearReservedFor()
+      
+      Service -> DB : updateBloodUnitStatus(unitId: String, status: BloodUnitStatus.AVAILABLE)
+      Service -> DB : deleteReservation(reservationId: String)
+      
+      Service -> Scheduler : cancelTimeout(reservationId: String)
+      note right: Prevent double release
+    end
+    
+    Service -> TR : setStatus(status: TransfusionRequestStatus.CANCELLED)
+    note right: State transition: Pending -> Cancelled
+    Service -> DB : updateRequestStatus(requestId: String, status: TransfusionRequestStatus.CANCELLED)
+    Service -> DB : commit()
+    
+    Service --> UI : return success
+    UI -> UI : display cancellation confirmation
+  end
+end
+
+@enduml

@@ -1,0 +1,316 @@
+{
+  "run_id": "P2E1",
+  "project": 2,
+  "essay": 1,
+  "n_tasks": 7,
+  "wall_clock_s": 14247.01,
+  "pipeline_steps": 387,
+  "total_incidents": 36,
+  "fixed_incidents": 29,
+  "escalated_incidents": 7,
+  "self_fix_rate_pct": 80.6,
+  "by_phase": {
+    "DESIGN_UML": {
+      "fixed": 2,
+      "escalated": 0
+    },
+    "ARCHITECTURE": {
+      "fixed": 0,
+      "escalated": 3
+    },
+    "TESTING": {
+      "fixed": 27,
+      "escalated": 4
+    }
+  },
+  "incidents": [
+    {
+      "line_num": 4274,
+      "timestamp": "2026-06-14 14:33:52.393",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpi1gspm0k/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 4461,
+      "timestamp": "2026-06-14 14:39:30.516",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpuy6e5pzk/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 5312,
+      "timestamp": "2026-06-14 14:43:13.908",
+      "phase": "ARCHITECTURE",
+      "error_type": "SYNTAX",
+      "outcome": "FAIL_ESCALATED",
+      "message": "3 file(s) still have errors after auto-fix: ['src/domain/reservation/Reservation.py', 'src/domain/transfusion_request/TransfusionRequest.py', 'src/repository/alert/alert_repository.py']"
+    },
+    {
+      "line_num": 5751,
+      "timestamp": "2026-06-14 14:49:21.925",
+      "phase": "ARCHITECTURE",
+      "error_type": "GENERAL",
+      "outcome": "FAIL_ESCALATED",
+      "message": "[tracer] tool fill_deterministic_scaffold failed: UnboundLocalError: cannot access local variable 'domain_class_list' where it is not associated with a value"
+    },
+    {
+      "line_num": 14246,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_get_compatible_blood_types_a_positive"
+    },
+    {
+      "line_num": 14247,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_get_compatible_blood_types_o_negative"
+    },
+    {
+      "line_num": 14248,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_get_compatible_blood_types_ab_positive"
+    },
+    {
+      "line_num": 14249,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_get_compatible_blood_types_b_negative"
+    },
+    {
+      "line_num": 14304,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_get_compatible_blood_types_a_positive"
+    },
+    {
+      "line_num": 14305,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_get_compatible_blood_types_o_negative"
+    },
+    {
+      "line_num": 14306,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_get_compatible_blood_types_ab_positive"
+    },
+    {
+      "line_num": 14307,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/blood_unit/test_blood_unit_domain.py::TestBloodUnitDomain::test_get_compatible_blood_types_b_negative"
+    },
+    {
+      "line_num": 16837,
+      "timestamp": "2026-06-14 16:18:08.048",
+      "phase": "ARCHITECTURE",
+      "error_type": "SYNTAX",
+      "outcome": "FAIL_ESCALATED",
+      "message": "3 file(s) still have errors after auto-fix: ['src/domain/reservation/Reservation.py', 'src/domain/transfusion_request/TransfusionRequest.py', 'src/repository/alert/alert_repository.py']"
+    },
+    {
+      "line_num": 27220,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: tests/unit/reservation/test_reservation_domain.py::TestState::test_check_state_change_valid"
+    },
+    {
+      "line_num": 27227,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/reservation/test_reservation_domain.py::TestResource::test_creation"
+    },
+    {
+      "line_num": 27229,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/reservation/test_reservation_domain.py::TestResource::test_check_access_no_access"
+    },
+    {
+      "line_num": 27236,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/reservation/test_reservation_domain.py::TestREQ_BB_01::test_create_operation_valid"
+    },
+    {
+      "line_num": 27237,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/reservation/test_reservation_domain.py::TestREQ_BB_01::test_create_operation_no_channel"
+    },
+    {
+      "line_num": 27238,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/reservation/test_reservation_domain.py::TestREQ_BB_01::test_create_operation_no_target"
+    },
+    {
+      "line_num": 27239,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/reservation/test_reservation_domain.py::TestREQ_BB_01::test_create_operation_no_permission"
+    },
+    {
+      "line_num": 27240,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/reservation/test_reservation_domain.py::TestREQ_BB_01::test_create_operation_no_state_change"
+    },
+    {
+      "line_num": 27241,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/reservation/test_reservation_domain.py::TestREQ_BB_01::test_create_operation_no_resource_access"
+    },
+    {
+      "line_num": 27242,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/reservation/test_reservation_domain.py::TestCancellationRecord::test_create_cancellation_record_valid"
+    },
+    {
+      "line_num": 27243,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/reservation/test_reservation_domain.py::TestCancellationRecord::test_create_cancellation_record_invalid_permission"
+    },
+    {
+      "line_num": 27244,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/reservation/test_reservation_domain.py::TestOverlapRecord::test_record_overlap_valid"
+    },
+    {
+      "line_num": 27245,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/reservation/test_reservation_domain.py::TestOverlapRecord::test_record_overlap_invalid"
+    },
+    {
+      "line_num": 27389,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/reservation/test_reservation_domain.py::TestState::test_check_state_change_valid"
+    },
+    {
+      "line_num": 27396,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/reservation/test_reservation_domain.py::TestResource::test_creation"
+    },
+    {
+      "line_num": 27398,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/reservation/test_reservation_domain.py::TestResource::test_check_access_no_access"
+    },
+    {
+      "line_num": 27405,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/reservation/test_reservation_domain.py::TestREQ_BB_01::test_create_operation_valid"
+    },
+    {
+      "line_num": 27406,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/reservation/test_reservation_domain.py::TestREQ_BB_01::test_create_operation_no_channel"
+    },
+    {
+      "line_num": 27407,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/reservation/test_reservation_domain.py::TestREQ_BB_01::test_create_operation_no_target"
+    },
+    {
+      "line_num": 27408,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/reservation/test_reservation_domain.py::TestREQ_BB_01::test_create_operation_no_permission"
+    },
+    {
+      "line_num": 27409,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: ntests/unit/reservation/test_reservation_domain.py::TestREQ_BB_01::test_create_operation_no_state_change"
+    },
+    {
+      "line_num": 27410,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/reservation/test_reservation_domain.py::TestREQ_BB_01::test_create_operation_no_resource_access"
+    },
+    {
+      "line_num": 27411,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/reservation/test_reservation_domain.py::TestCancellationRecord::test_create_cancellation_record_valid"
+    }
+  ]
+}

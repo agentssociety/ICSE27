@@ -1,0 +1,65 @@
+{
+  "task_id": 70,
+  "confidence": 0.988,
+  "evidence": [
+    {
+      "claim": "The system assigns an immediate priority slot for an emergency flight",
+      "fact": "The system immediately gives a declared emergency flight the earliest possible slot.",
+      "score": 0.9984,
+      "user_story_span": "assign an immediate priority slot",
+      "fact_span": "immediately gives a declared emergency flight the earliest possible slot"
+    },
+    {
+      "claim": "The system assigns an immediate priority slot to that flight",
+      "fact": "The system immediately gives a declared emergency flight the earliest possible slot.",
+      "score": 0.998,
+      "user_story_span": "assigns an immediate priority slot to that flight",
+      "fact_span": "immediately gives a declared emergency flight the earliest possible slot"
+    },
+    {
+      "claim": "An emergency flight has been assigned a priority slot",
+      "fact": "The system immediately gives a declared emergency flight the earliest possible slot.",
+      "score": 0.9977,
+      "user_story_span": "an emergency flight has been assigned a priority slot",
+      "fact_span": "immediately gives a declared emergency flight the earliest possible slot"
+    },
+    {
+      "claim": "The system processes the slot assignment",
+      "fact": "The system allocates time slots.",
+      "score": 0.9969,
+      "user_story_span": "processes the slot assignment",
+      "fact_span": "allocates time slots"
+    },
+    {
+      "claim": "The system allows declaring an emergency for a flight",
+      "fact": "The system immediately gives a declared emergency flight the earliest possible slot.",
+      "score": 0.9962,
+      "user_story_span": "declare an emergency for a flight",
+      "fact_span": "immediately gives a declared emergency flight the earliest possible slot"
+    },
+    {
+      "claim": "The user views a flight in the system",
+      "fact": "The system shows delayed flights on the slot timetable.",
+      "score": 0.994,
+      "user_story_span": "viewing a flight in the system",
+      "fact_span": "shows delayed flights on the slot timetable"
+    },
+    {
+      "claim": "Emergency flights require immediate priority over other scheduled flights",
+      "fact": "The system gives immediate priority to declared emergencies.",
+      "score": 0.9838,
+      "user_story_span": "Emergency flights require immediate priority over other scheduled flights",
+      "fact_span": "gives immediate priority to declared emergencies"
+    },
+    {
+      "claim": "The system overrides normal scheduling rules for emergency flights",
+      "fact": "The scheduling system produces a conflict-free runway schedule with emergency preemption.",
+      "score": 0.9394,
+      "user_story_span": "overriding normal scheduling rules",
+      "fact_span": "produces a conflict-free runway schedule with emergency preemption"
+    }
+  ],
+  "total_claims": 12,
+  "supported_claims": 8,
+  "threshold": 0.6
+}

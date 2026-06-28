@@ -1,0 +1,47 @@
+from __future__ import annotations
+
+from typing import Optional
+
+from sqlalchemy.orm import Session
+
+from src.dto.resource.resource_dto import ResourceCreate, ResourceUpdate, ResourceResponse
+
+
+class SQLAlchemyResourceRepository:
+    def __init__(self, session: Session) -> None:
+        self._session = session
+        from src.orm.resource.resource_orm import ResourceORM
+        self._orm_class = ResourceORM
+
+    def get_by_id(self, item_id: int) -> Optional[ResourceResponse]:
+        row = self._session.get(self._orm_class, item_id)
+        return ResourceResponse.model_validate(row) if row else None
+
+    def get_all(self, skip: int = 0, limit: int = 100) -> list[ResourceResponse]:
+        rows = self._session.query(self._orm_class).offset(skip).limit(limit).all()
+        return [ResourceResponse.model_validate(r) for r in rows]
+
+    def create(self, data: ResourceCreate) -> ResourceResponse:
+        row = self._orm_class(**data.model_dump(exclude_unset=True))
+        self._session.add(row)
+        self._session.commit()
+        self._session.refresh(row)
+        return ResourceResponse.model_validate(row)
+
+    def update(self, item_id: int, data: ResourceUpdate) -> Optional[ResourceResponse]:
+        row = self._session.get(self._orm_class, item_id)
+        if row is None:
+            return None
+        for key, value in data.model_dump(exclude_unset=True).items():
+            setattr(row, key, value)
+        self._session.commit()
+        self._session.refresh(row)
+        return ResourceResponse.model_validate(row)
+
+    def delete(self, item_id: int) -> bool:
+        row = self._session.get(self._orm_class, item_id)
+        if row is None:
+            return False
+        self._session.delete(row)
+        self._session.commit()
+        return True

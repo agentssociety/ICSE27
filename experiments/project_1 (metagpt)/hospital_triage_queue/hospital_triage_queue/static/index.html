@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Triage Queue System</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>🏥 Hospital Triage Queue System</h1>
+            <p>Real-time patient queue management dashboard</p>
+        </header>
+
+        <!-- Patient Registration Form -->
+        <section id="registration-section">
+            <h2>Register New Patient</h2>
+            <form id="registration-form">
+                <div class="form-group">
+                    <label for="patient-name">Patient Name:</label>
+                    <input type="text" id="patient-name" name="name" placeholder="Enter patient name" required>
+                </div>
+                <div class="form-group">
+                    <label for="patient-symptoms">Symptoms:</label>
+                    <textarea id="patient-symptoms" name="symptoms" placeholder="Describe symptoms" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="manual-urgency">Manual Urgency (optional, 1-5):</label>
+                    <input type="number" id="manual-urgency" name="manual_urgency" min="1" max="5" placeholder="Leave empty for auto-triage">
+                </div>
+                <button type="submit" class="btn btn-primary">Register Patient</button>
+            </form>
+            <div id="registration-feedback" class="feedback"></div>
+        </section>
+
+        <!-- Queue Display -->
+        <section id="queue-section">
+            <h2>Current Queue
+                <span id="queue-count" class="badge">0 patients</span>
+            </h2>
+            <div class="queue-controls">
+                <button id="dequeue-btn" class="btn btn-danger" title="Dequeue highest priority patient">Dequeue Next Patient</button>
+                <button id="refresh-btn" class="btn btn-secondary" title="Manually refresh queue">Refresh</button>
+            </div>
+            <div id="queue-table-wrapper">
+                <table id="queue-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Symptoms</th>
+                            <th>Urgency</th>
+                            <th>Waiting Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="queue-body">
+                        <!-- Queue rows will be populated by JavaScript -->
+                        <tr id="empty-row">
+                            <td colspan="6" class="text-center">No patients in queue.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Re-triage Modal (simple inline popup) -->
+        <div id="re-triage-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn" onclick="hideReTriageModal()">&times;</span>
+                <h3>Re-triage Patient</h3>
+                <p id="re-triage-patient-info"></p>
+                <form id="re-triage-form">
+                    <input type="hidden" id="re-triage-patient-id">
+                    <label for="new-urgency">New Urgency Level (1-5):</label>
+                    <input type="number" id="new-urgency" min="1" max="5" required>
+                    <button type="submit" class="btn btn-primary">Update Urgency</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <section id="stats-section">
+            <h2>Queue Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Average Wait Time</span>
+                    <span id="avg-wait-time" class="stat-value">0s</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Urgency 1 (Critical)</span>
+                    <span id="urgency-1-count" class="stat-value badge-critical">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Urgency 2 (High)</span>
+                    <span id="urgency-2-count" class="stat-value badge-high">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Urgency 3 (Moderate)</span>
+                    <span id="urgency-3-count" class="stat-value badge-moderate">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Urgency 4 (Low)</span>
+                    <span id="urgency-4-count" class="stat-value badge-low">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Urgency 5 (Non-urgent)</span>
+                    <span id="urgency-5-count" class="stat-value badge-non">0</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

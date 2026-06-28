@@ -1,0 +1,65 @@
+{
+  "task_id": 94,
+  "confidence": 0.9767,
+  "evidence": [
+    {
+      "claim": "The account status changes to locked.",
+      "fact": "The application locks the account after 3 consecutive failed authentication attempts.",
+      "score": 0.9978,
+      "user_story_span": "account status changes to \"locked\"",
+      "fact_span": "locks the account"
+    },
+    {
+      "claim": "Locking an account prevents the user from performing actions.",
+      "fact": "When an administrator locks an account, the cardholder cannot perform any transactions until unlocked.",
+      "score": 0.9973,
+      "user_story_span": "",
+      "fact_span": "cannot perform any transactions"
+    },
+    {
+      "claim": "There is an existing user management interface for admins.",
+      "fact": "Through the admin interface, authorized users can toggle the locked status of any account instantly.",
+      "score": 0.9964,
+      "user_story_span": "There is an existing user management interface for admins.",
+      "fact_span": "admin interface"
+    },
+    {
+      "claim": "The system allows admins to manually unlock user accounts.",
+      "fact": "Administrators possess the ability to manually enable or disable a cardholder's access to the system.",
+      "score": 0.9958,
+      "user_story_span": "",
+      "fact_span": "manually enable"
+    },
+    {
+      "claim": "Locking an account prevents the user from logging in.",
+      "fact": "After three successive authentication failures, the system permanently blocks access for that card.",
+      "score": 0.9877,
+      "user_story_span": "prevents the user from logging in",
+      "fact_span": "blocks access"
+    },
+    {
+      "claim": "The user cannot log in when account is locked.",
+      "fact": "The cardholder's account becomes inaccessible for any transaction until an administrator reactivates it.",
+      "score": 0.9662,
+      "user_story_span": "the user cannot log in",
+      "fact_span": "becomes inaccessible"
+    },
+    {
+      "claim": "The account status changes to active.",
+      "fact": "The cardholder's account becomes inaccessible for any transaction until an administrator reactivates it.",
+      "score": 0.9584,
+      "user_story_span": "account status changes to \"active\"",
+      "fact_span": "reactivates it"
+    },
+    {
+      "claim": "The admin selects a user account and chooses to lock it.",
+      "fact": "When an administrator locks an account, the cardholder cannot perform any transactions until unlocked.",
+      "score": 0.9512,
+      "user_story_span": "select a user account and choose to lock it",
+      "fact_span": "locks an account"
+    }
+  ],
+  "total_claims": 14,
+  "supported_claims": 8,
+  "threshold": 0.6
+}

@@ -1,0 +1,4591 @@
+{
+  "main.lifespan": {
+    "file": "main.py",
+    "line": 41,
+    "end_line": 47,
+    "class": null,
+    "name": "lifespan",
+    "calls": [
+      "src.config.database.create_tables"
+    ],
+    "called_by": []
+  },
+  "main.health": {
+    "file": "main.py",
+    "line": 89,
+    "end_line": 90,
+    "class": null,
+    "name": "health",
+    "calls": [],
+    "called_by": []
+  },
+  "migrations.env.run_migrations_offline": {
+    "file": "migrations/env.py",
+    "line": 24,
+    "end_line": 27,
+    "class": null,
+    "name": "run_migrations_offline",
+    "calls": [
+      "migrations.env.run_migrations"
+    ],
+    "called_by": [
+      "migrations.env.run_migrations"
+    ]
+  },
+  "migrations.env.run_migrations_online": {
+    "file": "migrations/env.py",
+    "line": 30,
+    "end_line": 39,
+    "class": null,
+    "name": "run_migrations_online",
+    "calls": [
+      "migrations.env.run_migrations"
+    ],
+    "called_by": [
+      "migrations.env.run_migrations"
+    ]
+  },
+  "migrations.env.run_migrations": {
+    "file": "migrations/env.py",
+    "line": 42,
+    "end_line": 46,
+    "class": null,
+    "name": "run_migrations",
+    "calls": [
+      "migrations.env.run_migrations_offline",
+      "migrations.env.run_migrations_online"
+    ],
+    "called_by": [
+      "migrations.env.run_migrations_offline",
+      "migrations.env.run_migrations_online"
+    ]
+  },
+  "src.api.account.account_router.AccountRouter.__init__": {
+    "file": "src/api/account/account_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": "AccountRouter",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.account_balance.account_balance_router._repo": {
+    "file": "src/api/account_balance/account_balance_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.account_balance.account_balance_router.list_account_balances": {
+    "file": "src/api/account_balance/account_balance_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_account_balances",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.account_balance.account_balance_router.get_account_balance": {
+    "file": "src/api/account_balance/account_balance_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_account_balance",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.account_balance.account_balance_router.create_account_balance": {
+    "file": "src/api/account_balance/account_balance_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_account_balance",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.account_balance.account_balance_router.update_account_balance": {
+    "file": "src/api/account_balance/account_balance_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_account_balance",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.account_balance.account_balance_router.delete_account_balance": {
+    "file": "src/api/account_balance/account_balance_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_account_balance",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router._repo": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.list_actors": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_actors",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.get_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_actor",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.create_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_actor",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.update_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_actor",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.delete_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_actor",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.audit_log_resource.audit_log_resource_router._repo": {
+    "file": "src/api/audit_log_resource/audit_log_resource_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.audit_log_resource.audit_log_resource_router.list_audit_log_resources": {
+    "file": "src/api/audit_log_resource/audit_log_resource_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_audit_log_resources",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.audit_log_resource.audit_log_resource_router.get_audit_log_resource": {
+    "file": "src/api/audit_log_resource/audit_log_resource_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_audit_log_resource",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.audit_log_resource.audit_log_resource_router.create_audit_log_resource": {
+    "file": "src/api/audit_log_resource/audit_log_resource_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_audit_log_resource",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.audit_log_resource.audit_log_resource_router.update_audit_log_resource": {
+    "file": "src/api/audit_log_resource/audit_log_resource_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_audit_log_resource",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.audit_log_resource.audit_log_resource_router.delete_audit_log_resource": {
+    "file": "src/api/audit_log_resource/audit_log_resource_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_audit_log_resource",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.authentication_attempt.authentication_attempt_router._repo": {
+    "file": "src/api/authentication_attempt/authentication_attempt_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.authentication_attempt.authentication_attempt_router.list_authentication_attempts": {
+    "file": "src/api/authentication_attempt/authentication_attempt_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_authentication_attempts",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.authentication_attempt.authentication_attempt_router.get_authentication_attempt": {
+    "file": "src/api/authentication_attempt/authentication_attempt_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_authentication_attempt",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.authentication_attempt.authentication_attempt_router.create_authentication_attempt": {
+    "file": "src/api/authentication_attempt/authentication_attempt_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_authentication_attempt",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.authentication_attempt.authentication_attempt_router.update_authentication_attempt": {
+    "file": "src/api/authentication_attempt/authentication_attempt_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_authentication_attempt",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.authentication_attempt.authentication_attempt_router.delete_authentication_attempt": {
+    "file": "src/api/authentication_attempt/authentication_attempt_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_authentication_attempt",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.authentication_session.authentication_session_router._repo": {
+    "file": "src/api/authentication_session/authentication_session_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.authentication_session.authentication_session_router.list_authentication_sessions": {
+    "file": "src/api/authentication_session/authentication_session_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_authentication_sessions",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.authentication_session.authentication_session_router.get_authentication_session": {
+    "file": "src/api/authentication_session/authentication_session_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_authentication_session",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.authentication_session.authentication_session_router.create_authentication_session": {
+    "file": "src/api/authentication_session/authentication_session_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_authentication_session",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.authentication_session.authentication_session_router.update_authentication_session": {
+    "file": "src/api/authentication_session/authentication_session_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_authentication_session",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.authentication_session.authentication_session_router.delete_authentication_session": {
+    "file": "src/api/authentication_session/authentication_session_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_authentication_session",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.card.card_router._repo": {
+    "file": "src/api/card/card_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.card.card_router.list_cards": {
+    "file": "src/api/card/card_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_cards",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.card.card_router.get_card": {
+    "file": "src/api/card/card_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_card",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.card.card_router.create_card": {
+    "file": "src/api/card/card_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_card",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.card.card_router.update_card": {
+    "file": "src/api/card/card_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_card",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.card.card_router.delete_card": {
+    "file": "src/api/card/card_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_card",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.daily_withdrawal_limit.daily_withdrawal_limit_router.DailyWithdrawalLimitRouter.__init__": {
+    "file": "src/api/daily_withdrawal_limit/daily_withdrawal_limit_router.py",
+    "line": 17,
+    "end_line": 18,
+    "class": "DailyWithdrawalLimitRouter",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.failed_attempt.failed_attempt_router._repo": {
+    "file": "src/api/failed_attempt/failed_attempt_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.failed_attempt.failed_attempt_router.list_failed_attempts": {
+    "file": "src/api/failed_attempt/failed_attempt_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_failed_attempts",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.failed_attempt.failed_attempt_router.get_failed_attempt": {
+    "file": "src/api/failed_attempt/failed_attempt_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_failed_attempt",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.failed_attempt.failed_attempt_router.create_failed_attempt": {
+    "file": "src/api/failed_attempt/failed_attempt_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_failed_attempt",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.failed_attempt.failed_attempt_router.update_failed_attempt": {
+    "file": "src/api/failed_attempt/failed_attempt_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_failed_attempt",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.failed_attempt.failed_attempt_router.delete_failed_attempt": {
+    "file": "src/api/failed_attempt/failed_attempt_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_failed_attempt",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.flagged_transaction.flagged_transaction_router.FlaggedTransactionRouter.__init__": {
+    "file": "src/api/flagged_transaction/flagged_transaction_router.py",
+    "line": 17,
+    "end_line": 18,
+    "class": "FlaggedTransactionRouter",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.load_alert.load_alert_router._repo": {
+    "file": "src/api/load_alert/load_alert_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.load_alert.load_alert_router.list_load_alerts": {
+    "file": "src/api/load_alert/load_alert_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_load_alerts",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.load_alert.load_alert_router.get_load_alert": {
+    "file": "src/api/load_alert/load_alert_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_load_alert",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.load_alert.load_alert_router.create_load_alert": {
+    "file": "src/api/load_alert/load_alert_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_load_alert",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.load_alert.load_alert_router.update_load_alert": {
+    "file": "src/api/load_alert/load_alert_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_load_alert",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.load_alert.load_alert_router.delete_load_alert": {
+    "file": "src/api/load_alert/load_alert_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_load_alert",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.lockout_notification.lockout_notification_router._repo": {
+    "file": "src/api/lockout_notification/lockout_notification_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.lockout_notification.lockout_notification_router.list_lockout_notifications": {
+    "file": "src/api/lockout_notification/lockout_notification_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_lockout_notifications",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.lockout_notification.lockout_notification_router.get_lockout_notification": {
+    "file": "src/api/lockout_notification/lockout_notification_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_lockout_notification",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.lockout_notification.lockout_notification_router.create_lockout_notification": {
+    "file": "src/api/lockout_notification/lockout_notification_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_lockout_notification",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.lockout_notification.lockout_notification_router.update_lockout_notification": {
+    "file": "src/api/lockout_notification/lockout_notification_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_lockout_notification",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.lockout_notification.lockout_notification_router.delete_lockout_notification": {
+    "file": "src/api/lockout_notification/lockout_notification_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_lockout_notification",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.lockout_record.lockout_record_router._repo": {
+    "file": "src/api/lockout_record/lockout_record_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.lockout_record.lockout_record_router.list_lockout_records": {
+    "file": "src/api/lockout_record/lockout_record_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_lockout_records",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.lockout_record.lockout_record_router.get_lockout_record": {
+    "file": "src/api/lockout_record/lockout_record_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_lockout_record",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.lockout_record.lockout_record_router.create_lockout_record": {
+    "file": "src/api/lockout_record/lockout_record_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_lockout_record",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.lockout_record.lockout_record_router.update_lockout_record": {
+    "file": "src/api/lockout_record/lockout_record_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_lockout_record",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.lockout_record.lockout_record_router.delete_lockout_record": {
+    "file": "src/api/lockout_record/lockout_record_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_lockout_record",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.pin.pin_router._repo": {
+    "file": "src/api/pin/pin_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.pin.pin_router.list_pins": {
+    "file": "src/api/pin/pin_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_pins",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.pin.pin_router.get_pin": {
+    "file": "src/api/pin/pin_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_pin",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.pin.pin_router.create_pin": {
+    "file": "src/api/pin/pin_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_pin",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.pin.pin_router.update_pin": {
+    "file": "src/api/pin/pin_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_pin",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.pin.pin_router.delete_pin": {
+    "file": "src/api/pin/pin_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_pin",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.storage_state.storage_state_router._repo": {
+    "file": "src/api/storage_state/storage_state_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.storage_state.storage_state_router.list_storage_states": {
+    "file": "src/api/storage_state/storage_state_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_storage_states",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.storage_state.storage_state_router.get_storage_state": {
+    "file": "src/api/storage_state/storage_state_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_storage_state",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.storage_state.storage_state_router.create_storage_state": {
+    "file": "src/api/storage_state/storage_state_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_storage_state",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.storage_state.storage_state_router.update_storage_state": {
+    "file": "src/api/storage_state/storage_state_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_storage_state",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.storage_state.storage_state_router.delete_storage_state": {
+    "file": "src/api/storage_state/storage_state_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_storage_state",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.suspicious_pattern.suspicious_pattern_router._repo": {
+    "file": "src/api/suspicious_pattern/suspicious_pattern_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.suspicious_pattern.suspicious_pattern_router.list_suspicious_patterns": {
+    "file": "src/api/suspicious_pattern/suspicious_pattern_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_suspicious_patterns",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.suspicious_pattern.suspicious_pattern_router.get_suspicious_pattern": {
+    "file": "src/api/suspicious_pattern/suspicious_pattern_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_suspicious_pattern",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.suspicious_pattern.suspicious_pattern_router.create_suspicious_pattern": {
+    "file": "src/api/suspicious_pattern/suspicious_pattern_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_suspicious_pattern",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.suspicious_pattern.suspicious_pattern_router.update_suspicious_pattern": {
+    "file": "src/api/suspicious_pattern/suspicious_pattern_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_suspicious_pattern",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.suspicious_pattern.suspicious_pattern_router.delete_suspicious_pattern": {
+    "file": "src/api/suspicious_pattern/suspicious_pattern_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_suspicious_pattern",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.transaction_log.transaction_log_router._repo": {
+    "file": "src/api/transaction_log/transaction_log_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.transaction_log.transaction_log_router.list_transaction_logs": {
+    "file": "src/api/transaction_log/transaction_log_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_transaction_logs",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.transaction_log.transaction_log_router.get_transaction_log": {
+    "file": "src/api/transaction_log/transaction_log_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_transaction_log",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.transaction_log.transaction_log_router.create_transaction_log": {
+    "file": "src/api/transaction_log/transaction_log_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_transaction_log",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.transaction_log.transaction_log_router.update_transaction_log": {
+    "file": "src/api/transaction_log/transaction_log_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_transaction_log",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.transaction_log.transaction_log_router.delete_transaction_log": {
+    "file": "src/api/transaction_log/transaction_log_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_transaction_log",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.transaction_state_change.transaction_state_change_router._repo": {
+    "file": "src/api/transaction_state_change/transaction_state_change_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.transaction_state_change.transaction_state_change_router.list_transaction_state_changes": {
+    "file": "src/api/transaction_state_change/transaction_state_change_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_transaction_state_changes",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.transaction_state_change.transaction_state_change_router.get_transaction_state_change": {
+    "file": "src/api/transaction_state_change/transaction_state_change_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_transaction_state_change",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.transaction_state_change.transaction_state_change_router.create_transaction_state_change": {
+    "file": "src/api/transaction_state_change/transaction_state_change_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_transaction_state_change",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.transaction_state_change.transaction_state_change_router.update_transaction_state_change": {
+    "file": "src/api/transaction_state_change/transaction_state_change_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_transaction_state_change",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.transaction_state_change.transaction_state_change_router.delete_transaction_state_change": {
+    "file": "src/api/transaction_state_change/transaction_state_change_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_transaction_state_change",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.user.user_router._repo": {
+    "file": "src/api/user/user_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.user.user_router.list_users": {
+    "file": "src/api/user/user_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_users",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.user.user_router.get_user": {
+    "file": "src/api/user/user_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_user",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.user.user_router.create_user": {
+    "file": "src/api/user/user_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_user",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.user.user_router.update_user": {
+    "file": "src/api/user/user_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_user",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.user.user_router.delete_user": {
+    "file": "src/api/user/user_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_user",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.user_account.user_account_router._repo": {
+    "file": "src/api/user_account/user_account_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.user_account.user_account_router.list_user_accounts": {
+    "file": "src/api/user_account/user_account_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_user_accounts",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.user_account.user_account_router.get_user_account": {
+    "file": "src/api/user_account/user_account_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_user_account",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.user_account.user_account_router.create_user_account": {
+    "file": "src/api/user_account/user_account_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_user_account",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.user_account.user_account_router.update_user_account": {
+    "file": "src/api/user_account/user_account_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_user_account",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.user_account.user_account_router.delete_user_account": {
+    "file": "src/api/user_account/user_account_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_user_account",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_limit.withdrawal_limit_router._repo": {
+    "file": "src/api/withdrawal_limit/withdrawal_limit_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.withdrawal_limit.withdrawal_limit_router.list_withdrawal_limits": {
+    "file": "src/api/withdrawal_limit/withdrawal_limit_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_withdrawal_limits",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_limit.withdrawal_limit_router.get_withdrawal_limit": {
+    "file": "src/api/withdrawal_limit/withdrawal_limit_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_withdrawal_limit",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_limit.withdrawal_limit_router.create_withdrawal_limit": {
+    "file": "src/api/withdrawal_limit/withdrawal_limit_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_withdrawal_limit",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_limit.withdrawal_limit_router.update_withdrawal_limit": {
+    "file": "src/api/withdrawal_limit/withdrawal_limit_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_withdrawal_limit",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_limit.withdrawal_limit_router.delete_withdrawal_limit": {
+    "file": "src/api/withdrawal_limit/withdrawal_limit_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_withdrawal_limit",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_request.withdrawal_request_router._repo": {
+    "file": "src/api/withdrawal_request/withdrawal_request_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.withdrawal_request.withdrawal_request_router.list_withdrawal_requests": {
+    "file": "src/api/withdrawal_request/withdrawal_request_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_withdrawal_requests",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_request.withdrawal_request_router.get_withdrawal_request": {
+    "file": "src/api/withdrawal_request/withdrawal_request_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_withdrawal_request",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_request.withdrawal_request_router.create_withdrawal_request": {
+    "file": "src/api/withdrawal_request/withdrawal_request_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_withdrawal_request",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_request.withdrawal_request_router.update_withdrawal_request": {
+    "file": "src/api/withdrawal_request/withdrawal_request_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_withdrawal_request",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_request.withdrawal_request_router.delete_withdrawal_request": {
+    "file": "src/api/withdrawal_request/withdrawal_request_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_withdrawal_request",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_transaction.withdrawal_transaction_router._repo": {
+    "file": "src/api/withdrawal_transaction/withdrawal_transaction_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.withdrawal_transaction.withdrawal_transaction_router.list_withdrawal_transactions": {
+    "file": "src/api/withdrawal_transaction/withdrawal_transaction_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_withdrawal_transactions",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_transaction.withdrawal_transaction_router.get_withdrawal_transaction": {
+    "file": "src/api/withdrawal_transaction/withdrawal_transaction_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_withdrawal_transaction",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_transaction.withdrawal_transaction_router.create_withdrawal_transaction": {
+    "file": "src/api/withdrawal_transaction/withdrawal_transaction_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_withdrawal_transaction",
+    "calls": [
+      "src.domain.card.Card.AuthenticationSession.create"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_transaction.withdrawal_transaction_router.update_withdrawal_transaction": {
+    "file": "src/api/withdrawal_transaction/withdrawal_transaction_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_withdrawal_transaction",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.withdrawal_transaction.withdrawal_transaction_router.delete_withdrawal_transaction": {
+    "file": "src/api/withdrawal_transaction/withdrawal_transaction_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_withdrawal_transaction",
+    "calls": [
+      "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.config.database.get_db": {
+    "file": "src/config/database.py",
+    "line": 24,
+    "end_line": 29,
+    "class": null,
+    "name": "get_db",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.database.create_tables": {
+    "file": "src/config/database.py",
+    "line": 32,
+    "end_line": 34,
+    "class": null,
+    "name": "create_tables",
+    "calls": [],
+    "called_by": [
+      "main.lifespan"
+    ]
+  },
+  "src.config.dependencies.get_account_balance_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 29,
+    "end_line": 30,
+    "class": null,
+    "name": "get_account_balance_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_actor_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 32,
+    "end_line": 33,
+    "class": null,
+    "name": "get_actor_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_audit_log_resource_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 35,
+    "end_line": 36,
+    "class": null,
+    "name": "get_audit_log_resource_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_authentication_attempt_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 38,
+    "end_line": 39,
+    "class": null,
+    "name": "get_authentication_attempt_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_authentication_session_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 41,
+    "end_line": 42,
+    "class": null,
+    "name": "get_authentication_session_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_card_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 44,
+    "end_line": 45,
+    "class": null,
+    "name": "get_card_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_failed_attempt_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 47,
+    "end_line": 48,
+    "class": null,
+    "name": "get_failed_attempt_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_load_alert_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 50,
+    "end_line": 51,
+    "class": null,
+    "name": "get_load_alert_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_lockout_notification_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 53,
+    "end_line": 54,
+    "class": null,
+    "name": "get_lockout_notification_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_lockout_record_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 56,
+    "end_line": 57,
+    "class": null,
+    "name": "get_lockout_record_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_pin_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 59,
+    "end_line": 60,
+    "class": null,
+    "name": "get_pin_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_storage_state_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 62,
+    "end_line": 63,
+    "class": null,
+    "name": "get_storage_state_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_suspicious_pattern_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 65,
+    "end_line": 66,
+    "class": null,
+    "name": "get_suspicious_pattern_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_transaction_log_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 68,
+    "end_line": 69,
+    "class": null,
+    "name": "get_transaction_log_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_transaction_state_change_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 71,
+    "end_line": 72,
+    "class": null,
+    "name": "get_transaction_state_change_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_user_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 74,
+    "end_line": 75,
+    "class": null,
+    "name": "get_user_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_user_account_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 77,
+    "end_line": 78,
+    "class": null,
+    "name": "get_user_account_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_withdrawal_limit_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 80,
+    "end_line": 81,
+    "class": null,
+    "name": "get_withdrawal_limit_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_withdrawal_request_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 83,
+    "end_line": 84,
+    "class": null,
+    "name": "get_withdrawal_request_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_withdrawal_transaction_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 86,
+    "end_line": 87,
+    "class": null,
+    "name": "get_withdrawal_transaction_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.account.Account.Actor.checkPermission": {
+    "file": "src/domain/account/Account.py",
+    "line": 40,
+    "end_line": 41,
+    "class": "Actor",
+    "name": "checkPermission",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.account.Account.Resource.checkAccessibility": {
+    "file": "src/domain/account/Account.py",
+    "line": 87,
+    "end_line": 88,
+    "class": "Resource",
+    "name": "checkAccessibility",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.account.Account.Account.isLocked": {
+    "file": "src/domain/account/Account.py",
+    "line": 115,
+    "end_line": 116,
+    "class": "Account",
+    "name": "isLocked",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.account.Account.Account.unlock": {
+    "file": "src/domain/account/Account.py",
+    "line": 118,
+    "end_line": 119,
+    "class": "Account",
+    "name": "unlock",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.account.Account.Account.setLocked": {
+    "file": "src/domain/account/Account.py",
+    "line": 121,
+    "end_line": 122,
+    "class": "Account",
+    "name": "setLocked",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.account.Account.Account.lock": {
+    "file": "src/domain/account/Account.py",
+    "line": 124,
+    "end_line": 125,
+    "class": "Account",
+    "name": "lock",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.account.Account.Account.getAccount": {
+    "file": "src/domain/account/Account.py",
+    "line": 127,
+    "end_line": 128,
+    "class": "Account",
+    "name": "getAccount",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.account.Account.Account.updateBalance": {
+    "file": "src/domain/account/Account.py",
+    "line": 130,
+    "end_line": 131,
+    "class": "Account",
+    "name": "updateBalance",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.account.Account.Account.getStatus": {
+    "file": "src/domain/account/Account.py",
+    "line": 133,
+    "end_line": 134,
+    "class": "Account",
+    "name": "getStatus",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.authentication_attempt.AuthenticationAttempt.Actor.checkPermission": {
+    "file": "src/domain/authentication_attempt/AuthenticationAttempt.py",
+    "line": 42,
+    "end_line": 43,
+    "class": "Actor",
+    "name": "checkPermission",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.authentication_attempt.AuthenticationAttempt.AuditLogResource.recordAuthenticationAttempt": {
+    "file": "src/domain/authentication_attempt/AuthenticationAttempt.py",
+    "line": 74,
+    "end_line": 75,
+    "class": "AuditLogResource",
+    "name": "recordAuthenticationAttempt",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.authentication_attempt.AuthenticationAttempt.AuditLogResource.recordStateChange": {
+    "file": "src/domain/authentication_attempt/AuthenticationAttempt.py",
+    "line": 77,
+    "end_line": 78,
+    "class": "AuditLogResource",
+    "name": "recordStateChange",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.authentication_attempt.AuthenticationAttempt.AuditLogResource.checkPermissions": {
+    "file": "src/domain/authentication_attempt/AuthenticationAttempt.py",
+    "line": 80,
+    "end_line": 81,
+    "class": "AuditLogResource",
+    "name": "checkPermissions",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.card.Card.Card.isExpired": {
+    "file": "src/domain/card/Card.py",
+    "line": 39,
+    "end_line": 40,
+    "class": "Card",
+    "name": "isExpired",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.card.Card.Card.verifyPin": {
+    "file": "src/domain/card/Card.py",
+    "line": 42,
+    "end_line": 43,
+    "class": "Card",
+    "name": "verifyPin",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.card.Card.AuthenticationSession.create": {
+    "file": "src/domain/card/Card.py",
+    "line": 55,
+    "end_line": 56,
+    "class": "AuthenticationSession",
+    "name": "create",
+    "calls": [],
+    "called_by": [
+      "src.api.account_balance.account_balance_router.create_account_balance",
+      "src.api.actor.actor_router.create_actor",
+      "src.api.audit_log_resource.audit_log_resource_router.create_audit_log_resource",
+      "src.api.authentication_attempt.authentication_attempt_router.create_authentication_attempt",
+      "src.api.authentication_session.authentication_session_router.create_authentication_session",
+      "src.api.card.card_router.create_card",
+      "src.api.failed_attempt.failed_attempt_router.create_failed_attempt",
+      "src.api.load_alert.load_alert_router.create_load_alert",
+      "src.api.lockout_notification.lockout_notification_router.create_lockout_notification",
+      "src.api.lockout_record.lockout_record_router.create_lockout_record",
+      "src.api.pin.pin_router.create_pin",
+      "src.api.storage_state.storage_state_router.create_storage_state",
+      "src.api.suspicious_pattern.suspicious_pattern_router.create_suspicious_pattern",
+      "src.api.transaction_log.transaction_log_router.create_transaction_log",
+      "src.api.transaction_state_change.transaction_state_change_router.create_transaction_state_change",
+      "src.api.user.user_router.create_user",
+      "src.api.user_account.user_account_router.create_user_account",
+      "src.api.withdrawal_limit.withdrawal_limit_router.create_withdrawal_limit",
+      "src.api.withdrawal_request.withdrawal_request_router.create_withdrawal_request",
+      "src.api.withdrawal_transaction.withdrawal_transaction_router.create_withdrawal_transaction"
+    ]
+  },
+  "src.domain.card.Card.AuthenticationSession.resetConsecutiveFailures": {
+    "file": "src/domain/card/Card.py",
+    "line": 58,
+    "end_line": 59,
+    "class": "AuthenticationSession",
+    "name": "resetConsecutiveFailures",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.card.Card.AuthenticationSession.incrementConsecutiveFailures": {
+    "file": "src/domain/card/Card.py",
+    "line": 61,
+    "end_line": 62,
+    "class": "AuthenticationSession",
+    "name": "incrementConsecutiveFailures",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.card.Card.LockoutRecord.create": {
+    "file": "src/domain/card/Card.py",
+    "line": 72,
+    "end_line": 73,
+    "class": "LockoutRecord",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.card.Card.FailedAttempt.createFailedAttempt": {
+    "file": "src/domain/card/Card.py",
+    "line": 81,
+    "end_line": 82,
+    "class": "FailedAttempt",
+    "name": "createFailedAttempt",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.card.Card.LockoutNotification.send": {
+    "file": "src/domain/card/Card.py",
+    "line": 91,
+    "end_line": 92,
+    "class": "LockoutNotification",
+    "name": "send",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.card.Card.LockoutNotification.setSent": {
+    "file": "src/domain/card/Card.py",
+    "line": 94,
+    "end_line": 95,
+    "class": "LockoutNotification",
+    "name": "setSent",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.daily_withdrawal_limit.DailyWithdrawalLimit.Actor.checkPermission": {
+    "file": "src/domain/daily_withdrawal_limit/DailyWithdrawalLimit.py",
+    "line": 33,
+    "end_line": 34,
+    "class": "Actor",
+    "name": "checkPermission",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.daily_withdrawal_limit.DailyWithdrawalLimit.Resource.checkAccessibility": {
+    "file": "src/domain/daily_withdrawal_limit/DailyWithdrawalLimit.py",
+    "line": 80,
+    "end_line": 81,
+    "class": "Resource",
+    "name": "checkAccessibility",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.flagged_transaction.FlaggedTransaction.Actor.checkPermission": {
+    "file": "src/domain/flagged_transaction/FlaggedTransaction.py",
+    "line": 26,
+    "end_line": 27,
+    "class": "Actor",
+    "name": "checkPermission",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.flagged_transaction.FlaggedTransaction.Security_Team.checkPermission": {
+    "file": "src/domain/flagged_transaction/FlaggedTransaction.py",
+    "line": 33,
+    "end_line": 34,
+    "class": "Security_Team",
+    "name": "checkPermission",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.flagged_transaction.FlaggedTransaction.Finance_Team.checkPermission": {
+    "file": "src/domain/flagged_transaction/FlaggedTransaction.py",
+    "line": 40,
+    "end_line": 41,
+    "class": "Finance_Team",
+    "name": "checkPermission",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.flagged_transaction.FlaggedTransaction.Operations_Team.checkPermission": {
+    "file": "src/domain/flagged_transaction/FlaggedTransaction.py",
+    "line": 47,
+    "end_line": 48,
+    "class": "Operations_Team",
+    "name": "checkPermission",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.flagged_transaction.FlaggedTransaction.Resource.checkAccessibility": {
+    "file": "src/domain/flagged_transaction/FlaggedTransaction.py",
+    "line": 67,
+    "end_line": 68,
+    "class": "Resource",
+    "name": "checkAccessibility",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.flagged_transaction.FlaggedTransaction.REQ_SEC_01.submitWithdrawal": {
+    "file": "src/domain/flagged_transaction/FlaggedTransaction.py",
+    "line": 102,
+    "end_line": 103,
+    "class": "REQ_SEC_01",
+    "name": "submitWithdrawal",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.flagged_transaction.FlaggedTransaction.FlaggedTransaction.createFlaggedTransaction": {
+    "file": "src/domain/flagged_transaction/FlaggedTransaction.py",
+    "line": 141,
+    "end_line": 142,
+    "class": "FlaggedTransaction",
+    "name": "createFlaggedTransaction",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.pin.Pin.AuthenticationSession.create": {
+    "file": "src/domain/pin/Pin.py",
+    "line": 41,
+    "end_line": 42,
+    "class": "AuthenticationSession",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.pin.Pin.AuthenticationSession.resetConsecutiveFailures": {
+    "file": "src/domain/pin/Pin.py",
+    "line": 44,
+    "end_line": 45,
+    "class": "AuthenticationSession",
+    "name": "resetConsecutiveFailures",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.pin.Pin.AuthenticationSession.incrementConsecutiveFailures": {
+    "file": "src/domain/pin/Pin.py",
+    "line": 47,
+    "end_line": 48,
+    "class": "AuthenticationSession",
+    "name": "incrementConsecutiveFailures",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.pin.Pin.LockoutRecord.create": {
+    "file": "src/domain/pin/Pin.py",
+    "line": 58,
+    "end_line": 59,
+    "class": "LockoutRecord",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.pin.Pin.FailedAttempt.createFailedAttempt": {
+    "file": "src/domain/pin/Pin.py",
+    "line": 67,
+    "end_line": 68,
+    "class": "FailedAttempt",
+    "name": "createFailedAttempt",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.pin.Pin.LockoutNotification.send": {
+    "file": "src/domain/pin/Pin.py",
+    "line": 77,
+    "end_line": 78,
+    "class": "LockoutNotification",
+    "name": "send",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.pin.Pin.LockoutNotification.setSent": {
+    "file": "src/domain/pin/Pin.py",
+    "line": 80,
+    "end_line": 81,
+    "class": "LockoutNotification",
+    "name": "setSent",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.suspicious_pattern.SuspiciousPattern.SuspiciousPattern.evaluatePattern": {
+    "file": "src/domain/suspicious_pattern/SuspiciousPattern.py",
+    "line": 38,
+    "end_line": 39,
+    "class": "SuspiciousPattern",
+    "name": "evaluatePattern",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.withdrawal_transaction.WithdrawalTransaction.UserAccount.getBalance": {
+    "file": "src/domain/withdrawal_transaction/WithdrawalTransaction.py",
+    "line": 30,
+    "end_line": 31,
+    "class": "UserAccount",
+    "name": "getBalance",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.withdrawal_transaction.WithdrawalTransaction.UserAccount.deduct": {
+    "file": "src/domain/withdrawal_transaction/WithdrawalTransaction.py",
+    "line": 33,
+    "end_line": 34,
+    "class": "UserAccount",
+    "name": "deduct",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.withdrawal_transaction.WithdrawalTransaction.UserAccount.reverseDeduction": {
+    "file": "src/domain/withdrawal_transaction/WithdrawalTransaction.py",
+    "line": 36,
+    "end_line": 37,
+    "class": "UserAccount",
+    "name": "reverseDeduction",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.withdrawal_transaction.WithdrawalTransaction.WithdrawalLimit.updateLimit": {
+    "file": "src/domain/withdrawal_transaction/WithdrawalTransaction.py",
+    "line": 43,
+    "end_line": 44,
+    "class": "WithdrawalLimit",
+    "name": "updateLimit",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.withdrawal_transaction.WithdrawalTransaction.WithdrawalLimit.reverseUpdate": {
+    "file": "src/domain/withdrawal_transaction/WithdrawalTransaction.py",
+    "line": 46,
+    "end_line": 47,
+    "class": "WithdrawalLimit",
+    "name": "reverseUpdate",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.withdrawal_transaction.WithdrawalTransaction.TransactionLog.createLog": {
+    "file": "src/domain/withdrawal_transaction/WithdrawalTransaction.py",
+    "line": 54,
+    "end_line": 55,
+    "class": "TransactionLog",
+    "name": "createLog",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.withdrawal_transaction.WithdrawalTransaction.LoadAlert.checkSystemLoad": {
+    "file": "src/domain/withdrawal_transaction/WithdrawalTransaction.py",
+    "line": 71,
+    "end_line": 72,
+    "class": "LoadAlert",
+    "name": "checkSystemLoad",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.withdrawal_transaction.WithdrawalTransaction.StorageState.checkStorageCapacity": {
+    "file": "src/domain/withdrawal_transaction/WithdrawalTransaction.py",
+    "line": 80,
+    "end_line": 81,
+    "class": "StorageState",
+    "name": "checkStorageCapacity",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.withdrawal_transaction.WithdrawalTransaction.WithdrawalTransaction.createTransaction": {
+    "file": "src/domain/withdrawal_transaction/WithdrawalTransaction.py",
+    "line": 111,
+    "end_line": 112,
+    "class": "WithdrawalTransaction",
+    "name": "createTransaction",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.account.account_repo_impl.SQLAlchemyAccountRepository.__init__": {
+    "file": "src/infra/account/account_repo_impl.py",
+    "line": 20,
+    "end_line": 21,
+    "class": "SQLAlchemyAccountRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.__init__": {
+    "file": "src/infra/account_balance/account_balance_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyAccountBalanceRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_by_id": {
+    "file": "src/infra/account_balance/account_balance_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyAccountBalanceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": [
+      "src.api.account_balance.account_balance_router.get_account_balance",
+      "src.api.actor.actor_router.get_actor",
+      "src.api.audit_log_resource.audit_log_resource_router.get_audit_log_resource",
+      "src.api.authentication_attempt.authentication_attempt_router.get_authentication_attempt",
+      "src.api.authentication_session.authentication_session_router.get_authentication_session",
+      "src.api.card.card_router.get_card",
+      "src.api.failed_attempt.failed_attempt_router.get_failed_attempt",
+      "src.api.load_alert.load_alert_router.get_load_alert",
+      "src.api.lockout_notification.lockout_notification_router.get_lockout_notification",
+      "src.api.lockout_record.lockout_record_router.get_lockout_record",
+      "src.api.pin.pin_router.get_pin",
+      "src.api.storage_state.storage_state_router.get_storage_state",
+      "src.api.suspicious_pattern.suspicious_pattern_router.get_suspicious_pattern",
+      "src.api.transaction_log.transaction_log_router.get_transaction_log",
+      "src.api.transaction_state_change.transaction_state_change_router.get_transaction_state_change",
+      "src.api.user.user_router.get_user",
+      "src.api.user_account.user_account_router.get_user_account",
+      "src.api.withdrawal_limit.withdrawal_limit_router.get_withdrawal_limit",
+      "src.api.withdrawal_request.withdrawal_request_router.get_withdrawal_request",
+      "src.api.withdrawal_transaction.withdrawal_transaction_router.get_withdrawal_transaction"
+    ]
+  },
+  "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.get_all": {
+    "file": "src/infra/account_balance/account_balance_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyAccountBalanceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": [
+      "src.api.account_balance.account_balance_router.list_account_balances",
+      "src.api.actor.actor_router.list_actors",
+      "src.api.audit_log_resource.audit_log_resource_router.list_audit_log_resources",
+      "src.api.authentication_attempt.authentication_attempt_router.list_authentication_attempts",
+      "src.api.authentication_session.authentication_session_router.list_authentication_sessions",
+      "src.api.card.card_router.list_cards",
+      "src.api.failed_attempt.failed_attempt_router.list_failed_attempts",
+      "src.api.load_alert.load_alert_router.list_load_alerts",
+      "src.api.lockout_notification.lockout_notification_router.list_lockout_notifications",
+      "src.api.lockout_record.lockout_record_router.list_lockout_records",
+      "src.api.pin.pin_router.list_pins",
+      "src.api.storage_state.storage_state_router.list_storage_states",
+      "src.api.suspicious_pattern.suspicious_pattern_router.list_suspicious_patterns",
+      "src.api.transaction_log.transaction_log_router.list_transaction_logs",
+      "src.api.transaction_state_change.transaction_state_change_router.list_transaction_state_changes",
+      "src.api.user.user_router.list_users",
+      "src.api.user_account.user_account_router.list_user_accounts",
+      "src.api.withdrawal_limit.withdrawal_limit_router.list_withdrawal_limits",
+      "src.api.withdrawal_request.withdrawal_request_router.list_withdrawal_requests",
+      "src.api.withdrawal_transaction.withdrawal_transaction_router.list_withdrawal_transactions"
+    ]
+  },
+  "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.create": {
+    "file": "src/infra/account_balance/account_balance_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyAccountBalanceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.update": {
+    "file": "src/infra/account_balance/account_balance_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyAccountBalanceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": [
+      "src.api.account_balance.account_balance_router.update_account_balance",
+      "src.api.actor.actor_router.update_actor",
+      "src.api.audit_log_resource.audit_log_resource_router.update_audit_log_resource",
+      "src.api.authentication_attempt.authentication_attempt_router.update_authentication_attempt",
+      "src.api.authentication_session.authentication_session_router.update_authentication_session",
+      "src.api.card.card_router.update_card",
+      "src.api.failed_attempt.failed_attempt_router.update_failed_attempt",
+      "src.api.load_alert.load_alert_router.update_load_alert",
+      "src.api.lockout_notification.lockout_notification_router.update_lockout_notification",
+      "src.api.lockout_record.lockout_record_router.update_lockout_record",
+      "src.api.pin.pin_router.update_pin",
+      "src.api.storage_state.storage_state_router.update_storage_state",
+      "src.api.suspicious_pattern.suspicious_pattern_router.update_suspicious_pattern",
+      "src.api.transaction_log.transaction_log_router.update_transaction_log",
+      "src.api.transaction_state_change.transaction_state_change_router.update_transaction_state_change",
+      "src.api.user.user_router.update_user",
+      "src.api.user_account.user_account_router.update_user_account",
+      "src.api.withdrawal_limit.withdrawal_limit_router.update_withdrawal_limit",
+      "src.api.withdrawal_request.withdrawal_request_router.update_withdrawal_request",
+      "src.api.withdrawal_transaction.withdrawal_transaction_router.update_withdrawal_transaction"
+    ]
+  },
+  "src.infra.account_balance.account_balance_repo_impl.SQLAlchemyAccountBalanceRepository.delete": {
+    "file": "src/infra/account_balance/account_balance_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyAccountBalanceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": [
+      "src.api.account_balance.account_balance_router.delete_account_balance",
+      "src.api.actor.actor_router.delete_actor",
+      "src.api.audit_log_resource.audit_log_resource_router.delete_audit_log_resource",
+      "src.api.authentication_attempt.authentication_attempt_router.delete_authentication_attempt",
+      "src.api.authentication_session.authentication_session_router.delete_authentication_session",
+      "src.api.card.card_router.delete_card",
+      "src.api.failed_attempt.failed_attempt_router.delete_failed_attempt",
+      "src.api.load_alert.load_alert_router.delete_load_alert",
+      "src.api.lockout_notification.lockout_notification_router.delete_lockout_notification",
+      "src.api.lockout_record.lockout_record_router.delete_lockout_record",
+      "src.api.pin.pin_router.delete_pin",
+      "src.api.storage_state.storage_state_router.delete_storage_state",
+      "src.api.suspicious_pattern.suspicious_pattern_router.delete_suspicious_pattern",
+      "src.api.transaction_log.transaction_log_router.delete_transaction_log",
+      "src.api.transaction_state_change.transaction_state_change_router.delete_transaction_state_change",
+      "src.api.user.user_router.delete_user",
+      "src.api.user_account.user_account_router.delete_user_account",
+      "src.api.withdrawal_limit.withdrawal_limit_router.delete_withdrawal_limit",
+      "src.api.withdrawal_request.withdrawal_request_router.delete_withdrawal_request",
+      "src.api.withdrawal_transaction.withdrawal_transaction_router.delete_withdrawal_transaction"
+    ]
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.__init__": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyActorRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyActorRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyActorRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.create": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyActorRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyActorRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyActorRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.audit_log_resource.audit_log_resource_repo_impl.SQLAlchemyAuditLogResourceRepository.__init__": {
+    "file": "src/infra/audit_log_resource/audit_log_resource_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyAuditLogResourceRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.audit_log_resource.audit_log_resource_repo_impl.SQLAlchemyAuditLogResourceRepository.get_by_id": {
+    "file": "src/infra/audit_log_resource/audit_log_resource_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyAuditLogResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.audit_log_resource.audit_log_resource_repo_impl.SQLAlchemyAuditLogResourceRepository.get_all": {
+    "file": "src/infra/audit_log_resource/audit_log_resource_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyAuditLogResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.audit_log_resource.audit_log_resource_repo_impl.SQLAlchemyAuditLogResourceRepository.create": {
+    "file": "src/infra/audit_log_resource/audit_log_resource_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyAuditLogResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.audit_log_resource.audit_log_resource_repo_impl.SQLAlchemyAuditLogResourceRepository.update": {
+    "file": "src/infra/audit_log_resource/audit_log_resource_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyAuditLogResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.audit_log_resource.audit_log_resource_repo_impl.SQLAlchemyAuditLogResourceRepository.delete": {
+    "file": "src/infra/audit_log_resource/audit_log_resource_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyAuditLogResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.authentication_attempt.authentication_attempt_repo_impl.SQLAlchemyAuthenticationAttemptRepository.__init__": {
+    "file": "src/infra/authentication_attempt/authentication_attempt_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyAuthenticationAttemptRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.authentication_attempt.authentication_attempt_repo_impl.SQLAlchemyAuthenticationAttemptRepository.get_by_id": {
+    "file": "src/infra/authentication_attempt/authentication_attempt_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyAuthenticationAttemptRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.authentication_attempt.authentication_attempt_repo_impl.SQLAlchemyAuthenticationAttemptRepository.get_all": {
+    "file": "src/infra/authentication_attempt/authentication_attempt_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyAuthenticationAttemptRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.authentication_attempt.authentication_attempt_repo_impl.SQLAlchemyAuthenticationAttemptRepository.create": {
+    "file": "src/infra/authentication_attempt/authentication_attempt_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyAuthenticationAttemptRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.authentication_attempt.authentication_attempt_repo_impl.SQLAlchemyAuthenticationAttemptRepository.update": {
+    "file": "src/infra/authentication_attempt/authentication_attempt_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyAuthenticationAttemptRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.authentication_attempt.authentication_attempt_repo_impl.SQLAlchemyAuthenticationAttemptRepository.delete": {
+    "file": "src/infra/authentication_attempt/authentication_attempt_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyAuthenticationAttemptRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.authentication_session.authentication_session_repo_impl.SQLAlchemyAuthenticationSessionRepository.__init__": {
+    "file": "src/infra/authentication_session/authentication_session_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyAuthenticationSessionRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.authentication_session.authentication_session_repo_impl.SQLAlchemyAuthenticationSessionRepository.get_by_id": {
+    "file": "src/infra/authentication_session/authentication_session_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyAuthenticationSessionRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.authentication_session.authentication_session_repo_impl.SQLAlchemyAuthenticationSessionRepository.get_all": {
+    "file": "src/infra/authentication_session/authentication_session_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyAuthenticationSessionRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.authentication_session.authentication_session_repo_impl.SQLAlchemyAuthenticationSessionRepository.create": {
+    "file": "src/infra/authentication_session/authentication_session_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyAuthenticationSessionRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.authentication_session.authentication_session_repo_impl.SQLAlchemyAuthenticationSessionRepository.update": {
+    "file": "src/infra/authentication_session/authentication_session_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyAuthenticationSessionRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.authentication_session.authentication_session_repo_impl.SQLAlchemyAuthenticationSessionRepository.delete": {
+    "file": "src/infra/authentication_session/authentication_session_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyAuthenticationSessionRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.card.card_repo_impl.SQLAlchemyCardRepository.__init__": {
+    "file": "src/infra/card/card_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyCardRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.card.card_repo_impl.SQLAlchemyCardRepository.get_by_id": {
+    "file": "src/infra/card/card_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyCardRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.card.card_repo_impl.SQLAlchemyCardRepository.get_all": {
+    "file": "src/infra/card/card_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyCardRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.card.card_repo_impl.SQLAlchemyCardRepository.create": {
+    "file": "src/infra/card/card_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyCardRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.card.card_repo_impl.SQLAlchemyCardRepository.update": {
+    "file": "src/infra/card/card_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyCardRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.card.card_repo_impl.SQLAlchemyCardRepository.delete": {
+    "file": "src/infra/card/card_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyCardRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.daily_withdrawal_limit.daily_withdrawal_limit_repo_impl.SQLAlchemyDailyWithdrawalLimitRepository.__init__": {
+    "file": "src/infra/daily_withdrawal_limit/daily_withdrawal_limit_repo_impl.py",
+    "line": 17,
+    "end_line": 18,
+    "class": "SQLAlchemyDailyWithdrawalLimitRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.failed_attempt.failed_attempt_repo_impl.SQLAlchemyFailedAttemptRepository.__init__": {
+    "file": "src/infra/failed_attempt/failed_attempt_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyFailedAttemptRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.failed_attempt.failed_attempt_repo_impl.SQLAlchemyFailedAttemptRepository.get_by_id": {
+    "file": "src/infra/failed_attempt/failed_attempt_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyFailedAttemptRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.failed_attempt.failed_attempt_repo_impl.SQLAlchemyFailedAttemptRepository.get_all": {
+    "file": "src/infra/failed_attempt/failed_attempt_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyFailedAttemptRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.failed_attempt.failed_attempt_repo_impl.SQLAlchemyFailedAttemptRepository.create": {
+    "file": "src/infra/failed_attempt/failed_attempt_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyFailedAttemptRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.failed_attempt.failed_attempt_repo_impl.SQLAlchemyFailedAttemptRepository.update": {
+    "file": "src/infra/failed_attempt/failed_attempt_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyFailedAttemptRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.failed_attempt.failed_attempt_repo_impl.SQLAlchemyFailedAttemptRepository.delete": {
+    "file": "src/infra/failed_attempt/failed_attempt_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyFailedAttemptRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.flagged_transaction.flagged_transaction_repo_impl.SQLAlchemyFlaggedTransactionRepository.__init__": {
+    "file": "src/infra/flagged_transaction/flagged_transaction_repo_impl.py",
+    "line": 17,
+    "end_line": 18,
+    "class": "SQLAlchemyFlaggedTransactionRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.load_alert.load_alert_repo_impl.SQLAlchemyLoadAlertRepository.__init__": {
+    "file": "src/infra/load_alert/load_alert_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyLoadAlertRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.load_alert.load_alert_repo_impl.SQLAlchemyLoadAlertRepository.get_by_id": {
+    "file": "src/infra/load_alert/load_alert_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyLoadAlertRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.load_alert.load_alert_repo_impl.SQLAlchemyLoadAlertRepository.get_all": {
+    "file": "src/infra/load_alert/load_alert_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyLoadAlertRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.load_alert.load_alert_repo_impl.SQLAlchemyLoadAlertRepository.create": {
+    "file": "src/infra/load_alert/load_alert_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyLoadAlertRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.load_alert.load_alert_repo_impl.SQLAlchemyLoadAlertRepository.update": {
+    "file": "src/infra/load_alert/load_alert_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyLoadAlertRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.load_alert.load_alert_repo_impl.SQLAlchemyLoadAlertRepository.delete": {
+    "file": "src/infra/load_alert/load_alert_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyLoadAlertRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.lockout_notification.lockout_notification_repo_impl.SQLAlchemyLockoutNotificationRepository.__init__": {
+    "file": "src/infra/lockout_notification/lockout_notification_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyLockoutNotificationRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.lockout_notification.lockout_notification_repo_impl.SQLAlchemyLockoutNotificationRepository.get_by_id": {
+    "file": "src/infra/lockout_notification/lockout_notification_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyLockoutNotificationRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.lockout_notification.lockout_notification_repo_impl.SQLAlchemyLockoutNotificationRepository.get_all": {
+    "file": "src/infra/lockout_notification/lockout_notification_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyLockoutNotificationRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.lockout_notification.lockout_notification_repo_impl.SQLAlchemyLockoutNotificationRepository.create": {
+    "file": "src/infra/lockout_notification/lockout_notification_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyLockoutNotificationRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.lockout_notification.lockout_notification_repo_impl.SQLAlchemyLockoutNotificationRepository.update": {
+    "file": "src/infra/lockout_notification/lockout_notification_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyLockoutNotificationRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.lockout_notification.lockout_notification_repo_impl.SQLAlchemyLockoutNotificationRepository.delete": {
+    "file": "src/infra/lockout_notification/lockout_notification_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyLockoutNotificationRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.lockout_record.lockout_record_repo_impl.SQLAlchemyLockoutRecordRepository.__init__": {
+    "file": "src/infra/lockout_record/lockout_record_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyLockoutRecordRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.lockout_record.lockout_record_repo_impl.SQLAlchemyLockoutRecordRepository.get_by_id": {
+    "file": "src/infra/lockout_record/lockout_record_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyLockoutRecordRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.lockout_record.lockout_record_repo_impl.SQLAlchemyLockoutRecordRepository.get_all": {
+    "file": "src/infra/lockout_record/lockout_record_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyLockoutRecordRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.lockout_record.lockout_record_repo_impl.SQLAlchemyLockoutRecordRepository.create": {
+    "file": "src/infra/lockout_record/lockout_record_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyLockoutRecordRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.lockout_record.lockout_record_repo_impl.SQLAlchemyLockoutRecordRepository.update": {
+    "file": "src/infra/lockout_record/lockout_record_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyLockoutRecordRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.lockout_record.lockout_record_repo_impl.SQLAlchemyLockoutRecordRepository.delete": {
+    "file": "src/infra/lockout_record/lockout_record_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyLockoutRecordRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.pin.pin_repo_impl.SQLAlchemyPinRepository.__init__": {
+    "file": "src/infra/pin/pin_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyPinRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.pin.pin_repo_impl.SQLAlchemyPinRepository.get_by_id": {
+    "file": "src/infra/pin/pin_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyPinRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.pin.pin_repo_impl.SQLAlchemyPinRepository.get_all": {
+    "file": "src/infra/pin/pin_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyPinRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.pin.pin_repo_impl.SQLAlchemyPinRepository.create": {
+    "file": "src/infra/pin/pin_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyPinRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.pin.pin_repo_impl.SQLAlchemyPinRepository.update": {
+    "file": "src/infra/pin/pin_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyPinRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.pin.pin_repo_impl.SQLAlchemyPinRepository.delete": {
+    "file": "src/infra/pin/pin_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyPinRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.storage_state.storage_state_repo_impl.SQLAlchemyStorageStateRepository.__init__": {
+    "file": "src/infra/storage_state/storage_state_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyStorageStateRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.storage_state.storage_state_repo_impl.SQLAlchemyStorageStateRepository.get_by_id": {
+    "file": "src/infra/storage_state/storage_state_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyStorageStateRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.storage_state.storage_state_repo_impl.SQLAlchemyStorageStateRepository.get_all": {
+    "file": "src/infra/storage_state/storage_state_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyStorageStateRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.storage_state.storage_state_repo_impl.SQLAlchemyStorageStateRepository.create": {
+    "file": "src/infra/storage_state/storage_state_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyStorageStateRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.storage_state.storage_state_repo_impl.SQLAlchemyStorageStateRepository.update": {
+    "file": "src/infra/storage_state/storage_state_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyStorageStateRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.storage_state.storage_state_repo_impl.SQLAlchemyStorageStateRepository.delete": {
+    "file": "src/infra/storage_state/storage_state_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyStorageStateRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.suspicious_pattern.suspicious_pattern_repo_impl.SQLAlchemySuspiciousPatternRepository.__init__": {
+    "file": "src/infra/suspicious_pattern/suspicious_pattern_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemySuspiciousPatternRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.suspicious_pattern.suspicious_pattern_repo_impl.SQLAlchemySuspiciousPatternRepository.get_by_id": {
+    "file": "src/infra/suspicious_pattern/suspicious_pattern_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemySuspiciousPatternRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.suspicious_pattern.suspicious_pattern_repo_impl.SQLAlchemySuspiciousPatternRepository.get_all": {
+    "file": "src/infra/suspicious_pattern/suspicious_pattern_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemySuspiciousPatternRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.suspicious_pattern.suspicious_pattern_repo_impl.SQLAlchemySuspiciousPatternRepository.create": {
+    "file": "src/infra/suspicious_pattern/suspicious_pattern_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemySuspiciousPatternRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.suspicious_pattern.suspicious_pattern_repo_impl.SQLAlchemySuspiciousPatternRepository.update": {
+    "file": "src/infra/suspicious_pattern/suspicious_pattern_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemySuspiciousPatternRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.suspicious_pattern.suspicious_pattern_repo_impl.SQLAlchemySuspiciousPatternRepository.delete": {
+    "file": "src/infra/suspicious_pattern/suspicious_pattern_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemySuspiciousPatternRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transaction_log.transaction_log_repo_impl.SQLAlchemyTransactionLogRepository.__init__": {
+    "file": "src/infra/transaction_log/transaction_log_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyTransactionLogRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transaction_log.transaction_log_repo_impl.SQLAlchemyTransactionLogRepository.get_by_id": {
+    "file": "src/infra/transaction_log/transaction_log_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyTransactionLogRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transaction_log.transaction_log_repo_impl.SQLAlchemyTransactionLogRepository.get_all": {
+    "file": "src/infra/transaction_log/transaction_log_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyTransactionLogRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transaction_log.transaction_log_repo_impl.SQLAlchemyTransactionLogRepository.create": {
+    "file": "src/infra/transaction_log/transaction_log_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyTransactionLogRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transaction_log.transaction_log_repo_impl.SQLAlchemyTransactionLogRepository.update": {
+    "file": "src/infra/transaction_log/transaction_log_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyTransactionLogRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transaction_log.transaction_log_repo_impl.SQLAlchemyTransactionLogRepository.delete": {
+    "file": "src/infra/transaction_log/transaction_log_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyTransactionLogRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transaction_state_change.transaction_state_change_repo_impl.SQLAlchemyTransactionStateChangeRepository.__init__": {
+    "file": "src/infra/transaction_state_change/transaction_state_change_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyTransactionStateChangeRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transaction_state_change.transaction_state_change_repo_impl.SQLAlchemyTransactionStateChangeRepository.get_by_id": {
+    "file": "src/infra/transaction_state_change/transaction_state_change_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyTransactionStateChangeRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transaction_state_change.transaction_state_change_repo_impl.SQLAlchemyTransactionStateChangeRepository.get_all": {
+    "file": "src/infra/transaction_state_change/transaction_state_change_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyTransactionStateChangeRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transaction_state_change.transaction_state_change_repo_impl.SQLAlchemyTransactionStateChangeRepository.create": {
+    "file": "src/infra/transaction_state_change/transaction_state_change_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyTransactionStateChangeRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transaction_state_change.transaction_state_change_repo_impl.SQLAlchemyTransactionStateChangeRepository.update": {
+    "file": "src/infra/transaction_state_change/transaction_state_change_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyTransactionStateChangeRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transaction_state_change.transaction_state_change_repo_impl.SQLAlchemyTransactionStateChangeRepository.delete": {
+    "file": "src/infra/transaction_state_change/transaction_state_change_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyTransactionStateChangeRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user.user_repo_impl.SQLAlchemyUserRepository.__init__": {
+    "file": "src/infra/user/user_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyUserRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user.user_repo_impl.SQLAlchemyUserRepository.get_by_id": {
+    "file": "src/infra/user/user_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyUserRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user.user_repo_impl.SQLAlchemyUserRepository.get_all": {
+    "file": "src/infra/user/user_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyUserRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user.user_repo_impl.SQLAlchemyUserRepository.create": {
+    "file": "src/infra/user/user_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyUserRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user.user_repo_impl.SQLAlchemyUserRepository.update": {
+    "file": "src/infra/user/user_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyUserRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user.user_repo_impl.SQLAlchemyUserRepository.delete": {
+    "file": "src/infra/user/user_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyUserRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user_account.user_account_repo_impl.SQLAlchemyUserAccountRepository.__init__": {
+    "file": "src/infra/user_account/user_account_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyUserAccountRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user_account.user_account_repo_impl.SQLAlchemyUserAccountRepository.get_by_id": {
+    "file": "src/infra/user_account/user_account_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyUserAccountRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user_account.user_account_repo_impl.SQLAlchemyUserAccountRepository.get_all": {
+    "file": "src/infra/user_account/user_account_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyUserAccountRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user_account.user_account_repo_impl.SQLAlchemyUserAccountRepository.create": {
+    "file": "src/infra/user_account/user_account_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyUserAccountRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user_account.user_account_repo_impl.SQLAlchemyUserAccountRepository.update": {
+    "file": "src/infra/user_account/user_account_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyUserAccountRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user_account.user_account_repo_impl.SQLAlchemyUserAccountRepository.delete": {
+    "file": "src/infra/user_account/user_account_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyUserAccountRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_limit.withdrawal_limit_repo_impl.SQLAlchemyWithdrawalLimitRepository.__init__": {
+    "file": "src/infra/withdrawal_limit/withdrawal_limit_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyWithdrawalLimitRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_limit.withdrawal_limit_repo_impl.SQLAlchemyWithdrawalLimitRepository.get_by_id": {
+    "file": "src/infra/withdrawal_limit/withdrawal_limit_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyWithdrawalLimitRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_limit.withdrawal_limit_repo_impl.SQLAlchemyWithdrawalLimitRepository.get_all": {
+    "file": "src/infra/withdrawal_limit/withdrawal_limit_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyWithdrawalLimitRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_limit.withdrawal_limit_repo_impl.SQLAlchemyWithdrawalLimitRepository.create": {
+    "file": "src/infra/withdrawal_limit/withdrawal_limit_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyWithdrawalLimitRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_limit.withdrawal_limit_repo_impl.SQLAlchemyWithdrawalLimitRepository.update": {
+    "file": "src/infra/withdrawal_limit/withdrawal_limit_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyWithdrawalLimitRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_limit.withdrawal_limit_repo_impl.SQLAlchemyWithdrawalLimitRepository.delete": {
+    "file": "src/infra/withdrawal_limit/withdrawal_limit_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyWithdrawalLimitRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_request.withdrawal_request_repo_impl.SQLAlchemyWithdrawalRequestRepository.__init__": {
+    "file": "src/infra/withdrawal_request/withdrawal_request_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyWithdrawalRequestRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_request.withdrawal_request_repo_impl.SQLAlchemyWithdrawalRequestRepository.get_by_id": {
+    "file": "src/infra/withdrawal_request/withdrawal_request_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyWithdrawalRequestRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_request.withdrawal_request_repo_impl.SQLAlchemyWithdrawalRequestRepository.get_all": {
+    "file": "src/infra/withdrawal_request/withdrawal_request_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyWithdrawalRequestRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_request.withdrawal_request_repo_impl.SQLAlchemyWithdrawalRequestRepository.create": {
+    "file": "src/infra/withdrawal_request/withdrawal_request_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyWithdrawalRequestRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_request.withdrawal_request_repo_impl.SQLAlchemyWithdrawalRequestRepository.update": {
+    "file": "src/infra/withdrawal_request/withdrawal_request_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyWithdrawalRequestRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_request.withdrawal_request_repo_impl.SQLAlchemyWithdrawalRequestRepository.delete": {
+    "file": "src/infra/withdrawal_request/withdrawal_request_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyWithdrawalRequestRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_transaction.withdrawal_transaction_repo_impl.SQLAlchemyWithdrawalTransactionRepository.__init__": {
+    "file": "src/infra/withdrawal_transaction/withdrawal_transaction_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyWithdrawalTransactionRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_transaction.withdrawal_transaction_repo_impl.SQLAlchemyWithdrawalTransactionRepository.get_by_id": {
+    "file": "src/infra/withdrawal_transaction/withdrawal_transaction_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyWithdrawalTransactionRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_transaction.withdrawal_transaction_repo_impl.SQLAlchemyWithdrawalTransactionRepository.get_all": {
+    "file": "src/infra/withdrawal_transaction/withdrawal_transaction_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyWithdrawalTransactionRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_transaction.withdrawal_transaction_repo_impl.SQLAlchemyWithdrawalTransactionRepository.create": {
+    "file": "src/infra/withdrawal_transaction/withdrawal_transaction_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyWithdrawalTransactionRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_transaction.withdrawal_transaction_repo_impl.SQLAlchemyWithdrawalTransactionRepository.update": {
+    "file": "src/infra/withdrawal_transaction/withdrawal_transaction_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyWithdrawalTransactionRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.withdrawal_transaction.withdrawal_transaction_repo_impl.SQLAlchemyWithdrawalTransactionRepository.delete": {
+    "file": "src/infra/withdrawal_transaction/withdrawal_transaction_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyWithdrawalTransactionRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.account_balance.account_balance_repository.AccountBalanceRepository.get_by_id": {
+    "file": "src/repository/account_balance/account_balance_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "AccountBalanceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.account_balance.account_balance_repository.AccountBalanceRepository.get_all": {
+    "file": "src/repository/account_balance/account_balance_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "AccountBalanceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.account_balance.account_balance_repository.AccountBalanceRepository.create": {
+    "file": "src/repository/account_balance/account_balance_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "AccountBalanceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.account_balance.account_balance_repository.AccountBalanceRepository.update": {
+    "file": "src/repository/account_balance/account_balance_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "AccountBalanceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.account_balance.account_balance_repository.AccountBalanceRepository.delete": {
+    "file": "src/repository/account_balance/account_balance_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "AccountBalanceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.get_by_id": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "ActorRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.get_all": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "ActorRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.create": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "ActorRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.update": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "ActorRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.delete": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "ActorRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.audit_log_resource.audit_log_resource_repository.AuditLogResourceRepository.get_by_id": {
+    "file": "src/repository/audit_log_resource/audit_log_resource_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "AuditLogResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.audit_log_resource.audit_log_resource_repository.AuditLogResourceRepository.get_all": {
+    "file": "src/repository/audit_log_resource/audit_log_resource_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "AuditLogResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.audit_log_resource.audit_log_resource_repository.AuditLogResourceRepository.create": {
+    "file": "src/repository/audit_log_resource/audit_log_resource_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "AuditLogResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.audit_log_resource.audit_log_resource_repository.AuditLogResourceRepository.update": {
+    "file": "src/repository/audit_log_resource/audit_log_resource_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "AuditLogResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.audit_log_resource.audit_log_resource_repository.AuditLogResourceRepository.delete": {
+    "file": "src/repository/audit_log_resource/audit_log_resource_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "AuditLogResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.authentication_attempt.authentication_attempt_repository.AuthenticationAttemptRepository.get_by_id": {
+    "file": "src/repository/authentication_attempt/authentication_attempt_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "AuthenticationAttemptRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.authentication_attempt.authentication_attempt_repository.AuthenticationAttemptRepository.get_all": {
+    "file": "src/repository/authentication_attempt/authentication_attempt_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "AuthenticationAttemptRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.authentication_attempt.authentication_attempt_repository.AuthenticationAttemptRepository.create": {
+    "file": "src/repository/authentication_attempt/authentication_attempt_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "AuthenticationAttemptRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.authentication_attempt.authentication_attempt_repository.AuthenticationAttemptRepository.update": {
+    "file": "src/repository/authentication_attempt/authentication_attempt_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "AuthenticationAttemptRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.authentication_attempt.authentication_attempt_repository.AuthenticationAttemptRepository.delete": {
+    "file": "src/repository/authentication_attempt/authentication_attempt_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "AuthenticationAttemptRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.authentication_session.authentication_session_repository.AuthenticationSessionRepository.get_by_id": {
+    "file": "src/repository/authentication_session/authentication_session_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "AuthenticationSessionRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.authentication_session.authentication_session_repository.AuthenticationSessionRepository.get_all": {
+    "file": "src/repository/authentication_session/authentication_session_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "AuthenticationSessionRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.authentication_session.authentication_session_repository.AuthenticationSessionRepository.create": {
+    "file": "src/repository/authentication_session/authentication_session_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "AuthenticationSessionRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.authentication_session.authentication_session_repository.AuthenticationSessionRepository.update": {
+    "file": "src/repository/authentication_session/authentication_session_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "AuthenticationSessionRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.authentication_session.authentication_session_repository.AuthenticationSessionRepository.delete": {
+    "file": "src/repository/authentication_session/authentication_session_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "AuthenticationSessionRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.card.card_repository.CardRepository.get_by_id": {
+    "file": "src/repository/card/card_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "CardRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.card.card_repository.CardRepository.get_all": {
+    "file": "src/repository/card/card_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "CardRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.card.card_repository.CardRepository.create": {
+    "file": "src/repository/card/card_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "CardRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.card.card_repository.CardRepository.update": {
+    "file": "src/repository/card/card_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "CardRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.card.card_repository.CardRepository.delete": {
+    "file": "src/repository/card/card_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "CardRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.failed_attempt.failed_attempt_repository.FailedAttemptRepository.get_by_id": {
+    "file": "src/repository/failed_attempt/failed_attempt_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "FailedAttemptRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.failed_attempt.failed_attempt_repository.FailedAttemptRepository.get_all": {
+    "file": "src/repository/failed_attempt/failed_attempt_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "FailedAttemptRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.failed_attempt.failed_attempt_repository.FailedAttemptRepository.create": {
+    "file": "src/repository/failed_attempt/failed_attempt_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "FailedAttemptRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.failed_attempt.failed_attempt_repository.FailedAttemptRepository.update": {
+    "file": "src/repository/failed_attempt/failed_attempt_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "FailedAttemptRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.failed_attempt.failed_attempt_repository.FailedAttemptRepository.delete": {
+    "file": "src/repository/failed_attempt/failed_attempt_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "FailedAttemptRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.load_alert.load_alert_repository.LoadAlertRepository.get_by_id": {
+    "file": "src/repository/load_alert/load_alert_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "LoadAlertRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.load_alert.load_alert_repository.LoadAlertRepository.get_all": {
+    "file": "src/repository/load_alert/load_alert_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "LoadAlertRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.load_alert.load_alert_repository.LoadAlertRepository.create": {
+    "file": "src/repository/load_alert/load_alert_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "LoadAlertRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.load_alert.load_alert_repository.LoadAlertRepository.update": {
+    "file": "src/repository/load_alert/load_alert_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "LoadAlertRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.load_alert.load_alert_repository.LoadAlertRepository.delete": {
+    "file": "src/repository/load_alert/load_alert_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "LoadAlertRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.lockout_notification.lockout_notification_repository.LockoutNotificationRepository.get_by_id": {
+    "file": "src/repository/lockout_notification/lockout_notification_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "LockoutNotificationRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.lockout_notification.lockout_notification_repository.LockoutNotificationRepository.get_all": {
+    "file": "src/repository/lockout_notification/lockout_notification_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "LockoutNotificationRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.lockout_notification.lockout_notification_repository.LockoutNotificationRepository.create": {
+    "file": "src/repository/lockout_notification/lockout_notification_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "LockoutNotificationRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.lockout_notification.lockout_notification_repository.LockoutNotificationRepository.update": {
+    "file": "src/repository/lockout_notification/lockout_notification_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "LockoutNotificationRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.lockout_notification.lockout_notification_repository.LockoutNotificationRepository.delete": {
+    "file": "src/repository/lockout_notification/lockout_notification_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "LockoutNotificationRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.lockout_record.lockout_record_repository.LockoutRecordRepository.get_by_id": {
+    "file": "src/repository/lockout_record/lockout_record_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "LockoutRecordRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.lockout_record.lockout_record_repository.LockoutRecordRepository.get_all": {
+    "file": "src/repository/lockout_record/lockout_record_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "LockoutRecordRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.lockout_record.lockout_record_repository.LockoutRecordRepository.create": {
+    "file": "src/repository/lockout_record/lockout_record_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "LockoutRecordRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.lockout_record.lockout_record_repository.LockoutRecordRepository.update": {
+    "file": "src/repository/lockout_record/lockout_record_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "LockoutRecordRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.lockout_record.lockout_record_repository.LockoutRecordRepository.delete": {
+    "file": "src/repository/lockout_record/lockout_record_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "LockoutRecordRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.pin.pin_repository.PinRepository.get_by_id": {
+    "file": "src/repository/pin/pin_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "PinRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.pin.pin_repository.PinRepository.get_all": {
+    "file": "src/repository/pin/pin_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "PinRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.pin.pin_repository.PinRepository.create": {
+    "file": "src/repository/pin/pin_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "PinRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.pin.pin_repository.PinRepository.update": {
+    "file": "src/repository/pin/pin_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "PinRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.pin.pin_repository.PinRepository.delete": {
+    "file": "src/repository/pin/pin_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "PinRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.storage_state.storage_state_repository.StorageStateRepository.get_by_id": {
+    "file": "src/repository/storage_state/storage_state_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "StorageStateRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.storage_state.storage_state_repository.StorageStateRepository.get_all": {
+    "file": "src/repository/storage_state/storage_state_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "StorageStateRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.storage_state.storage_state_repository.StorageStateRepository.create": {
+    "file": "src/repository/storage_state/storage_state_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "StorageStateRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.storage_state.storage_state_repository.StorageStateRepository.update": {
+    "file": "src/repository/storage_state/storage_state_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "StorageStateRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.storage_state.storage_state_repository.StorageStateRepository.delete": {
+    "file": "src/repository/storage_state/storage_state_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "StorageStateRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.suspicious_pattern.suspicious_pattern_repository.SuspiciousPatternRepository.get_by_id": {
+    "file": "src/repository/suspicious_pattern/suspicious_pattern_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "SuspiciousPatternRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.suspicious_pattern.suspicious_pattern_repository.SuspiciousPatternRepository.get_all": {
+    "file": "src/repository/suspicious_pattern/suspicious_pattern_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "SuspiciousPatternRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.suspicious_pattern.suspicious_pattern_repository.SuspiciousPatternRepository.create": {
+    "file": "src/repository/suspicious_pattern/suspicious_pattern_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "SuspiciousPatternRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.suspicious_pattern.suspicious_pattern_repository.SuspiciousPatternRepository.update": {
+    "file": "src/repository/suspicious_pattern/suspicious_pattern_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "SuspiciousPatternRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.suspicious_pattern.suspicious_pattern_repository.SuspiciousPatternRepository.delete": {
+    "file": "src/repository/suspicious_pattern/suspicious_pattern_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "SuspiciousPatternRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transaction_log.transaction_log_repository.TransactionLogRepository.get_by_id": {
+    "file": "src/repository/transaction_log/transaction_log_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "TransactionLogRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transaction_log.transaction_log_repository.TransactionLogRepository.get_all": {
+    "file": "src/repository/transaction_log/transaction_log_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "TransactionLogRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transaction_log.transaction_log_repository.TransactionLogRepository.create": {
+    "file": "src/repository/transaction_log/transaction_log_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "TransactionLogRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transaction_log.transaction_log_repository.TransactionLogRepository.update": {
+    "file": "src/repository/transaction_log/transaction_log_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "TransactionLogRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transaction_log.transaction_log_repository.TransactionLogRepository.delete": {
+    "file": "src/repository/transaction_log/transaction_log_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "TransactionLogRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transaction_state_change.transaction_state_change_repository.TransactionStateChangeRepository.get_by_id": {
+    "file": "src/repository/transaction_state_change/transaction_state_change_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "TransactionStateChangeRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transaction_state_change.transaction_state_change_repository.TransactionStateChangeRepository.get_all": {
+    "file": "src/repository/transaction_state_change/transaction_state_change_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "TransactionStateChangeRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transaction_state_change.transaction_state_change_repository.TransactionStateChangeRepository.create": {
+    "file": "src/repository/transaction_state_change/transaction_state_change_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "TransactionStateChangeRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transaction_state_change.transaction_state_change_repository.TransactionStateChangeRepository.update": {
+    "file": "src/repository/transaction_state_change/transaction_state_change_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "TransactionStateChangeRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transaction_state_change.transaction_state_change_repository.TransactionStateChangeRepository.delete": {
+    "file": "src/repository/transaction_state_change/transaction_state_change_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "TransactionStateChangeRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user.user_repository.UserRepository.get_by_id": {
+    "file": "src/repository/user/user_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "UserRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user.user_repository.UserRepository.get_all": {
+    "file": "src/repository/user/user_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "UserRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user.user_repository.UserRepository.create": {
+    "file": "src/repository/user/user_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "UserRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user.user_repository.UserRepository.update": {
+    "file": "src/repository/user/user_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "UserRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user.user_repository.UserRepository.delete": {
+    "file": "src/repository/user/user_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "UserRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user_account.user_account_repository.UserAccountRepository.get_by_id": {
+    "file": "src/repository/user_account/user_account_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "UserAccountRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user_account.user_account_repository.UserAccountRepository.get_all": {
+    "file": "src/repository/user_account/user_account_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "UserAccountRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user_account.user_account_repository.UserAccountRepository.create": {
+    "file": "src/repository/user_account/user_account_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "UserAccountRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user_account.user_account_repository.UserAccountRepository.update": {
+    "file": "src/repository/user_account/user_account_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "UserAccountRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user_account.user_account_repository.UserAccountRepository.delete": {
+    "file": "src/repository/user_account/user_account_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "UserAccountRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_limit.withdrawal_limit_repository.WithdrawalLimitRepository.get_by_id": {
+    "file": "src/repository/withdrawal_limit/withdrawal_limit_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "WithdrawalLimitRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_limit.withdrawal_limit_repository.WithdrawalLimitRepository.get_all": {
+    "file": "src/repository/withdrawal_limit/withdrawal_limit_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "WithdrawalLimitRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_limit.withdrawal_limit_repository.WithdrawalLimitRepository.create": {
+    "file": "src/repository/withdrawal_limit/withdrawal_limit_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "WithdrawalLimitRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_limit.withdrawal_limit_repository.WithdrawalLimitRepository.update": {
+    "file": "src/repository/withdrawal_limit/withdrawal_limit_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "WithdrawalLimitRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_limit.withdrawal_limit_repository.WithdrawalLimitRepository.delete": {
+    "file": "src/repository/withdrawal_limit/withdrawal_limit_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "WithdrawalLimitRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_request.withdrawal_request_repository.WithdrawalRequestRepository.get_by_id": {
+    "file": "src/repository/withdrawal_request/withdrawal_request_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "WithdrawalRequestRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_request.withdrawal_request_repository.WithdrawalRequestRepository.get_all": {
+    "file": "src/repository/withdrawal_request/withdrawal_request_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "WithdrawalRequestRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_request.withdrawal_request_repository.WithdrawalRequestRepository.create": {
+    "file": "src/repository/withdrawal_request/withdrawal_request_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "WithdrawalRequestRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_request.withdrawal_request_repository.WithdrawalRequestRepository.update": {
+    "file": "src/repository/withdrawal_request/withdrawal_request_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "WithdrawalRequestRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_request.withdrawal_request_repository.WithdrawalRequestRepository.delete": {
+    "file": "src/repository/withdrawal_request/withdrawal_request_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "WithdrawalRequestRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_transaction.withdrawal_transaction_repository.WithdrawalTransactionRepository.get_by_id": {
+    "file": "src/repository/withdrawal_transaction/withdrawal_transaction_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "WithdrawalTransactionRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_transaction.withdrawal_transaction_repository.WithdrawalTransactionRepository.get_all": {
+    "file": "src/repository/withdrawal_transaction/withdrawal_transaction_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "WithdrawalTransactionRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_transaction.withdrawal_transaction_repository.WithdrawalTransactionRepository.create": {
+    "file": "src/repository/withdrawal_transaction/withdrawal_transaction_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "WithdrawalTransactionRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_transaction.withdrawal_transaction_repository.WithdrawalTransactionRepository.update": {
+    "file": "src/repository/withdrawal_transaction/withdrawal_transaction_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "WithdrawalTransactionRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.withdrawal_transaction.withdrawal_transaction_repository.WithdrawalTransactionRepository.delete": {
+    "file": "src/repository/withdrawal_transaction/withdrawal_transaction_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "WithdrawalTransactionRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.account.account_service.REQ_BAL_01.__init__": {
+    "file": "src/service/account/account_service.py",
+    "line": 20,
+    "end_line": 36,
+    "class": "REQ_BAL_01",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.card.card_service.CardServiceImpl.__init__": {
+    "file": "src/service/card/card_service.py",
+    "line": 19,
+    "end_line": 20,
+    "class": "CardServiceImpl",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.daily_withdrawal_limit.daily_withdrawal_limit_service.REQ_BAL_01.__init__": {
+    "file": "src/service/daily_withdrawal_limit/daily_withdrawal_limit_service.py",
+    "line": 17,
+    "end_line": 33,
+    "class": "REQ_BAL_01",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.flagged_transaction.flagged_transaction_service.WithdrawalTransaction.__init__": {
+    "file": "src/service/flagged_transaction/flagged_transaction_service.py",
+    "line": 21,
+    "end_line": 24,
+    "class": "WithdrawalTransaction",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.flagged_transaction.flagged_transaction_service.WithdrawalTransaction.createTransaction": {
+    "file": "src/service/flagged_transaction/flagged_transaction_service.py",
+    "line": 26,
+    "end_line": 27,
+    "class": "WithdrawalTransaction",
+    "name": "createTransaction",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.flagged_transaction.flagged_transaction_service.Account.__init__": {
+    "file": "src/service/flagged_transaction/flagged_transaction_service.py",
+    "line": 30,
+    "end_line": 33,
+    "class": "Account",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.flagged_transaction.flagged_transaction_service.Account.updateBalance": {
+    "file": "src/service/flagged_transaction/flagged_transaction_service.py",
+    "line": 35,
+    "end_line": 36,
+    "class": "Account",
+    "name": "updateBalance",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.flagged_transaction.flagged_transaction_service.FlaggedTransaction.__init__": {
+    "file": "src/service/flagged_transaction/flagged_transaction_service.py",
+    "line": 39,
+    "end_line": 42,
+    "class": "FlaggedTransaction",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.flagged_transaction.flagged_transaction_service.FlaggedTransaction.createFlaggedTransaction": {
+    "file": "src/service/flagged_transaction/flagged_transaction_service.py",
+    "line": 59,
+    "end_line": 60,
+    "class": "FlaggedTransaction",
+    "name": "createFlaggedTransaction",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.flagged_transaction.flagged_transaction_service.SuspiciousPattern.__init__": {
+    "file": "src/service/flagged_transaction/flagged_transaction_service.py",
+    "line": 63,
+    "end_line": 66,
+    "class": "SuspiciousPattern",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.flagged_transaction.flagged_transaction_service.SuspiciousPattern.evaluatePattern": {
+    "file": "src/service/flagged_transaction/flagged_transaction_service.py",
+    "line": 80,
+    "end_line": 81,
+    "class": "SuspiciousPattern",
+    "name": "evaluatePattern",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.pin.pin_service.PinServiceImpl.__init__": {
+    "file": "src/service/pin/pin_service.py",
+    "line": 19,
+    "end_line": 20,
+    "class": "PinServiceImpl",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.suspicious_pattern.suspicious_pattern_service.SuspiciousPatternServiceImpl.__init__": {
+    "file": "src/service/suspicious_pattern/suspicious_pattern_service.py",
+    "line": 17,
+    "end_line": 18,
+    "class": "SuspiciousPatternServiceImpl",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.transaction_state.transaction_state_service.TransactionStateServiceImpl.__init__": {
+    "file": "src/service/transaction_state/transaction_state_service.py",
+    "line": 17,
+    "end_line": 18,
+    "class": "TransactionStateServiceImpl",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.withdrawal_transaction.withdrawal_transaction_service.WithdrawalTransactionServiceImpl.__init__": {
+    "file": "src/service/withdrawal_transaction/withdrawal_transaction_service.py",
+    "line": 21,
+    "end_line": 22,
+    "class": "WithdrawalTransactionServiceImpl",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.conftest.test_conftest_placeholder": {
+    "file": "tests/integration/conftest.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_conftest_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_account_flow.test_test_account_flow_placeholder": {
+    "file": "tests/integration/test_account_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_account_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_api_contracts.test_test_api_contracts_placeholder": {
+    "file": "tests/integration/test_api_contracts.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_api_contracts_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_authentication_attempt_flow.test_test_authentication_attempt_flow_placeholder": {
+    "file": "tests/integration/test_authentication_attempt_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_authentication_attempt_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_card_flow.test_test_card_flow_placeholder": {
+    "file": "tests/integration/test_card_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_card_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_daily_withdrawal_limit_flow.test_test_daily_withdrawal_limit_flow_placeholder": {
+    "file": "tests/integration/test_daily_withdrawal_limit_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_daily_withdrawal_limit_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_flagged_transaction_flow.test_test_flagged_transaction_flow_placeholder": {
+    "file": "tests/integration/test_flagged_transaction_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_flagged_transaction_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_pin_flow.test_test_pin_flow_placeholder": {
+    "file": "tests/integration/test_pin_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_pin_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_suspicious_pattern_flow.test_test_suspicious_pattern_flow_placeholder": {
+    "file": "tests/integration/test_suspicious_pattern_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_suspicious_pattern_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_transaction_state_flow.test_test_transaction_state_flow_placeholder": {
+    "file": "tests/integration/test_transaction_state_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_transaction_state_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_withdrawal_transaction_flow.test_test_withdrawal_transaction_flow_placeholder": {
+    "file": "tests/integration/test_withdrawal_transaction_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_withdrawal_transaction_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.account.test_account_api.test_test_account_api_placeholder": {
+    "file": "tests/unit/account/test_account_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_account_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.account.test_account_domain.test_test_account_domain_placeholder": {
+    "file": "tests/unit/account/test_account_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_account_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.account.test_account_service.test_test_account_service_placeholder": {
+    "file": "tests/unit/account/test_account_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_account_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.authentication_attempt.test_authentication_attempt_api.test_test_authentication_attempt_api_placeholder": {
+    "file": "tests/unit/authentication_attempt/test_authentication_attempt_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_authentication_attempt_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.authentication_attempt.test_authentication_attempt_domain.test_test_authentication_attempt_domain_placeholder": {
+    "file": "tests/unit/authentication_attempt/test_authentication_attempt_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_authentication_attempt_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.authentication_attempt.test_authentication_attempt_service.test_test_authentication_attempt_service_placeholder": {
+    "file": "tests/unit/authentication_attempt/test_authentication_attempt_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_authentication_attempt_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.card.test_card_api.test_test_card_api_placeholder": {
+    "file": "tests/unit/card/test_card_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_card_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.card.test_card_domain.test_test_card_domain_placeholder": {
+    "file": "tests/unit/card/test_card_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_card_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.card.test_card_service.test_test_card_service_placeholder": {
+    "file": "tests/unit/card/test_card_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_card_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.daily_withdrawal_limit.test_daily_withdrawal_limit_api.test_test_daily_withdrawal_limit_api_placeholder": {
+    "file": "tests/unit/daily_withdrawal_limit/test_daily_withdrawal_limit_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_daily_withdrawal_limit_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.daily_withdrawal_limit.test_daily_withdrawal_limit_domain.test_test_daily_withdrawal_limit_domain_placeholder": {
+    "file": "tests/unit/daily_withdrawal_limit/test_daily_withdrawal_limit_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_daily_withdrawal_limit_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.daily_withdrawal_limit.test_daily_withdrawal_limit_service.test_test_daily_withdrawal_limit_service_placeholder": {
+    "file": "tests/unit/daily_withdrawal_limit/test_daily_withdrawal_limit_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_daily_withdrawal_limit_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flagged_transaction.test_flagged_transaction_api.test_test_flagged_transaction_api_placeholder": {
+    "file": "tests/unit/flagged_transaction/test_flagged_transaction_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_flagged_transaction_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flagged_transaction.test_flagged_transaction_domain.test_test_flagged_transaction_domain_placeholder": {
+    "file": "tests/unit/flagged_transaction/test_flagged_transaction_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_flagged_transaction_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.flagged_transaction.test_flagged_transaction_service.test_test_flagged_transaction_service_placeholder": {
+    "file": "tests/unit/flagged_transaction/test_flagged_transaction_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_flagged_transaction_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.pin.test_pin_api.test_test_pin_api_placeholder": {
+    "file": "tests/unit/pin/test_pin_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_pin_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.pin.test_pin_domain.test_test_pin_domain_placeholder": {
+    "file": "tests/unit/pin/test_pin_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_pin_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.pin.test_pin_service.test_test_pin_service_placeholder": {
+    "file": "tests/unit/pin/test_pin_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_pin_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.suspicious_pattern.test_suspicious_pattern_api.test_test_suspicious_pattern_api_placeholder": {
+    "file": "tests/unit/suspicious_pattern/test_suspicious_pattern_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_suspicious_pattern_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.suspicious_pattern.test_suspicious_pattern_domain.test_test_suspicious_pattern_domain_placeholder": {
+    "file": "tests/unit/suspicious_pattern/test_suspicious_pattern_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_suspicious_pattern_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.suspicious_pattern.test_suspicious_pattern_service.test_test_suspicious_pattern_service_placeholder": {
+    "file": "tests/unit/suspicious_pattern/test_suspicious_pattern_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_suspicious_pattern_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.transaction_state.test_transaction_state_api.test_test_transaction_state_api_placeholder": {
+    "file": "tests/unit/transaction_state/test_transaction_state_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_transaction_state_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.transaction_state.test_transaction_state_domain.test_test_transaction_state_domain_placeholder": {
+    "file": "tests/unit/transaction_state/test_transaction_state_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_transaction_state_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.transaction_state.test_transaction_state_service.test_test_transaction_state_service_placeholder": {
+    "file": "tests/unit/transaction_state/test_transaction_state_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_transaction_state_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.withdrawal_transaction.test_withdrawal_transaction_api.test_test_withdrawal_transaction_api_placeholder": {
+    "file": "tests/unit/withdrawal_transaction/test_withdrawal_transaction_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_withdrawal_transaction_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.withdrawal_transaction.test_withdrawal_transaction_domain.test_test_withdrawal_transaction_domain_placeholder": {
+    "file": "tests/unit/withdrawal_transaction/test_withdrawal_transaction_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_withdrawal_transaction_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.withdrawal_transaction.test_withdrawal_transaction_service.test_test_withdrawal_transaction_service_placeholder": {
+    "file": "tests/unit/withdrawal_transaction/test_withdrawal_transaction_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_withdrawal_transaction_service_placeholder",
+    "calls": [],
+    "called_by": []
+  }
+}

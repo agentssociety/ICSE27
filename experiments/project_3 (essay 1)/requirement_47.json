@@ -1,0 +1,91 @@
+{
+  "id": "REQ-ATC-01",
+  "title": "Automate Earliest Available Time Slot Allocation with Gap",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall automatically allocate the earliest available 5-minute time slot that includes a mandatory 3-minute gap before and after any existing allocations.",
+  "rationale": "To ensure safe separation between flights by providing appropriate time intervals between them.",
+  "business_value": "Enhances flight safety and operational efficiency by reducing manual errors in scheduling.",
+  "source": {
+    "type": "User Story",
+    "id": 47,
+    "description": "As a air traffic controller I need the system to automatically allocate the earliest available 5-minute time slot with a mandatory 3-minute gap between consecutive slots So that safe separation between flights is ensured."
+  },
+  "stakeholders": [
+    "Air Traffic Control Team",
+    "Flight Operations Team"
+  ],
+  "acceptance_criteria": [
+    "The system assigns the earliest 5-minute slot that respects a 3-minute gap before and after any existing allocations."
+  ],
+  "preconditions": [
+    "A schedule with existing allocated slots is available.",
+    "Current time or a given reference time is known."
+  ],
+  "postconditions": [
+    "A new 5-minute time slot has been allocated with the mandatory 3-minute gap enforced."
+  ],
+  "functional_constraints": [
+    "The allocation algorithm must consider both the start and end times of existing slots.",
+    "The system must accurately account for the 3-minute gap in its calculations."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The time slot allocation process should complete within a reasonable time frame to avoid delays in air traffic operations.",
+    "availability": "The system must be available at all times to ensure continuous operation of the air traffic control center.",
+    "scalability": "The system should be able to handle an increasing number of flight schedules without significant performance degradation.",
+    "usability": "Error handling mechanisms should provide clear and actionable feedback to the user in case of allocation failures."
+  },
+  "edge_cases": [
+    "What happens if there are no available slots that meet the criteria?",
+    "How does the system handle time zone differences between different air traffic control centers?",
+    "What happens when a new slot overlaps with an existing slot despite the gap?"
+  ],
+  "dependencies": [
+    "Existing flight schedule data",
+    "Time reference for calculation (current or given)"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Flight Schedule Management API",
+      "description": "The requirement interacts with this API to retrieve and update the existing flight schedules."
+    },
+    {
+      "type": "UI",
+      "name": "Air Traffic Control Console",
+      "description": "The requirement interfaces with this UI to receive user requests for slot allocations and display the results."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ATC-01",
+      "description": "Request allocation when no existing slots are available.",
+      "expected_result": "System returns an error message indicating no available slots."
+    },
+    {
+      "id": "TC-ATC-02",
+      "description": "Request allocation with a time zone difference.",
+      "expected_result": "System correctly calculates and allocates the earliest slot respecting the 3-minute gap, considering the time zone differences."
+    },
+    {
+      "id": "TC-ATC-03",
+      "description": "Request allocation when new slots overlap despite the gap.",
+      "expected_result": "System handles the overlap by finding another available slot that adheres to the mandatory 3-minute gap."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T10:35:41.812923",
+  "last_updated": "2026-06-15T10:43:04.355166",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Slot"
+    ],
+    "test_artifacts": []
+  }
+}

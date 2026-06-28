@@ -1,0 +1,94 @@
+@startuml
+skinparam class {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+  FontSize 12
+}
+skinparam package {
+  BackgroundColor #F0F0F0
+  BorderColor #666666
+}
+skinparam note {
+  BackgroundColor #FFFFCC
+  BorderColor #CCCC00
+}
+
+package "Domain Model" {
+  class Flight {
+    - flightNumber : String
+    - origin : String
+    - destination : String
+    - estimatedDepartureTime : String
+  }
+  note right of Flight
+    Invariants:
+    - Flight number must be unique across all flights
+    - Origin and destination must be valid airport codes
+    - Estimated departure time must be in standard format (HH:MM)
+  end note
+
+  class Actor {
+    - mayPerform : Set<Permission>
+  }
+
+  class Resource {
+    - owner : Actor
+    - accessible : Set<Actor>
+  }
+  note right of Resource
+    Invariant: Owner is always in accessible set
+  end note
+
+  class Interface {
+    - kind : IfaceKind
+    - encrypted : Bool
+    - authenticated : Bool
+  }
+
+  enum Permission <<enum>> {
+    Read
+    Write
+    Execute
+    Admin
+  }
+  note right of Permission
+    Invariant: Permissions form a partial order:
+    Write subsumes Read,
+    Execute subsumes Read,
+    Admin subsumes all
+  end note
+
+  enum State <<enum>> {
+    Pre1
+    Post1
+    Error
+  + transition(State.Pre1, State.Post1)
+  + transition(State.Pre1, State.Error)
+  }
+
+  enum IfaceKind <<enum>> {
+    Database
+    UI
+  }
+
+  class Operation {
+    ' No attributes defined yet
+  }
+
+  ' Relationships
+  Flight "1" --> "1" Actor : registered by
+  Flight "1" --> "1" Resource : stored in
+
+  Operation "*" --> "1" Actor : initiated by
+  Operation "1" --> "1..10" Resource : affects
+  Operation "1" --> "1..2" Interface : uses
+  Operation "*" --> "1" Permission : requires
+  Operation "1" --> "1" State : preState
+  Operation "1" --> "1" State : postState
+
+  Resource "1" --> "1" Actor : owner
+  Resource "1" --> "*" Actor : accessible
+  Actor "*" --> "*" Permission : mayPerform
+}
+
+@enduml

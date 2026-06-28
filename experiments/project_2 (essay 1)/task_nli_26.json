@@ -1,0 +1,23 @@
+{
+  "task_id": 26,
+  "confidence": 0.9638,
+  "evidence": [
+    {
+      "claim": "Transfusion requests come from healthcare providers (e.g., hospitals, clinics).",
+      "fact": "The application is intended for a hospital blood bank.",
+      "score": 0.9709,
+      "user_story_span": "Transfusion requests come from healthcare providers (e.g., hospitals, clinics).",
+      "fact_span": ""
+    },
+    {
+      "claim": "A healthcare provider submits a transfusion request.",
+      "fact": "The application is intended for a hospital blood bank.",
+      "score": 0.9568,
+      "user_story_span": "a healthcare provider submits a transfusion request",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

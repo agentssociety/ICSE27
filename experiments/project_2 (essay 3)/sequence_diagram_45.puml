@@ -1,0 +1,141 @@
+@startuml
+title Blood Inventory Dashboard - Sequence Diagrams
+
+box "Controller" #LightBlue
+participant DashboardController
+end box
+
+box "Application" #LightGreen
+participant DashboardService
+end box
+
+box "Domain" #LightYellow
+participant StockLevels
+participant ExpirationData
+participant TransfusionRequestData
+participant BloodUnit
+end box
+
+box "Infrastructure" #LightCoral
+participant InventoryDatabase
+end box
+
+box "External" #LightGrey
+actor Blood_Bank_Manager
+actor Inventory_Team
+end box
+
+== Flow: View Stock Levels ==
+
+Blood_Bank_Manager -> DashboardController: GET /stock-levels
+activate DashboardController
+
+DashboardController -> DashboardController: authenticateUser(token) : User
+alt Authentication fails
+  DashboardController --> Blood_Bank_Manager: 401 Unauthorized
+else Authentication succeeds
+  DashboardController -> DashboardService: getStockLevels(user: User) : List<StockLevels>
+  activate DashboardService
+
+  DashboardService -> DashboardService: checkAuthorization(user, Permission.READ, StockLevels) : boolean
+  alt Authorization fails
+    DashboardService --> DashboardController: AuthorizationException
+    DashboardController --> Blood_Bank_Manager: 403 Forbidden
+  else Authorized
+    DashboardService -> InventoryDatabase: fetchAllStockLevels() : List<StockLevels> [TLS]
+    activate InventoryDatabase
+    InventoryDatabase --> DashboardService: stockLevelsList
+    deactivate InventoryDatabase
+
+    alt No stock levels exist
+      DashboardService --> DashboardController: List<StockLevels> (empty)
+      DashboardController --> Blood_Bank_Manager: 200 OK (empty list)
+      note right: StockLevels remains unchanged
+    else Data exists
+      DashboardService -> DashboardService: mapToDomain(List<Data>) : List<StockLevels>
+      DashboardService --> DashboardController: List<StockLevels>
+      DashboardController --> Blood_Bank_Manager: 200 OK (stock levels)
+      note right: StockLevels state unchanged
+    end
+  end
+  deactivate DashboardService
+end
+deactivate DashboardController
+
+== Flow: View Expiration Data ==
+
+Blood_Bank_Manager -> DashboardController: GET /expiration-data
+activate DashboardController
+
+DashboardController -> DashboardController: authenticateUser(token) : User
+alt Authentication fails
+  DashboardController --> Blood_Bank_Manager: 401 Unauthorized
+else Authentication succeeds
+  DashboardController -> DashboardService: getExpirationData(user: User, thresholdDays: int) : List<ExpirationData>
+  activate DashboardService
+
+  DashboardService -> DashboardService: checkAuthorization(user, Permission.READ, ExpirationData) : boolean
+  alt Authorization fails
+    DashboardService --> DashboardController: AuthorizationException
+    DashboardController --> Blood_Bank_Manager: 403 Forbidden
+  else Authorized
+    note right: Expiration threshold configurable (e.g., 5 days)
+    DashboardService -> InventoryDatabase: fetchExpiringUnits(thresholdDays) : List<ExpirationData> [TLS]
+    activate InventoryDatabase
+    InventoryDatabase --> DashboardService: expiringDataList
+    deactivate InventoryDatabase
+
+    alt No units nearing expiration
+      DashboardService --> DashboardController: List<ExpirationData> (empty)
+      DashboardController --> Blood_Bank_Manager: 200 OK (empty section)
+      note right: ExpirationData candidates state unchanged
+    else Data exists
+      DashboardService -> DashboardService: mapToDomain(List<Data>) : List<ExpirationData>
+      DashboardService --> DashboardController: List<ExpirationData>
+      DashboardController --> Blood_Bank_Manager: 200 OK (expiration data)
+      note right: ExpirationData objects unchanged
+    end
+  end
+  deactivate DashboardService
+end
+deactivate DashboardController
+
+== Flow: View Transfusion Requests ==
+
+Inventory_Team -> DashboardController: GET /transfusion-requests
+activate DashboardController
+
+DashboardController -> DashboardController: authenticateUser(token) : User
+alt Authentication fails
+  DashboardController --> Inventory_Team: 401 Unauthorized
+else Authentication succeeds
+  DashboardController -> DashboardService: getTransfusionRequests(user: User) : List<TransfusionRequestData>
+  activate DashboardService
+
+  DashboardService -> DashboardService: checkAuthorization(user, Permission.READ, TransfusionRequestData) : boolean
+  alt Authorization fails
+    DashboardService --> DashboardController: AuthorizationException
+    DashboardController --> Inventory_Team: 403 Forbidden
+  else Authorized
+    note right: Ensure concurrent reads are authorized
+    DashboardService -> InventoryDatabase: fetchAllTransfusionRequests() : List<TransfusionRequestData> [TLS]
+    activate InventoryDatabase
+    InventoryDatabase --> DashboardService: requestsList
+    deactivate InventoryDatabase
+
+    alt No requests exist
+      DashboardService --> DashboardController: List<TransfusionRequestData> (empty)
+      DashboardController --> Inventory_Team: 200 OK (empty list)
+      note right: TransfusionRequestData state unchanged
+    else Data exists
+      DashboardService -> DashboardService: mapToDomain(List<Data>) : List<TransfusionRequestData>
+      DashboardService --> DashboardController: List<TransfusionRequestData>
+      DashboardController --> Inventory_Team: 200 OK (transfusion requests)
+      note right: TransfusionRequestData objects unchanged
+    end
+  end
+  deactivate DashboardService
+end
+deactivate DashboardController
+
+@enduml

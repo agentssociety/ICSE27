@@ -1,0 +1,37 @@
+{
+  "task_id": 35,
+  "confidence": 0.9907,
+  "evidence": [
+    {
+      "claim": "Reservations are made based on blood type and compatibility matching.",
+      "fact": "It pairs a request with a compatible blood unit by exact type match, then by nearest expiration date.",
+      "score": 0.9976,
+      "user_story_span": "Reservations are made based on blood type and compatibility matching",
+      "fact_span": "It pairs a request with a compatible blood unit by exact type match"
+    },
+    {
+      "claim": "The unit is marked as available for other requests.",
+      "fact": "The system shows a dashboard of open requests.",
+      "score": 0.9959,
+      "user_story_span": "the unit is marked as available for other requests",
+      "fact_span": "The system shows a dashboard of open requests"
+    },
+    {
+      "claim": "The system releases reservations after 24 hours if not issued.",
+      "fact": "The system reserves a unit for a request and releases it back if the transfusion is not finalized in a day.",
+      "score": 0.9871,
+      "user_story_span": "release reservations after 24 hours if not issued",
+      "fact_span": "releases it back if the transfusion is not finalized in a day"
+    },
+    {
+      "claim": "When 24 hours have elapsed without the unit being issued, the reservation is automatically released.",
+      "fact": "The reservation mechanism locks a unit for a request and automatically frees it after a 24-hour confirmation window.",
+      "score": 0.982,
+      "user_story_span": "",
+      "fact_span": "automatically frees it after a 24-hour confirmation window"
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

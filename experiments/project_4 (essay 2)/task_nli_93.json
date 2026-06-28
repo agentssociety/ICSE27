@@ -1,0 +1,44 @@
+{
+  "task_id": 93,
+  "confidence": 0.9851,
+  "evidence": [
+    {
+      "claim": "The system allows the admin to investigate a flagged transaction.",
+      "fact": "The application lets administrators review flagged transactions.",
+      "score": 0.999,
+      "user_story_span": "investigate suspicious activity",
+      "fact_span": "review flagged transactions"
+    },
+    {
+      "claim": "The system allows the admin to approve a flagged transaction.",
+      "fact": "Admins access the flagged transaction queue to review each case and decide whether to approve, block, or investigate further.",
+      "score": 0.9943,
+      "user_story_span": "Actions may include approving, denying, or further investigating transactions",
+      "fact_span": "approve, block, or investigate further"
+    },
+    {
+      "claim": "The system updates the transaction status after an action is taken.",
+      "fact": "The application records every transaction state change with a timestamp.",
+      "score": 0.9861,
+      "user_story_span": "updates the transaction status",
+      "fact_span": "records every transaction state change"
+    },
+    {
+      "claim": "The system allows the admin to deny a flagged transaction.",
+      "fact": "The application lets administrators lock accounts.",
+      "score": 0.9759,
+      "user_story_span": "denying",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system provides filtering capabilities for the list.",
+      "fact": "It compares the requested amount against the account's current balance and the remaining daily allowance, and declines if either limit is exceeded.",
+      "score": 0.9701,
+      "user_story_span": "filtering and sorting capabilities",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 5,
+  "threshold": 0.6
+}

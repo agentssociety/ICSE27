@@ -1,0 +1,153 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+skinparam backgroundColor #FEFEFE
+
+package "Domain Model" {
+  class Actor {
+    - mayPerform : set Permission
+  + checkPermission(initiator: InventoryManagementTeam, grant: Permission) : Bool
+  }
+
+  class InventoryManagementTeam <<extends Actor>> {
+  + showError("Access Denied")
+  + showError("Permission Denied")
+  + showError("Authentication Required")
+  + dashboardSummaryVisible(no state change)
+  + showError("Grant Not Allowed")
+  + showError("Grant Conflict")
+  }
+
+  class OperationsTeam <<extends Actor>> {
+  }
+
+  class FinanceTeam <<extends Actor>> {
+  }
+
+  class Resource {
+    - owner : Actor
+    - accessible : set Actor
+  + checkAccess(initiator: InventoryManagementTeam, target: Resource[]) : Bool
+  }
+
+  class Permission <<enum>> {
+  + validateGrant(grant: Permission) : Bool
+  + checkGrantCompatibility(existingGrant: Permission, newGrant: Permission) : Bool
+  }
+
+  class State {
+  }
+
+  class PreIdle <<extends State>> {
+  + getState()
+  }
+
+  class Post1 <<extends State>> {
+  + transitionState(from: PreIdle, to: Post1)
+  }
+
+  class REQ_INV_MAN_01 {
+    - initiator : Actor
+    - target : some Resource
+    - channel : some Interface
+    - grant : Permission
+    - pre : State
+    - post : State
+  + initiateREQ_INV_MAN_01(initiator: InventoryManagementTeam, target: Resource[], channel: Interface[], grant: Permission)
+  }
+
+  Actor <|-- InventoryManagementTeam
+  Actor <|-- OperationsTeam
+  Actor <|-- FinanceTeam
+  State <|-- PreIdle
+  State <|-- Post1
+
+  Actor "1" -- "0..*" Permission : has_permission >
+  Resource "1" -- "1" Actor : owned_by >
+  Resource "1" -- "0..*" Actor : accessible_by >
+  REQ_INV_MAN_01 "1" -- "1" Actor : initiated_by >
+  REQ_INV_MAN_01 "1" -- "1" Resource : affects >
+  REQ_INV_MAN_01 "1" -- "1" Permission : requires >
+  REQ_INV_MAN_01 "1" -- "1" State : precondition >
+  REQ_INV_MAN_01 "1" -- "1" State : postcondition >
+}
+
+package "Infrastructure — Ports" {
+  class Interface {
+    - kind : enum [UI, API]
+    - encrypted : Bool
+    - authenticated : Bool
+  + validateAuthentication(channel: Interface) : Bool
+  }
+
+  class InventoryAPI <<extends Interface>> {
+  }
+
+  class RequestAPI <<extends Interface>> {
+  }
+
+  class InventoryDashboard <<extends Interface>> {
+  + viewDashboard()
+  + displayDashboard(stockLevels, pendingRequests)
+  + error("Unauthorized resource access")
+  + error("Operation denied")
+  + error("No authenticated channel")
+  + displayDashboard(limitedData)
+  + error("Operation denied - incompatible grant")
+  + error("Incompatible grants on same target")
+  }
+
+  Interface <|-- InventoryAPI
+  Interface <|-- RequestAPI
+  Interface <|-- InventoryDashboard
+
+  REQ_INV_MAN_01 "1" -- "1" Interface : uses_channel >
+}
+
+package "Exceptions" {
+  class OperationNotAllowedException <<exception>> {
+  }
+
+  class UnauthorizedResourceAccessException <<exception>> {
+  }
+
+  class OperationDeniedException <<exception>> {
+  }
+
+  class NoStateChangeException <<exception>> {
+  }
+}
+
+package "DTOs" {
+  class DashboardSummaryDTO <<dto>> {
+    - stockLevels : map
+    - expiringUnits : list
+    - pendingRequests : int
+  }
+}
+
+note top of REQ_INV_MAN_01
+  Constraints:
+  - pre != post
+  - post ∈ {Post1}
+  - grant ∈ initiator.mayPerform
+  - channel.authenticated = True
+  - initiator ∈ target.accessible
+  - If target.accessible is empty:
+    grant ∉ {Write, Execute}
+    post = pre
+end note
+
+note top of Interface
+  At most 3 interfaces have
+  authenticated = True
+end note
+
+note top of Permission
+  Lattice: Read < Write,
+  Execute < Admin
+end note
+
+@enduml

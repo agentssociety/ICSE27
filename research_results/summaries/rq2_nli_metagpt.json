@@ -1,0 +1,389 @@
+{
+  "metric": "rq2_nli_metagpt",
+  "description": "NLI-based confidence measurement for MetaGPT-generated user stories. Identical methodology to AgentsSociety NLI measurement: same model (khalidalt/DeBERTa-v3-large-mnli), same entailment threshold (0.6), same metrics (alignment score = precision of grounded claims; extrapolation rate = fraction with no spec match).",
+  "projects": [
+    {
+      "project_id": 1,
+      "project_name": "hospital_triage_queue",
+      "spec_path": "experiments/project_1 (metagpt)/hospital_triage_queue/docs/requirement.txt",
+      "prd_path": "experiments/project_1 (metagpt)/hospital_triage_queue/docs/prd/20260623122709.json",
+      "n_facts": 7,
+      "facts": [
+        "clinical urgency. It ensures critical cases are surfaced to medical.",
+        "The system register incoming patients with their name and presenting symptoms.",
+        "The system assign each patient an urgency level from 1 (critical) to 5 (non-urgent) based on the symptoms.",
+        "The system order the queue by urgency level first, then by arrival time within the same level.",
+        "The system reorder the queue immediately whenever a new patient arrives or an existing patient is re-triaged to a different urgency level.",
+        "The system let a physician take the patient at the head of the queue, removing them from the queue.",
+        "The system show a live dashboard of the queue with each patient's urgency and waiting time."
+      ],
+      "n_stories": 5,
+      "stories": [
+        {
+          "task_id": 1,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 3,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 2,
+          "confidence": 0.9984,
+          "evidence": [
+            {
+              "claim": "The system enables users to see the queue sorted by urgency and arrival time.",
+              "fact": "The system show a live dashboard of the queue with each patient's urgency and waiting time.",
+              "score": 0.9984,
+              "user_story_span": "",
+              "fact_span": ""
+            }
+          ],
+          "total_claims": 3,
+          "supported_claims": 1,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 3,
+          "confidence": 0.9794,
+          "evidence": [
+            {
+              "claim": "The queue reflects their new priority immediately.",
+              "fact": "The system reorder the queue immediately whenever a new patient arrives or an existing patient is re-triaged to a different urgency level.",
+              "score": 0.9794,
+              "user_story_span": "",
+              "fact_span": ""
+            }
+          ],
+          "total_claims": 3,
+          "supported_claims": 1,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 4,
+          "confidence": 0.9991,
+          "evidence": [
+            {
+              "claim": "The system enables users to view a live dashboard showing each patient's urgency and waiting time.",
+              "fact": "The system show a live dashboard of the queue with each patient's urgency and waiting time.",
+              "score": 0.9991,
+              "user_story_span": "",
+              "fact_span": ""
+            }
+          ],
+          "total_claims": 3,
+          "supported_claims": 1,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 5,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        }
+      ],
+      "summary": {
+        "mean_nli_alignment_score": 0.9923,
+        "median_nli_alignment_score": 0.9984,
+        "std_nli_alignment_score": 0.0112,
+        "q1": 0.9889,
+        "q3": 0.9988,
+        "iqr": 0.0099,
+        "n_outliers": 0,
+        "n_zero_alignment": 0,
+        "total_claims": 14,
+        "supported_claims": 3,
+        "spec_coverage_rate": 0.2143,
+        "spec_extrapolation_rate": 0.7857,
+        "overall_hallucination_rate": 0.7857
+      }
+    },
+    {
+      "project_id": 2,
+      "project_name": "blood_bank_inventory_manager",
+      "spec_path": "experiments/project_2 (metagpt)/docs/requirement.txt",
+      "prd_path": "experiments/project_2 (metagpt)/docs/prd/20260623143455.json",
+      "n_facts": 8,
+      "facts": [
+        "blood bank. It manages compatibility between blood types, monitors.",
+        "The system track blood units by ABO type, Rh factor, and collection date, with expiry fixed at 42 days after collection.",
+        "The system accept transfusion requests specifying blood type, Rh factor, and quantity.",
+        "The system match requests to compatible units using standard ABO/Rh donor compatibility (exact-type matches first, then closest expiry first).",
+        "The system reserve matched units, and release a reservation back to stock if it is not confirmed as issued within 24 hours.",
+        "The system automatically expire units past their expiry date and exclude them from matching.",
+        "The system raise a shortage alert whenever available stock of any blood type falls below 5 units.",
+        "The system show a dashboard of stock per type, units expiring within 7 days, and open requests."
+      ],
+      "n_stories": 5,
+      "stories": [
+        {
+          "task_id": 1,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 3,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 2,
+          "confidence": 0.9991,
+          "evidence": [
+            {
+              "claim": "The system enables users to submit a transfusion request specifying blood type, Rh, and quantity.",
+              "fact": "The system accept transfusion requests specifying blood type, Rh factor, and quantity.",
+              "score": 0.9991,
+              "user_story_span": "",
+              "fact_span": ""
+            }
+          ],
+          "total_claims": 3,
+          "supported_claims": 1,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 3,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 4,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 5,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        }
+      ],
+      "summary": {
+        "mean_nli_alignment_score": 0.9991,
+        "median_nli_alignment_score": 0.9991,
+        "std_nli_alignment_score": 0.0,
+        "q1": 0.9991,
+        "q3": 0.9991,
+        "iqr": 0.0,
+        "n_outliers": 0,
+        "n_zero_alignment": 0,
+        "total_claims": 12,
+        "supported_claims": 1,
+        "spec_coverage_rate": 0.0833,
+        "spec_extrapolation_rate": 0.9167,
+        "overall_hallucination_rate": 0.9167
+      }
+    },
+    {
+      "project_id": 3,
+      "project_name": "airport_runway_scheduling",
+      "spec_path": "experiments/project_3 (metagpt)/docs/requirement.txt",
+      "prd_path": "experiments/project_3 (metagpt)/docs/prd/20260623141944.json",
+      "n_facts": 7,
+      "facts": [
+        "The system register incoming and outgoing flights with their estimated times.",
+        "The system allocate each flight the earliest available 5-minute slot on either runway at or after its estimated time, with a 3-minute separation gap between consecutive slots on the same runway.",
+        "The system give arrivals priority over departures when competing for the same slot.",
+        "The system detect and prevent any overlapping or gap-violating assignments on the same runway.",
+        "The system allow a runway to be closed, automatically reassigning its future flights to the other runway and marking flights as delayed if they cannot be placed within 60 minutes of their estimated time.",
+        "The system immediately give a declared emergency flight the earliest possible slot and re-queue displaced flights by the normal rules.",
+        "The system show a slot timetable per runway with delayed flights and emergency events."
+      ],
+      "n_stories": 5,
+      "stories": [
+        {
+          "task_id": 1,
+          "confidence": 0.9988,
+          "evidence": [
+            {
+              "claim": "The system enables users to register flights with their estimated times.",
+              "fact": "The system register incoming and outgoing flights with their estimated times.",
+              "score": 0.9988,
+              "user_story_span": "",
+              "fact_span": ""
+            }
+          ],
+          "total_claims": 3,
+          "supported_claims": 1,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 2,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 3,
+          "confidence": 0.9964,
+          "evidence": [
+            {
+              "claim": "The system enables users to close a runway and have the system automatically reassign flights to the other runway, marking delayed flights clearly.",
+              "fact": "The system allow a runway to be closed, automatically reassigning its future flights to the other runway and marking flights as delayed if they cannot be placed within 60 minutes of their estimated time.",
+              "score": 0.9964,
+              "user_story_span": "",
+              "fact_span": ""
+            }
+          ],
+          "total_claims": 2,
+          "supported_claims": 1,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 4,
+          "confidence": 0.9964,
+          "evidence": [
+            {
+              "claim": "The system enables users to declare an emergency and have the system immediately assign the earliest slot, displacing other flights as needed.",
+              "fact": "The system immediately give a declared emergency flight the earliest possible slot and re-queue displaced flights by the normal rules.",
+              "score": 0.9964,
+              "user_story_span": "",
+              "fact_span": ""
+            }
+          ],
+          "total_claims": 2,
+          "supported_claims": 1,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 5,
+          "confidence": 0.9865,
+          "evidence": [
+            {
+              "claim": "The system enables users to view a clear timetable per runway showing all slots, delayed flights, and emergency events.",
+              "fact": "The system show a slot timetable per runway with delayed flights and emergency events.",
+              "score": 0.9865,
+              "user_story_span": "",
+              "fact_span": ""
+            }
+          ],
+          "total_claims": 2,
+          "supported_claims": 1,
+          "threshold": 0.6
+        }
+      ],
+      "summary": {
+        "mean_nli_alignment_score": 0.9945,
+        "median_nli_alignment_score": 0.9964,
+        "std_nli_alignment_score": 0.0055,
+        "q1": 0.9939,
+        "q3": 0.997,
+        "iqr": 0.0031,
+        "n_outliers": 1,
+        "n_zero_alignment": 0,
+        "total_claims": 11,
+        "supported_claims": 4,
+        "spec_coverage_rate": 0.3636,
+        "spec_extrapolation_rate": 0.6364,
+        "overall_hallucination_rate": 0.6364
+      }
+    },
+    {
+      "project_id": 4,
+      "project_name": "atm_withdrawal_safety_backend",
+      "spec_path": "experiments/project_4 (metagpt)/docs/requirement.txt",
+      "prd_path": "experiments/project_4 (metagpt)/docs/prd/20260623150919.json",
+      "n_facts": 7,
+      "facts": [
+        "failed transaction is fully rolled back.",
+        "The system authenticate users by card number and PIN before any transaction, locking the account after 3 consecutive failed attempts.",
+        "The system decline withdrawals exceeding the account balance or the daily limit per calendar day.",
+        "The system process each withdrawal atomically, rolling back all steps completely if any step fails so the balance is unchanged.",
+        "The system detect suspicious withdrawal patterns and flag the transactions for administrator review.",
+        "The system let administrators review flagged transactions, lock or unlock accounts, and view transaction histories.",
+        "The system record every authentication attempt and transaction state change with a timestamp."
+      ],
+      "n_stories": 5,
+      "stories": [
+        {
+          "task_id": 1,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 2,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 3,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 4,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 5,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        }
+      ],
+      "summary": {
+        "mean_nli_alignment_score": 0.0,
+        "median_nli_alignment_score": 0.0,
+        "std_nli_alignment_score": 0.0,
+        "q1": 0,
+        "q3": 0,
+        "iqr": 0,
+        "n_outliers": 0,
+        "n_zero_alignment": 0,
+        "total_claims": 10,
+        "supported_claims": 0,
+        "spec_coverage_rate": 0.0,
+        "spec_extrapolation_rate": 1.0,
+        "overall_hallucination_rate": 1.0
+      }
+    }
+  ],
+  "pooled_all_projects": {
+    "n_stories": 8,
+    "mean": 0.9943,
+    "median": 0.9974,
+    "std": 0.0073,
+    "q1": 0.9939,
+    "q3": 0.9989,
+    "iqr": 0.005,
+    "outlier_threshold_lo": 0.9865,
+    "outlier_threshold_hi": 1.0063,
+    "n_outliers": 1,
+    "n_zero_confidence": 0
+  },
+  "comparison_with_agentsociety": {
+    "pooled_mean_alignment": 0.9683,
+    "pooled_median_alignment": 0.9877,
+    "pooled_std_alignment": 0.1112,
+    "pooled_iqr_alignment": 0.0168,
+    "spec_extrapolation_rate_mean": 0.522,
+    "n_stories": 82,
+    "source": "summaries/rq2_nli_confidence.json"
+  }
+}

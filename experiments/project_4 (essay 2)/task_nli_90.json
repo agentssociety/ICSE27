@@ -1,0 +1,65 @@
+{
+  "task_id": 90,
+  "confidence": 0.9932,
+  "evidence": [
+    {
+      "claim": "Transactions that would exceed the balance are rejected.",
+      "fact": "The application declines withdrawals exceeding the account balance.",
+      "score": 0.9988,
+      "user_story_span": "Transactions that would exceed the balance or daily limit are rejected.",
+      "fact_span": "The application declines withdrawals exceeding the account balance."
+    },
+    {
+      "claim": "Transactions that would exceed the daily limit are rejected.",
+      "fact": "The application declines withdrawals exceeding the daily limit per calendar day.",
+      "score": 0.9983,
+      "user_story_span": "Then the transaction is rejected due to exceeding the daily limit",
+      "fact_span": "The application declines withdrawals exceeding the daily limit per calendar day."
+    },
+    {
+      "claim": "The system enforces daily transaction limits.",
+      "fact": "The system enforces rules that prevent withdrawals exceeding the available funds or the predefined maximum per calendar day.",
+      "score": 0.9976,
+      "user_story_span": "the system to enforce balance checks and daily transaction limits",
+      "fact_span": "The system enforces rules that prevent withdrawals exceeding the available funds or the predefined maximum per calendar day."
+    },
+    {
+      "claim": "The system enforces balance checks.",
+      "fact": "Financial constraints are applied by verifying available credit and a per-day ceiling for cash removal.",
+      "score": 0.9961,
+      "user_story_span": "enforce balance checks",
+      "fact_span": "Financial constraints are applied by verifying available credit and a per-day ceiling for cash removal."
+    },
+    {
+      "claim": "The transaction is rejected due to exceeding the daily limit.",
+      "fact": "The application declines withdrawals exceeding the daily limit per calendar day.",
+      "score": 0.9961,
+      "user_story_span": "Then the transaction is rejected due to exceeding the daily limit",
+      "fact_span": "The application declines withdrawals exceeding the daily limit per calendar day."
+    },
+    {
+      "claim": "A daily transaction limit (number or total amount) is defined per account.",
+      "fact": "Users cannot request cash amounts that go beyond their current balance or the daily withdrawal cap.",
+      "score": 0.996,
+      "user_story_span": "A daily transaction limit (number or total amount) is defined per account.",
+      "fact_span": "Users cannot request cash amounts that go beyond their current balance or the daily withdrawal cap."
+    },
+    {
+      "claim": "The transaction is authorized.",
+      "fact": "Successful authentication grants access to proceed with a withdrawal; failure blocks further steps.",
+      "score": 0.9915,
+      "user_story_span": "the transaction is authorized",
+      "fact_span": "Successful authentication grants access to proceed with a withdrawal; failure blocks further steps."
+    },
+    {
+      "claim": "The system will check the account balance before authorizing any transaction.",
+      "fact": "It compares the requested amount against the account's current balance and the remaining daily allowance, and declines if either limit is exceeded.",
+      "score": 0.971,
+      "user_story_span": "The system will check the account balance before authorizing any transaction.",
+      "fact_span": "It compares the requested amount against the account's current balance and the remaining daily allowance, and declines if either limit is exceeded."
+    }
+  ],
+  "total_claims": 17,
+  "supported_claims": 8,
+  "threshold": 0.6
+}

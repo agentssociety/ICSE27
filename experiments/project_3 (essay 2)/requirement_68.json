@@ -1,0 +1,105 @@
+{
+  "id": "REQ-SYS-01",
+  "title": "Automated Detection of Overlapping Assignments and Scheduling Violations",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall automatically detect overlapping assignments or violations of the 3-minute gap rule and flag scheduling conflicts.",
+  "rationale": "To prevent operational errors caused by flight schedule conflicts, ensuring safety and efficiency in operations.",
+  "business_value": "Improves operational accuracy and reduces potential for human error, leading to safer and more efficient airline operations.",
+  "source": {
+    "type": "User Story",
+    "id": 68,
+    "description": "As a system monitor I need the system to automatically detect overlapping assignments or violations of the 3-minute gap rule So that scheduling conflicts can be flagged"
+  },
+  "stakeholders": [
+    "Flight Operations Team",
+    "Safety Compliance Department"
+  ],
+  "acceptance_criteria": [
+    "Given two flights occupy overlapping time windows, When the system is monitoring, Then alerts are triggered",
+    "Given the gap between two slots is less than 3 minutes, When the system is monitoring, Then alerts are triggered",
+    "Given a scheduling violation is detected, When the system is monitoring, Then a visual/notification indicator of the violation is shown"
+  ],
+  "preconditions": [
+    "The system must be operational and running in real-time mode.",
+    "Flight assignments and time slots must be inputted into the system."
+  ],
+  "postconditions": [
+    "Alerts must be triggered for any detected overlapping assignments or scheduling violations.",
+    "A visual/notification indicator must be displayed to indicate a scheduling violation."
+  ],
+  "functional_constraints": [
+    "The detection of overlapping assignments and scheduling violations must occur within 1 minute of the time slot changes.",
+    "Alerts must be generated in a clear and understandable format, including timestamps and relevant flight information."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The system must handle up to 500 simultaneous flight assignments without significant delay or loss of data.",
+    "availability": "The system must be available 99.9% of the time, with no more than 1 minute downtime per year.",
+    "scalability": "The system must be able to scale to accommodate an increase in flight assignments by 50% without performance degradation.",
+    "usability": "Error messages and alerts must be user-friendly and easy to interpret."
+  },
+  "edge_cases": [
+    "Two flights with zero-minute gaps between their end and start times.",
+    "Overlapping assignments that occur at the exact minute boundary.",
+    "Scheduling violations during a time zone change.",
+    "System performance under heavy load due to numerous simultaneous flight assignments."
+  ],
+  "dependencies": [
+    "Real-time data input from flight management systems.",
+    "Alert notification system for visual and auditory alerts.",
+    "Logging and auditing system for tracking detected violations."
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Flight Data API",
+      "description": "Interface for receiving real-time flight assignment data from the flight management system."
+    },
+    {
+      "type": "Database",
+      "name": "Scheduling Database",
+      "description": "Interface for accessing and updating the database of scheduled flight assignments."
+    },
+    {
+      "type": "UI",
+      "name": "Alert UI",
+      "description": "Interface for displaying visual and auditory alerts to the system monitor."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-01",
+      "description": "Two flights occupy overlapping time windows.",
+      "expected_result": "System triggers an alert for each overlapping assignment."
+    },
+    {
+      "id": "TC-02",
+      "description": "Gap between two slots is less than 3 minutes.",
+      "expected_result": "System triggers an alert indicating the scheduling violation."
+    },
+    {
+      "id": "TC-03",
+      "description": "System performance under heavy load due to numerous simultaneous flight assignments.",
+      "expected_result": "System handles up to 500 simultaneous flight assignments without significant delay or loss of data."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T19:49:11.565241",
+  "last_updated": "2026-06-15T19:54:43.976507",
+  "traceability": {
+    "related_requirements": [
+      "REQ-ATC-TIME-SLOTS-01",
+      "REQ-ATC-01"
+    ],
+    "design_components": [
+      "Slot",
+      "Flight"
+    ],
+    "test_artifacts": []
+  }
+}

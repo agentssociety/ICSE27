@@ -1,0 +1,77 @@
+{
+  "run_id": "P1E1",
+  "project": 1,
+  "essay": 1,
+  "n_tasks": 6,
+  "tasks": [
+    {
+      "task_id": 1,
+      "nli_alignment_score": 0.9972,
+      "total_claims": 6,
+      "supported_claims": 3,
+      "spec_extrapolation_rate": 0.5,
+      "spec_coverage_rate": 0.5,
+      "n_evidence": 3
+    },
+    {
+      "task_id": 2,
+      "nli_alignment_score": 0.9988,
+      "total_claims": 4,
+      "supported_claims": 1,
+      "spec_extrapolation_rate": 0.75,
+      "spec_coverage_rate": 0.25,
+      "n_evidence": 1
+    },
+    {
+      "task_id": 3,
+      "nli_alignment_score": 0.9911,
+      "total_claims": 7,
+      "supported_claims": 6,
+      "spec_extrapolation_rate": 0.1429,
+      "spec_coverage_rate": 0.8571,
+      "n_evidence": 6
+    },
+    {
+      "task_id": 4,
+      "nli_alignment_score": 0.9943,
+      "total_claims": 8,
+      "supported_claims": 7,
+      "spec_extrapolation_rate": 0.125,
+      "spec_coverage_rate": 0.875,
+      "n_evidence": 7
+    },
+    {
+      "task_id": 5,
+      "nli_alignment_score": 0.9952,
+      "total_claims": 8,
+      "supported_claims": 5,
+      "spec_extrapolation_rate": 0.375,
+      "spec_coverage_rate": 0.625,
+      "n_evidence": 5
+    },
+    {
+      "task_id": 6,
+      "nli_alignment_score": 0.9897,
+      "total_claims": 8,
+      "supported_claims": 3,
+      "spec_extrapolation_rate": 0.625,
+      "spec_coverage_rate": 0.375,
+      "n_evidence": 3
+    }
+  ],
+  "summary": {
+    "mean_nli_alignment_score": 0.9944,
+    "median_nli_alignment_score": 0.9948,
+    "std_nli_alignment_score": 0.0035,
+    "q1": 0.9919,
+    "q3": 0.9967,
+    "iqr": 0.0048,
+    "n_outliers": 0,
+    "n_zero_alignment": 0,
+    "total_claims": 41,
+    "supported_claims": 25,
+    "spec_coverage_rate": 0.6098,
+    "spec_extrapolation_rate": 0.3902,
+    "overall_hallucination_rate": 0.3902
+  }
+}

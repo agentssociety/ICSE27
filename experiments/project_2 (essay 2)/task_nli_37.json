@@ -1,0 +1,30 @@
+{
+  "task_id": 37,
+  "confidence": 0.9929,
+  "evidence": [
+    {
+      "claim": "The system alerts when stock for any blood type falls below 5 units.",
+      "fact": "The system raises a shortage alert whenever available stock of any blood type falls below 5 units.",
+      "score": 0.999,
+      "user_story_span": "be alerted when stock for any blood type falls below 5 units",
+      "fact_span": "raises a shortage alert whenever available stock of any blood type falls below 5 units"
+    },
+    {
+      "claim": "The alert threshold is defined as 5 units for any blood type.",
+      "fact": "A shortage alert is triggered whenever the available stock for any blood type drops below five units.",
+      "score": 0.9903,
+      "user_story_span": "The alert threshold is defined as 5 units for any blood type",
+      "fact_span": "drops below five units"
+    },
+    {
+      "claim": "The system monitors blood inventory levels per ABO/Rh type.",
+      "fact": "It automatically logs incoming blood units and updates available stock counts based on type and Rh factor.",
+      "score": 0.9895,
+      "user_story_span": "monitor blood inventory levels per ABO/Rh type",
+      "fact_span": "updates available stock counts based on type and Rh factor"
+    }
+  ],
+  "total_claims": 4,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

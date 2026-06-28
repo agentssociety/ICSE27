@@ -1,0 +1,296 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+participant "PatientRegistrationAPI" as API_REG
+participant "ReTriageAPI" as API_TRIAGE
+end box
+
+box "Application Layer" #LightGreen
+participant "QueueService" as SVC
+end box
+
+box "Domain Layer" #LightYellow
+participant "Patient" as PATIENT
+participant "Queue" as QUEUE
+participant "UrgencyLevel" as URGENCY
+participant "Actor" as ACTOR
+participant "Resource" as RESOURCE
+participant "REQ_SYS_01_Operation" as OPERATION
+end box
+
+box "Infrastructure Layer" #LightCoral
+participant "PatientQueueDatabase" as DB
+end box
+
+== FLOW-REGISTRATION: New Patient Registration ==
+
+actor "Patient_Care_Coordinators" as COORDINATOR
+
+COORDINATOR -> API_REG : POST /patients [TLS]
+note right: Authenticated channel required
+
+API_REG -> SVC : registerPatient(patientData: PatientDTO) : QueueDTO
+
+SVC -> ACTOR : checkPermission(role: String, permission: Permission) : boolean
+note right: Must have Write permission
+
+alt Permission denied
+    SVC --> API_REG : return 403 Forbidden
+    API_REG --> COORDINATOR : 403 Forbidden
+else Permission granted
+    SVC -> RESOURCE : checkAccess(actor: Actor, resource: Resource) : boolean
+    note right: Actor must be in accessibleActors
+    
+    alt Access denied
+        SVC --> API_REG : return 403 Forbidden
+        API_REG --> COORDINATOR : 403 Forbidden
+    else Access granted
+        SVC -> OPERATION : create(initiator: Actor, target: Resource, channel: Channel) : REQ_SYS_01_Operation
+        note right: preState != postState enforced
+        
+        SVC -> DB : beginTransaction() [TLS, encrypted at rest]
+        
+        SVC -> PATIENT : create(name: String, urgencyLevel: UrgencyLevel) : Patient
+        PATIENT -> URGENCY : validateLevel(level: String) : boolean
+        
+        alt Invalid urgency level
+            SVC -> DB : rollback()
+            SVC --> API_REG : return 400 Bad Request
+            API_REG --> COORDINATOR : 400 Bad Request
+        else Valid urgency level
+            SVC -> DB : savePatient(patient: Patient) [TLS]
+            
+            SVC -> QUEUE : addPatient(patient: Patient) : void
+            QUEUE -> QUEUE : sortByUrgency()
+            note right: Highest urgency first
+            
+            SVC -> DB : saveQueue(queue: Queue) [TLS]
+            
+            SVC -> DB : commit() [TLS]
+            
+            SVC -> OPERATION : recordStateChange(operation: REQ_SYS_01_Operation) : void
+            note right: pre != post enforced
+            
+            SVC --> API_REG : return 200 OK + QueueDTO
+            API_REG --> COORDINATOR : 200 OK + Updated Queue
+        end
+    end
+end
+
+== FLOW-REGISTRATION: Concurrent Registration Conflict ==
+
+COORDINATOR -> API_REG : POST /patients [TLS]
+
+API_REG -> SVC : registerPatient(patientData: PatientDTO) : QueueDTO
+
+SVC -> ACTOR : checkPermission(role: String, permission: Permission) : boolean
+
+alt Permission denied
+    SVC --> API_REG : return 403 Forbidden
+    API_REG --> COORDINATOR : 403 Forbidden
+else Permission granted
+    SVC -> RESOURCE : checkAccess(actor: Actor, resource: Resource) : boolean
+    
+    alt Access denied
+        SVC --> API_REG : return 403 Forbidden
+        API_REG --> COORDINATOR : 403 Forbidden
+    else Access granted
+        SVC -> DB : beginTransaction() [TLS]
+        
+        SVC -> PATIENT : create(name: String, urgencyLevel: UrgencyLevel) : Patient
+        
+        SVC -> DB : savePatient(patient: Patient) [TLS]
+        
+        SVC -> QUEUE : addPatient(patient: Patient) : void
+        QUEUE -> QUEUE : sortByUrgency()
+        
+        SVC -> DB : saveQueue(queue: Queue) [TLS]
+        
+        alt Optimistic lock failure (concurrent modification)
+            SVC -> DB : rollback()
+            SVC -> DB : retryTransaction() [TLS]
+            note right: Max 3 retries
+            
+            alt Retry successful
+                SVC -> DB : commit() [TLS]
+                SVC --> API_REG : return 200 OK + QueueDTO
+                API_REG --> COORDINATOR : 200 OK + Updated Queue
+            else Retry failed
+                SVC --> API_REG : return 409 Conflict
+                API_REG --> COORDINATOR : 409 Conflict - Concurrent registration
+            end
+        else Transaction successful
+            SVC -> DB : commit() [TLS]
+            SVC --> API_REG : return 200 OK + QueueDTO
+            API_REG --> COORDINATOR : 200 OK + Updated Queue
+        end
+    end
+end
+
+== FLOW-URGENCY-UPDATE: Urgency Level Update ==
+
+actor "Healthcare_Professionals" as PROFESSIONAL
+
+PROFESSIONAL -> API_TRIAGE : PUT /patients/{id}/urgency [TLS]
+note right: Authenticated channel required
+
+API_TRIAGE -> SVC : updateUrgency(patientId: String, newUrgency: UrgencyLevel) : QueueDTO
+
+SVC -> ACTOR : checkPermission(role: String, permission: Permission) : boolean
+note right: Must have Write permission
+
+alt Permission denied
+    SVC --> API_TRIAGE : return 403 Forbidden
+    API_TRIAGE --> PROFESSIONAL : 403 Forbidden
+else Permission granted
+    SVC -> RESOURCE : checkAccess(actor: Actor, resource: Resource) : boolean
+    
+    alt Access denied
+        SVC --> API_TRIAGE : return 403 Forbidden
+        API_TRIAGE --> PROFESSIONAL : 403 Forbidden
+    else Access granted
+        SVC -> DB : beginTransaction() [TLS]
+        
+        SVC -> DB : findPatientById(patientId: String) : Patient [TLS]
+        
+        alt Patient not found
+            SVC -> DB : rollback()
+            SVC --> API_TRIAGE : return 404 Not Found
+            API_TRIAGE --> PROFESSIONAL : 404 Not Found
+        else Patient found
+            SVC -> PATIENT : getUrgencyLevel() : UrgencyLevel
+            note right: Capture preState
+            
+            alt Same urgency level (no state change)
+                SVC -> DB : rollback()
+                SVC --> API_TRIAGE : return 400 Bad Request
+                API_TRIAGE --> PROFESSIONAL : 400 Bad Request - No change in urgency
+            else Different urgency level
+                SVC -> PATIENT : setUrgencyLevel(newUrgency: UrgencyLevel) : void
+                PATIENT -> URGENCY : validateLevel(level: String) : boolean
+                
+                alt Invalid urgency level
+                    SVC -> DB : rollback()
+                    SVC --> API_TRIAGE : return 400 Bad Request
+                    API_TRIAGE --> PROFESSIONAL : 400 Bad Request
+                else Valid urgency level
+                    SVC -> DB : updatePatient(patient: Patient) [TLS]
+                    
+                    SVC -> QUEUE : reSortByUrgency() : void
+                    note right: Patient may move to front if urgency becomes critical
+                    
+                    SVC -> DB : saveQueue(queue: Queue) [TLS]
+                    
+                    SVC -> DB : commit() [TLS]
+                    
+                    SVC -> OPERATION : recordStateChange(operation: REQ_SYS_01_Operation) : void
+                    note right: preState != postState enforced
+                    
+                    SVC --> API_TRIAGE : return 200 OK + QueueDTO
+                    API_TRIAGE --> PROFESSIONAL : 200 OK + Updated Queue
+                end
+            end
+        end
+    end
+end
+
+== FLOW-URGENCY-UPDATE: Concurrent Update Conflict ==
+
+PROFESSIONAL -> API_TRIAGE : PUT /patients/{id}/urgency [TLS]
+
+API_TRIAGE -> SVC : updateUrgency(patientId: String, newUrgency: UrgencyLevel) : QueueDTO
+
+SVC -> ACTOR : checkPermission(role: String, permission: Permission) : boolean
+
+alt Permission denied
+    SVC --> API_TRIAGE : return 403 Forbidden
+    API_TRIAGE --> PROFESSIONAL : 403 Forbidden
+else Permission granted
+    SVC -> RESOURCE : checkAccess(actor: Actor, resource: Resource) : boolean
+    
+    alt Access denied
+        SVC --> API_TRIAGE : return 403 Forbidden
+        API_TRIAGE --> PROFESSIONAL : 403 Forbidden
+    else Access granted
+        SVC -> DB : beginTransaction() [TLS]
+        
+        SVC -> DB : findPatientById(patientId: String) : Patient [TLS]
+        
+        alt Patient not found
+            SVC -> DB : rollback()
+            SVC --> API_TRIAGE : return 404 Not Found
+            API_TRIAGE --> PROFESSIONAL : 404 Not Found
+        else Patient found
+            SVC -> PATIENT : getUrgencyLevel() : UrgencyLevel
+            
+            alt Same urgency level
+                SVC -> DB : rollback()
+                SVC --> API_TRIAGE : return 400 Bad Request
+                API_TRIAGE --> PROFESSIONAL : 400 Bad Request
+            else Different urgency level
+                SVC -> PATIENT : setUrgencyLevel(newUrgency: UrgencyLevel) : void
+                
+                SVC -> DB : updatePatient(patient: Patient) [TLS]
+                
+                SVC -> QUEUE : reSortByUrgency() : void
+                
+                SVC -> DB : saveQueue(queue: Queue) [TLS]
+                
+                alt Optimistic lock failure (concurrent modification)
+                    SVC -> DB : rollback()
+                    SVC -> DB : retryTransaction() [TLS]
+                    note right: Max 3 retries
+                    
+                    alt Retry successful
+                        SVC -> DB : commit() [TLS]
+                        SVC --> API_TRIAGE : return 200 OK + QueueDTO
+                        API_TRIAGE --> PROFESSIONAL : 200 OK + Updated Queue
+                    else Retry failed
+                        SVC --> API_TRIAGE : return 409 Conflict
+                        API_TRIAGE --> PROFESSIONAL : 409 Conflict - Concurrent update
+                    end
+                else Transaction successful
+                    SVC -> DB : commit() [TLS]
+                    SVC --> API_TRIAGE : return 200 OK + QueueDTO
+                    API_TRIAGE --> PROFESSIONAL : 200 OK + Updated Queue
+                end
+            end
+        end
+    end
+end
+
+== ERROR: Database Connection Failure ==
+
+COORDINATOR -> API_REG : POST /patients [TLS]
+
+API_REG -> SVC : registerPatient(patientData: PatientDTO) : QueueDTO
+
+SVC -> ACTOR : checkPermission(role: String, permission: Permission) : boolean
+
+alt Permission granted
+    SVC -> RESOURCE : checkAccess(actor: Actor, resource: Resource) : boolean
+    
+    alt Access granted
+        SVC -> DB : beginTransaction() [TLS]
+        
+        alt Database connection failed
+            SVC --> API_REG : return 503 Service Unavailable
+            API_REG --> COORDINATOR : 503 Service Unavailable
+        else Database timeout
+            SVC --> API_REG : return 504 Gateway Timeout
+            API_REG --> COORDINATOR : 504 Gateway Timeout
+        end
+    end
+end
+
+== ERROR: Unauthenticated Request ==
+
+actor "Unauthenticated User" as UNAUTH
+
+UNAUTH -> API_REG : POST /patients [No TLS]
+
+API_REG --> UNAUTH : 401 Unauthorized
+note right: Missing authentication channel
+
+@enduml

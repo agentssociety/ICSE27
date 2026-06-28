@@ -1,0 +1,30 @@
+{
+  "task_id": 68,
+  "confidence": 0.9312,
+  "evidence": [
+    {
+      "claim": "The system manages flight assignments",
+      "fact": "The system allocates each flight the earliest available 5-minute slot on either runway at or after its estimated time.",
+      "score": 0.9985,
+      "user_story_span": "The system manages flight assignments",
+      "fact_span": "The system allocates each flight the earliest available 5-minute slot on either runway at or after its estimated time."
+    },
+    {
+      "claim": "The system manages time slots",
+      "fact": "The system allocates time slots.",
+      "score": 0.9956,
+      "user_story_span": "",
+      "fact_span": "The system allocates time slots."
+    },
+    {
+      "claim": "The system detects a scheduling violation",
+      "fact": "The system detects gap-violating assignments on the same runway.",
+      "score": 0.7994,
+      "user_story_span": "",
+      "fact_span": "detects gap-violating assignments on the same runway."
+    }
+  ],
+  "total_claims": 10,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

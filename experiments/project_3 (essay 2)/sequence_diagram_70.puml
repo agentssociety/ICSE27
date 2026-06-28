@@ -1,0 +1,192 @@
+@startuml
+skinparam defaultFontSize 12
+skinparam backgroundColor #FEFEFE
+
+box "Controller" #LightBlue
+  actor "AirTrafficController" as ATC
+end box
+
+box "Application" #LightGreen
+  participant "EmergencyOperationHandler" as EOH
+  participant "FlightDispatch" as FD
+  participant "SafetyManagement" as SM
+end box
+
+box "Domain" #LightYellow
+  participant "Flight" as F
+  participant "Slot" as S
+  participant "EmergencyStateMarker" as ESM
+  participant "CriticalFlight" as CF
+  participant "Resource" as R
+  participant "Actor" as A
+  participant "Permission" as P
+  participant "State" as ST
+end box
+
+box "Infrastructure" #LightCoral
+  participant "FlightManagementDatabase" as DB
+end box
+
+== Main Flow - Mark Emergency Success ==
+
+ATC -> EOH : POST /emergency [TLS]
+activate EOH
+
+EOH -> EOH : validateInput(flightId) : boolean
+alt Invalid identifier
+  EOH --> ATC : 400 Bad Request
+  note right: Clear feedback (usability)
+else Valid identifier
+  EOH -> DB : fetchFlight(flightId) [encrypted at rest]
+  activate DB
+  DB --> EOH : Flight data
+  deactivate DB
+  alt Flight not found
+    EOH --> ATC : 404 Not Found
+  else Flight found
+    EOH -> F : checkState() : State
+    activate F
+    F --> EOH : NORMAL
+    deactivate F
+    EOH -> A : authenticate(credentials) : Actor
+    activate A
+    A --> EOH : actor object
+    deactivate A
+    EOH -> A : getPermissions() : Set<Permission>
+    activate A
+    A --> EOH : {Execute, Admin}
+    deactivate A
+    alt Permission missing
+      EOH --> ATC : 403 Forbidden
+    else Permission present
+      EOH -> F : isAccessible(actor) : boolean
+      activate F
+      F --> EOH : true
+      deactivate F
+      alt Not accessible
+        EOH --> ATC : 403 Forbidden
+      else Accessible
+        EOH -> EOH : checkTargetSlots(slotIds)
+        alt slot belongs to CriticalFlight
+          EOH --> ATC : 409 Conflict
+          note right: ec_safe_3 – operation denied
+        else valid slot
+          EOH -> F : assignEmergencyState() : State
+          activate F
+          F -> ESM : addState(EMERGENCY)
+          activate ESM
+          ESM --> F : ok
+          deactivate ESM
+          F --> EOH : EMERGENCY
+          note left: Pre1 → Post1
+          deactivate F
+          EOH -> F : getResources() : Set<Resource>
+          activate F
+          F --> EOH : resources
+          deactivate F
+          EOH -> S : assignPrioritySlot(flightId, resources)
+          activate S
+          S -> DB : updateSlot(slotId, priority) [encrypted at rest]
+          deactivate S
+          EOH -> S : adjustOtherSlots(flightId)
+          activate S
+          S -> DB : bulkUpdateOtherSlots() [encrypted at rest]
+          note right: Post2 – real-time adjustment
+          deactivate S
+          EOH --> ATC : 200 OK
+        end
+      end
+    end
+  end
+end
+deactivate EOH
+
+== Error Flow - Flight Already in Emergency ==
+
+ATC -> EOH : POST /emergency [TLS]
+activate EOH
+
+EOH -> DB : fetchFlight(flightId) [encrypted at rest]
+activate DB
+DB --> EOH : Flight data
+deactivate DB
+EOH -> F : checkState() : State
+activate F
+F --> EOH : EMERGENCY
+deactivate F
+note over EOH : ec_safe_1, ec_safe_2 – no conflicting grants
+EOH --> ATC : 200 OK (already in emergency)
+deactivate EOH
+
+== Error Flow - Attempt on CriticalFlight Resources ==
+
+ATC -> EOH : POST /emergency (targeting critical slot)
+activate EOH
+
+EOH -> DB : fetchFlight(flightId)
+activate DB
+DB --> EOH : Flight data
+deactivate DB
+EOH -> F : isAccessible() : boolean
+activate F
+F --> EOH : true
+deactivate F
+EOH -> EOH : checkTargetSlots() -> includes critical slot
+EOH --> ATC : 409 Conflict
+note right: ec_safe_3 – resources of CriticalFlight must not be touched
+deactivate EOH
+
+== Edge Case - Simultaneous Declarations (No Conflict) ==
+
+|||
+group Handled independently per declaration
+  ATC -> EOH : POST /emergency (flightA)
+  activate EOH
+  EOH -> DB : fetchFlight(flightA)
+  activate DB
+  DB --> EOH : Flight data
+  deactivate DB
+  EOH -> F : lockResource(flightA)
+  activate F
+  F --> EOH : locked
+  deactivate F
+  EOH -> EOH : allocateSlot()
+  note right: ec_safe_2 – no overlapping targets
+  EOH --> ATC : 200 OK
+  deactivate EOH
+end
+|||
+group Simultaneous but different resources – no conflict
+  ATC -> EOH : POST /emergency (flightB)
+  activate EOH
+  EOH -> DB : fetchFlight(flightB)
+  activate DB
+  DB --> EOH : Flight data
+  deactivate DB
+  EOH -> F : lockResource(flightB)
+  activate F
+  F --> EOH : locked
+  deactivate F
+  EOH --> ATC : 200 OK
+  deactivate EOH
+end
+|||
+
+== Additional Flow - Unauthorized Actor (FlightDispatch) ==
+
+FD -> EOH : POST /emergency [TLS]
+activate EOH
+
+EOH -> A : authenticate(credentials) : Actor
+activate A
+A --> EOH : FlightDispatch actor
+deactivate A
+EOH -> A : getPermissions() : Set<Permission>
+activate A
+A --> EOH : {}
+deactivate A
+note over EOH : No Execute/Admin permission
+EOH --> FD : 403 Forbidden
+deactivate EOH
+
+@enduml

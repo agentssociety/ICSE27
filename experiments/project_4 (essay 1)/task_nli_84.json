@@ -1,0 +1,65 @@
+{
+  "task_id": 84,
+  "confidence": 0.9855,
+  "evidence": [
+    {
+      "claim": "The system contains a mechanism for flagging transactions as suspicious.",
+      "fact": "Administrative personnel can review a list of withdrawals that were flagged as potentially suspicious by the detection logic.",
+      "score": 0.9988,
+      "user_story_span": "The system contains a mechanism for flagging transactions as suspicious",
+      "fact_span": "flagged as potentially suspicious by the detection logic"
+    },
+    {
+      "claim": "The admin views a list of suspicious transactions.",
+      "fact": "Administrative personnel can review a list of withdrawals that were flagged as potentially suspicious by the detection logic.",
+      "score": 0.9984,
+      "user_story_span": "view a list of suspicious transactions",
+      "fact_span": "review a list of withdrawals that were flagged as potentially suspicious"
+    },
+    {
+      "claim": "The system allows review of flagged suspicious transactions.",
+      "fact": "Administrative personnel can review a list of withdrawals that were flagged as potentially suspicious by the detection logic.",
+      "score": 0.9983,
+      "user_story_span": "review flagged suspicious transactions",
+      "fact_span": "review a list of withdrawals that were flagged as potentially suspicious"
+    },
+    {
+      "claim": "The admin reviews a suspicious transaction.",
+      "fact": "Administrators have the ability to examine all transactions that have been marked as suspicious and decide on further action.",
+      "score": 0.9973,
+      "user_story_span": "reviewing a suspicious transaction",
+      "fact_span": "examine all transactions that have been marked as suspicious"
+    },
+    {
+      "claim": "The action is logged for audit purposes.",
+      "fact": "The audit log captures the time of each access attempt and each status update, providing a trustworthy history.",
+      "score": 0.9962,
+      "user_story_span": "the action is logged for audit purposes",
+      "fact_span": "audit log captures the time of each access attempt and each status update"
+    },
+    {
+      "claim": "The system allows rejection of flagged suspicious transactions.",
+      "fact": "The enforcement component blocks transactions that exceed the account's current funds or the per-calendar-day maximum of one thousand.",
+      "score": 0.9954,
+      "user_story_span": "approve, reject, or escalate",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system allows approval of flagged suspicious transactions.",
+      "fact": "Administrative personnel can review a list of withdrawals that were flagged as potentially suspicious by the detection logic.",
+      "score": 0.992,
+      "user_story_span": "approve, reject, or escalate",
+      "fact_span": ""
+    },
+    {
+      "claim": "Admin has the necessary permissions to view flagged transactions.",
+      "fact": "Administrators have the ability to examine all transactions that have been marked as suspicious and decide on further action.",
+      "score": 0.9765,
+      "user_story_span": "Admin has the necessary permissions to view and act on flagged transactions",
+      "fact_span": "examine all transactions that have been marked as suspicious"
+    }
+  ],
+  "total_claims": 15,
+  "supported_claims": 8,
+  "threshold": 0.6
+}

@@ -1,0 +1,45 @@
+```mermaid
+sequenceDiagram
+    participant Admin as Administrator
+    participant UI as Web UI (Flask)
+    participant M as Main (app.py)
+    participant DB as SQLite Database
+    participant Sched as APScheduler
+
+    Admin ->> UI: Submit new blood unit form
+    UI ->> M: POST /inventory/add (abo_type, rh, collection_date)
+    M ->> DB: INSERT BloodUnit
+    DB -->> M: unit saved
+    M -->> UI: redirect with success message
+
+    Nurse ->> UI: Submit transfusion request
+    UI ->> M: POST /requests/new (abo_type, rh, quantity)
+    M ->> M: MatchingService.auto_match_and_reserve(request)
+    M ->> DB: SELECT compatible units (exact type first, then closest expiry)
+    DB -->> M: units list
+    M ->> DB: INSERT Reservation rows for each matched unit
+    M ->> DB: UPDATE BloodUnit status='reserved'
+    M ->> DB: UPDATE Request status='pending' (if partial) or 'fulfilled'
+    M ->> DB: SELECT current stock per type
+    M ->> M: check if any stock < 5 → create StockAlert
+    M -->> UI: redirect to dashboard
+
+    Sched ->> M: run expire_units_job (every hour)
+    M ->> DB: SELECT units where expiry_date < now and status='available' or 'reserved'
+    M ->> DB: UPDATE BloodUnit status='expired'
+
+    Sched ->> M: run release_unconfirmed_reservations (every 10 minutes)
+    M ->> DB: SELECT reservations where reserved_at < now - 24h and confirmed=False
+    M ->> DB: UPDATE BloodUnit status='available', DELETE reservation
+
+    Sched ->> M: run check_and_raise_alerts (every 5 minutes)
+    M ->> DB: SELECT count(*) per type/rh where status='available'
+    M ->> M: compare with threshold 5, create alerts if needed
+    DB -->> M: alert inserted
+
+    Manager ->> UI: GET /dashboard
+    UI ->> M: GET /dashboard
+    M ->> DB: aggregate stock by type, units expiring in 7 days, pending requests, active alerts
+    DB -->> M: data
+    M -->> UI: render dashboard.html with dashboard data
+```

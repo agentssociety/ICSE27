@@ -1,0 +1,30 @@
+{
+  "task_id": 96,
+  "confidence": 0.9974,
+  "evidence": [
+    {
+      "claim": "The system allows authentication using a card and PIN.",
+      "fact": "The system authenticates users by card number and PIN before any transaction.",
+      "score": 0.9991,
+      "user_story_span": "authenticate using my card and PIN",
+      "fact_span": "authenticates users by card number and PIN"
+    },
+    {
+      "claim": "The system locks the account after 3 consecutive failed attempts.",
+      "fact": "The system locks the account after 3 consecutive failed authentication attempts.",
+      "score": 0.9986,
+      "user_story_span": "my account locked after 3 consecutive failed attempts",
+      "fact_span": "locks the account after 3 consecutive failed authentication attempts"
+    },
+    {
+      "claim": "Card and PIN are the required authentication methods.",
+      "fact": "Users must present a valid card and correct PIN to initiate a withdrawal; after three wrong attempts their account becomes locked.",
+      "score": 0.9946,
+      "user_story_span": "Card and PIN are the required authentication methods",
+      "fact_span": "present a valid card and correct PIN"
+    }
+  ],
+  "total_claims": 3,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

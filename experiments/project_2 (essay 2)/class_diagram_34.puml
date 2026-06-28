@@ -1,0 +1,142 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+  class BloodUnit {
+    - aboRhType: String
+    - expiryDate: Date
+    - crossMatchStatus: CrossMatchStatus
+    {field} invariants: Must have valid cross-match status before being considered for matching
+  + filterByCrossMatchStatus(units: List<BloodUnit>, status: CrossMatchStatus.VALID) : List<BloodUnit>
+  + sortByExactMatch(units: List<BloodUnit>) : List<BloodUnit>
+  + sortByClosestExpiryDate(units: List<BloodUnit>) : List<BloodUnit>
+  + findCompatibleTypes(units: List<BloodUnit>) : List<BloodUnit>
+  + validateCrossMatchStatus(unit: BloodUnit) : Boolean
+  + updateCrossMatchStatus(unit: BloodUnit, status: CrossMatchStatus) : void
+  + updateExpiryDateSorting(unit: BloodUnit) : void
+  }
+
+  class TransfusionRequest {
+    - aboRhType: String
+    {field} invariants: Must specify a specific ABO/Rh type
+  }
+
+  enum CrossMatchStatus {
+    PENDING
+    VALID
+    INVALID
+    EXPIRED
+  }
+
+  enum ABORhType {
+    A_POSITIVE
+    A_NEGATIVE
+    B_POSITIVE
+    B_NEGATIVE
+    AB_POSITIVE
+    AB_NEGATIVE
+    O_POSITIVE
+    O_NEGATIVE
+  }
+}
+
+package "Application" {
+  class MatchingProcess {
+    - matchingStrategy: MatchingStrategy
+    - inventoryService: BloodUnitInventoryService
+    - requestRepository: TransfusionRequestRepository
+  + initiateMatching(request: TransfusionRequest) : void
+  + checkAuthorization(actor: String) : Boolean
+  }
+
+  interface MatchingStrategy {
+    + match(request: TransfusionRequest, units: List<BloodUnit>): List<BloodUnit>
+  }
+
+  class ExactMatchFirstStrategy {
+    + match(request: TransfusionRequest, units: List<BloodUnit>): List<BloodUnit>
+  + execute(units: List<BloodUnit>, requestType: ABORhType) : List<BloodUnit>
+  }
+
+  class CompatibleMatchStrategy {
+    + match(request: TransfusionRequest, units: List<BloodUnit>): List<BloodUnit>
+  + execute(units: List<BloodUnit>, requestType: ABORhType) : List<BloodUnit>
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface BloodUnitInventoryService {
+    + getAvailableUnits(): List<BloodUnit>
+    + getUnitsByType(aboRhType: ABORhType): List<BloodUnit>
+  }
+
+  interface TransfusionRequestRepository {
+    + save(request: TransfusionRequest): void
+    + findById(id: String): TransfusionRequest
+    + updateMatchingResult(requestId: String, matchedUnits: List<BloodUnit>): void
+  }
+}
+
+package "Controllers" {
+  class MatchingController {
+    - matchingProcess: MatchingProcess
+    + initiateMatching(requestId: String): MatchingResult
+  }
+}
+
+package "DTOs" {
+  class MatchingResult <<dto>> {
+    - requestId: String
+    - matchedUnits: List<BloodUnit>
+    - matchingTimestamp: DateTime
+    - matchingType: String
+  + createResult(matchedUnits: List<BloodUnit>, strategy: String) : MatchingResult
+  + createEmptyResult() : MatchingResult
+  + createErrorResult(error: String, code: Integer) : MatchingResult
+  }
+
+  class MatchingRequest <<dto>> {
+    - requestId: String
+    - aboRhType: ABORhType
+  }
+}
+
+package "Exceptions" {
+  class NoCompatibleUnitsException <<exception>> {
+    - message: String
+    - requestId: String
+  }
+
+  class InvalidCrossMatchException <<exception>> {
+    - message: String
+    - bloodUnitId: String
+  }
+
+  class UnauthorizedAccessException <<exception>> {
+    - message: String
+    - userId: String
+  }
+}
+
+' Relationships
+TransfusionRequest "1" --> "0..*" BloodUnit : matched to
+MatchingProcess ..> BloodUnitInventoryService : depends on
+MatchingProcess --> TransfusionRequestRepository : uses
+MatchingProcess --> MatchingStrategy : uses
+ExactMatchFirstStrategy ..|> MatchingStrategy
+CompatibleMatchStrategy ..|> MatchingStrategy
+MatchingController --> MatchingProcess : delegates to
+MatchingController ..> MatchingResult : creates
+MatchingController ..> MatchingRequest : receives
+MatchingProcess ..> NoCompatibleUnitsException : throws
+MatchingProcess ..> InvalidCrossMatchException : throws
+MatchingController ..> UnauthorizedAccessException : throws
+BloodUnit --> CrossMatchStatus : has
+BloodUnit --> ABORhType : has
+TransfusionRequest --> ABORhType : has
+
+@enduml

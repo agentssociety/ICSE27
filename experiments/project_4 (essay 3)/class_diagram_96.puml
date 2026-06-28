@@ -1,0 +1,227 @@
+@startuml
+skinparam classFontColor black
+skinparam classBorderColor #2E2E2E
+skinparam classBackgroundColor #FEFEFE
+skinparam packageStyle rectangle
+skinparam packageBorderColor #2E2E2E
+skinparam packageFontColor #2E2E2E
+skinparam stereotypeFontSize 10
+
+package "Domain Model" {
+    class User {
+        - userId: String
+        - card: Card
+        - account: Account
+        - roles: List<Role>
+        {field} invariants: "User must have exactly one active card"
+    }
+
+    class Card {
+        - cardNumber: String
+        - expired: Bool
+        - user: User
+        {field} invariants: "Card must be valid (not expired) for authentication attempt"
+  + isExpired() : Boolean
+  + verifyPin(pin) : Boolean
+    }
+
+    class Account {
+        - accountId: String
+        - locked: Bool
+        - failedAttemptCount: Int
+        - user: User
+        {field} invariants: "failedAttemptCount >= 0"
+        {field} invariants: "locked == true if failedAttemptCount >= 3"
+  + isLocked() : Boolean
+  + unlock()
+  + setLocked(false)
+  + lock()
+  + setLocked(true)
+    }
+
+    class AuthenticationSession {
+        - sessionId: String
+        - user: User
+        - card: Card
+        - consecutiveFailures: Int
+        - locked: Bool
+        {field} invariants: "consecutiveFailures resets on success"
+        {field} invariants: "locked implies consecutiveFailures >= 3"
+  + create(card, user) : AuthenticationSession
+  + resetConsecutiveFailures()
+  + incrementConsecutiveFailures()
+    }
+
+    class AuthenticationAttempt {
+        - card: Card
+        - pin: String
+        - success: Bool
+        - timestamp: DateTime
+        - device: Device
+        {field} invariants: "success == false if card.expired == True"
+  + recordAttempt(card, pin, device) : AuthenticationAttempt
+  + markFailed(device)
+    }
+
+    class LockoutRecord {
+        - device: Device
+        - operation: String
+        - locked: Bool
+        {field} invariants: "locked == True implies account.locked == True"
+  + create(device, operation, locked=true)
+    }
+
+    class FailedAttempt {
+        - device: Device
+        - operation: String
+        {field} invariants: "Each failed attempt is recorded"
+  + createFailedAttempt(device, operation)
+    }
+
+    class LockoutNotification {
+        - device: Device
+        - lockout: LockoutRecord
+        - sent: Bool
+        {field} invariants: "sent == True when lockout occurs"
+  + send(device, lockout)
+  + setSent(true)
+    }
+
+    enum Permission {
+        READ
+        WRITE
+        EXECUTE
+        ADMIN
+    }
+
+    enum State {
+        PRE_IDLE
+        AUTHENTICATING
+        UNLOCKED
+        LOCKED
+    }
+}
+
+package "Application" {
+    interface "Authentication API" <<interface>> {
+        + {abstract} initiateAuthentication(card: Card, pin: String): LockoutStatus
+        + {abstract} validateCredentials(card: Card, pin: String): Bool
+        + {abstract} checkFailedAttemptCount(card: Card): Int
+        + {abstract} resetConsecutiveFailures(session: AuthenticationSession): Void
+        + {abstract} updateAccountStatus(account: Account, status: State): Void
+        + {abstract} lockAccount(account: Account): Void
+        + {abstract} displayLockoutNotification(notification: LockoutNotification): Void
+        + {abstract} displayErrorMessage(message: String): Void
+        {field} encrypted: true
+        {field} authenticated: true
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface "User Data Store" <<interface>> {
+        + {abstract} storeUserCredentials(user: User, card: Card): Void
+        + {abstract} retrieveCardData(cardNumber: String): Card
+        + {abstract} updateLockoutStatus(account: Account, locked: Bool): Void
+        + {abstract} getFailedAttemptCount(card: Card): Int
+        {field} encrypted: true
+        {field} authenticated: false
+  + findCard(cardNumber) : Card
+  + findAccountByCard(cardNumber) : Account
+  + updateAccount(account)
+  + incrementFailedAttemptCount(account)
+  + setLockedFlag(account)
+  + findCard(expiredCardNumber) : Card
+  + findAccount(accountId) : Account
+    }
+
+    interface "Login Screen" <<interface>> {
+        + {abstract} displayCardEntry(): Void
+        + {abstract} displayPINEntry(): Void
+        + {abstract} showLockoutNotification(notification: LockoutNotification): Void
+        + {abstract} showErrorMessage(message: String): Void
+        {field} encrypted: true
+        {field} authenticated: false
+  + insertCard(cardNumber)
+  + insertCard(expiredCardNumber)
+    }
+}
+
+package "Controllers" {
+    class AuthenticationController {
+        - authenticationAPI: Authentication API
+        - userDataStore: User Data Store
+        - loginScreen: Login Screen
+        + {static} handleCardInsertion(card: Card): Void
+        + {static} handlePINEntry(pin: String): Void
+        + {static} processAuthenticationAttempt(attempt: AuthenticationAttempt): Bool
+        + {static} manageLockoutState(account: Account): Void
+    }
+}
+
+package "DTOs" {
+    class AuthenticationRequestDTO <<dto>> {
+        - cardNumber: String
+        - pin: String
+        - deviceId: String
+    }
+
+    class AuthenticationResponseDTO <<dto>> {
+        - success: Bool
+        - lockoutStatus: State
+        - message: String
+    }
+
+    class LockoutStatusDTO <<dto>> {
+        - accountId: String
+        - locked: Bool
+        - failedAttemptCount: Int
+    }
+}
+
+package "Exceptions" {
+    class CardExpiredException <<exception>> {
+        - cardNumber: String
+        - expiryDate: DateTime
+    }
+
+    class AccountLockedException <<exception>> {
+        - accountId: String
+        - lockoutTime: DateTime
+    }
+
+    class AuthenticationFailedException <<exception>> {
+        - reason: String
+        - timestamp: DateTime
+    }
+
+    class InvalidPINException <<exception>> {
+        - attemptCount: Int
+    }
+}
+
+' Relationships
+User "1" --> "1..*" Card : has
+Card "1" --> "1" Account : linkedTo
+AuthenticationAttempt "1" --> "1" Card : uses
+AuthenticationAttempt "1" --> "1" User : initiatedBy
+Account "1" --> "0..*" LockoutRecord : resultsIn
+FailedAttempt "1" --> "1" Device : associatedWith
+LockoutNotification "1" --> "1" LockoutRecord : notifies
+
+' Interface implementations
+AuthenticationController ..|> "Authentication API"
+AuthenticationController ..|> "User Data Store"
+AuthenticationController ..|> "Login Screen"
+
+' DTO usage
+AuthenticationController --> AuthenticationRequestDTO : creates
+AuthenticationController --> AuthenticationResponseDTO : returns
+AuthenticationController --> LockoutStatusDTO : uses
+
+' Exception handling
+AuthenticationController --> CardExpiredException : throws
+AuthenticationController --> AccountLockedException : throws
+AuthenticationController --> AuthenticationFailedException : throws
+AuthenticationController --> InvalidPINException : throws
+
+@enduml

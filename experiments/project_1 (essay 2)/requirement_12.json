@@ -1,0 +1,96 @@
+{
+  "id": "REQ-DASH-01",
+  "title": "Real-time Patient Queue Dashboard",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall display each patient's urgency level and estimated wait time in real-time on a live dashboard.",
+  "rationale": "To enable triage nurses or physicians to monitor the queue status in real-time, improving efficiency and patient care coordination.",
+  "business_value": "Enhances operational efficiency by allowing healthcare professionals to quickly assess and manage patient flow, leading to better resource utilization and faster patient outcomes.",
+  "source": {
+    "type": "User Story",
+    "id": 12,
+    "description": "As a triage nurse or physician I need a live dashboard that displays each patient's urgency level and estimated wait time So that I can monitor the queue status in real-time"
+  },
+  "stakeholders": [
+    "Triage Nurses",
+    "Physicians",
+    "Hospital Management",
+    "IT Team"
+  ],
+  "acceptance_criteria": [
+    "I see each patient's urgency level and estimated wait time"
+  ],
+  "preconditions": [
+    "The system has real-time data updates enabled",
+    "Patients are already triaged and assigned an urgency level",
+    "Estimated wait times are calculated based on current queue and resource availability"
+  ],
+  "postconditions": [
+    "Each patient's urgency level is displayed on the dashboard in real time",
+    "An estimated wait time for each patient is displayed on the dashboard in real time"
+  ],
+  "functional_constraints": [
+    "The system must update the dashboard every 5 seconds or less to ensure real-time data"
+  ],
+  "security_requirements": [
+    "Access to the live dashboard should be restricted to authorized triage nurses and physicians",
+    "Data transmitted between the server and client should be encrypted using TLS 1.2 or higher"
+  ],
+  "non_functional_requirements": {
+    "performance": "The system must handle a minimum of 100 patients simultaneously without degradation in performance",
+    "availability": "The dashboard must be available at least 99.9% of the time",
+    "scalability": "The system should be able to scale up to support an increase of 500 patients simultaneously",
+    "usability": "Error messages should be clear and actionable, providing guidance on how to resolve issues"
+  },
+  "edge_cases": [
+    "What happens if a patient's urgency level changes while on the dashboard?",
+    "How does the system handle network disruptions that could affect real-time data updates?",
+    "What if there are no patients in the queue, should the dashboard still be functional?",
+    "How does the estimated wait time change as new patients arrive and others are treated?"
+  ],
+  "dependencies": [
+    "Real-time patient triage system",
+    "Hospital or clinic's scheduling system",
+    "Authentication and authorization system for users"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Patient Data API",
+      "description": "The requirement interacts with this API to fetch real-time patient data, including urgency levels and wait times."
+    },
+    {
+      "type": "UI",
+      "name": "Live Dashboard Interface",
+      "description": "This interface is where the requirement is implemented, providing a visual display of patient urgency levels and estimated wait times."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-DASH-01",
+      "description": "Verify that the dashboard updates every 5 seconds with new data when a patient's status changes.",
+      "expected_result": "The dashboard should refresh within 5 seconds and display updated urgency levels and wait times."
+    },
+    {
+      "id": "TC-DASH-02",
+      "description": "Test the system under high load with 150 patients to ensure it remains responsive.",
+      "expected_result": "The system should handle up to 150 patients simultaneously without performance degradation."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-12T22:01:15.129984",
+  "last_updated": "2026-06-12T22:03:49.340061",
+  "traceability": {
+    "related_requirements": [
+      "REQ-TRIAGE-01"
+    ],
+    "design_components": [
+      "Patient"
+    ],
+    "test_artifacts": []
+  }
+}

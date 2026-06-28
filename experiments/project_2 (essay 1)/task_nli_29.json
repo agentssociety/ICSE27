@@ -1,0 +1,30 @@
+{
+  "task_id": 29,
+  "confidence": 0.9977,
+  "evidence": [
+    {
+      "claim": "A blood unit has a collection date.",
+      "fact": "The application tracks blood units by collection date.",
+      "score": 0.999,
+      "user_story_span": "a blood unit has a collection date",
+      "fact_span": "tracks blood units by collection date"
+    },
+    {
+      "claim": "The blood unit is automatically marked as expired.",
+      "fact": "It automatically monitors the expiry of blood units and removes outdated ones from circulation.",
+      "score": 0.9978,
+      "user_story_span": "the blood unit is automatically marked as expired",
+      "fact_span": "removes outdated ones from circulation"
+    },
+    {
+      "claim": "Blood units have a maximum shelf life of 42 days.",
+      "fact": "The expiry of a blood unit is fixed at 42 days after collection.",
+      "score": 0.9963,
+      "user_story_span": "Blood units have a maximum shelf life of 42 days",
+      "fact_span": "expiry of a blood unit is fixed at 42 days"
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

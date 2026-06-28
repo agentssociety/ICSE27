@@ -1,0 +1,199 @@
+@startuml
+' === Participants ===
+actor "Air Traffic Control" as ATC
+actor "System" as Sys
+
+' Controller layer
+box "Controller" #LightBlue
+participant "FlightSchedulingController" as Controller
+end box
+
+' Application layer
+box "Application" #LightGreen
+participant "RunwayClosureService" as AppService
+end box
+
+' Domain layer
+box "Domain" #LightYellow
+participant "Runway" as Runway
+participant "Flight" as Flight
+participant "Slot" as Slot
+participant "AlternativeRunway" as AltRunway
+participant "Permission" as Permission
+end box
+
+' Infrastructure layer
+box "Infrastructure" #LightPink
+participant "RunwayStatusDatabase" as DB
+participant "FlightSchedulingAPI" as API
+participant "AirTrafficControlConsole" as Console
+end box
+
+' === Flows ===
+
+== Main Flow: Runway marked as closed ==
+
+Sys -> Controller : POST /runways/{runwayId}/close [auth required]
+activate Controller
+
+Controller -> AppService : handleRunwayClosure(runwayId: String)
+activate AppService
+
+' Security: authentication check on channel
+AppService -> DB : authenticate(channel) : boolean
+DB --> AppService : ok
+
+note over AppService: All channels must be authenticated
+
+AppService -> DB : getRunway(runwayId) : Runway [TLS]
+activate DB
+DB --> AppService : Runway object
+deactivate DB
+
+AppService -> Runway : status = CLOSED
+activate Runway
+Runway -> AppService : status changed
+deactivate Runway
+
+AppService -> DB : findFlightsByRunway(runwayId) : List<Flight>
+activate DB
+DB --> AppService : flights
+deactivate DB
+
+' For each flight
+group for each flight
+  AppService -> Flight : getAircraftType() : AircraftType
+  Flight --> AppService : type
+
+  AppService -> DB : findAlternativeRunways(aircraftType, length) : List<AlternativeRunway>
+  activate DB
+  DB --> AppService : alternatives
+  deactivate DB
+
+  alt at least one alternative runway is available
+    AppService -> AltRunway : isAvailable() : boolean
+    AltRunway --> AppService : true
+
+    ' Suggest reassignment
+    AppService -> Flight : suggestReassignment(alternativeRunway)
+    Flight --> AppService : suggestion
+
+    ' Display to controller
+    AppService -> Console : displayReassignmentSuggestion(flight, alternativeRunway) [TLS]
+    activate Console
+    Console -> ATC : show suggestion
+    ATC -> Console : approve()
+    Console --> AppService : approval
+    deactivate Console
+
+    ' Apply reassignment
+    AppService -> Flight : reassign(alternativeRunway)
+    activate Flight
+    Flight -> Flight : status = REASSIGNED
+    Flight -> Slot : updateSlot(runway, time)
+    Flight --> AppService : done
+    deactivate Flight
+
+    AppService -> DB : saveFlight(flight)
+    activate DB
+    DB --> AppService : saved
+    deactivate DB
+
+  else no alternative runway available
+    ' Queue and reschedule
+    AppService -> Flight : queueAndReschedule()
+    activate Flight
+    Flight -> Flight : status = QUEUED
+    Flight -> Flight : rescheduledTime = new DateTime
+    Flight --> AppService : done
+    deactivate Flight
+
+    ' Update via API
+    AppService -> API : updateFlightSchedule(flight, newTime)
+    activate API
+    API --> AppService : success
+    deactivate API
+
+    ' Display queue suggestion
+    AppService -> Console : displayQueueSuggestion(flight) [TLS]
+    activate Console
+    Console -> ATC : show queue
+    ATC -> Console : approve()
+    Console --> AppService : approval
+    deactivate Console
+
+    AppService -> DB : saveFlight(flight)
+    activate DB
+    DB --> AppService : saved
+    deactivate DB
+
+  else all alternative runways closed
+    ' Error: state unchanged
+    AppService -> Console : alertController(flight, "All alternative runways closed") [TLS]
+    activate Console
+    Console -> ATC : alert
+    ATC -> Console : acknowledge
+    Console --> AppService : acknowledged
+    deactivate Console
+    note over AppService: State unchanged (Pre1 maintained)
+
+  else flight cannot be reassigned due to operational constraints
+    ' Error: state unchanged
+    AppService -> Console : alertController(flight, "Incompatible runway") [TLS]
+    activate Console
+    Console -> ATC : alert
+    ATC -> Console : acknowledge
+    Console --> AppService : acknowledged
+    deactivate Console
+    note over AppService: State unchanged (Pre1 maintained)
+  end
+end
+
+' Postcondition check
+AppService -> DB : commit()
+activate DB
+DB --> AppService : committed
+deactivate DB
+
+Controller -> Sys : 200 OK
+note over Controller: Post1: flights reassigned or queued\nPost2: controller can review/approve
+
+deactivate AppService
+deactivate Controller
+
+== Error Path: Authentication failure ==
+
+Sys -> Controller : POST /runways/{runwayId}/close [no auth]
+Controller -> AppService : handleRunwayClosure
+AppService -> DB : authenticate(channel)
+DB --> AppService : 401 Unauthorized
+AppService -> Controller : AuthenticationError
+Controller -> Sys : 401 Unauthorized
+note over AppService: State unchanged (constraint violated)
+
+== Error Path: Authorization failure ==
+
+Sys -> Controller : POST /runways/{runwayId}/close [by FlightOperations]
+Controller -> AppService : handleRunwayClosure
+AppService -> Permission : checkPermission(FlightOperations, WRITE)
+activate Permission
+Permission --> AppService : allowed but not sufficient
+deactivate Permission
+note over AppService: Operation requires ADMIN for closure marking
+AppService -> Console : permissionDenied() [TLS]
+Console --> AppService : error
+AppService -> Controller : ForbiddenError
+Controller -> Sys : 403 Forbidden
+note over AppService: State unchanged
+
+== Error Path: Unauthenticated channel used ==
+
+Sys -> Controller : POST /runways/{runwayId}/close [via insecure channel]
+Controller -> AppService : handleRunwayClosure
+AppService -> DB : getRunway [TLS missing]
+DB --> AppService : 401 Unauthorized
+AppService -> Controller : SecurityException
+Controller -> Sys : 403 Forbidden
+note over AppService: Operation not proceeded, state unchanged
+
+@enduml

@@ -1,0 +1,179 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  class Actor {
+    - mayPerform: set Permission
+  }
+
+  class Resource {
+    - owner: one Actor
+    - accessible: set Actor
+    {field} owner in accessible
+  }
+
+  class State {
+  }
+
+  class Pre1 {
+    {field} Runway closure request received by airport operations manager
+  + transitionTo(Post1)
+  + transitionTo(Post2)
+  + transitionTo(Post3)
+  }
+
+  class Pre2 {
+    {field} Available alternate runways and slots
+  + detectCondition()
+  + transitionTo(Post3)
+  }
+
+  class Post1 {
+    {field} Flights reassigned to other available runways
+  + applyState()
+  }
+
+  class Post2 {
+    {field} New delays for each flight calculated
+  + applyState()
+  }
+
+  class Post3 {
+    {field} Flights with delay > 60 minutes marked as delayed
+  + applyState()
+  }
+
+  class RunwayClosureRequest {
+    - owner = Airport_Operations_Manager
+    - accessible = Airport_Operations_Manager + Flight_Control_Center
+  }
+
+  class FlightSchedule {
+    - owner = Flight_Control_Center
+    - accessible = Airport_Operations_Manager + Flight_Control_Center + Passenger_Services_Department
+  + reassignFlights(fromRunway: String, toRunways: List<Runway>)
+  + markFlightDelayed(flightId: String, delay: Duration)
+  + updateFlightDelay(flightId: String, delay: Duration)
+  + markFlightsAsDelayed(runwayId: String)
+  }
+
+  class DelayCalculation {
+    - owner = Flight_Control_Center
+    - accessible = Airport_Operations_Manager + Flight_Control_Center + Passenger_Services_Department
+  + calculateDelay(flight: Flight) : Duration
+  }
+
+  class Airport_Operations_Manager {
+    - mayPerform = Read + Write + Execute + Admin
+  + displaySuccess(message)
+  + displayError(message)
+  + displayMessage(message)
+  }
+
+  class Flight_Control_Center {
+    - mayPerform = Read + Write + Execute
+  + displayDelays(delays: Map)
+  + displayError(message)
+  }
+
+  class Passenger_Services_Department {
+    - mayPerform = Read + Write
+  }
+
+  Resource <|-- RunwayClosureRequest
+  Resource <|-- FlightSchedule
+  Resource <|-- DelayCalculation
+  Actor <|-- Airport_Operations_Manager
+  Actor <|-- Flight_Control_Center
+  Actor <|-- Passenger_Services_Department
+  State <|-- Pre1
+  State <|-- Pre2
+  State <|-- Post1
+  State <|-- Post2
+  State <|-- Post3
+  Resource "1" --> "1" Actor : owner
+  Resource "1" --> "*" Actor : accessible
+}
+
+package "Infrastructure — Ports" {
+  interface Interface {
+    - kind: one IfaceKind
+    - encrypted: one Bool
+    - authenticated: one Bool
+  }
+
+  class Runway_Closure_API {
+    - kind = API
+    - encrypted = True
+    - authenticated = True
+  }
+
+  class Flight_Schedule_Database {
+    - kind = Database
+    - encrypted = True
+    - authenticated = True
+  }
+
+  class Airport_Operations_Manager_Console {
+    - kind = UI
+    - encrypted = True
+    - authenticated = True
+  + submitClosureRequest(runwayId: String)
+  + successResponse(200 OK, "Flights reassigned")
+  + errorResponse(409 Conflict, "No alternate runways available")
+  + errorResponse(403 Forbidden, "Access denied")
+  + errorResponse(403 Forbidden, "Insufficient permissions")
+  + attemptClosure(runwayId: String)
+  + errorResponse(409 Conflict, "No alternate runways available. Flights marked delayed.")
+  + successResponse(200 OK, "Alternate runways available")
+  }
+
+  Interface <|-- Runway_Closure_API
+  Interface <|-- Flight_Schedule_Database
+  Interface <|-- Airport_Operations_Manager_Console
+}
+
+package "Application" {
+  class REQ_OPM_01 {
+    - initiator: one Actor
+    - target: some Resource
+    - channel: some Interface
+    - grant: one Permission
+    - pre: one State
+    - post: one State
+    {field} some channel
+    {field} some target
+    {field} grant in initiator.mayPerform
+    {field} initiator in target.accessible
+    {field} pre != post
+    {field} some c: channel | c.authenticated = True
+    {field} post in Post1 + Post2 + Post3
+  + handleClosureRequest(runwayId: String) : Response
+  + validatePermission(actor: Airport_Operations_Manager, permission: Write) : boolean
+  + checkAccess(initiator: AOM, target: Flight_Schedule_Database) : boolean
+  + handleDelayCalculation(scheduleId: String) : Response
+  + validatePermission(actor: Flight_Control_Center, permission: Execute) : boolean
+  + checkAccess(initiator: FCC, target: Flight_Schedule_Database) : boolean
+  + handleClosureAttempt(runwayId: String) : Response
+  }
+
+  REQ_OPM_01 "1" --> "1" Actor : initiator
+  REQ_OPM_01 "1" --> "*" Resource : target
+  REQ_OPM_01 "1" --> "*" Interface : channel
+  REQ_OPM_01 "1" --> "1" Permission : grant
+  REQ_OPM_01 "1" --> "1" State : pre
+  REQ_OPM_01 "1" --> "1" State : post
+}
+
+@enduml

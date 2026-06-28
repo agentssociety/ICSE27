@@ -1,0 +1,159 @@
+@startuml
+title Urgency Assignment Sequence Diagrams
+
+box "Controller" #LightBlue
+participant "Item_Management_API" as API
+end box
+
+box "Application" #LightGreen
+participant "REQ_ITEM_URGENCY_01" as REQ
+end box
+
+box "Domain" #LightYellow
+participant "Actor" as Actor
+participant "Resource" as Resource
+participant "State" as State
+participant "UrgencyLevel" as Urgency
+end box
+
+box "Infrastructure" #LightCoral
+database "DB" as DB
+end box
+
+== Flow: Assign Urgency - Happy Path ==
+
+group Authentication and Channel Validation
+API -> API : authenticateChannel(channel: Interface) : Bool
+note right: Channel must have authenticated=True [TLS]
+alt Channel not authenticated
+    API --> API : return 401 Unauthorized
+    note right: At least one channel must have authenticated=True
+else Channel authenticated
+    API -> API : checkEncryption(channel: Interface) : Bool
+    note right: encrypted must be True
+    alt Channel not encrypted
+        API --> API : return 400 Bad Request
+        note right: Security requirement: encrypted = True
+    end
+end
+end
+
+group Permission Verification
+API -> REQ : assignUrgency(initiatorId: String, targetId: String, urgencyValue: UrgencyLevel)
+REQ -> Actor : hasPermission(permission: Permission) : Bool
+note right: Must have Write permission (subsumes Read)
+alt Actor lacks Write permission
+    REQ --> API : return 403 Forbidden
+    note right: Caller must have Write permission
+else Has Write permission
+    REQ -> Resource : findResource(resourceId: String) : Resource
+    Resource -> DB : SELECT * FROM resources WHERE id = :resourceId [encrypted at rest]
+    DB --> Resource : resource data
+    alt Resource not found
+        REQ --> API : return 404 Not Found
+    end
+end
+end
+
+group Access Control Check
+REQ -> Resource : isInAccessibleSet(actor: Actor) : Bool
+Resource -> Resource : check accessible set contains actor
+alt Actor not in accessible set
+    REQ --> API : return 403 Forbidden
+    note right: Initiator must be in target.accessible
+end
+end
+
+group Urgency Level Validation
+REQ -> Urgency : validateUrgencyLevel(value: String) : Bool
+note right: Only U1, U2, U3, U4, U5 allowed
+alt Invalid urgency level
+    REQ --> API : return 400 Bad Request
+    note right: Type system prevents invalid values
+end
+end
+
+group State Transition
+REQ -> State : getPreState() : State
+note right: Pre-state must be PreIdle
+State --> REQ : PreIdle
+REQ -> State : transitionTo(Post1) : Bool
+note right: Pre != Post constraint enforced
+State -> State : updateState()
+State --> REQ : success
+end
+
+group Execute Operation
+REQ -> Resource : setUrgency(urgency: UrgencyLevel) : Resource
+note right: Sets target.urgency to specified UrgencyLevel
+Resource -> Resource : validateOwnerInAccessible()
+note right: Owner must be in accessible set invariant
+alt Invariant violation
+    Resource --> REQ : error: invariant violated
+    REQ --> API : return 500 Internal Server Error
+end
+Resource --> REQ : updated resource
+REQ -> Resource : saveState()
+Resource -> DB : UPDATE resources SET urgency = :value WHERE id = :id [encrypted at rest]
+DB --> Resource : success
+REQ --> API : return 200 OK
+end
+
+== Flow: Assign Urgency - Validation Error Paths ==
+
+group Missing Required Parameters
+API -> REQ : assignUrgency(initiatorId: "", targetId: String, urgencyValue: UrgencyLevel)
+REQ -> REQ : validateRequiredParams()
+alt Initiator ID is empty
+    REQ --> API : return 400 Bad Request - Missing initiator
+else No targets provided
+    REQ --> API : return 400 Bad Request - At least one target required
+else No channels provided
+    REQ --> API : return 400 Bad Request - At least one channel required
+end
+end
+
+group Concurrent Modification
+API -> REQ : assignUrgency(initiatorId: String, targetId: String, urgencyValue: UrgencyLevel)
+REQ -> Resource : findResource(resourceId: String) : Resource
+Resource -> DB : SELECT * FROM resources WHERE id = :resourceId [encrypted at rest]
+DB --> Resource : resource data
+alt Resource has been modified
+    REQ -> Resource : checkVersion(resource: Resource) : Bool
+    REQ --> API : return 409 Conflict
+    note right: Optimistic locking failure
+end
+end
+
+group State Transition Failure
+REQ -> State : transitionTo(Post1) : Bool
+alt Invalid state transition
+    State --> REQ : false - PreIdle required
+    REQ --> API : return 500 Internal Server Error
+    note right: Pre state must be PreIdle, Post state must be Post1
+end
+end
+
+group Authorization Timeout
+API -> REQ : assignUrgency(initiatorId: String, targetId: String, urgencyValue: UrgencyLevel)
+REQ -> Actor : hasPermission(permission: Permission) : Bool
+alt Authorization service timeout
+    REQ --> API : return 503 Service Unavailable
+    note right: Actor permission check failed
+end
+end
+
+== Flow: State Comparison Validation ==
+
+API -> REQ : assignUrgency(initiatorId: String, targetId: String, urgencyValue: UrgencyLevel)
+REQ -> State : getPreState() : State
+REQ -> State : getPostState() : State
+State --> REQ : PreIdle, Post1
+alt Pre and Post states are same
+    REQ --> API : return 400 Bad Request - State must change
+    note right: Invariant: pre and post must be different
+else Valid state change
+    note right: Transition from PreIdle to Post1 confirmed
+end
+
+@enduml

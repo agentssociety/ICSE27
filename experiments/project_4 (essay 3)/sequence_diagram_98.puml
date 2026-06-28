@@ -1,0 +1,270 @@
+@startuml
+title Withdrawal System - Sequence Diagrams
+
+box "Controller Layer" #LightBlue
+    participant "WithdrawalController" as WC
+end box
+
+box "Application Layer" #LightGreen
+    participant "WithdrawalService" as WS
+end box
+
+box "Domain Layer" #LightYellow
+    participant "UserAccount" as UA
+    participant "WithdrawalLimit" as WL
+    participant "TransactionLog" as TL
+    participant "AccountBalance" as AB
+    participant "LoadAlert" as LA
+    participant "StorageState" as SS
+    participant "Account" as AC
+    participant "Actor" as ACT
+end box
+
+box "Infrastructure Layer" #LightCoral
+    participant "AccountService_API" as AS_API
+    participant "LimitService_API" as LS_API
+    participant "TransactionLog_Database" as TL_DB
+end box
+
+== Main Withdrawal Flow ==
+
+ACT -> WC : initiateWithdrawal(accountId, amount)
+activate WC
+
+WC -> WS : processWithdrawal(accountId: String, amount: Decimal)
+activate WS
+
+WS -> LA : checkSystemLoad() : LoadAlert
+activate LA
+LA --> WS : return loadAlert
+deactivate LA
+
+alt High Load Detected
+    WS --> WC : return Error("High load - transaction delayed")
+    WC --> ACT : 503 Service Unavailable
+    note right: No state changes made
+else Normal Load
+    WS -> SS : checkStorageCapacity() : StorageState
+    activate SS
+    SS --> WS : return storageState
+    deactivate SS
+    
+    alt Storage Full
+        WS --> WC : return Error("Storage full - transaction rejected")
+        WC --> ACT : 507 Insufficient Storage
+        note right: No state changes made
+    else Storage Available
+        WS -> AC : getAccount(accountId) : Account
+        activate AC
+        AC -> UA : getBalance() : Decimal
+        activate UA
+        UA --> AC : return balance
+        deactivate UA
+        AC --> WS : return account
+        deactivate AC
+        
+        alt Insufficient Balance
+            WS --> WC : return Error("Insufficient balance")
+            WC --> ACT : 422 Unprocessable Entity
+            note right: Pre1 violated - no changes made
+        else Sufficient Balance
+            WS -> AS_API : deductBalance(accountId: String, amount: Decimal) [HTTP POST]
+            activate AS_API
+            AS_API -> UA : deduct(amount: Decimal) : Boolean
+            activate UA
+            UA --> AS_API : return success
+            deactivate UA
+            AS_API --> WS : return 200 OK
+            deactivate AS_API
+            
+            WS -> LS_API : updateDailyLimit(accountId: String, amount: Decimal) [HTTP POST]
+            activate LS_API
+            LS_API -> WL : updateLimit(amount: Decimal) : Boolean
+            activate WL
+            WL --> LS_API : return success
+            deactivate WL
+            LS_API --> WS : return 200 OK
+            deactivate LS_API
+            
+            WS -> TL_DB : recordTransaction(accountId: String, amount: Decimal, type: String) [SQL INSERT]
+            activate TL_DB
+            TL_DB -> TL : createLog(record: TransactionRecord) : Boolean
+            activate TL
+            TL --> TL_DB : return success
+            deactivate TL
+            TL_DB --> WS : return success
+            deactivate TL_DB
+            
+            WS --> WC : return Success
+            WC --> ACT : 200 OK - Withdrawal complete
+            note right: Post1, Post2, Post3 achieved
+        end
+    end
+end
+
+== Error Flow - Rollback on Failure ==
+
+ACT -> WC : initiateWithdrawal(accountId, amount)
+activate WC
+
+WC -> WS : processWithdrawal(accountId: String, amount: Decimal)
+activate WS
+
+WS -> LA : checkSystemLoad() : LoadAlert
+activate LA
+LA --> WS : return loadAlert
+deactivate LA
+
+alt Normal Load
+    WS -> SS : checkStorageCapacity() : StorageState
+    activate SS
+    SS --> WS : return storageState
+    deactivate SS
+    
+    alt Storage Available
+        WS -> AC : getAccount(accountId) : Account
+        activate AC
+        AC -> UA : getBalance() : Decimal
+        activate UA
+        UA --> AC : return balance
+        deactivate UA
+        AC --> WS : return account
+        deactivate AC
+        
+        alt Sufficient Balance
+            WS -> AS_API : deductBalance(accountId: String, amount: Decimal) [HTTP POST]
+            activate AS_API
+            AS_API -> UA : deduct(amount: Decimal) : Boolean
+            activate UA
+            UA --> AS_API : return success
+            deactivate UA
+            AS_API --> WS : return 200 OK
+            deactivate AS_API
+            
+            WS -> LS_API : updateDailyLimit(accountId: String, amount: Decimal) [HTTP POST]
+            activate LS_API
+            LS_API -> WL : updateLimit(amount: Decimal) : Boolean
+            activate WL
+            WL --> LS_API : return success
+            deactivate WL
+            LS_API --> WS : return 200 OK
+            deactivate LS_API
+            
+            WS -> TL_DB : recordTransaction(accountId: String, amount: Decimal, type: String) [SQL INSERT]
+            activate TL_DB
+            
+            alt Log Storage Full During Insert
+                TL_DB --> WS : return Error("Storage full")
+                note right: Rollback initiated
+                
+                WS -> AS_API : reverseDeduction(accountId: String, amount: Decimal) [HTTP POST]
+                activate AS_API
+                AS_API -> UA : reverseDeduction(amount: Decimal) : Boolean
+                activate UA
+                UA --> AS_API : return success
+                deactivate UA
+                AS_API --> WS : return 200 OK
+                deactivate AS_API
+                
+                WS -> LS_API : reverseLimitUpdate(accountId: String, amount: Decimal) [HTTP POST]
+                activate LS_API
+                LS_API -> WL : reverseUpdate(amount: Decimal) : Boolean
+                activate WL
+                WL --> LS_API : return success
+                deactivate WL
+                LS_API --> WS : return 200 OK
+                deactivate LS_API
+                
+                WS --> WC : return Error("Transaction failed - rolled back")
+                WC --> ACT : 500 Internal Server Error
+                note right: Post1, Post2, Post3 maintained
+            else Log Insert Success
+                TL_DB --> WS : return success
+                deactivate TL_DB
+                
+                WS --> WC : return Success
+                WC --> ACT : 200 OK - Withdrawal complete
+            end
+        end
+    end
+end
+
+== Error Flow - Limit Service Failure ==
+
+ACT -> WC : initiateWithdrawal(accountId, amount)
+activate WC
+
+WC -> WS : processWithdrawal(accountId: String, amount: Decimal)
+activate WS
+
+WS -> LA : checkSystemLoad() : LoadAlert
+activate LA
+LA --> WS : return loadAlert
+deactivate LA
+
+alt Normal Load
+    WS -> SS : checkStorageCapacity() : StorageState
+    activate SS
+    SS --> WS : return storageState
+    deactivate SS
+    
+    alt Storage Available
+        WS -> AC : getAccount(accountId) : Account
+        activate AC
+        AC -> UA : getBalance() : Decimal
+        activate UA
+        UA --> AC : return balance
+        deactivate UA
+        AC --> WS : return account
+        deactivate AC
+        
+        alt Sufficient Balance
+            WS -> AS_API : deductBalance(accountId: String, amount: Decimal) [HTTP POST]
+            activate AS_API
+            AS_API -> UA : deduct(amount: Decimal) : Boolean
+            activate UA
+            UA --> AS_API : return success
+            deactivate UA
+            AS_API --> WS : return 200 OK
+            deactivate AS_API
+            
+            WS -> LS_API : updateDailyLimit(accountId: String, amount: Decimal) [HTTP POST]
+            activate LS_API
+            
+            alt Limit Service Unavailable
+                LS_API --> WS : return 503 Service Unavailable
+                note right: Rollback initiated
+                
+                WS -> AS_API : reverseDeduction(accountId: String, amount: Decimal) [HTTP POST]
+                activate AS_API
+                AS_API -> UA : reverseDeduction(amount: Decimal) : Boolean
+                activate UA
+                UA --> AS_API : return success
+                deactivate UA
+                AS_API --> WS : return 200 OK
+                deactivate AS_API
+                
+                WS --> WC : return Error("Limit service unavailable - rolled back")
+                WC --> ACT : 503 Service Unavailable
+                note right: Post1, Post2, Post3 maintained
+            else Limit Update Success
+                LS_API --> WS : return 200 OK
+                deactivate LS_API
+                
+                WS -> TL_DB : recordTransaction(accountId: String, amount: Decimal, type: String) [SQL INSERT]
+                activate TL_DB
+                TL_DB -> TL : createLog(record: TransactionRecord) : Boolean
+                activate TL
+                TL --> TL_DB : return success
+                deactivate TL
+                TL_DB --> WS : return success
+                deactivate TL_DB
+                
+                WS --> WC : return Success
+                WC --> ACT : 200 OK - Withdrawal complete
+            end
+        end
+    end
+end
+
+@enduml

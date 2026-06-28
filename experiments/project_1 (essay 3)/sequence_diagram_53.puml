@@ -1,0 +1,170 @@
+@startuml
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+box "UI Layer" #LightBlue
+  participant "PatientUI" as UI
+end box
+
+box "Controller Layer" #LightGreen
+  participant "SymptomRegistrationAPI" as API
+end box
+
+box "Application Layer" #LightYellow
+  participant "Patient" as Patient
+  participant "UserAuthenticationSystem" as Auth
+end box
+
+box "Domain Layer" #LightCoral
+  participant "Symptom" as Symptom
+  participant "SymptomRecord" as Record
+  participant "Permission" as Perm
+  participant "SymptomState" as State
+end box
+
+box "Infrastructure Layer" #LightGray
+  participant "PatientDatabase" as DB
+end box
+
+== Flow: Register Symptoms (Happy Path) ==
+
+UI -> Patient : inputSymptoms(description: String, language: String)
+note right: Multi-language support via encrypted channel
+
+Patient -> Auth : authenticate(sessionToken: Token) : UserId
+note right: [TLS] Bearer token validation
+alt Authentication Success
+  Auth --> Patient : userId: UserId
+  Patient -> API : POST /symptoms(description, language, patientId)
+  note right: [HTTPS] Encrypted in transit
+  
+  API -> Perm : checkWritePermission(patientId: UserId) : boolean
+  alt Permission Granted
+    Perm --> API : true
+    
+    API -> Symptom : create(description: String, language: String, patientId: UserId) : Symptom
+    note right: State: NEW
+    
+    Symptom -> State : transitionTo(NEW) : SymptomState
+    State --> Symptom : SymptomState.NEW
+    
+    Symptom -> Record : mapToRecord(symptom: Symptom) : SymptomRecord
+    Record -> Record : setEncryptedAtRest()
+    note right: [encrypted at rest]
+    
+    Record -> DB : store(symptomRecord: SymptomRecord) : RecordId
+    note right: Supports concurrent writes
+    
+    alt Store Success
+      DB --> Record : recordId: RecordId
+      Record --> Symptom : recordId: RecordId
+      
+      Symptom -> State : transitionTo(RECORDED) : SymptomState
+      State --> Symptom : SymptomState.RECORDED
+      
+      Symptom --> API : symptom: Symptom
+      API --> UI : HTTP 201 Created\n{ "recordId": recordId, "status": "RECORDED" }
+      
+      UI -> Patient : displayConfirmation("Symptoms recorded successfully")
+      note right: Postcondition: Post2 state achieved
+      
+    else Store Failure - Duplicate
+      DB --> Record : DuplicateKeyException
+      Record --> API : DuplicateDetected
+      note right: State change must still occur
+      
+      Symptom -> State : transitionTo(UPDATED) : SymptomState
+      State --> Symptom : SymptomState.UPDATED
+      
+      API --> UI : HTTP 409 Conflict\n{ "message": "Entry updated", "status": "UPDATED" }
+      UI -> Patient : displayMessage("Symptom entry updated")
+      
+    else Store Failure - Database Error
+      DB --> Record : StorageException
+      Record --> API : StorageException
+      
+      API --> UI : HTTP 500 Internal Server Error
+      UI -> Patient : displayError("Unable to record symptoms. Please try again.")
+      note right: Error message suggests next steps
+    end
+    
+  else Permission Denied
+    Perm --> API : false
+    API --> UI : HTTP 403 Forbidden
+    UI -> Patient : displayError("You don't have permission to record symptoms")
+  end
+  
+else Authentication Failed
+  Auth --> Patient : AuthenticationException
+  Patient -> UI : displayError("Please log in to record symptoms")
+  note right: Precondition: user must be logged in
+  
+else Session Expired
+  Auth --> Patient : SessionExpiredException
+  Patient -> UI : displayError("Session expired. Please log in again.")
+end
+
+== Flow: Network Failure (Alt Path) ==
+
+UI -> Patient : inputSymptoms(description: String, language: String)
+Patient -> Auth : authenticate(sessionToken: Token) : UserId
+alt Authentication Success
+  Auth --> Patient : userId: UserId
+  Patient -> API : POST /symptoms(description, language, patientId)
+  note right: [HTTPS] Attempt encrypted connection
+  
+  alt Network Timeout / Unencrypted Channel
+    API --> Patient : NetworkException / TimeoutException
+    note right: Channel unencrypted or timeout detected
+    
+    Patient -> UI : displayError("Network connection failed. Symptoms will be saved when connection is restored.")
+    note right: Error message suggests next steps
+    UI -> Patient : retryOnReconnection()
+    note right: Retry upon network reconnection
+    
+    alt Retry Successful
+      Patient -> API : POST /symptoms(description, language, patientId)
+      API -> DB : store(symptomRecord: SymptomRecord)
+      DB --> API : recordId: RecordId
+      API --> UI : HTTP 201 Created
+      UI -> Patient : displayConfirmation("Symptoms recorded successfully")
+    else Retry Failed
+      API --> Patient : NetworkException
+      Patient -> UI : displayError("Unable to connect. Please try again later.")
+      note right: State: NetworkFailure - cannot reach Post2
+    end
+    
+  end
+end
+
+== Flow: Duplicate Symptom Entry (Alt Path) ==
+
+UI -> Patient : inputSymptoms(description: String, language: String)
+Patient -> Auth : authenticate(sessionToken: Token) : UserId
+alt Authentication Success
+  Auth --> Patient : userId: UserId
+  Patient -> API : POST /symptoms(description, language, patientId)
+  API -> Perm : checkWritePermission(patientId: UserId) : boolean
+  alt Permission Granted
+    Perm --> API : true
+    API -> Symptom : create(description: String, language: String, patientId: UserId) : Symptom
+    Symptom -> Record : mapToRecord(symptom: Symptom) : SymptomRecord
+    Record -> DB : store(symptomRecord: SymptomRecord)
+    
+    alt Duplicate Detected
+      DB --> Record : DuplicateKeyException
+      note right: Deduplication logic implied
+      
+      alt Update Existing Record
+        Record -> DB : update(existingRecord: SymptomRecord) : RecordId
+        DB --> Record : recordId: RecordId
+        Symptom -> State : transitionTo(UPDATED) : SymptomState
+        API --> UI : HTTP 200 OK\n{ "recordId": recordId, "status": "UPDATED" }
+        UI -> Patient : displayMessage("Existing symptom entry updated")
+      end
+      
+    end
+  end
+end
+
+@enduml

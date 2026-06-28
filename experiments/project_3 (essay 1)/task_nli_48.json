@@ -1,0 +1,37 @@
+{
+  "task_id": 48,
+  "confidence": 0.9802,
+  "evidence": [
+    {
+      "claim": "The system manages runway slots for both arriving and departing aircraft.",
+      "fact": "This system assigns departure and arrival slots while enforcing a minimum separation interval between consecutive uses of the same runway.",
+      "score": 0.9976,
+      "user_story_span": "The system manages runway slots for both arriving and departing aircraft.",
+      "fact_span": "This system assigns departure and arrival slots while enforcing a minimum separation interval between consecutive uses of the same runway."
+    },
+    {
+      "claim": "The system allows arrival flights to be given priority over departure flights when allocating slots.",
+      "fact": "Arrivals have priority over departures when competing for the same slot.",
+      "score": 0.9902,
+      "user_story_span": "arrival flights to be given priority over departure flights when allocating slots",
+      "fact_span": "Arrivals have priority over departures when competing for the same slot."
+    },
+    {
+      "claim": "The system runs the slot allocation process when the interaction occurs.",
+      "fact": "When an emergency is declared, the system instantly frees up a slot and reorders other flights to accommodate it.",
+      "score": 0.9795,
+      "user_story_span": "the slot allocation process runs",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system reassigns the departure flight to the next available slot.",
+      "fact": "When a runway is closed, the system reassigns its future flights to the other runway.",
+      "score": 0.9535,
+      "user_story_span": "reassigns the departure flight to the next available slot",
+      "fact_span": "reassigns its future flights to the other runway"
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

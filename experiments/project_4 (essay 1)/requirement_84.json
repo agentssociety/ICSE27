@@ -1,0 +1,111 @@
+{
+  "id": "REQ-ADMIN-01",
+  "title": "Admin Flagged Transaction Review and Action",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow an admin to review flagged suspicious transactions and update their status by choosing between approve, reject, or escalate actions.",
+  "rationale": "To maintain system integrity and prevent fraud, admins need the capability to respond appropriately to flagged transactions.",
+  "business_value": "Enhances security and compliance by ensuring that all suspicious activities are properly reviewed and managed in a timely manner, reducing the risk of fraudulent transactions.",
+  "source": {
+    "type": "User Story",
+    "id": 84,
+    "description": "As a admin I need to review flagged suspicious transactions and decide whether to approve, reject, or escalate them So that I can maintain system integrity and prevent fraud"
+  },
+  "stakeholders": [
+    "Admin Team",
+    "Security Team",
+    "Finance Team",
+    "IT Support"
+  ],
+  "acceptance_criteria": [
+    "I can see each flagged transaction with its details",
+    "The transaction status is updated accordingly",
+    "The action is logged for audit purposes"
+  ],
+  "preconditions": [
+    "I am logged in as an admin",
+    "A list of suspicious transactions is available"
+  ],
+  "postconditions": [
+    "The selected action (approve, reject, or escalate) has been applied to the transaction",
+    "The transaction status has been updated in the system",
+    "The action has been logged for audit purposes"
+  ],
+  "functional_constraints": [],
+  "security_requirements": [
+    "Access to flagged transactions is restricted to admins with appropriate permissions",
+    "All actions on flagged transactions are logged and accessible to authorized users for audit purposes"
+  ],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens if an admin tries to approve a transaction that is already in the process of being escalated?",
+    "How should the system handle multiple simultaneous actions on the same transaction by different admins?",
+    "What if there are no flagged transactions available when the admin logs in?"
+  ],
+  "dependencies": [
+    "System must have a mechanism for flagging transactions as suspicious.",
+    "Admins must have appropriate permissions to view and act on flagged transactions."
+  ],
+  "interfaces": [
+    {
+      "type": "UI",
+      "name": "Transaction Review Interface",
+      "description": "The user interface where admins can view flagged transactions and select actions."
+    },
+    {
+      "type": "API",
+      "name": "Flagged Transactions API",
+      "description": "API to retrieve flagged transactions and update their status based on admin actions."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ADMIN-01",
+      "description": "Admin logs in as an authorized user.",
+      "expected_result": "System displays the login screen with correct credentials prompt."
+    },
+    {
+      "id": "TC-ADMIN-02",
+      "description": "Admin views a list of flagged transactions.",
+      "expected_result": "A list of flagged transactions is displayed, showing details such as transaction ID, amount, and timestamp."
+    },
+    {
+      "id": "TC-ADMIN-03",
+      "description": "Admin selects 'Approve' action on a flagged transaction.",
+      "expected_result": "The transaction status changes to 'Approved', and the action is logged in the audit trail."
+    },
+    {
+      "id": "TC-ADMIN-04",
+      "description": "Admin selects 'Reject' action on a flagged transaction.",
+      "expected_result": "The transaction status changes to 'Rejected', and the action is logged in the audit trail."
+    },
+    {
+      "id": "TC-ADMIN-05",
+      "description": "Admin selects 'Escalate' action on a flagged transaction.",
+      "expected_result": "The transaction status changes to 'Escalated', and the action is logged in the audit trail."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-16T09:59:29.374917",
+  "last_updated": "2026-06-16T10:13:37.842746",
+  "traceability": {
+    "related_requirements": [
+      "REQ-FUNC-01",
+      "REQ-AUTH-01"
+    ],
+    "design_components": [
+      "Transaction",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "Flight": [
+    "Runway",
+    "EmergencyFlight"
+  ],
+  "Slot": [
+    "Runway",
+    "EmergencyFlight"
+  ],
+  "Runway": [],
+  "EmergencyFlight": []
+}

@@ -1,0 +1,164 @@
+@startuml
+skinparam classFontSize 12
+skinparam packageStyle rectangle
+skinparam defaultFontName Courier
+
+package "Enums" {
+  enum RunwayStatus {
+    OPEN
+    CLOSED
+  }
+
+  enum FlightStatus {
+    SCHEDULED
+    REASSIGNED
+    QUEUED
+    RESCHEDULED
+  }
+
+  enum PermissionLevel {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+
+  enum AircraftType {
+    BOEING_737
+    AIRBUS_A320
+    OTHER
+  }
+
+  enum IfaceKind {
+    Database
+    UI
+    API
+  }
+}
+
+package "Domain Model" {
+  class Runway {
+    runwayId: String
+    status: RunwayStatus
+    length: Number
+    aircraftTypes: Set<AircraftType>
+  }
+
+  class Flight {
+    flightId: String
+    scheduledRunway: Runway
+    alternativeRunways: Set<Runway>
+    scheduledTime: DateTime
+    rescheduledTime: DateTime [nullable]
+    status: FlightStatus
+  + getAircraftType() : AircraftType
+  + suggestReassignment(alternativeRunway)
+  + reassign(alternativeRunway)
+  + queueAndReschedule()
+  }
+
+  class Slot {
+    time: DateTime
+  + updateSlot(runway, time)
+  }
+
+  class AlternativeRunway {
+    isAvailable: Boolean
+    compatibleFlightTypes: Set<AircraftType>
+  + isAvailable() : boolean
+  }
+
+  class Operation {
+    description: String
+  }
+
+  class Resource {
+    resourceId: String
+    resourceType: String
+  }
+
+  class Channel {
+    channelId: String
+    channelType: String
+  }
+
+  class Interface {
+    name: String
+    description: String
+    securityRequirements: String
+  }
+}
+
+package "Application" {
+  abstract class Actor {
+    roleName: String
+  }
+
+  class AirTrafficControl {
+    permissions: Set<Permission>
+  }
+
+  class FlightOperations {
+    permissions: Set<Permission>
+  }
+
+  class Passengers {
+    permissions: Set<Permission>
+  }
+
+  class Permission {
+    level: PermissionLevel
+  + checkPermission(FlightOperations, WRITE)
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface FlightSchedulingAPI {
+    + endpoint: String
+    + authenticationRequired: Boolean
+  }
+
+  interface RunwayStatusDatabase {
+    + endpoint: String
+    + authenticationRequired: Boolean
+  + authenticate(channel) : boolean
+  + findFlightsByRunway(runwayId) : List<Flight>
+  + findAlternativeRunways(aircraftType, length) : List<AlternativeRunway>
+  + saveFlight(flight)
+  + commit()
+  + authenticate(channel)
+  }
+
+  interface AirTrafficControlConsole {
+    + endpoint: String
+    + encryptionRequired: Boolean
+  + approve()
+  }
+}
+
+' Associations
+
+Runway "1" -- "*" Flight : scheduledRunway >
+Flight "1" -- "1" Slot : occupies >
+Slot "0..1" -- "1" Runway : runwayId >
+
+AlternativeRunway "1" -- "1" Runway : runwayId >
+AlternativeRunway "*" ..> AircraftType : compatibleFlightTypes
+
+Actor "1" -- "*" Permission : has >
+AirTrafficControl --|> Actor
+FlightOperations --|> Actor
+Passengers --|> Actor
+
+AirTrafficControl --> Runway : accesses
+AirTrafficControl --> Flight : accesses
+
+Operation "*" -- "*" Channel : uses
+Operation "*" -- "*" Resource : affects
+
+Interface "1" -- IfaceKind : type
+FlightSchedulingAPI ..|> Interface
+RunwayStatusDatabase ..|> Interface
+AirTrafficControlConsole ..|> Interface
+
+@enduml

@@ -1,0 +1,113 @@
+{
+  "id": "REQ-ATC-01",
+  "title": "Automatic Reassignment of Flights During Runway Closure",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall automatically reassign flights scheduled for a closed runway to an alternative runway, update their departure/arrival times with appropriate delays, and ensure separation rules are maintained.",
+  "rationale": "To ensure safe and efficient rerouting of flights during runway closures, preventing potential delays and ensuring air traffic safety.",
+  "business_value": "Improves operational efficiency by minimizing flight disruptions and enhancing overall safety through timely rerouting and adherence to separation rules.",
+  "source": {
+    "type": "User Story",
+    "id": 50,
+    "description": "As an air traffic controller, I need the system to handle runway closures by automatically reassigning affected flights to alternative runways and marking them with appropriate delays so that flights are safely and efficiently rerouted while maintaining separation rules."
+  },
+  "stakeholders": [
+    "Air Traffic Control Team",
+    "Flight Operations Management",
+    "Safety Compliance Office"
+  ],
+  "acceptance_criteria": [
+    "flight A123 is reassigned to an alternative runway (e.g., 27R)",
+    "flight A123's departure time is updated with an appropriate delay",
+    "separation rules between all affected flights are maintained",
+    "each flight is assigned to a suitable alternative runway based on aircraft type and current traffic",
+    "no two flights are assigned to the same runway within minimum separation time"
+  ],
+  "preconditions": [
+    "runway closure has been declared for runway 27L",
+    "flight A123 is scheduled to depart from runway 27L",
+    "alternative runways have sufficient capacity and configuration for the aircraft types",
+    "real-time knowledge of runway closures and available alternative runways"
+  ],
+  "postconditions": [
+    "flights are safely and efficiently rerouted",
+    "separation rules between all affected flights are maintained"
+  ],
+  "functional_constraints": [
+    "enforcement of separation rules (e.g., wake turbulence, runway spacing)"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What if there are no available alternative runways?",
+    "How should the system handle flights that cannot be safely rerouted (e.g., aircraft too large for any alternative runway)?",
+    "What happens when multiple runways are closed simultaneously?"
+  ],
+  "dependencies": [
+    "Real-time runway status data from ground control or sensors",
+    "Aircraft type and current traffic information for determining suitable alternative runways",
+    "Separation rules database to ensure compliance with wake turbulence and spacing requirements"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Runway Status API",
+      "description": "The system interfaces with an external API to receive real-time runway closure information."
+    },
+    {
+      "type": "Database",
+      "name": "Aircraft and Traffic Database",
+      "description": "The system queries this database to get the necessary aircraft type and traffic data for rerouting decisions."
+    },
+    {
+      "type": "Database",
+      "name": "Separation Rules Database",
+      "description": "This database is used to enforce separation rules during flight reassignment."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ATC-01",
+      "description": "Runway closure for single flight.",
+      "expected_result": "Flight A123 is reassigned to an alternative runway and its departure time is updated accordingly. Separation rules are maintained."
+    },
+    {
+      "id": "TC-ATC-02",
+      "description": "Multiple flights affected by a runway closure.",
+      "expected_result": "Each of the flights (A123, B456, C789) is assigned to a suitable alternative runway. No two flights are assigned to the same runway within minimum separation time."
+    },
+    {
+      "id": "TC-ATC-03",
+      "description": "No available alternative runways.",
+      "expected_result": "System handles the situation gracefully, possibly rerouting flights to an external airport or delaying them until a runway becomes available. Notification sent to air traffic control team."
+    },
+    {
+      "id": "TC-ATC-04",
+      "description": "Flight too large for any alternative runway.",
+      "expected_result": "System informs the air traffic controller and holds the flight until a suitable runway becomes available or an external airport can accommodate it."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-15T10:38:34.755626",
+  "last_updated": "2026-06-15T10:43:15.221755",
+  "traceability": {
+    "related_requirements": [
+      "REQ-ATC-01"
+    ],
+    "design_components": [
+      "Runway",
+      "Flight",
+      "Slot"
+    ],
+    "test_artifacts": []
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "run_id": "P1E3",
+  "project": 1,
+  "essay": 3,
+  "n_created": 12,
+  "n_kept": 6,
+  "n_deleted": 6,
+  "task_deletion_rate": 0.5,
+  "n_duplicate_deleted": 6,
+  "deleted_tasks": [
+    {
+      "task_id": 59,
+      "title": "Register Patient with Symptoms",
+      "is_duplicate": true
+    },
+    {
+      "task_id": 60,
+      "title": "Assign Urgency Level 1-5",
+      "is_duplicate": true
+    },
+    {
+      "task_id": 61,
+      "title": "Order Queue by Urgency then Time",
+      "is_duplicate": true
+    },
+    {
+      "task_id": 62,
+      "title": "Reorder Queue on Change",
+      "is_duplicate": true
+    },
+    {
+      "task_id": 63,
+      "title": "Take Next Patient from Head",
+      "is_duplicate": true
+    },
+    {
+      "task_id": 64,
+      "title": "Live Dashboard with Urgency and Wait Time",
+      "is_duplicate": true
+    }
+  ],
+  "kept_tasks": [
+    53,
+    54,
+    55,
+    56,
+    57,
+    58
+  ]
+}

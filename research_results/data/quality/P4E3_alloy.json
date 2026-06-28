@@ -1,0 +1,13 @@
+{
+  "run_id": "P4E3",
+  "project": 4,
+  "essay": 3,
+  "n_tasks": 6,
+  "spec_files": 6,
+  "verified_specs": 6,
+  "failed_specs": 0,
+  "total_specs": 6,
+  "verification_rate": 1.0,
+  "n_commented_block_specs": 0,
+  "commented_block_specs": []
+}

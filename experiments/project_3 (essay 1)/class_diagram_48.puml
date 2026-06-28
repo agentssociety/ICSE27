@@ -1,0 +1,166 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FEFEFE
+skinparam class {
+  BackgroundColor #F0F0F0
+  BorderColor #333333
+  FontColor #333333
+}
+skinparam interface {
+  BackgroundColor #E0F7FA
+  BorderColor #00838F
+  FontColor #00838F
+}
+skinparam enum {
+  BackgroundColor #FFF9C4
+  BorderColor #F57F17
+  FontColor #F57F17
+}
+skinparam exception {
+  BackgroundColor #FFEBEE
+  BorderColor #C62828
+  FontColor #C62828
+}
+
+package "Domain Model" {
+  class Flight {
+    - id : String
+    - type : FlightType
+    - schedule_time : DateTime
+    - status : FlightStatus
+  + setStatus(status: FlightStatus.QUEUED) : void
+  + setStatus(status: FlightStatus.CANCELED) : void
+  + getStatus() : FlightStatus
+  }
+  class Slot {
+    - time : DateTime
+    - status : SlotStatus
+    - assigned_flight_id : String
+  + allocateFlight(flightId: String) : SlotStatus
+  + release(time: DateTime) : boolean
+  + getAssignedFlight() : Flight
+  + reallocateFlight(newFlightId: String) : SlotStatus
+  + rollbackReallocation() : boolean
+  + release() : boolean
+  + adjustAndReCheck(slot: Slot) : boolean
+  }
+  class Runway {
+    - id : String
+    - slots : List<Slot>
+  + getSlotsByTime(time: DateTime) : List<Slot>
+  + findNextAvailableSlot(departureTime: DateTime) : Slot
+  + getAvailableSlots(timeRange: TimeRange) : List<Slot>
+  + getSlotsByTimeRange(timeRange: TimeRange) : List<Slot>
+  + getAvailableSlots() : List<Slot>
+  + getNextAvailableSlot() : Slot
+  }
+  class Allocation {
+    - flight_id : String
+    - slot_time : DateTime
+    - priority : Integer
+    - state : AllocationState
+  + createAllocation(flight: Flight, time: DateTime) : AllocationState
+  + getRemainingSlots() : List<Slot>
+  + cancelAllocation(flightId: String) : AllocationState
+  + findConflicts(slots: List<Slot>) : List<Conflict>
+  + resolveConflict(conflict: Conflict) : AllocationState
+  + acquireLock(resourceId: String) : boolean
+  }
+  enum FlightType {
+    ARRIVAL
+    DEPARTURE
+  }
+  enum SlotStatus {
+    FREE
+    ALLOCATED
+  }
+  enum FlightStatus {
+    SCHEDULED
+    ALLOCATED
+    CANCELLED
+  }
+  enum AllocationState {
+    PRE1
+    PRE2
+    POST1
+    POST2
+    IN_PROGRESS
+    CANCELED
+  }
+  note top of Slot : invariant: slots are non‑overlapping
+  note top of Allocation : invariant: all arrival allocations\ncompleted before departures
+}
+
+package "Infrastructure — Ports" {
+  interface RunwaySlotAPI {
+    +{abstract} requestSlot(flightId: String, requestedTime: DateTime) : Slot
+    +{abstract} allocateSlot(slot: Slot, flightId: String) : Confirmation
+    +{abstract} reallocateSlot(slot: Slot, oldFlight: String, newFlight: String) : Slot
+  }
+  interface FlightScheduleDatabase {
+    +{abstract} getFlightSchedule(flightId: String) : Schedule
+    +{abstract} updateFlightStatus(flightId: String, status: AllocationState) : void
+  + getFlightSchedule(flightId: String) : Schedule
+  + getFlightSchedule(flight2Id: String) : Schedule
+  }
+  interface SafetyConstraintsModule {
+    +{abstract} checkSeparation(slot: Slot, flight: Flight) : Boolean
+  + checkSeparation(slot: Slot, flight: Flight) : boolean
+  + checkSeparation(slot: Slot, arrivalFlight: Flight) : boolean
+  + checkSeparation(nextSlot: Slot, departureFlight: Flight) : boolean
+  + checkSeparation(slot: Slot, departureFlight: Flight) : boolean
+  + checkSeparation(nextSlot: Slot, flight: Flight) : boolean
+  }
+}
+
+package "DTOs" {
+  class Confirmation <<dto>> {
+    - success : Boolean
+    - message : String
+  + createConfirmation(slot: Slot, flight: Flight) : Confirmation
+  }
+  class Schedule <<dto>> {
+    - flightId : String
+    - scheduledTime : DateTime
+    - type : FlightType
+  }
+}
+
+package "Exceptions" {
+  class SlotAllocationException <<exception>> {
+    - reason : String
+  }
+  class InvalidFlightException <<exception>> {
+    - details : String
+  }
+}
+
+package "Security" {
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+  class Role {
+    - name : String
+    - permissions : List<Permission>
+  }
+  note right of Permission : Hierarchy: ADMIN > WRITE/EXECUTE > READ
+}
+
+' Relationships
+Runway --> "*" Slot : contains
+Flight --> "1" Slot : requests
+Allocation --> "1" Flight : assigns
+Allocation --> "1" Slot : assigns to
+SafetyConstraintsModule ..> Allocation : restricts
+RunwaySlotAPI ..> Slot : uses
+RunwaySlotAPI ..> Confirmation : returns
+FlightScheduleDatabase ..> Schedule : returns
+SafetyConstraintsModule ..> Slot : checks
+SafetyConstraintsModule ..> Flight : checks
+Role --> "*" Permission : has
+@enduml

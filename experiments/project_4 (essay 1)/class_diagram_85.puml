@@ -1,0 +1,222 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F5F5F5
+skinparam classBorderColor #333333
+skinparam interfaceBackgroundColor #E8F0FE
+skinparam interfaceBorderColor #1A73E8
+skinparam enumBackgroundColor #FFF8E1
+skinparam enumBorderColor #F9A825
+skinparam packageBackgroundColor #FAFAFA
+skinparam packageBorderColor #666666
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+
+package "Domain Model" {
+  class UserAccount {
+    - owner: Actor
+    - accessible: set Actor
+    - lockStatus: LockStatus
+    - reason: String
+    ..
+    + {abstract} lock(reason: String)
+    + {abstract} unlock()
+    + {abstract} isLocked(): Boolean
+  }
+  note right of UserAccount::lockStatus
+    transitions only via Admin with Write permission
+  end note
+  note right of UserAccount::reason
+    must be provided when locking
+  end note
+
+  class User {
+    - mayPerform: set Permission = none
+  }
+
+  class Admin {
+    - mayPerform: set Permission = Admin
+  }
+
+  enum LockStatus {
+    LOCKED
+    UNLOCKED
+  }
+
+  enum Permission {
+    NONE
+    ADMIN
+    WRITE
+  }
+
+  class Actor {
+    - id: String
+    - name: String
+  }
+
+  class Resource {
+    - id: String
+    - type: String
+  }
+
+  class Interface {
+    - name: String
+    - encrypted: Boolean
+    - authenticated: Boolean
+  }
+
+  class State {
+    - description: String
+  }
+}
+
+package "Application" {
+  class REQ_SEC_01 {
+    - initiator: Actor
+    - target: Resource
+    - channel: Interface
+    - grant: Permission
+    - pre: State
+    - post: State
+    ..
+    + {abstract} execute(): Boolean
+  }
+  note right of REQ_SEC_01
+    initiator must have grant permission
+    initiator must be in target.accessible
+    pre != post
+    at least one channel must be authenticated
+    target must include UserAccount for lock/unlock
+  end note
+
+  class AuditLog {
+    - entry: REQ_SEC_01
+    - timestamp: DateTime
+    - operationType: String
+    ..
+    + {abstract} record(entry: REQ_SEC_01)
+  }
+  note right of AuditLog
+    every lock/unlock operation has exactly one audit log entry
+  end note
+}
+
+package "Infrastructure — Ports" {
+  interface AccountManagementAPI {
+    + lockAccount(accountId: String, reason: String): Boolean
+    + unlockAccount(accountId: String): Boolean
+    + getAccountStatus(accountId: String): LockStatus
+  }
+  note right of AccountManagementAPI
+    requires authentication
+    only Admin role allowed
+  end note
+
+  interface UserDatabase {
+    + findById(id: String): UserAccount
+    + updateLockStatus(id: String, status: LockStatus, reason: String): Boolean
+    + save(account: UserAccount): Boolean
+  }
+
+  interface AuthenticationService {
+    + authenticate(credentials: Object): Boolean
+    + authorize(actor: Actor, permission: Permission): Boolean
+  }
+}
+
+package "Controllers" {
+  class AccountManagementController {
+    - api: AccountManagementAPI
+    - auth: AuthenticationService
+    - db: UserDatabase
+    ..
+    + lockAccount(adminId: String, accountId: String, reason: String): Response
+    + unlockAccount(adminId: String, accountId: String): Response
+    + getAccountStatus(adminId: String, accountId: String): Response
+  }
+}
+
+package "DTOs" {
+  class LockAccountRequest <<dto>> {
+    - accountId: String
+    - reason: String
+    - adminId: String
+  }
+
+  class UnlockAccountRequest <<dto>> {
+    - accountId: String
+    - adminId: String
+  }
+
+  class AccountStatusResponse <<dto>> {
+    - accountId: String
+    - lockStatus: LockStatus
+    - reason: String
+    - lastModified: DateTime
+  }
+
+  class ErrorResponse <<dto>> {
+    - code: String
+    - message: String
+    - details: String
+  }
+}
+
+package "Exceptions" {
+  class AccountNotFoundException <<exception>> {
+    - accountId: String
+  }
+
+  class UnauthorizedException <<exception>> {
+    - actorId: String
+    - requiredPermission: Permission
+  }
+
+  class AccountNotLockedException <<exception>> {
+    - accountId: String
+  }
+
+  class ConcurrentOperationException <<exception>> {
+    - accountId: String
+  }
+}
+
+' Domain Model Relationships
+UserAccount --> Actor : "owner"
+UserAccount --> Actor : "accessible"
+UserAccount --> LockStatus : "lockStatus"
+UserAccount --> User : "owned by"
+UserAccount --> Admin : "accessible by"
+
+User --> Permission : "mayPerform"
+Admin --> Permission : "mayPerform"
+
+' Application Relationships
+REQ_SEC_01 --> Actor : "initiator"
+REQ_SEC_01 --> Resource : "target"
+REQ_SEC_01 --> Interface : "channel"
+REQ_SEC_01 --> Permission : "grant"
+REQ_SEC_01 --> State : "pre"
+REQ_SEC_01 --> State : "post"
+REQ_SEC_01 --> UserAccount : "targets"
+REQ_SEC_01 --> Admin : "initiated by"
+
+AuditLog --> REQ_SEC_01 : "records"
+
+' Infrastructure Relationships
+AccountManagementAPI <.. AccountManagementController : "uses"
+UserDatabase <.. AccountManagementController : "uses"
+AuthenticationService <.. AccountManagementController : "uses"
+
+' Controller Relationships
+AccountManagementController --> LockAccountRequest : "receives"
+AccountManagementController --> UnlockAccountRequest : "receives"
+AccountManagementController --> AccountStatusResponse : "returns"
+AccountManagementController --> ErrorResponse : "returns on error"
+
+' Exception Relationships
+AccountManagementController --> AccountNotFoundException : "throws"
+AccountManagementController --> UnauthorizedException : "throws"
+AccountManagementController --> AccountNotLockedException : "throws"
+AccountManagementController --> ConcurrentOperationException : "throws"
+
+@enduml

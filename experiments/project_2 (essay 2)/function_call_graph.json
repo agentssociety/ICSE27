@@ -1,0 +1,1645 @@
+{
+  "main.lifespan": {
+    "file": "main.py",
+    "line": 26,
+    "end_line": 32,
+    "class": null,
+    "name": "lifespan",
+    "calls": [
+      "src.config.database.create_tables"
+    ],
+    "called_by": []
+  },
+  "main.health": {
+    "file": "main.py",
+    "line": 59,
+    "end_line": 60,
+    "class": null,
+    "name": "health",
+    "calls": [],
+    "called_by": []
+  },
+  "migrations.env.run_migrations_offline": {
+    "file": "migrations/env.py",
+    "line": 21,
+    "end_line": 24,
+    "class": null,
+    "name": "run_migrations_offline",
+    "calls": [],
+    "called_by": []
+  },
+  "migrations.env.run_migrations_online": {
+    "file": "migrations/env.py",
+    "line": 27,
+    "end_line": 36,
+    "class": null,
+    "name": "run_migrations_online",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.actor.actor_router._repo": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.list_actors": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_actors",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.get_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_actor",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.create_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_actor",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.update_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_actor",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.delete_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_actor",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_unit.blood_unit_router._repo": {
+    "file": "src/api/blood_unit/blood_unit_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.blood_unit.blood_unit_router.list_blood_units": {
+    "file": "src/api/blood_unit/blood_unit_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_blood_units",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_unit.blood_unit_router.get_blood_unit": {
+    "file": "src/api/blood_unit/blood_unit_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_blood_unit",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_unit.blood_unit_router.create_blood_unit": {
+    "file": "src/api/blood_unit/blood_unit_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_blood_unit",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.create"
+    ],
+    "called_by": [
+      "tests.unit.blood_unit.test_blood_unit_api.TestBloodUnitAPI.test_create_blood_unit_via_service",
+      "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_create_blood_unit_calculates_expiry"
+    ]
+  },
+  "src.api.blood_unit.blood_unit_router.update_blood_unit": {
+    "file": "src/api/blood_unit/blood_unit_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_blood_unit",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_unit.blood_unit_router.delete_blood_unit": {
+    "file": "src/api/blood_unit/blood_unit_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_blood_unit",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.reservation.reservation_router._repo": {
+    "file": "src/api/reservation/reservation_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.reservation.reservation_router.list_reservations": {
+    "file": "src/api/reservation/reservation_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_reservations",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.reservation.reservation_router.get_reservation": {
+    "file": "src/api/reservation/reservation_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_reservation",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.reservation.reservation_router.create_reservation": {
+    "file": "src/api/reservation/reservation_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_reservation",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.create"
+    ],
+    "called_by": [
+      "tests.unit.reservation.test_reservation_service.TestReservationService.test_create_reservation_success",
+      "tests.unit.reservation.test_reservation_service.TestReservationService.test_create_reservation_blood_unit_not_available",
+      "tests.unit.reservation.test_reservation_service.TestReservationService.test_create_reservation_type_mismatch"
+    ]
+  },
+  "src.api.reservation.reservation_router.update_reservation": {
+    "file": "src/api/reservation/reservation_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_reservation",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.reservation.reservation_router.delete_reservation": {
+    "file": "src/api/reservation/reservation_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_reservation",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router._repo": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.list_resources": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_resources",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.get_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_resource",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.create_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_resource",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.update_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_resource",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.delete_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_resource",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.transfusion_request.transfusion_request_router._repo": {
+    "file": "src/api/transfusion_request/transfusion_request_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.transfusion_request.transfusion_request_router.validate_request": {
+    "file": "src/api/transfusion_request/transfusion_request_router.py",
+    "line": 29,
+    "end_line": 32,
+    "class": null,
+    "name": "validate_request",
+    "calls": [],
+    "called_by": [
+      "tests.unit.transfusion_request.test_transfusion_request_service.TestTransfusionRequestValidation.test_validate_valid_request",
+      "tests.unit.transfusion_request.test_transfusion_request_service.TestTransfusionRequestValidation.test_validate_invalid_blood_type",
+      "tests.unit.transfusion_request.test_transfusion_request_service.TestTransfusionRequestValidation.test_validate_invalid_rh_factor",
+      "tests.unit.transfusion_request.test_transfusion_request_service.TestTransfusionRequestValidation.test_validate_zero_quantity",
+      "tests.unit.transfusion_request.test_transfusion_request_service.TestTransfusionRequestValidation.test_validate_negative_quantity"
+    ]
+  },
+  "src.api.transfusion_request.transfusion_request_router.submit_request": {
+    "file": "src/api/transfusion_request/transfusion_request_router.py",
+    "line": 36,
+    "end_line": 41,
+    "class": null,
+    "name": "submit_request",
+    "calls": [
+      "src.infra.transfusion_request.transfusion_request_repo_impl.SQLAlchemyTransfusionRequestRepository.store_request"
+    ],
+    "called_by": []
+  },
+  "src.api.transfusion_request.transfusion_request_router.get_request": {
+    "file": "src/api/transfusion_request/transfusion_request_router.py",
+    "line": 45,
+    "end_line": 50,
+    "class": null,
+    "name": "get_request",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.transfusion_request.transfusion_request_router.list_requests": {
+    "file": "src/api/transfusion_request/transfusion_request_router.py",
+    "line": 54,
+    "end_line": 56,
+    "class": null,
+    "name": "list_requests",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.config.database.get_db": {
+    "file": "src/config/database.py",
+    "line": 24,
+    "end_line": 29,
+    "class": null,
+    "name": "get_db",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.database.create_tables": {
+    "file": "src/config/database.py",
+    "line": 32,
+    "end_line": 34,
+    "class": null,
+    "name": "create_tables",
+    "calls": [],
+    "called_by": [
+      "main.lifespan"
+    ]
+  },
+  "src.config.dependencies.get_actor_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 13,
+    "end_line": 14,
+    "class": null,
+    "name": "get_actor_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_blood_unit_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 16,
+    "end_line": 17,
+    "class": null,
+    "name": "get_blood_unit_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_reservation_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 19,
+    "end_line": 20,
+    "class": null,
+    "name": "get_reservation_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_resource_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 22,
+    "end_line": 23,
+    "class": null,
+    "name": "get_resource_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.Reservation.release": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 68,
+    "end_line": 70,
+    "class": "Reservation",
+    "name": "release",
+    "calls": [],
+    "called_by": [
+      "tests.unit.reservation.test_reservation_domain.TestReservationDomain.test_release_reservation"
+    ]
+  },
+  "src.domain.reservation.Reservation.Reservation.is_expired": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 72,
+    "end_line": 74,
+    "class": "Reservation",
+    "name": "is_expired",
+    "calls": [],
+    "called_by": [
+      "tests.unit.reservation.test_reservation_domain.TestReservationDomain.test_reservation_creation",
+      "tests.unit.reservation.test_reservation_domain.TestReservationDomain.test_is_expired_past_expiry"
+    ]
+  },
+  "src.domain.reservation.Reservation.Reservation.issue": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 76,
+    "end_line": 78,
+    "class": "Reservation",
+    "name": "issue",
+    "calls": [],
+    "called_by": [
+      "tests.unit.reservation.test_reservation_domain.TestReservationDomain.test_issue_reservation"
+    ]
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.__init__": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyActorRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyActorRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.get_actor",
+      "src.api.blood_unit.blood_unit_router.get_blood_unit",
+      "src.api.reservation.reservation_router.get_reservation",
+      "src.api.resource.resource_router.get_resource",
+      "src.api.transfusion_request.transfusion_request_router.get_request",
+      "src.service.reservation.reservation_service.ReservationService.create_reservation",
+      "tests.unit.blood_unit.test_blood_unit_api.TestBloodUnitAPI.test_get_blood_unit_not_found",
+      "tests.unit.transfusion_request.test_transfusion_request_api.TestTransfusionRequestAPI.test_get_by_id_returns_none_for_missing"
+    ]
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyActorRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.list_actors",
+      "src.api.blood_unit.blood_unit_router.list_blood_units",
+      "src.api.reservation.reservation_router.list_reservations",
+      "src.api.resource.resource_router.list_resources",
+      "src.api.transfusion_request.transfusion_request_router.list_requests",
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.get_inventory_summary",
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.check_and_expire_units",
+      "src.service.reservation.reservation_service.ReservationService.release_expired_reservations",
+      "tests.unit.blood_unit.test_blood_unit_api.TestBloodUnitAPI.test_list_blood_units_endpoint",
+      "tests.unit.transfusion_request.test_transfusion_request_api.TestTransfusionRequestAPI.test_get_all_returns_list"
+    ]
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.create": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyActorRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.create_actor",
+      "src.api.blood_unit.blood_unit_router.create_blood_unit",
+      "src.api.reservation.reservation_router.create_reservation",
+      "src.api.resource.resource_router.create_resource",
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.create_blood_unit",
+      "src.service.reservation.reservation_service.ReservationService.create_reservation"
+    ]
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyActorRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.update_actor",
+      "src.api.blood_unit.blood_unit_router.update_blood_unit",
+      "src.api.reservation.reservation_router.update_reservation",
+      "src.api.resource.resource_router.update_resource",
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.change_status",
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.check_and_expire_units",
+      "src.service.reservation.reservation_service.ReservationService.create_reservation",
+      "src.service.reservation.reservation_service.ReservationService.release_expired_reservations"
+    ]
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyActorRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.delete_actor",
+      "src.api.blood_unit.blood_unit_router.delete_blood_unit",
+      "src.api.reservation.reservation_router.delete_reservation",
+      "src.api.resource.resource_router.delete_resource",
+      "tests.unit.blood_unit.test_blood_unit_api.TestBloodUnitAPI.test_delete_blood_unit"
+    ]
+  },
+  "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.__init__": {
+    "file": "src/infra/blood_unit/blood_unit_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyBloodUnitRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.get_by_id": {
+    "file": "src/infra/blood_unit/blood_unit_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyBloodUnitRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.get_all": {
+    "file": "src/infra/blood_unit/blood_unit_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyBloodUnitRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.create": {
+    "file": "src/infra/blood_unit/blood_unit_repo_impl.py",
+    "line": 23,
+    "end_line": 30,
+    "class": "SQLAlchemyBloodUnitRepository",
+    "name": "create",
+    "calls": [
+      "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.update": {
+    "file": "src/infra/blood_unit/blood_unit_repo_impl.py",
+    "line": 32,
+    "end_line": 40,
+    "class": "SQLAlchemyBloodUnitRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": [
+      "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.create"
+    ]
+  },
+  "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.delete": {
+    "file": "src/infra/blood_unit/blood_unit_repo_impl.py",
+    "line": 42,
+    "end_line": 48,
+    "class": "SQLAlchemyBloodUnitRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.reservation.reservation_repo_impl.SQLAlchemyReservationRepository.__init__": {
+    "file": "src/infra/reservation/reservation_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyReservationRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.reservation.reservation_repo_impl.SQLAlchemyReservationRepository.get_orm_by_id": {
+    "file": "src/infra/reservation/reservation_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyReservationRepository",
+    "name": "get_orm_by_id",
+    "calls": [],
+    "called_by": [
+      "src.service.reservation.reservation_service.ReservationService.release_expired_reservations"
+    ]
+  },
+  "src.infra.reservation.reservation_repo_impl.SQLAlchemyReservationRepository.get_by_id": {
+    "file": "src/infra/reservation/reservation_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyReservationRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.reservation.reservation_repo_impl.SQLAlchemyReservationRepository.get_all": {
+    "file": "src/infra/reservation/reservation_repo_impl.py",
+    "line": 23,
+    "end_line": 25,
+    "class": "SQLAlchemyReservationRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.reservation.reservation_repo_impl.SQLAlchemyReservationRepository.create": {
+    "file": "src/infra/reservation/reservation_repo_impl.py",
+    "line": 27,
+    "end_line": 34,
+    "class": "SQLAlchemyReservationRepository",
+    "name": "create",
+    "calls": [
+      "src.infra.reservation.reservation_repo_impl.SQLAlchemyReservationRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.infra.reservation.reservation_repo_impl.SQLAlchemyReservationRepository.update": {
+    "file": "src/infra/reservation/reservation_repo_impl.py",
+    "line": 36,
+    "end_line": 44,
+    "class": "SQLAlchemyReservationRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": [
+      "src.infra.reservation.reservation_repo_impl.SQLAlchemyReservationRepository.create"
+    ]
+  },
+  "src.infra.reservation.reservation_repo_impl.SQLAlchemyReservationRepository.delete": {
+    "file": "src/infra/reservation/reservation_repo_impl.py",
+    "line": 46,
+    "end_line": 52,
+    "class": "SQLAlchemyReservationRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.__init__": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.get_by_id": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.get_all": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.create": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.update": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.delete": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transfusion_request.transfusion_request_repo_impl.SQLAlchemyTransfusionRequestRepository.__init__": {
+    "file": "src/infra/transfusion_request/transfusion_request_repo_impl.py",
+    "line": 22,
+    "end_line": 23,
+    "class": "SQLAlchemyTransfusionRequestRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transfusion_request.transfusion_request_repo_impl.SQLAlchemyTransfusionRequestRepository.validate_request": {
+    "file": "src/infra/transfusion_request/transfusion_request_repo_impl.py",
+    "line": 25,
+    "end_line": 33,
+    "class": "SQLAlchemyTransfusionRequestRepository",
+    "name": "validate_request",
+    "calls": [],
+    "called_by": [
+      "src.infra.transfusion_request.transfusion_request_repo_impl.SQLAlchemyTransfusionRequestRepository.store_request"
+    ]
+  },
+  "src.infra.transfusion_request.transfusion_request_repo_impl.SQLAlchemyTransfusionRequestRepository.store_request": {
+    "file": "src/infra/transfusion_request/transfusion_request_repo_impl.py",
+    "line": 35,
+    "end_line": 52,
+    "class": "SQLAlchemyTransfusionRequestRepository",
+    "name": "store_request",
+    "calls": [
+      "src.infra.transfusion_request.transfusion_request_repo_impl.SQLAlchemyTransfusionRequestRepository.validate_request"
+    ],
+    "called_by": [
+      "src.api.transfusion_request.transfusion_request_router.submit_request",
+      "tests.unit.transfusion_request.test_transfusion_request_api.TestTransfusionRequestAPI.test_submit_valid_request_via_repo",
+      "tests.unit.transfusion_request.test_transfusion_request_api.TestTransfusionRequestAPI.test_submit_invalid_request_returns_error",
+      "tests.unit.transfusion_request.test_transfusion_request_service.TestTransfusionRequestValidation.test_store_request_invalid_not_stored"
+    ]
+  },
+  "src.infra.transfusion_request.transfusion_request_repo_impl.SQLAlchemyTransfusionRequestRepository.get_by_id": {
+    "file": "src/infra/transfusion_request/transfusion_request_repo_impl.py",
+    "line": 54,
+    "end_line": 63,
+    "class": "SQLAlchemyTransfusionRequestRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transfusion_request.transfusion_request_repo_impl.SQLAlchemyTransfusionRequestRepository.get_all": {
+    "file": "src/infra/transfusion_request/transfusion_request_repo_impl.py",
+    "line": 65,
+    "end_line": 75,
+    "class": "SQLAlchemyTransfusionRequestRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.get_by_id": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "ActorRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.get_all": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "ActorRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.create": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "ActorRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.update": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "ActorRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.delete": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "ActorRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_unit.blood_unit_repository.BloodUnitRepository.get_by_id": {
+    "file": "src/repository/blood_unit/blood_unit_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "BloodUnitRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_unit.blood_unit_repository.BloodUnitRepository.get_all": {
+    "file": "src/repository/blood_unit/blood_unit_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "BloodUnitRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_unit.blood_unit_repository.BloodUnitRepository.create": {
+    "file": "src/repository/blood_unit/blood_unit_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "BloodUnitRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_unit.blood_unit_repository.BloodUnitRepository.update": {
+    "file": "src/repository/blood_unit/blood_unit_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "BloodUnitRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_unit.blood_unit_repository.BloodUnitRepository.delete": {
+    "file": "src/repository/blood_unit/blood_unit_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "BloodUnitRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.reservation.reservation_repository.ReservationRepository.get_by_id": {
+    "file": "src/repository/reservation/reservation_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "ReservationRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.reservation.reservation_repository.ReservationRepository.get_all": {
+    "file": "src/repository/reservation/reservation_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "ReservationRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.reservation.reservation_repository.ReservationRepository.create": {
+    "file": "src/repository/reservation/reservation_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "ReservationRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.reservation.reservation_repository.ReservationRepository.update": {
+    "file": "src/repository/reservation/reservation_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "ReservationRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.reservation.reservation_repository.ReservationRepository.delete": {
+    "file": "src/repository/reservation/reservation_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "ReservationRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.get_by_id": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "ResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.get_all": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "ResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.create": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "ResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.update": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "ResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.delete": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "ResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transfusion_request.transfusion_request_repository.TransfusionRequestDatabase.store_request": {
+    "file": "src/repository/transfusion_request/transfusion_request_repository.py",
+    "line": 16,
+    "end_line": 18,
+    "class": "TransfusionRequestDatabase",
+    "name": "store_request",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transfusion_request.transfusion_request_repository.TransfusionRequestDatabase.get_by_id": {
+    "file": "src/repository/transfusion_request/transfusion_request_repository.py",
+    "line": 20,
+    "end_line": 22,
+    "class": "TransfusionRequestDatabase",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transfusion_request.transfusion_request_repository.TransfusionRequestDatabase.get_all": {
+    "file": "src/repository/transfusion_request/transfusion_request_repository.py",
+    "line": 24,
+    "end_line": 26,
+    "class": "TransfusionRequestDatabase",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.blood_unit.blood_unit_service.BloodUnitService.__init__": {
+    "file": "src/service/blood_unit/blood_unit_service.py",
+    "line": 14,
+    "end_line": 15,
+    "class": "BloodUnitService",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.blood_unit.blood_unit_service.BloodUnitService.calculate_expiry_date": {
+    "file": "src/service/blood_unit/blood_unit_service.py",
+    "line": 17,
+    "end_line": 19,
+    "class": "BloodUnitService",
+    "name": "calculate_expiry_date",
+    "calls": [],
+    "called_by": [
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.create_blood_unit",
+      "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_calculate_expiry_date"
+    ]
+  },
+  "src.service.blood_unit.blood_unit_service.BloodUnitService.create_blood_unit": {
+    "file": "src/service/blood_unit/blood_unit_service.py",
+    "line": 21,
+    "end_line": 24,
+    "class": "BloodUnitService",
+    "name": "create_blood_unit",
+    "calls": [
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.calculate_expiry_date",
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.service.blood_unit.blood_unit_service.BloodUnitService.get_inventory_summary": {
+    "file": "src/service/blood_unit/blood_unit_service.py",
+    "line": 26,
+    "end_line": 34,
+    "class": "BloodUnitService",
+    "name": "get_inventory_summary",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": [
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.check_low_stock_alerts",
+      "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_get_inventory_summary"
+    ]
+  },
+  "src.service.blood_unit.blood_unit_service.BloodUnitService.check_low_stock_alerts": {
+    "file": "src/service/blood_unit/blood_unit_service.py",
+    "line": 36,
+    "end_line": 55,
+    "class": "BloodUnitService",
+    "name": "check_low_stock_alerts",
+    "calls": [
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.get_inventory_summary"
+    ],
+    "called_by": [
+      "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_check_low_stock_alerts_below_threshold",
+      "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_check_low_stock_alerts_above_threshold"
+    ]
+  },
+  "src.service.blood_unit.blood_unit_service.BloodUnitService.change_status": {
+    "file": "src/service/blood_unit/blood_unit_service.py",
+    "line": 57,
+    "end_line": 60,
+    "class": "BloodUnitService",
+    "name": "change_status",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": [
+      "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_change_status"
+    ]
+  },
+  "src.service.blood_unit.blood_unit_service.BloodUnitService.check_and_expire_units": {
+    "file": "src/service/blood_unit/blood_unit_service.py",
+    "line": 62,
+    "end_line": 71,
+    "class": "BloodUnitService",
+    "name": "check_and_expire_units",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all",
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": [
+      "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_check_and_expire_units"
+    ]
+  },
+  "src.service.reservation.reservation_service.ReservationService.__init__": {
+    "file": "src/service/reservation/reservation_service.py",
+    "line": 15,
+    "end_line": 21,
+    "class": "ReservationService",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.reservation.reservation_service.ReservationService.create_reservation": {
+    "file": "src/service/reservation/reservation_service.py",
+    "line": 23,
+    "end_line": 58,
+    "class": "ReservationService",
+    "name": "create_reservation",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id",
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update",
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.create"
+    ],
+    "called_by": []
+  },
+  "src.service.reservation.reservation_service.ReservationService.release_expired_reservations": {
+    "file": "src/service/reservation/reservation_service.py",
+    "line": 60,
+    "end_line": 85,
+    "class": "ReservationService",
+    "name": "release_expired_reservations",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all",
+      "src.infra.reservation.reservation_repo_impl.SQLAlchemyReservationRepository.get_orm_by_id",
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": [
+      "src.service.reservation.reservation_service.ReservationService.auto_release_all_expired",
+      "tests.unit.reservation.test_reservation_service.TestReservationService.test_release_expired_reservations",
+      "tests.unit.reservation.test_reservation_service.TestReservationService.test_no_expired_reservations"
+    ]
+  },
+  "src.service.reservation.reservation_service.ReservationService.auto_release_all_expired": {
+    "file": "src/service/reservation/reservation_service.py",
+    "line": 87,
+    "end_line": 89,
+    "class": "ReservationService",
+    "name": "auto_release_all_expired",
+    "calls": [
+      "src.service.reservation.reservation_service.ReservationService.release_expired_reservations"
+    ],
+    "called_by": []
+  },
+  "src.service.transfusion_request.transfusion_request_service.BloodBankStaff.__init__": {
+    "file": "src/service/transfusion_request/transfusion_request_service.py",
+    "line": 22,
+    "end_line": 23,
+    "class": "BloodBankStaff",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.transfusion_request.transfusion_request_service.ClinicalTeams.__init__": {
+    "file": "src/service/transfusion_request/transfusion_request_service.py",
+    "line": 26,
+    "end_line": 27,
+    "class": "ClinicalTeams",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.transfusion_request.transfusion_request_service.Patients.__init__": {
+    "file": "src/service/transfusion_request/transfusion_request_service.py",
+    "line": 30,
+    "end_line": 31,
+    "class": "Patients",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.conftest.test_conftest_placeholder": {
+    "file": "tests/integration/conftest.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_conftest_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_api_contracts.test_test_api_contracts_placeholder": {
+    "file": "tests/integration/test_api_contracts.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_api_contracts_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_blood_unit_flow.test_test_blood_unit_flow_placeholder": {
+    "file": "tests/integration/test_blood_unit_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_blood_unit_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_reservation_flow.test_test_reservation_flow_placeholder": {
+    "file": "tests/integration/test_reservation_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_reservation_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_transfusion_request_flow.test_test_transfusion_request_flow_placeholder": {
+    "file": "tests/integration/test_transfusion_request_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_transfusion_request_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_api.TestBloodUnitAPI.test_list_blood_units_endpoint": {
+    "file": "tests/unit/blood_unit/test_blood_unit_api.py",
+    "line": 13,
+    "end_line": 24,
+    "class": "TestBloodUnitAPI",
+    "name": "test_list_blood_units_endpoint",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_api.TestBloodUnitAPI.test_create_blood_unit_via_service": {
+    "file": "tests/unit/blood_unit/test_blood_unit_api.py",
+    "line": 26,
+    "end_line": 37,
+    "class": "TestBloodUnitAPI",
+    "name": "test_create_blood_unit_via_service",
+    "calls": [
+      "src.api.blood_unit.blood_unit_router.create_blood_unit"
+    ],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_api.TestBloodUnitAPI.test_delete_blood_unit": {
+    "file": "tests/unit/blood_unit/test_blood_unit_api.py",
+    "line": 39,
+    "end_line": 42,
+    "class": "TestBloodUnitAPI",
+    "name": "test_delete_blood_unit",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_api.TestBloodUnitAPI.test_get_blood_unit_not_found": {
+    "file": "tests/unit/blood_unit/test_blood_unit_api.py",
+    "line": 44,
+    "end_line": 47,
+    "class": "TestBloodUnitAPI",
+    "name": "test_get_blood_unit_not_found",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_domain.TestBloodUnitDomain.test_abo_type_enum_values": {
+    "file": "tests/unit/blood_unit/test_blood_unit_domain.py",
+    "line": 12,
+    "end_line": 16,
+    "class": "TestBloodUnitDomain",
+    "name": "test_abo_type_enum_values",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_domain.TestBloodUnitDomain.test_rh_factor_enum_values": {
+    "file": "tests/unit/blood_unit/test_blood_unit_domain.py",
+    "line": 18,
+    "end_line": 20,
+    "class": "TestBloodUnitDomain",
+    "name": "test_rh_factor_enum_values",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_domain.TestBloodUnitDomain.test_blood_unit_status_enum_values": {
+    "file": "tests/unit/blood_unit/test_blood_unit_domain.py",
+    "line": 22,
+    "end_line": 25,
+    "class": "TestBloodUnitDomain",
+    "name": "test_blood_unit_status_enum_values",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_domain.TestBloodUnitDomain.test_blood_unit_dataclass_creation": {
+    "file": "tests/unit/blood_unit/test_blood_unit_domain.py",
+    "line": 27,
+    "end_line": 40,
+    "class": "TestBloodUnitDomain",
+    "name": "test_blood_unit_dataclass_creation",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_domain.TestBloodUnitDomain.test_actor_permissions": {
+    "file": "tests/unit/blood_unit/test_blood_unit_domain.py",
+    "line": 42,
+    "end_line": 46,
+    "class": "TestBloodUnitDomain",
+    "name": "test_actor_permissions",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_calculate_expiry_date": {
+    "file": "tests/unit/blood_unit/test_blood_unit_service.py",
+    "line": 13,
+    "end_line": 18,
+    "class": "TestBloodUnitService",
+    "name": "test_calculate_expiry_date",
+    "calls": [
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.calculate_expiry_date"
+    ],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_create_blood_unit_calculates_expiry": {
+    "file": "tests/unit/blood_unit/test_blood_unit_service.py",
+    "line": 20,
+    "end_line": 26,
+    "class": "TestBloodUnitService",
+    "name": "test_create_blood_unit_calculates_expiry",
+    "calls": [
+      "src.api.blood_unit.blood_unit_router.create_blood_unit"
+    ],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_change_status": {
+    "file": "tests/unit/blood_unit/test_blood_unit_service.py",
+    "line": 28,
+    "end_line": 38,
+    "class": "TestBloodUnitService",
+    "name": "test_change_status",
+    "calls": [
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.change_status"
+    ],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_check_and_expire_units": {
+    "file": "tests/unit/blood_unit/test_blood_unit_service.py",
+    "line": 40,
+    "end_line": 54,
+    "class": "TestBloodUnitService",
+    "name": "test_check_and_expire_units",
+    "calls": [
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.check_and_expire_units"
+    ],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_get_inventory_summary": {
+    "file": "tests/unit/blood_unit/test_blood_unit_service.py",
+    "line": 56,
+    "end_line": 70,
+    "class": "TestBloodUnitService",
+    "name": "test_get_inventory_summary",
+    "calls": [
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.get_inventory_summary"
+    ],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_check_low_stock_alerts_below_threshold": {
+    "file": "tests/unit/blood_unit/test_blood_unit_service.py",
+    "line": 72,
+    "end_line": 85,
+    "class": "TestBloodUnitService",
+    "name": "test_check_low_stock_alerts_below_threshold",
+    "calls": [
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.check_low_stock_alerts"
+    ],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_service.TestBloodUnitService.test_check_low_stock_alerts_above_threshold": {
+    "file": "tests/unit/blood_unit/test_blood_unit_service.py",
+    "line": 87,
+    "end_line": 102,
+    "class": "TestBloodUnitService",
+    "name": "test_check_low_stock_alerts_above_threshold",
+    "calls": [
+      "src.service.blood_unit.blood_unit_service.BloodUnitService.check_low_stock_alerts"
+    ],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_api.test_test_reservation_api_placeholder": {
+    "file": "tests/unit/reservation/test_reservation_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_reservation_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_domain.TestReservationDomain.test_reservation_creation": {
+    "file": "tests/unit/reservation/test_reservation_domain.py",
+    "line": 19,
+    "end_line": 32,
+    "class": "TestReservationDomain",
+    "name": "test_reservation_creation",
+    "calls": [
+      "src.domain.reservation.Reservation.Reservation.is_expired"
+    ],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_domain.TestReservationDomain.test_release_reservation": {
+    "file": "tests/unit/reservation/test_reservation_domain.py",
+    "line": 34,
+    "end_line": 43,
+    "class": "TestReservationDomain",
+    "name": "test_release_reservation",
+    "calls": [
+      "src.domain.reservation.Reservation.Reservation.release"
+    ],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_domain.TestReservationDomain.test_issue_reservation": {
+    "file": "tests/unit/reservation/test_reservation_domain.py",
+    "line": 45,
+    "end_line": 54,
+    "class": "TestReservationDomain",
+    "name": "test_issue_reservation",
+    "calls": [
+      "src.domain.reservation.Reservation.Reservation.issue"
+    ],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_domain.TestReservationDomain.test_is_expired_past_expiry": {
+    "file": "tests/unit/reservation/test_reservation_domain.py",
+    "line": 56,
+    "end_line": 65,
+    "class": "TestReservationDomain",
+    "name": "test_is_expired_past_expiry",
+    "calls": [
+      "src.domain.reservation.Reservation.Reservation.is_expired"
+    ],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_domain.TestReservationDomain.test_enum_values": {
+    "file": "tests/unit/reservation/test_reservation_domain.py",
+    "line": 67,
+    "end_line": 71,
+    "class": "TestReservationDomain",
+    "name": "test_enum_values",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_service.TestReservationService.test_create_reservation_success": {
+    "file": "tests/unit/reservation/test_reservation_service.py",
+    "line": 14,
+    "end_line": 41,
+    "class": "TestReservationService",
+    "name": "test_create_reservation_success",
+    "calls": [
+      "src.api.reservation.reservation_router.create_reservation"
+    ],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_service.TestReservationService.test_create_reservation_blood_unit_not_available": {
+    "file": "tests/unit/reservation/test_reservation_service.py",
+    "line": 43,
+    "end_line": 56,
+    "class": "TestReservationService",
+    "name": "test_create_reservation_blood_unit_not_available",
+    "calls": [
+      "src.api.reservation.reservation_router.create_reservation"
+    ],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_service.TestReservationService.test_create_reservation_type_mismatch": {
+    "file": "tests/unit/reservation/test_reservation_service.py",
+    "line": 58,
+    "end_line": 71,
+    "class": "TestReservationService",
+    "name": "test_create_reservation_type_mismatch",
+    "calls": [
+      "src.api.reservation.reservation_router.create_reservation"
+    ],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_service.TestReservationService.test_release_expired_reservations": {
+    "file": "tests/unit/reservation/test_reservation_service.py",
+    "line": 73,
+    "end_line": 94,
+    "class": "TestReservationService",
+    "name": "test_release_expired_reservations",
+    "calls": [
+      "src.service.reservation.reservation_service.ReservationService.release_expired_reservations"
+    ],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_service.TestReservationService.test_no_expired_reservations": {
+    "file": "tests/unit/reservation/test_reservation_service.py",
+    "line": 96,
+    "end_line": 113,
+    "class": "TestReservationService",
+    "name": "test_no_expired_reservations",
+    "calls": [
+      "src.service.reservation.reservation_service.ReservationService.release_expired_reservations"
+    ],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_api.TestTransfusionRequestAPI.test_submit_valid_request_via_repo": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_api.py",
+    "line": 18,
+    "end_line": 37,
+    "class": "TestTransfusionRequestAPI",
+    "name": "test_submit_valid_request_via_repo",
+    "calls": [
+      "src.infra.transfusion_request.transfusion_request_repo_impl.SQLAlchemyTransfusionRequestRepository.store_request"
+    ],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_api.TestTransfusionRequestAPI.refresh_side_effect": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_api.py",
+    "line": 30,
+    "end_line": 31,
+    "class": "TestTransfusionRequestAPI",
+    "name": "refresh_side_effect",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_api.TestTransfusionRequestAPI.test_submit_invalid_request_returns_error": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_api.py",
+    "line": 39,
+    "end_line": 45,
+    "class": "TestTransfusionRequestAPI",
+    "name": "test_submit_invalid_request_returns_error",
+    "calls": [
+      "src.infra.transfusion_request.transfusion_request_repo_impl.SQLAlchemyTransfusionRequestRepository.store_request"
+    ],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_api.TestTransfusionRequestAPI.test_get_by_id_returns_none_for_missing": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_api.py",
+    "line": 47,
+    "end_line": 52,
+    "class": "TestTransfusionRequestAPI",
+    "name": "test_get_by_id_returns_none_for_missing",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_api.TestTransfusionRequestAPI.test_get_all_returns_list": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_api.py",
+    "line": 54,
+    "end_line": 59,
+    "class": "TestTransfusionRequestAPI",
+    "name": "test_get_all_returns_list",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_domain.TestTransfusionRequestDomain.test_transfusion_request_default_state": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_domain.py",
+    "line": 12,
+    "end_line": 17,
+    "class": "TestTransfusionRequestDomain",
+    "name": "test_transfusion_request_default_state",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_domain.TestTransfusionRequestDomain.test_transfusion_request_custom_state": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_domain.py",
+    "line": 19,
+    "end_line": 23,
+    "class": "TestTransfusionRequestDomain",
+    "name": "test_transfusion_request_custom_state",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_domain.TestTransfusionRequestDomain.test_request_state_enum_values": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_domain.py",
+    "line": 25,
+    "end_line": 29,
+    "class": "TestTransfusionRequestDomain",
+    "name": "test_request_state_enum_values",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_domain.TestTransfusionRequestDomain.test_transfusion_request_invalid_quantity": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_domain.py",
+    "line": 31,
+    "end_line": 33,
+    "class": "TestTransfusionRequestDomain",
+    "name": "test_transfusion_request_invalid_quantity",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_domain.TestTransfusionRequestDomain.test_transfusion_request_empty_blood_type": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_domain.py",
+    "line": 35,
+    "end_line": 37,
+    "class": "TestTransfusionRequestDomain",
+    "name": "test_transfusion_request_empty_blood_type",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_service.TestTransfusionRequestValidation.test_validate_valid_request": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_service.py",
+    "line": 18,
+    "end_line": 25,
+    "class": "TestTransfusionRequestValidation",
+    "name": "test_validate_valid_request",
+    "calls": [
+      "src.api.transfusion_request.transfusion_request_router.validate_request"
+    ],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_service.TestTransfusionRequestValidation.test_validate_invalid_blood_type": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_service.py",
+    "line": 27,
+    "end_line": 33,
+    "class": "TestTransfusionRequestValidation",
+    "name": "test_validate_invalid_blood_type",
+    "calls": [
+      "src.api.transfusion_request.transfusion_request_router.validate_request"
+    ],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_service.TestTransfusionRequestValidation.test_validate_invalid_rh_factor": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_service.py",
+    "line": 35,
+    "end_line": 41,
+    "class": "TestTransfusionRequestValidation",
+    "name": "test_validate_invalid_rh_factor",
+    "calls": [
+      "src.api.transfusion_request.transfusion_request_router.validate_request"
+    ],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_service.TestTransfusionRequestValidation.test_validate_zero_quantity": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_service.py",
+    "line": 43,
+    "end_line": 49,
+    "class": "TestTransfusionRequestValidation",
+    "name": "test_validate_zero_quantity",
+    "calls": [
+      "src.api.transfusion_request.transfusion_request_router.validate_request"
+    ],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_service.TestTransfusionRequestValidation.test_validate_negative_quantity": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_service.py",
+    "line": 51,
+    "end_line": 57,
+    "class": "TestTransfusionRequestValidation",
+    "name": "test_validate_negative_quantity",
+    "calls": [
+      "src.api.transfusion_request.transfusion_request_router.validate_request"
+    ],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_service.TestTransfusionRequestValidation.test_store_request_invalid_not_stored": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_service.py",
+    "line": 59,
+    "end_line": 68,
+    "class": "TestTransfusionRequestValidation",
+    "name": "test_store_request_invalid_not_stored",
+    "calls": [
+      "src.infra.transfusion_request.transfusion_request_repo_impl.SQLAlchemyTransfusionRequestRepository.store_request"
+    ],
+    "called_by": []
+  }
+}

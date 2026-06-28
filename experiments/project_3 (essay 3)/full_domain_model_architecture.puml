@@ -1,0 +1,285 @@
+@startuml
+title Project 10 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+note as RelationshipCorrections
+  <b>Relationship cardinalities corrected by LLM review</b>
+  Actor --> Permission → Actor "1" --> "*" Permission
+    Reason: The relationship should be one Actor has many Permissions, not a simple directed association without multiplicity. Corrected to reflect a one-to-many directed association.
+  Flight "0..1" -- "0..1" Slot → Flight "1" -- "0..1" Slot
+    Reason: A Flight can have at most one Slot, and a Slot can be associated with zero or one Flight, so the multiplicity should be 1 on Flight side and 0..1 on Slot side.
+  Flight "1" --> "1" Actor → Flight "*" --> "1" Actor
+    Reason: Many Flights can be associated with one Actor (e.g., dispatcher), not a one-to-one relationship.
+  Flight "1" --> "1" Resource → Flight "*" --> "1" Resource
+    Reason: Many Flights can use one Resource (e.g., runway), not a one-to-one relationship.
+  Resource "1" --> "*" Actor → Resource "*" --> "1" Actor
+    Reason: Many Resources can be assigned to one Actor, not one Resource to many Actors.
+  Schedule "1" *-- "many" Slot → Schedule "1" *-- "0..*" Slot
+    Reason: A Schedule can contain many Slots, so composition is correct: one Schedule has many Slots.
+  Slot "1" --> "1" Flight → Slot "0..1" --> "1" Flight
+    Reason: A Slot may be associated with zero or one Flight, not one-to-one. A Slot can be unassigned.
+end note
+
+note as ArchitectureCorrections
+  <b>Architecture mistakes corrected automatically</b>
+  [wrong_inheritance] Actor inherits from Permission via a directed association arrow, but Permission is an enum (role), not a base class.
+    Fix applied: remove_relation
+  [wrong_inheritance] Actor inherits from Permission again with a different multiplicity, which is redundant and incorrect.
+    Fix applied: remove_relation
+  [wrong_inheritance] Flight has a directed association to Actor, but the task context shows Flight is a domain entity, not owned by an actor.
+    Fix applied: remove_relation
+  [wrong_inheritance] Resource inherits from Actor with multiplicity, but Resource is a base class for things like Runway, not an actor.
+    Fix applied: remove_relation
+  [wrong_inheritance] Resource has another directed association to Actor with different multiplicity, likely a mistake.
+    Fix applied: remove_relation
+  [wrong_inheritance] Slot has a directed association to Actor, but Slot is a time interval, not owned by an actor.
+    Fix applied: remove_relation
+  [wrong_inheritance] SlotAllocationOperation has a directed association to Actor, but it's an operation, not an actor.
+    Fix applied: remove_relation
+  [wrong_inheritance] Operation has a directed association to Actor, but Operation is an action, not an entity owned by an actor.
+    Fix applied: remove_relation
+  [wrong_inheritance] REQ_OPM_01 has a directed association to Actor, but requirements are not owned by actors.
+    Fix applied: remove_relation
+  [wrong_inheritance] State has inheritance arrows to Post1, Post2, Post3, Pre1, Pre2, but these are likely states, not subclasses. Should be a composition or enumeration.
+    Fix applied: remove_relation
+  [wrong_inheritance] Same for Post2, Post3, Pre1, Pre2: they should not inherit from State.
+    Fix applied: remove_relation
+  [wrong_inheritance] Same for Post3.
+    Fix applied: remove_relation
+  [wrong_inheritance] Same for Pre1.
+    Fix applied: remove_relation
+  [wrong_inheritance] Same for Pre2.
+    Fix applied: remove_relation
+  [missing_relationship] Task #74 (Arrival Priority) requires priority logic between Slot and Flight type (arrival/departure), but no relationship exists to indicate flight type or priority.
+    Fix applied: add_relation
+  [missing_relationship] Task #75 (Conflict Detection) requires checking overlaps between slots, but there is no relationship between Slot and Slot for conflict detection.
+    Fix applied: add_relation
+  [missing_relationship] Task #76 (Runway Closure) requires Runway to have a relationship to Flight for reassignment, but Runway only composes Slot.
+    Fix applied: add_relation
+  [missing_relationship] Task #77 (Emergency Flight Handling) requires a queue for flights, but Queue only composes Flight without a priority or emergency flag.
+    Fix applied: add_relation
+  [missing_relationship] Task #78 (Slot Timetable) requires a view that links Runway, Slot, Flight, and status, but no direct relationship between Runway and Flight exists.
+    Fix applied: add_relation
+end note
+
+package "Task #72\nFlight Registration\nSystem" {
+  class Flight <<main>> <<level0>>
+  class Actor
+  class Interface
+  class Operation
+  enum Permission
+  class Resource
+  enum State
+}
+
+package "Task #73\nSlot Allocation" {
+  class Slot <<main>> <<level1>>
+}
+
+package "Task #74\nArrival Priority" {
+  note as TaskSummary74
+    No new domain model classes
+    Uses: Slot
+  end note
+}
+
+package "Task #75\nConflict Detection" {
+  note as TaskSummary75
+    No new domain model classes
+    Uses: Slot
+  end note
+}
+
+package "Task #76\nRunway Closure Handling" {
+  class Runway <<main>> <<level2>>
+  class Airport_Operations_Manager
+  class Airport_Operations_Manager_Console
+  class DelayCalculation
+  class FlightSchedule
+  class Flight_Control_Center
+  class Flight_Schedule_Database
+  class Passenger_Services_Department
+  class Post1
+  class Post2
+  class Post3
+  class Pre1
+  class Pre2
+  class REQ_OPM_01
+}
+
+package "Task #77\nEmergency Flight\nHandling" {
+  note as TaskSummary77
+    No new domain model classes
+    Uses: Flight, Slot
+  end note
+}
+
+package "Task #78\nSlot Timetable Display" {
+  note as TaskSummary78
+    No new domain model classes
+    Uses: Runway, Slot, Flight
+  end note
+}
+
+package "Shared / Cross-Task Classes\n[not owned by a single task]" <<Rectangle>> {
+  class EmergencyStatus <<shared>>
+  note right of EmergencyStatus : "appears only in relations; not owned by any task"
+  enum IfaceKind <<shared>>
+  note right of IfaceKind : "appears only in relations; not owned by any task"
+  class Queue <<shared>>
+  note right of Queue : "appears only in relations; not owned by any task"
+  class RunwayScheduleDB <<shared>>
+  note right of RunwayScheduleDB : "appears only in relations; not owned by any task"
+  class Schedule <<shared>>
+  note right of Schedule : "appears only in relations; not owned by any task"
+  class SlotAllocationOperation <<shared>>
+  note right of SlotAllocationOperation : "appears only in relations; not owned by any task"
+}
+
+Actor "*" --> "*" Permission
+Actor "1" --> "*" Permission
+Actor <|-- Airport_Operations_Manager
+Actor <|-- Flight_Control_Center
+Actor <|-- Passenger_Services_Department
+Flight "*" --> "1" Actor
+Flight "*" --> "1" Resource
+Flight "1" -- "0..1" Slot
+Interface --> IfaceKind
+Interface <|-- Airport_Operations_Manager_Console
+Interface <|-- Flight_Schedule_Database
+Operation "*" --> "1" Actor
+Operation "*" --> "1" Permission
+Operation "1" --> "1" State
+Operation "1" --> "1..10" Resource
+Operation "1" --> "1..2" Interface
+Queue "1" *-- "0..*" Flight
+REQ_OPM_01 "1" --> "*" Interface
+REQ_OPM_01 "1" --> "*" Resource
+REQ_OPM_01 "1" --> "1" Actor
+REQ_OPM_01 "1" --> "1" Permission
+REQ_OPM_01 "1" --> "1" State
+Resource "*" --> "1" Actor
+Resource "1" --> "1" Actor
+Resource <|-- DelayCalculation
+Resource <|-- FlightSchedule
+Runway "1" *-- "0..*" Slot
+RunwayScheduleDB --> EmergencyStatus
+RunwayScheduleDB --> "many" Runway
+RunwayScheduleDB --> "many" Slot
+Schedule "1" *-- "0..*" Slot
+Slot "0..1" --> "1" Flight
+Slot --> Actor
+SlotAllocationOperation --> Actor
+SlotAllocationOperation --> Interface
+SlotAllocationOperation --> Permission
+SlotAllocationOperation --> Slot
+State <|-- Post1
+State <|-- Post2
+State <|-- Post3
+State <|-- Pre1
+State <|-- Pre2
+note right of Post1 #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [extract_base_class] These appear to be states\n(pre/post conditions). Consider extracting them\nas values of an enum 'StateValue' rather than\nseparate classes.
+end note
+
+note right of Post2 #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [extract_base_class] These appear to be states\n(pre/post conditions). Consider extracting them\nas values of an enum 'StateValue' rather than\nseparate classes.
+end note
+
+note right of Post3 #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [extract_base_class] These appear to be states\n(pre/post conditions). Consider extracting them\nas values of an enum 'StateValue' rather than\nseparate classes.
+end note
+
+note right of Pre1 #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [extract_base_class] These appear to be states\n(pre/post conditions). Consider extracting them\nas values of an enum 'StateValue' rather than\nseparate classes.
+end note
+
+note right of Pre2 #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [extract_base_class] These appear to be states\n(pre/post conditions). Consider extracting them\nas values of an enum 'StateValue' rather than\nseparate classes.
+end note
+
+note right of Slot #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [introduce_value_object] Slot duration (5\nminutes) and gap (3 minutes) are fixed.\nIntroduce a value object 'SlotDuration' and\n'GapDuration' to encapsulate these constants.
+end note
+
+note right of Flight #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [add_aggregate_root] Consider making 'Runway' an\naggregate root that manages its own slots and\nflights, ensuring consistency for slot\nallocation and conflict detection.
+end note
+
+note right of Slot #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [add_aggregate_root] Consider making 'Runway' an\naggregate root that manages its own slots and\nflights, ensuring consistency for slot\nallocation and conflict detection.
+end note
+
+note right of Runway #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [add_aggregate_root] Consider making 'Runway' an\naggregate root that manages its own slots and\nflights, ensuring consistency for slot\nallocation and conflict detection.
+end note
+
+note right of Actor #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [rename_for_clarity] Rename 'Actor' to 'User' or\n'Personnel' to better reflect the domain (flight\ndispatcher, scheduler, air traffic controller).
+end note
+
+note right of Operation #FDFDE0
+  <b>SUGGESTION #5 (not applied)</b>
+  [rename_for_clarity] Rename 'Operation' to\n'Task' or 'Activity' to avoid confusion with\nsystem operations.
+end note
+
+note right of Flight #FDFDE0
+  <b>SUGGESTION #6 (not applied)</b>
+  [split_class] Consider splitting Flight into\n'FlightPlan' (route info) and 'FlightInstance'\n(actual departure/arrival) to separate\nscheduling from execution.
+end note
+
+note right of Queue #FDFDE0
+  <b>SUGGESTION #7 (not applied)</b>
+  [general] Add a 'Priority' attribute to Flight\nor Queue to support emergency prioritization as\nper Task #77.
+end note
+
+@enduml

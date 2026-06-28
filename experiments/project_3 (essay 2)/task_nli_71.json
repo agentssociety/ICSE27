@@ -1,0 +1,23 @@
+{
+  "task_id": 71,
+  "confidence": 0.9829,
+  "evidence": [
+    {
+      "claim": "The timetable can be filtered by runway and time.",
+      "fact": "It allocates time intervals for runway usage and ensures no overlapping assignments occur.",
+      "score": 0.9956,
+      "user_story_span": "Timetable can be filtered by runway and time",
+      "fact_span": ""
+    },
+    {
+      "claim": "The timetable shows all allocated slots per runway.",
+      "fact": "It allocates time intervals for runway usage and ensures no overlapping assignments occur.",
+      "score": 0.9703,
+      "user_story_span": "Timetable shows all allocated slots per runway",
+      "fact_span": "allocates time intervals for runway usage"
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

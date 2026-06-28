@@ -1,0 +1,117 @@
+@startuml
+!theme plain
+skinparam actorStyle awesome
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+box "External" #LightBlue
+  actor "User" as User
+end box
+
+box "Controller" #LightGreen
+  participant "Authentication API" as API
+end box
+
+box "Domain" #LightYellow
+  participant "User" as UserDomain
+  participant "Card" as CardDomain
+  participant "Account" as AccountDomain
+  participant "AuthenticationSession" as Session
+  participant "AuthenticationAttempt" as Attempt
+  participant "LockoutRecord" as LockoutRecord
+  participant "FailedAttempt" as FailedAttempt
+  participant "LockoutNotification" as LockoutNotification
+end box
+
+box "Infrastructure" #LightCoral
+  participant "User Data Store" as DB
+  participant "Login Screen" as Screen
+end box
+
+== Main Authentication Flow ==
+
+User -> Screen : insertCard(cardNumber)
+note right of Screen: [UI event]
+Screen -> API : POST /authenticate(cardNumber, pin)
+note right of API : [TLS encrypted channel]
+
+API -> DB : findCard(cardNumber) : Card
+DB --> API : Card
+API -> CardDomain : isExpired() : Boolean
+alt card expired
+  API -> Screen : HTTP 401 {error: "Card expired"}
+  note right of Screen : Error reason different from incorrect PIN
+  break
+end
+
+API -> DB : findAccountByCard(cardNumber) : Account
+DB --> API : Account
+API -> AccountDomain : isLocked() : Boolean
+alt account locked
+  API -> Screen : HTTP 403 {error: "Account locked"}
+  break
+end
+
+API -> Session : create(card, user) : AuthenticationSession
+API -> Attempt : recordAttempt(card, pin, device) : AuthenticationAttempt
+Attempt -> CardDomain : verifyPin(pin) : Boolean
+
+alt pin correct
+  API -> Session : resetConsecutiveFailures()
+  API -> AccountDomain : unlock()
+  AccountDomain -> AccountDomain : setLocked(false)
+  API -> DB : updateAccount(account)
+  DB --> API : success
+  API -> Screen : HTTP 200 {sessionToken}
+  Screen -> User : display "Login successful"
+
+else pin incorrect
+  API -> Session : incrementConsecutiveFailures()
+  Session -> Session : consecutiveFailures++
+  API -> Attempt : markFailed(device)
+  Attempt --> FailedAttempt : createFailedAttempt(device, operation)
+  API -> DB : incrementFailedAttemptCount(account)
+  DB --> API : success
+  alt consecutiveFailures >= 3
+    API -> AccountDomain : lock()
+    AccountDomain -> AccountDomain : setLocked(true)
+    API -> DB : setLockedFlag(account)
+    DB --> API : success
+    API -> LockoutRecord : create(device, operation, locked=true)
+    API -> LockoutNotification : send(device, lockout)
+    LockoutNotification -> LockoutNotification : setSent(true)
+    API -> Screen : HTTP 423 {error: "Account locked"}
+    Screen -> User : display "Card locked – too many incorrect attempts"
+  else consecutiveFailures < 3
+    API -> Screen : HTTP 401 {error: "Incorrect PIN, attempts remaining: " + (3 - consecutiveFailures)}
+    Screen -> User : display "Invalid PIN. X attempts remaining"
+  end
+end
+
+== Expired Card Error Flow ==
+
+User -> Screen : insertCard(expiredCardNumber)
+Screen -> API : POST /authenticate(expiredCardNumber, pin)
+API -> DB : findCard(expiredCardNumber) : Card
+API -> CardDomain : isExpired() : Boolean
+alt card expired
+  API -> Screen : HTTP 401 {error: "Card expired"}
+  note right of Screen : No lockout triggered
+  Screen -> User : display "This card has expired"
+else card not expired
+  API -> Screen : HTTP 200 (proceed to main flow)
+end
+
+== Admin Unlock Flow (Security Team) ==
+
+User -> API : POST /admin/unlock(accountId) [requires Admin permission]
+note right of API: Authorization check: User.roles contains "Admin"
+API -> DB : findAccount(accountId) : Account
+API -> AccountDomain : unlock()
+AccountDomain -> AccountDomain : setLocked(false)
+API -> DB : updateAccount(account)
+DB --> API : success
+API -> Screen : HTTP 200 {message: "Account unlocked"}
+Screen -> User : display "Account unlocked"
+
+@enduml

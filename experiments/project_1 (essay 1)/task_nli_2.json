@@ -1,0 +1,16 @@
+{
+  "task_id": 2,
+  "confidence": 0.9988,
+  "evidence": [
+    {
+      "claim": "The system allows assigning an urgency level (1-5) to each patient based on their symptoms.",
+      "fact": "The system assigns each patient an urgency level from 1 (critical) to 5 (non-urgent) based on symptoms.",
+      "score": 0.9988,
+      "user_story_span": "assign an urgency level (1-5) to each patient based on their symptoms",
+      "fact_span": "assigns each patient an urgency level from 1 (critical) to 5 (non-urgent) based on symptoms"
+    }
+  ],
+  "total_claims": 4,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

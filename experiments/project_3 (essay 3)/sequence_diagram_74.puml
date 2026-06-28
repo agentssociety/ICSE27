@@ -1,0 +1,268 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+skinparam ParticipantPadding 20
+skinparam BoxPadding 10
+
+box "Controller Layer" #LightBlue
+  participant "Slot Allocation API" as API
+end box
+
+box "Application Layer" #LightGreen
+  participant "SlotAllocationOperation" as Op
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Slot" as Slot
+  participant "Actor" as Actor
+  participant "Permission" as Perm
+  participant "State" as State
+  participant "SlotStatus" as SlotStatus
+  participant "FlightType" as FlightType
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "Slot Request Database" as DB
+  participant "Interface" as Iface
+end box
+
+== Flow: Initiate Arrival Slot Allocation ==
+
+Actor -> API : POST /allocate-arrival\n(flightRequest: FlightRequest)
+activate API
+
+API -> API : authenticateRequest()
+alt Authentication fails
+  API --> Actor : 401 Unauthorized
+  deactivate API
+else Authentication succeeds
+  API -> API : checkPermission(actor: Actor, permission: Permission.Write)
+  alt Permission missing
+    API --> Actor : 403 Forbidden
+    deactivate API
+  else Permission granted
+    API -> Actor : getAccessibleSlots(actor: Actor)
+    activate Actor
+    Actor --> API : accessibleSlots: List<Slot>
+    deactivate Actor
+
+    API -> Slot : isSlotAccessible(slot: Slot, actor: Actor)
+    activate Slot
+    alt Slot not accessible
+      Slot --> API : false
+      deactivate Slot
+      API --> Actor : 403 Forbidden - Slot not accessible
+      deactivate API
+    else Slot accessible
+      Slot --> API : true
+      deactivate Slot
+
+      API -> Op : createOperation(initiator: Actor, grant: Permission.Write, target: Slot, channel: API)
+      activate Op
+      Op -> Op : validatePreState(preState: State.PreIdle)
+      alt Invalid preState
+        Op --> API : Error - Invalid state
+        API --> Actor : 409 Conflict
+        deactivate Op
+        deactivate API
+      else Valid preState
+        Op -> Slot : allocateForArrival(flightRequest: FlightRequest)
+        activate Slot
+        Slot -> SlotStatus : setStatus(SlotStatus.allocated)
+        Slot -> State : setState(State.Post1)
+        Slot --> Op : success
+        deactivate Slot
+
+        Op -> Op : setPostState(State.Post1)
+        Op -> DB : saveOperation(op: SlotAllocationOperation) [TLS]
+        activate DB
+        DB --> Op : saved
+        deactivate DB
+
+        Op --> API : operationResult: Success
+        deactivate Op
+        API --> Actor : 200 OK - Arrival slot allocated
+        deactivate API
+      end
+    end
+  end
+end
+
+== Flow: Initiate Departure Slot Allocation ==
+
+Actor -> API : POST /allocate-departure\n(flightRequest: FlightRequest)
+activate API
+
+API -> API : authenticateRequest()
+alt Authentication fails
+  API --> Actor : 401 Unauthorized
+  deactivate API
+else Authentication succeeds
+  API -> API : checkPermission(actor: Actor, permission: Permission.Read)
+  alt Permission missing
+    API --> Actor : 403 Forbidden
+    deactivate API
+  else Permission granted
+    API -> Actor : getAccessibleSlots(actor: Actor)
+    activate Actor
+    Actor --> API : accessibleSlots: List<Slot>
+    deactivate Actor
+
+    API -> Slot : isSlotAccessible(slot: Slot, actor: Actor)
+    activate Slot
+    alt Slot not accessible
+      Slot --> API : false
+      deactivate Slot
+      API --> Actor : 403 Forbidden - Slot not accessible
+      deactivate API
+    else Slot accessible
+      Slot --> API : true
+      deactivate Slot
+
+      API -> Op : createOperation(initiator: Actor, grant: Permission.Read, target: Slot, channel: API)
+      activate Op
+      Op -> Op : validatePreState(preState: State.Post1)
+      alt Invalid preState
+        Op --> API : Error - Arrivals not completed
+        API --> Actor : 409 Conflict - Arrivals must complete first
+        deactivate Op
+        deactivate API
+      else Valid preState
+        Op -> Slot : allocateForDeparture(flightRequest: FlightRequest)
+        activate Slot
+        Slot -> SlotStatus : setStatus(SlotStatus.allocated)
+        Slot -> State : setState(State.Post1)
+        Slot --> Op : success
+        deactivate Slot
+
+        Op -> Op : setPostState(State.Post1)
+        Op -> DB : saveOperation(op: SlotAllocationOperation) [TLS]
+        activate DB
+        DB --> Op : saved
+        deactivate DB
+
+        Op --> API : operationResult: Success
+        deactivate Op
+        API --> Actor : 200 OK - Departure slot allocated
+        deactivate API
+      end
+    end
+  end
+end
+
+== Flow: Surge Handling - Multiple Operations Same Slot ==
+
+Actor -> API : POST /allocate-arrival\n(flightRequest: FlightRequest, surge: true)
+activate API
+
+API -> API : authenticateRequest()
+alt Authentication fails
+  API --> Actor : 401 Unauthorized
+  deactivate API
+else Authentication succeeds
+  API -> API : checkPermission(actor: Actor, permission: Permission.Write)
+  alt Permission missing
+    API --> Actor : 403 Forbidden
+    deactivate API
+  else Permission granted
+    API -> Slot : isSlotAccessible(slot: Slot, actor: Actor)
+    activate Slot
+    alt Slot not accessible
+      Slot --> API : false
+      deactivate Slot
+      API --> Actor : 403 Forbidden
+      deactivate API
+    else Slot accessible
+      Slot --> API : true
+      deactivate Slot
+
+      API -> Op : createOperation(initiator: Actor, grant: Permission.Write, target: Slot, channel: API)
+      activate Op
+      Op -> Op : validateSurgePermission(slot: Slot, permission: Permission.Write)
+      alt Conflicting permission type
+        Op --> API : Error - Conflicting allocation type
+        API --> Actor : 409 Conflict - All operations must have same permission type
+        deactivate Op
+        deactivate API
+      else Permission consistent
+        Op -> Slot : allocateForArrival(flightRequest: FlightRequest)
+        activate Slot
+        Slot -> SlotStatus : setStatus(SlotStatus.allocated)
+        Slot -> State : setState(State.Post1)
+        Slot --> Op : success
+        deactivate Slot
+
+        Op -> Op : setPostState(State.Post1)
+        Op -> DB : saveOperation(op: SlotAllocationOperation) [TLS]
+        activate DB
+        DB --> Op : saved
+        deactivate DB
+
+        Op --> API : operationResult: Success
+        deactivate Op
+        API --> Actor : 200 OK - Slot allocated during surge
+        deactivate API
+      end
+    end
+  end
+end
+
+== Flow: Equal Arrival/Departure Requests - Double-Booking Prevention ==
+
+Actor -> API : POST /allocate-arrival\n(flightRequest: FlightRequest)
+activate API
+
+API -> API : authenticateRequest()
+alt Authentication fails
+  API --> Actor : 401 Unauthorized
+  deactivate API
+else Authentication succeeds
+  API -> API : checkPermission(actor: Actor, permission: Permission.Write)
+  alt Permission missing
+    API --> Actor : 403 Forbidden
+    deactivate API
+  else Permission granted
+    API -> Slot : isSlotAccessible(slot: Slot, actor: Actor)
+    activate Slot
+    alt Slot not accessible
+      Slot --> API : false
+      deactivate Slot
+      API --> Actor : 403 Forbidden
+      deactivate API
+    else Slot accessible
+      Slot --> API : true
+      deactivate Slot
+
+      API -> Op : createOperation(initiator: Actor, grant: Permission.Write, target: Slot, channel: API)
+      activate Op
+      Op -> Op : validateNoDoubleBooking(slot: Slot, flightType: FlightType.arrival)
+      alt Double-booking detected
+        Op --> API : Error - Slot already targeted by departure
+        API --> Actor : 409 Conflict - Cannot allocate arrival and departure to same slot
+        deactivate Op
+        deactivate API
+      else No conflict
+        Op -> Slot : allocateForArrival(flightRequest: FlightRequest)
+        activate Slot
+        Slot -> SlotStatus : setStatus(SlotStatus.allocated)
+        Slot -> State : setState(State.Post1)
+        Slot --> Op : success
+        deactivate Slot
+
+        Op -> Op : setPostState(State.Post1)
+        Op -> DB : saveOperation(op: SlotAllocationOperation) [TLS]
+        activate DB
+        DB --> Op : saved
+        deactivate DB
+
+        Op --> API : operationResult: Success
+        deactivate Op
+        API --> Actor : 200 OK - Arrival slot allocated
+        deactivate API
+      end
+    end
+  end
+end
+
+@enduml

@@ -1,0 +1,158 @@
+@startuml
+skinparam classFontSize 12
+skinparam packageFontSize 14
+skinparam packageBorderColor #4A4A4A
+skinparam classBorderColor #4A4A4A
+skinparam classHeaderBackgroundColor #F0F0F0
+
+package "Domain Model" {
+    abstract class Actor {
+        - mayPerform : Set<Permission>
+    }
+    
+    class BloodUnit {
+        - collectionDate : DateTime
+        - expirationDate : DateTime
+        - status : BloodUnitStatus
+        - owner : Actor
+        - accessible : Set<Actor>
+  + getCollectionDate() : datetime
+  + getShelfLifeDuration() : int
+  + calculateExpirationDate(collectionDate: datetime, shelfLife: int) : datetime
+  + markAsExpired() : void
+  + getOwner() : Actor
+  + getAccessibleActors() : Set<Actor>
+  + setStatus(BloodUnitStatus.expired) : void
+  + removeFromAvailableInventory() : void
+  + getStatus() : BloodUnitStatus
+  + getExpirationDate() : datetime
+  + setShelfLifeDuration(newDuration: int) : void
+  + recalculateExpirationDate() : datetime
+    }
+    
+    enum BloodUnitStatus {
+        available
+        expired
+        indefinite
+    }
+    
+    abstract class Permission {
+    }
+    
+    enum PermissionValue {
+        Read
+        Write
+        Execute
+        Admin
+    }
+    
+    enum State {
+        Pre1
+        Pre2
+        Post1
+        Post2
+    }
+}
+
+package "Application" {
+    class Operation {
+        - initiator : Actor
+        - targets : Set<BloodUnit>
+        - requiredPermission : Permission
+        - preState : State
+        - postState : State
+  + triggerExpirationCheck() : void
+  + manualExpirationCheck(bloodUnitId: String) : void
+  + checkExpirationStatus(bloodUnitId: String) : void
+  + updateShelfLifeDuration(newDuration: int) : void
+  + markBloodUnitExpired(bloodUnitId: String) : void
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface Interface {
+        - kind : IfaceKind
+        - encrypted : Boolean
+        - authenticated : Boolean
+    }
+    
+    enum IfaceKind {
+        API
+        Database
+    }
+    
+    class Blood_Unit_Database <<interface>> {
+        - kind : IfaceKind = Database
+        - encrypted : Boolean = true
+        - authenticated : Boolean = true
+  + readAllBloodUnits() : List<BloodUnit>
+  + updateBloodUnit(bloodUnit: BloodUnit) : void
+  + removeFromInventory(bloodUnitId: String) : void
+  + readBloodUnit(bloodUnitId: String) : BloodUnit
+    }
+    
+    class Scheduling_API <<interface>> {
+        - kind : IfaceKind = API
+        - encrypted : Boolean = true
+        - authenticated : Boolean = true
+    }
+}
+
+package "Controllers" {
+    class Inventory_Manager {
+        - permissions : Set<Permission> = {Read, Write, Admin}
+    }
+    
+    class Clinical_Team {
+        - permissions : Set<Permission> = {Read}
+  + returnError("Authentication failed")
+  + returnError("Access denied: not authorized for this blood unit")
+  + returnError("Insufficient permissions: Read-only access")
+    }
+    
+    class Quality_Assurance {
+        - permissions : Set<Permission> = {Read, Write}
+    }
+}
+
+package "Exceptions" {
+    class UnauthorizedAccessException <<exception>> {
+        - message : String
+        - requiredPermission : Permission
+        - actorId : String
+    }
+    
+    class InvalidOperationException <<exception>> {
+        - message : String
+        - operationId : String
+    }
+    
+    class ResourceNotFoundException <<exception>> {
+        - message : String
+        - resourceId : String
+    }
+}
+
+' Relationships
+BloodUnit "1" -- "1" Actor : owned by
+BloodUnit "1" -- "*" Actor : accessible by
+Actor "*" -- "*" Permission : has permission
+Operation "*" -- "1" Actor : initiated by
+Operation "*" -- "*" BloodUnit : targets
+Operation "*" -- "*" Interface : uses channel
+Operation "*" -- "1" Permission : requires grant
+Operation "*" -- "2" State : transitions
+
+' Inheritance
+Inventory_Manager --|> Actor
+Clinical_Team --|> Actor
+Quality_Assurance --|> Actor
+
+' Interface implementations
+Blood_Unit_Database ..|> Interface
+Scheduling_API ..|> Interface
+
+' Permission enumeration
+Permission <|.. PermissionValue
+
+@enduml

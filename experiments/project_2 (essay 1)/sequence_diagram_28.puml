@@ -1,0 +1,138 @@
+@startuml
+title Blood Resource Reservation Lifecycle – Automatic Release & Error Handling
+
+box "External Actors" #LightBlue
+    participant "Blood_Bank_Manager" as BBM
+    participant "Clinical_Team" as CT
+    participant "IT_Support" as ITS
+end box
+
+box "Controller" #LightGray
+    participant "Scheduling_API" as API
+end box
+
+box "Application" #LightYellow
+    participant "REQ_BB_01" as OP
+    participant "CancellationRecord" as CANC
+    participant "OverlapRecord" as OVER
+    participant "OutageRecord" as OUT
+end box
+
+box "Domain" #LightGreen
+    participant "Actor" as ACT
+    participant "Resource" as RES
+    participant "State" as ST
+    participant "Permission" as PERM
+    participant "Interface" as IFACE
+    participant "IfaceKind" as IFKIND
+end box
+
+box "Infrastructure" #LightPink
+    participant "Blood_Inventory_Database" as DB
+end box
+
+== Automatic Release Flow ==
+
+note over ITS : Initiator must have Execute permission\nand be in target.accessible set
+
+ITS -> API : checkScheduledTime(resourceId: Resource) : Boolean
+note right : Channel must be authenticated (true) and encrypted (true)
+
+alt authenticated & encrypted
+    API -> DB : queryReservation(unitId: String) : State
+    DB --> API : reservation state (Reserved)
+    API --> ITS : timeElapsed = true
+
+    alt time elapsed
+        ITS -> OP : createOperation(initiator=ITS, target=resource,\n grant=Execute, pre=Reserved, post=Available)
+        note right : Every operation must use at least one channel\nand affect at least one resource
+
+        OP -> ACT : checkPermission(initiator: Actor, grant: Permission) : Boolean
+        ACT --> OP : authorized (grant in ITS.mayPerform)
+
+        OP -> RES : checkAccess(initiator: Actor, target: Resource) : Boolean
+        RES --> OP : accessible (ITS in target.accessible)
+
+        OP -> IFACE : checkAuthentication(channel: Interface) : Boolean
+        IFACE --> OP : authenticated (true)
+
+        OP -> ST : checkStateChange(pre: State, post: State) : Boolean
+        ST --> OP : valid (pre != post)
+
+        OP -> DB : releaseReservation(unitId: String) : Status
+        DB --> OP : success
+
+        OP -> ST : transitionState(Reserved -> Available) : State
+        ST --> OP : new state
+
+        ITS -> API : confirmRelease(resourceId: Resource) : ACK
+    else time not elapsed
+        ITS -> API : waitForTimeout() : void
+        note right : No state change occurs yet
+    end
+else channel insecure (unauthenticated and unencrypted)
+    API -> OUT : createOutageRecord(op=null, reason=ChannelInsecure) : OutageRecord
+    note right : Constraint: If any channel is unauthenticated\nand unencrypted, no state change is allowed.
+    API --> ITS : error(INVALID_CHANNEL)
+end
+
+== Cancellation Flow ==
+
+note over ITS, BBM : Only Blood_Bank_Manager and IT_Support have Admin permission\nto cancel. Clinical_Team uses Write permission.
+
+alt Clinical_Team cancels (Write permission)
+    CT -> API : cancelReservation(resourceId: Resource)
+    API -> OP : createOperation(initiator=CT, target=resource,\n grant=Write, pre=Reserved, post=Canceled)
+    OP -> ACT : checkPermission(CT, Write) : Boolean
+    ACT --> OP : authorized
+    OP -> RES : checkAccess(CT, resource) : Boolean
+    RES --> OP : accessible
+    OP -> IFACE : checkAuthentication(channel) : Boolean
+    IFACE --> OP : authenticated
+    OP -> ST : checkStateChange(Reserved, Canceled) : Boolean
+    ST --> OP : valid
+    OP -> DB : updateReservationStatus(unitId, Canceled) : Status
+    DB --> OP : success
+    OP -> ST : transitionState(Reserved -> Canceled) : State
+    API --> CT : success
+    OP -> CANC : createCancellationRecord(op, resource, time=State) : CancellationRecord
+end
+
+alt Blood_Bank_Manager cancels (Admin permission)
+    BBM -> API : cancelReservation(resourceId)
+    API -> OP : createOperation(initiator=BBM, target=resource,\n grant=Admin, pre=Reserved, post=Canceled)
+    OP -> ACT : checkPermission(BBM, Admin) : Boolean
+    ACT --> OP : authorized
+    ' ... similar validation steps
+    OP -> DB : updateReservationStatus(unitId, Canceled)
+    DB --> OP : success
+    OP -> ST : transitionState(Reserved -> Canceled)
+    API --> BBM : success
+end
+
+alt IT_Support cancels (Admin permission)
+    ITS -> API : cancelReservation(resourceId)
+    API -> OP : createOperation(initiator=ITS, target=resource,\n grant=Admin, pre=Reserved, post=Canceled)
+    ' ... similar
+    OP -> DB : updateReservationStatus(unitId, Canceled)
+    DB --> OP : success
+    API --> ITS : success
+end
+
+== Overlap Detection (Edge Case) ==
+
+note over OP : Two distinct operations with Write permission\ntargeting same resource must share initiator
+
+alt Write operations on same resource from different initiators
+    OP -> OVER : recordOverlap(resource, first_op, second_op)
+    OP -> API : error(OVERLAP_DETECTED)
+end
+
+== System Outage Handling ==
+
+note over API : During reservation period, if system outage occurs\nor channel becomes invalid…
+
+API -> OUT : createOutageRecord(op=null, reason=SystemOutage) : OutageRecord
+note right : No state change allowed during outage
+
+@enduml

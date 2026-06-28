@@ -1,0 +1,65 @@
+{
+  "task_id": 42,
+  "confidence": 0.9855,
+  "evidence": [
+    {
+      "claim": "Blood units have types.",
+      "fact": "The application manages compatibility between blood types.",
+      "score": 0.9988,
+      "user_story_span": "Blood units have unique identifiers and types",
+      "fact_span": "The application manages compatibility between blood types."
+    },
+    {
+      "claim": "Those units are marked as reserved.",
+      "fact": "The application reserves matched units.",
+      "score": 0.9981,
+      "user_story_span": "those units are marked as reserved",
+      "fact_span": "The application reserves matched units."
+    },
+    {
+      "claim": "Blood units have unique identifiers.",
+      "fact": "Each blood donation is logged with its blood type, Rhesus factor, and collection timestamp.",
+      "score": 0.9968,
+      "user_story_span": "Blood units have unique identifiers",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system allows reserving specific blood units for pending requests.",
+      "fact": "Reserved blood units are set aside for a specific order, and if not dispensed in a day, the hold is released back to general stock.",
+      "score": 0.9956,
+      "user_story_span": "reserve specific blood units for pending requests",
+      "fact_span": "Reserved blood units are set aside for a specific order"
+    },
+    {
+      "claim": "The user creates a pending request for a specific blood type and components.",
+      "fact": "A clinician can submit a transfusion order indicating the blood type, Rh requirement, and quantity.",
+      "score": 0.9942,
+      "user_story_span": "a pending request for a specific blood type and components",
+      "fact_span": "submit a transfusion order indicating the blood type, Rh requirement, and quantity"
+    },
+    {
+      "claim": "When the timeout expires for a reserved unit, that unit is automatically released.",
+      "fact": "Blood units that have passed their 42-day shelf life are automatically marked as expired and removed from matching consideration.",
+      "score": 0.993,
+      "user_story_span": "When the timeout expires for a reserved unit",
+      "fact_span": ""
+    },
+    {
+      "claim": "Those units are unavailable for other requests.",
+      "fact": "After a unit's expiration date, it is no longer considered for any transfusion requests.",
+      "score": 0.9918,
+      "user_story_span": "unavailable for other requests",
+      "fact_span": "no longer considered for any transfusion requests"
+    },
+    {
+      "claim": "When the interaction occurs, the system reserves the matching blood units.",
+      "fact": "When a request comes in, the system selects suitable blood units by checking ABO/Rh compatibility and picking the one expiring soonest among exact matches.",
+      "score": 0.99,
+      "user_story_span": "When the system reserves the matching blood units",
+      "fact_span": "When a request comes in, the system selects suitable blood units"
+    }
+  ],
+  "total_claims": 18,
+  "supported_claims": 8,
+  "threshold": 0.6
+}

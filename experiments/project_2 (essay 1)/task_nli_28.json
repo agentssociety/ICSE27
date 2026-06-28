@@ -1,0 +1,23 @@
+{
+  "task_id": 28,
+  "confidence": 0.8465,
+  "evidence": [
+    {
+      "claim": "Automatic release occurs once the timeframe expires without usage.",
+      "fact": "The application automatically expires units past their expiry date.",
+      "score": 0.9718,
+      "user_story_span": "Automatic release occurs once the timeframe expires without usage.",
+      "fact_span": ""
+    },
+    {
+      "claim": "The user has a scheduled transfusion with reserved units.",
+      "fact": "Exact-type matches are selected first.",
+      "score": 0.7212,
+      "user_story_span": "a scheduled transfusion with reserved units",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

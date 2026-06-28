@@ -1,0 +1,238 @@
+@startuml
+title Project 9 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+note as RelationshipCorrections
+  <b>Relationship cardinalities corrected by LLM review</b>
+  Actor "1" *-- "*" Permission → Actor "1" -- "*" Permission
+    Reason: Composition (many left, one right) is incorrect; an Actor has many Permissions, so undirected association with one-to-many is appropriate. Id 1 already shows the correct association.
+  AlternativeRunway "*" ..> AircraftType → AlternativeRunway "*" -- "*" AircraftType
+    Reason: Dependency with cardinality is misplaced; many AlternativeRunways can accommodate many AircraftTypes, so many-to-many association is more accurate.
+  AlternativeRunway "1" -- "1" Runway → AlternativeRunway "*" -- "1" Runway
+    Reason: One-to-one is too restrictive; a closed runway can have many alternative runways, so many alternative runways associated with one runway (a runway has many alternatives).
+  Flight "1" -- "0..*" Slot → Flight "1" -- "1" Slot
+    Reason: Each flight has exactly one active slot at a time; the existing zero-to-many multiplicity contradicts the one-to-one relationship in id 10. Corrected to one-to-one.
+  Flight "1" -- "0..1" CriticalFlight → CriticalFlight --|> Flight
+    Reason: A critical flight is a subtype of Flight, not an associated entity. Swapped classes and used inheritance to reflect that CriticalFlight extends Flight.
+  Flight "1" -- "0..1" EmergencyStateMarker → Flight "1" *-- "1" EmergencyStateMarker
+    Reason: Each flight owns one emergency state marker as part of its lifecycle; one-to-one composition (Flight contains EmergencyStateMarker) is more appropriate than association.
+  FlightAssignment "1" -- "1" TimeSlot → FlightAssignment "1" ..> "1" TimeSlot
+    Reason: The direct Flight-Slot association (id 10) already models the allocation; FlightAssignment should only depend on TimeSlot, not have a separate association, to avoid redundancy.
+  Operation "1" *-- "1" Interface → Operation "1" --> "1" Interface
+    Reason: An Operation uses an Interface, but composition implies ownership; directed association is more appropriate for a usage relationship.
+  Resource "1" *-- "*" Actor → Resource "*" -- "*" Actor
+    Reason: A Resource is not composed of Actors; many Actors can use many Resources, so many-to-many association is correct.
+  Resource "1" *-- "1" Actor → Resource "1" -- "1" Actor
+    Reason: Composition is incorrect; a simple one-to-one association between Resource and Actor (e.g., a resource currently assigned to one actor) is more plausible.
+  Slot "0..1" -- "1" Runway → Slot "1" -- "1" Runway
+    Reason: Each slot is assigned to exactly one runway; the zero-or-one multiplicity on Slot side is incorrect—a slot cannot exist without a runway.
+end note
+
+note as ArchitectureCorrections
+  <b>Architecture mistakes corrected automatically</b>
+  [wrong_class_type] FlightDataStore is declared as an interface but is used as a concrete data store for Flight entities.
+    Fix applied: change_class_type
+  [wrong_class_type] RunwaySlotDB is declared as an interface but is used as a concrete database for runway slot data.
+    Fix applied: change_class_type
+  [wrong_class_type] TimetableUI is declared as an interface but represents a concrete user interface component.
+    Fix applied: change_class_type
+  [wrong_inheritance] CriticalFlight inherits from Flight, but the domain describes emergency as a state of a flight, not a separate entity.
+    Fix applied: remove_relation
+  [missing_relationship] FlightAssignment should have a direct association with Flight, not just a dependency on TimeSlot.
+    Fix applied: add_relation
+  [missing_relationship] Runway should have a direct association with TimeSlot to support slot allocation per runway.
+    Fix applied: add_relation
+  [duplicate_concept] Slot and TimeSlot appear to represent the same concept (a time slot for a flight). They should be merged.
+    Fix applied: merge_classes
+  [other_correction] EmergencyStateMarker is a composition inside Flight, but emergency is a state that should be an attribute or enum, not a separate class.
+    Fix applied: remove_relation
+end note
+
+package "Task #65\nFlight Registration" {
+  class Flight <<main>> <<level0>>
+  interface FlightDataStore
+  enum FlightStatus
+  enum FlightType
+  class Resource
+}
+
+package "Task #66\nSlot Allocation with Gap" {
+  class TimeSlot <<main>> <<level1>>
+  class Slot
+  class SlotAllocation
+  class System
+}
+
+package "Task #67\nArrival Priority Over\nDepartures" {
+  note as TaskSummary67
+    No new domain model classes
+    Uses: Slot, Flight
+  end note
+}
+
+package "Task #68\nOverlap and Gap\nViolation Detection" {
+  note as TaskSummary68
+    No new domain model classes
+    Uses: Slot, Flight
+  end note
+}
+
+package "Task #69\nRunway Closure Handling" {
+  class Runway <<main>> <<level2>>
+  class Actor
+  class AirTrafficControl
+  enum AircraftType
+  class AlternativeRunway
+  class FlightOperations
+  class Passengers
+  class Permission
+}
+
+package "Task #70\nEmergency Priority Slot" {
+  note as TaskSummary70
+    No new domain model classes
+    Uses: Flight, Slot
+  end note
+}
+
+package "Task #71\nRunway Slot Timetable\nDisplay" {
+  note as TaskSummary71
+    No new domain model classes
+    Uses: Runway, Slot, Flight
+  end note
+}
+
+package "Shared / Cross-Task Classes\n[not owned by a single task]" <<Rectangle>> {
+  class CriticalFlight <<shared>>
+  note right of CriticalFlight : "appears only in relations; not owned by any task"
+  class EmergencyStateMarker <<shared>>
+  note right of EmergencyStateMarker : "appears only in relations; not owned by any task"
+  class FlightAssignment <<shared>>
+  note right of FlightAssignment : "appears only in relations; not owned by any task"
+  interface Interface <<shared>>
+  note right of Interface : "appears only in relations; not owned by any task"
+  class Operation <<shared>>
+  note right of Operation : "appears only in relations; not owned by any task"
+  interface RunwaySlotDB <<shared>>
+  note right of RunwaySlotDB : "appears only in relations; not owned by any task"
+  class RunwaySlotData <<shared>>
+  note right of RunwaySlotData : "appears only in relations; not owned by any task"
+  enum State <<shared>>
+  note right of State : "appears only in relations; not owned by any task"
+  interface TimetableUI <<shared>>
+  note right of TimetableUI : "appears only in relations; not owned by any task"
+}
+
+Actor "1" -- "*" Permission
+AirTrafficControl --> Flight
+AirTrafficControl --> Runway
+AirTrafficControl --|> Actor
+AlternativeRunway "*" -- "*" AircraftType
+AlternativeRunway "*" -- "1" Runway
+CriticalFlight --|> Flight
+Flight "1" *-- "1" EmergencyStateMarker
+Flight "1" -- "1" Slot
+Flight --> FlightStatus
+Flight --> FlightType
+Flight --> Resource
+FlightAssignment "1" --> "1" Flight
+FlightAssignment "1" ..> "1" TimeSlot
+FlightDataStore --> Flight
+FlightOperations --|> Actor
+Operation "1" *-- "1" Actor
+Operation "1" *-- "1" Permission
+Operation "1" *-- "1" Resource
+Operation "1" *-- "1" State
+Operation "1" --> "1" Interface
+Passengers --|> Actor
+Resource "*" -- "*" Actor
+Resource "1" -- "1" Actor
+Runway "1" -- "*" Flight
+Runway "1" -- "*" TimeSlot
+RunwaySlotDB --|> Interface
+RunwaySlotData --|> Resource
+Slot "1" -- "1" Runway
+SlotAllocation "1" --> "1" Flight
+SlotAllocation ..> TimeSlot
+System *--> TimeSlot
+TimetableUI --|> Interface
+note right of Flight #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [add_aggregate_root] Consider introducing an\naggregate root 'Schedule' that manages the\nallocation of TimeSlots to Flights on Runways,\nencapsulating the slot allocation and gap\nenforcement logic.
+end note
+
+note right of TimeSlot #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [add_aggregate_root] Consider introducing an\naggregate root 'Schedule' that manages the\nallocation of TimeSlots to Flights on Runways,\nencapsulating the slot allocation and gap\nenforcement logic.
+end note
+
+note right of Runway #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [add_aggregate_root] Consider introducing an\naggregate root 'Schedule' that manages the\nallocation of TimeSlots to Flights on Runways,\nencapsulating the slot allocation and gap\nenforcement logic.
+end note
+
+note right of Flight #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [introduce_value_object] Introduce a value\nobject 'FlightNumber' to encapsulate the flight\nnumber format and validation, rather than using\na primitive string.
+end note
+
+note right of AlternativeRunway #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [rename_for_clarity] Rename 'AlternativeRunway'\nto 'RunwayAssignment' or 'RunwayReassignment' to\nbetter reflect its role in handling runway\nclosures.
+end note
+
+note right of Operation #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [split_class] The 'Operation' class appears to\nbe a generic permission/resource wrapper.\nConsider splitting it into more specific domain\nconcepts like 'FlightOperation' and\n'RunwayOperation'.
+end note
+
+note right of FlightDataStore #FDFDE0
+  <b>SUGGESTION #5 (not applied)</b>
+  [extract_base_class] Extract a common base\ninterface 'Repository' for FlightDataStore and\nRunwaySlotDB to unify data access patterns.
+end note
+
+note right of RunwaySlotDB #FDFDE0
+  <b>SUGGESTION #5 (not applied)</b>
+  [extract_base_class] Extract a common base\ninterface 'Repository' for FlightDataStore and\nRunwaySlotDB to unify data access patterns.
+end note
+
+@enduml

@@ -1,0 +1,319 @@
+@startuml PackageArchitecture
+!pragma layout smetana
+scale 0.75
+
+title Package Architecture — Project 13
+
+skinparam {
+  BackgroundColor transparent
+  ComponentBorderColor #AAAAAA
+  ComponentFontSize 11
+  PackageFontSize 12
+  PackageFontStyle bold
+  ArrowColor #666666
+  ArrowThickness 1
+  Shadowing false
+}
+
+skinparam package<<Domain>> {
+  BackgroundColor #E1F5E1
+}
+skinparam package<<DTO>> {
+  BackgroundColor #E3F2FD
+}
+skinparam package<<Repository>> {
+  BackgroundColor #FCE4EC
+}
+skinparam package<<ORM>> {
+  BackgroundColor #FFF3E0
+}
+skinparam package<<Infra>> {
+  BackgroundColor #F3E5F5
+}
+skinparam package<<Service>> {
+  BackgroundColor #E0F2F1
+}
+skinparam package<<API>> {
+  BackgroundColor #FFF9C4
+}
+skinparam package<<UI>> {
+  BackgroundColor #F1F8E9
+}
+skinparam package<<Tests>> {
+  BackgroundColor #EEEEEE
+}
+skinparam package<<Config>> {
+  BackgroundColor #C8E6C9
+}
+skinparam package<<Docs>> {
+  BackgroundColor #BBDEFB
+}
+skinparam package<<Shared>> {
+  BackgroundColor #F5F5F5
+}
+
+package "Domain layer" <<Domain>> {
+  [domain.account] as domain_account
+  [domain.authentication_attempt] as domain_authentication_attempt
+  [domain.card] as domain_card
+  [domain.daily_withdrawal_limit] as domain_daily_withdrawal_limit
+  [domain.flagged_transaction] as domain_flagged_transaction
+  [domain.pin] as domain_pin
+  [domain.suspicious_pattern] as domain_suspicious_pattern
+  [domain.transaction_state] as domain_transaction_state
+  [domain.withdrawal_transaction] as domain_withdrawal_transaction
+}
+
+package "DTO layer" <<DTO>> {
+  [dto.account] as dto_account
+  [dto.authentication_attempt] as dto_authentication_attempt
+  [dto.card] as dto_card
+  [dto.daily_withdrawal_limit] as dto_daily_withdrawal_limit
+  [dto.flagged_transaction] as dto_flagged_transaction
+  [dto.pin] as dto_pin
+  [dto.suspicious_pattern] as dto_suspicious_pattern
+  [dto.transaction_state] as dto_transaction_state
+  [dto.withdrawal_transaction] as dto_withdrawal_transaction
+}
+
+package "Repository layer" <<Repository>> {
+  [repository.account] as repository_account
+  [repository.authentication_attempt] as repository_authentication_attempt
+  [repository.card] as repository_card
+  [repository.daily_withdrawal_limit] as repository_daily_withdrawal_limit
+  [repository.flagged_transaction] as repository_flagged_transaction
+  [repository.pin] as repository_pin
+  [repository.suspicious_pattern] as repository_suspicious_pattern
+  [repository.transaction_state] as repository_transaction_state
+  [repository.withdrawal_transaction] as repository_withdrawal_transaction
+}
+
+package "ORM layer" <<ORM>> {
+  [orm.account] as orm_account
+  [orm.authentication_attempt] as orm_authentication_attempt
+  [orm.card] as orm_card
+  [orm.daily_withdrawal_limit] as orm_daily_withdrawal_limit
+  [orm.flagged_transaction] as orm_flagged_transaction
+  [orm.pin] as orm_pin
+  [orm.suspicious_pattern] as orm_suspicious_pattern
+  [orm.transaction_state] as orm_transaction_state
+  [orm.withdrawal_transaction] as orm_withdrawal_transaction
+}
+
+package "Infra layer" <<Infra>> {
+  [infra.account] as infra_account
+  [infra.authentication_attempt] as infra_authentication_attempt
+  [infra.card] as infra_card
+  [infra.daily_withdrawal_limit] as infra_daily_withdrawal_limit
+  [infra.flagged_transaction] as infra_flagged_transaction
+  [infra.pin] as infra_pin
+  [infra.suspicious_pattern] as infra_suspicious_pattern
+  [infra.transaction_state] as infra_transaction_state
+  [infra.withdrawal_transaction] as infra_withdrawal_transaction
+}
+
+package "Service layer" <<Service>> {
+  [service.account] as service_account
+  [service.authentication_attempt] as service_authentication_attempt
+  [service.card] as service_card
+  [service.daily_withdrawal_limit] as service_daily_withdrawal_limit
+  [service.flagged_transaction] as service_flagged_transaction
+  [service.pin] as service_pin
+  [service.suspicious_pattern] as service_suspicious_pattern
+  [service.transaction_state] as service_transaction_state
+  [service.withdrawal_transaction] as service_withdrawal_transaction
+}
+
+package "API layer" <<API>> {
+  [api.account] as api_account
+  [api.authentication_attempt] as api_authentication_attempt
+  [api.card] as api_card
+  [api.daily_withdrawal_limit] as api_daily_withdrawal_limit
+  [api.flagged_transaction] as api_flagged_transaction
+  [api.pin] as api_pin
+  [api.suspicious_pattern] as api_suspicious_pattern
+  [api.transaction_state] as api_transaction_state
+  [api.withdrawal_transaction] as api_withdrawal_transaction
+}
+
+package "Config layer" <<Config>> {
+  [config.settings] as config_settings
+}
+
+package "Docs layer" <<Docs>> {
+  [docs.api_and_deployment] as docs_api_and_deployment
+}
+
+package "Tests layer" <<Tests>> {
+  [tests.integration] as tests_integration
+  [tests.unit.account] as tests_unit_account
+  [tests.unit.authentication_attempt] as tests_unit_authentication_attempt
+  [tests.unit.card] as tests_unit_card
+  [tests.unit.daily_withdrawal_limit] as tests_unit_daily_withdrawal_limit
+  [tests.unit.flagged_transaction] as tests_unit_flagged_transaction
+  [tests.unit.pin] as tests_unit_pin
+  [tests.unit.suspicious_pattern] as tests_unit_suspicious_pattern
+  [tests.unit.transaction_state] as tests_unit_transaction_state
+  [tests.unit.withdrawal_transaction] as tests_unit_withdrawal_transaction
+}
+
+' ── Dependencies ──
+dto_account --> domain_account
+repository_account --> domain_account
+orm_account --> domain_account
+infra_account --> domain_account
+infra_account --> repository_account
+infra_account --> orm_account
+service_account --> domain_account
+service_account --> repository_account
+service_account --> dto_account
+api_account --> service_account
+api_account --> dto_account
+dto_daily_withdrawal_limit --> domain_daily_withdrawal_limit
+repository_daily_withdrawal_limit --> domain_daily_withdrawal_limit
+orm_daily_withdrawal_limit --> domain_daily_withdrawal_limit
+infra_daily_withdrawal_limit --> domain_daily_withdrawal_limit
+infra_daily_withdrawal_limit --> repository_daily_withdrawal_limit
+infra_daily_withdrawal_limit --> orm_daily_withdrawal_limit
+service_daily_withdrawal_limit --> domain_daily_withdrawal_limit
+service_daily_withdrawal_limit --> repository_daily_withdrawal_limit
+service_daily_withdrawal_limit --> dto_daily_withdrawal_limit
+api_daily_withdrawal_limit --> service_daily_withdrawal_limit
+api_daily_withdrawal_limit --> dto_daily_withdrawal_limit
+dto_authentication_attempt --> domain_authentication_attempt
+repository_authentication_attempt --> domain_authentication_attempt
+orm_authentication_attempt --> domain_authentication_attempt
+infra_authentication_attempt --> domain_authentication_attempt
+infra_authentication_attempt --> repository_authentication_attempt
+infra_authentication_attempt --> orm_authentication_attempt
+service_authentication_attempt --> domain_authentication_attempt
+service_authentication_attempt --> repository_authentication_attempt
+service_authentication_attempt --> dto_authentication_attempt
+api_authentication_attempt --> service_authentication_attempt
+api_authentication_attempt --> dto_authentication_attempt
+dto_transaction_state --> domain_transaction_state
+repository_transaction_state --> domain_transaction_state
+orm_transaction_state --> domain_transaction_state
+infra_transaction_state --> domain_transaction_state
+infra_transaction_state --> repository_transaction_state
+infra_transaction_state --> orm_transaction_state
+service_transaction_state --> domain_transaction_state
+service_transaction_state --> repository_transaction_state
+service_transaction_state --> dto_transaction_state
+api_transaction_state --> service_transaction_state
+api_transaction_state --> dto_transaction_state
+dto_card --> domain_card
+repository_card --> domain_card
+orm_card --> domain_card
+infra_card --> domain_card
+infra_card --> repository_card
+infra_card --> orm_card
+service_card --> domain_card
+service_card --> repository_card
+service_card --> dto_card
+service_card --> service_account
+api_card --> service_card
+api_card --> dto_card
+dto_pin --> domain_pin
+repository_pin --> domain_pin
+orm_pin --> domain_pin
+infra_pin --> domain_pin
+infra_pin --> repository_pin
+infra_pin --> orm_pin
+service_pin --> domain_pin
+service_pin --> repository_pin
+service_pin --> dto_pin
+service_pin --> service_account
+api_pin --> service_pin
+api_pin --> dto_pin
+dto_withdrawal_transaction --> domain_withdrawal_transaction
+repository_withdrawal_transaction --> domain_withdrawal_transaction
+orm_withdrawal_transaction --> domain_withdrawal_transaction
+infra_withdrawal_transaction --> domain_withdrawal_transaction
+infra_withdrawal_transaction --> repository_withdrawal_transaction
+infra_withdrawal_transaction --> orm_withdrawal_transaction
+service_withdrawal_transaction --> domain_withdrawal_transaction
+service_withdrawal_transaction --> repository_withdrawal_transaction
+service_withdrawal_transaction --> dto_withdrawal_transaction
+service_withdrawal_transaction --> service_account
+service_withdrawal_transaction --> service_daily_withdrawal_limit
+api_withdrawal_transaction --> service_withdrawal_transaction
+api_withdrawal_transaction --> dto_withdrawal_transaction
+dto_flagged_transaction --> domain_flagged_transaction
+repository_flagged_transaction --> domain_flagged_transaction
+orm_flagged_transaction --> domain_flagged_transaction
+infra_flagged_transaction --> domain_flagged_transaction
+infra_flagged_transaction --> repository_flagged_transaction
+infra_flagged_transaction --> orm_flagged_transaction
+service_flagged_transaction --> domain_flagged_transaction
+service_flagged_transaction --> repository_flagged_transaction
+service_flagged_transaction --> dto_flagged_transaction
+service_flagged_transaction --> service_account
+service_flagged_transaction --> service_withdrawal_transaction
+api_flagged_transaction --> service_flagged_transaction
+api_flagged_transaction --> dto_flagged_transaction
+dto_suspicious_pattern --> domain_suspicious_pattern
+repository_suspicious_pattern --> domain_suspicious_pattern
+orm_suspicious_pattern --> domain_suspicious_pattern
+infra_suspicious_pattern --> domain_suspicious_pattern
+infra_suspicious_pattern --> repository_suspicious_pattern
+infra_suspicious_pattern --> orm_suspicious_pattern
+service_suspicious_pattern --> domain_suspicious_pattern
+service_suspicious_pattern --> repository_suspicious_pattern
+service_suspicious_pattern --> dto_suspicious_pattern
+service_suspicious_pattern --> service_account
+service_suspicious_pattern --> service_withdrawal_transaction
+api_suspicious_pattern --> service_suspicious_pattern
+api_suspicious_pattern --> dto_suspicious_pattern
+tests_unit_account --> domain_account
+tests_unit_account --> service_account
+tests_unit_account --> api_account
+tests_unit_daily_withdrawal_limit --> domain_daily_withdrawal_limit
+tests_unit_daily_withdrawal_limit --> service_daily_withdrawal_limit
+tests_unit_daily_withdrawal_limit --> api_daily_withdrawal_limit
+tests_unit_authentication_attempt --> domain_authentication_attempt
+tests_unit_authentication_attempt --> service_authentication_attempt
+tests_unit_authentication_attempt --> api_authentication_attempt
+tests_unit_transaction_state --> domain_transaction_state
+tests_unit_transaction_state --> service_transaction_state
+tests_unit_transaction_state --> api_transaction_state
+tests_unit_card --> domain_card
+tests_unit_card --> service_card
+tests_unit_card --> api_card
+tests_unit_pin --> domain_pin
+tests_unit_pin --> service_pin
+tests_unit_pin --> api_pin
+tests_unit_withdrawal_transaction --> domain_withdrawal_transaction
+tests_unit_withdrawal_transaction --> service_withdrawal_transaction
+tests_unit_withdrawal_transaction --> api_withdrawal_transaction
+tests_unit_flagged_transaction --> domain_flagged_transaction
+tests_unit_flagged_transaction --> service_flagged_transaction
+tests_unit_flagged_transaction --> api_flagged_transaction
+tests_unit_suspicious_pattern --> domain_suspicious_pattern
+tests_unit_suspicious_pattern --> service_suspicious_pattern
+tests_unit_suspicious_pattern --> api_suspicious_pattern
+tests_integration --> api_account
+tests_integration --> api_daily_withdrawal_limit
+tests_integration --> api_authentication_attempt
+tests_integration --> api_transaction_state
+tests_integration --> api_card
+tests_integration --> api_pin
+tests_integration --> api_withdrawal_transaction
+tests_integration --> api_flagged_transaction
+tests_integration --> api_suspicious_pattern
+
+legend right
+  **Layers (top → bottom)**
+  Domain → DTO → Repository → ORM → Infra
+  → Service → API → UI
+  Shared: cross-cutting utilities
+  Tests: mirrors every layer
+  Config / Docs: support concerns
+  ----
+  Packages: 75
+  Tasks: 6
+  Domain classes: 9
+  Generated: 2026-06-17 09:58 UTC
+end legend
+
+@enduml

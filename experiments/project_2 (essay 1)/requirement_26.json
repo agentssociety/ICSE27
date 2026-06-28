@@ -1,0 +1,92 @@
+{
+  "id": "REQ-BT-01",
+  "title": "Accept and Log Transfusion Requests",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall accept transfusion requests from healthcare providers, log them in the database with a unique identifier, and store all necessary details.",
+  "rationale": "To ensure efficient processing and tracking of transfusion requests by blood bank technicians.",
+  "business_value": "Improves operational efficiency and reduces errors in managing transfusion requests.",
+  "source": {
+    "type": "User Story",
+    "id": 26,
+    "description": "As a blood bank technician, I need accept and log transfusion requests from healthcare providers so that we can process and track transfusion requests efficiently."
+  },
+  "stakeholders": [
+    "Blood Bank Technicians",
+    "Healthcare Providers",
+    "IT Team"
+  ],
+  "acceptance_criteria": [
+    "The request is accepted and logged in the database with a unique ID."
+  ],
+  "preconditions": [
+    "A healthcare provider submits a transfusion request."
+  ],
+  "postconditions": [
+    "The system accepts the transfusion request.",
+    "The request is stored in the database with all necessary details.",
+    "The request has a unique identifier for tracking."
+  ],
+  "functional_constraints": [
+    "The system must accurately capture and store all required patient details, blood type, quantity, and urgency."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What if a healthcare provider submits an incomplete request?",
+    "How should the system handle duplicate requests for the same patient and blood type?",
+    "What if the database is unavailable during a request submission?"
+  ],
+  "dependencies": [
+    "Healthcare Provider System",
+    "Database Management System"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "TransfusionRequestAPI",
+      "description": "Interface for receiving transfusion requests from healthcare providers."
+    },
+    {
+      "type": "Database",
+      "name": "TransfusionRequestDB",
+      "description": "Database where all transfusion requests will be stored with a unique identifier."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-BT-01",
+      "description": "Submit a complete transfusion request.",
+      "expected_result": "The system should accept the request and log it in the database with a unique ID."
+    },
+    {
+      "id": "TC-BT-02",
+      "description": "Submit an incomplete transfusion request (missing patient details).",
+      "expected_result": "The system should reject the request and provide an error message to the healthcare provider."
+    },
+    {
+      "id": "TC-BT-03",
+      "description": "Submit a duplicate request for the same patient and blood type.",
+      "expected_result": "The system should accept the request but log it as a duplicate, providing a warning to the healthcare provider."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T14:47:58.447251",
+  "last_updated": "2026-06-14T14:50:49.366457",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "TransfusionRequest"
+    ],
+    "test_artifacts": []
+  }
+}

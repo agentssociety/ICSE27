@@ -1,0 +1,106 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam packageStyle rect
+skinparam defaultFontSize 12
+skinparam defaultFontName Helvetica
+
+package "Domain Model" <<Domain>> {
+  interface Actor {
+  }
+
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+
+  enum AccountStatus {
+    LOCKED
+    UNLOCKED
+  }
+
+  enum State {
+    LOCKED
+    UNLOCKED
+    ACTIVE
+    FLAGGED
+  }
+
+  class Admin implements Actor {
+    + mayPerform: Permission[]
+  }
+
+  class User implements Actor {
+    + accountStatus: AccountStatus
+    + owner: Admin
+  }
+
+  class Account {
+    + owner: Actor
+    + accessible: Actor[]
+  + getStatus() : AccountStatus
+  }
+
+  class Transaction {
+    + amount: Integer
+    + timestamp: Time
+    + flagged: Boolean
+    + userID: User
+  + createFlaggedList(transactions: List)
+  + createHistoryList(transactions: List)
+  }
+
+  class FlaggedTransaction extends Transaction {
+  }
+
+  class AuthenticationAttempt {
+    + success: Boolean
+    + timestamp: Time
+  + create(success: true, timestamp: Time)
+  }
+
+  class TransactionStateChange {
+    + oldState: State
+    + newState: State
+  + create(oldState: UNLOCKED, newState: LOCKED)
+  + create(oldState: LOCKED, newState: UNLOCKED)
+  }
+
+  Admin -right-> "manages" User : 1..*
+  Admin -right-> "views" Transaction : 1..*
+  User *-- Account : 1
+  Account -down-> "contains" Transaction : 1..*
+  FlaggedTransaction --|> Transaction
+}
+
+package "Application" <<Application>> {
+  interface "Admin_API" as AdminAPI {
+  }
+}
+
+package "Infrastructure — Ports" <<Infrastructure>> {
+  interface "User_Database" as UserDatabase {
+  }
+}
+
+package "Exceptions" <<Exceptions>> {
+  class AuthenticationException <<exception>> {
+  }
+
+  class NotFoundException <<exception>> {
+  }
+
+  class ConflictException <<exception>> {
+  }
+
+  class ServiceUnavailableException <<exception>> {
+  }
+
+  class InternalServerErrorException <<exception>> {
+  }
+}
+
+Admin .right.> AdminAPI : uses
+
+@enduml

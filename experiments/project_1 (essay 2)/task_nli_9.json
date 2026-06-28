@@ -1,0 +1,23 @@
+{
+  "task_id": 9,
+  "confidence": 0.9923,
+  "evidence": [
+    {
+      "claim": "The system sorts the patient queue by urgency level ascending.",
+      "fact": "It orders the waiting list so that higher-priority cases appear before lower-priority ones, with ties broken by time of entry.",
+      "score": 0.9948,
+      "user_story_span": "the queue to be sorted first by urgency level (lowest number first)",
+      "fact_span": "higher-priority cases appear before lower-priority ones"
+    },
+    {
+      "claim": "The system sorts the patient queue by arrival time ascending.",
+      "fact": "It orders the waiting list so that higher-priority cases appear before lower-priority ones, with ties broken by time of entry.",
+      "score": 0.9898,
+      "user_story_span": "then by arrival time (earliest first)",
+      "fact_span": "ties broken by time of entry"
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

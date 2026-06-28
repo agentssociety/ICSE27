@@ -1,0 +1,183 @@
+@startuml
+skinparam backgroundColor white
+skinparam sequenceMessageAlign center
+
+box "External Layer" #LightGrey
+  actor "EndUser" as EU
+  actor "Admin" as AD
+  participant LoginInterface as LI
+end box
+
+box "Controller Layer" #LightBlue
+  participant LoginController as LC
+  participant UnlockController as UC
+end box
+
+box "Application Layer" #LightGreen
+  participant LoginService as LS
+  participant UnlockService as US
+end box
+
+box "Domain Layer" #LightYellow
+  participant Account as A
+  participant User as U
+  participant Actor as Act
+  participant Resource as Res
+  participant Operation as Op
+  participant FailedAttempt as FA
+  participant Permission as Perm
+  participant State as S
+  participant LockStatus as LSEnum
+  participant PermissionType as PTEnum
+  participant StateValue as SVEnum
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant PINAttemptTrackingPort as PATP
+  participant UserAccountPort as UAP
+  participant LoginNotificationPort as LNP
+  participant UserAccountDatabase as DB
+end box
+
+== Login Flow ==
+
+EU -> LI : enters PIN
+LI -> LC : POST /login (userID, PIN)
+LC -> LS : authenticate(userID, PIN)
+
+alt Account already locked
+  LS -> UAP : loadAccount(userID)
+  UAP -> DB : SELECT account WHERE userId = :uid [TLS]
+  DB --> UAP : Account (lockStatus=locked)
+  UAP --> LS : Account(locked)
+  LS -> LNP : notifyLocked(userID)
+  LNP -> LI : show "Account locked" message
+  LI --> EU : display lock notification
+  LS --> LC : return 403 Forbidden
+  LC --> LI : HTTP 403
+
+else Account not locked (process PIN)
+  LS -> UAP : loadAccount(userID)
+  UAP -> DB : SELECT account [TLS]
+  DB --> UAP : Account (lockStatus=unlocked, consecutiveFailedCount=0)
+  UAP --> LS : Account(unlocked)
+
+  LS -> PATP : verifyPIN(userID, PIN)
+  alt PIN correct
+    PATP --> LS : PIN valid
+    LS -> A : resetFailedAttempts()
+    A -> A : set consecutiveFailedCount = 0
+    A -> A : set lockStatus = unlocked
+    note right: State transition: any → Post0
+    LS -> UAP : saveAccount(updated Account)
+    UAP -> DB : UPDATE account [TLS, encrypted at rest]
+    DB --> UAP : OK
+    UAP --> LS : saved
+    LS -> LNP : notifyLoginSuccess(userID)
+    LNP -> LI : show "Login successful" message
+    LI --> EU : display success
+    LS --> LC : return 200 OK
+    LC --> LI : HTTP 200
+
+  else PIN incorrect
+    PATP --> LS : PIN invalid
+    LS -> A : incrementFailedAttempts()
+    A -> A : consecutiveFailedCount++
+    note right: Check invariant: if count >=3, must lock
+    alt consecutiveFailedCount < 3
+      A -> A : set lockStatus = unlocked (unchanged)
+      LS -> UAP : saveAccount(updated Account)
+      UAP -> DB : UPDATE account [TLS]
+      DB --> UAP : OK
+      LS -> LNP : notifyWrongPIN(count)
+      LNP -> LI : show "Wrong PIN, attempts left: {3-count}"
+      LI --> EU : display warning
+      LS --> LC : return 401 Unauthorized
+      LC --> LI : HTTP 401
+    else consecutiveFailedCount >= 3
+      A -> A : set lockStatus = locked
+      note right: State transition: Pre1 → Post1 (locked)
+      LS -> UAP : saveAccount(locked Account)
+      UAP -> DB : UPDATE account [TLS]
+      DB --> UAP : OK
+      LS -> LNP : notifyAccountLocked(userID)
+      LNP -> LI : show "Account locked – contact admin"
+      LI --> EU : display lock notification
+      LS --> LC : return 423 Locked
+      LC --> LI : HTTP 423
+    end
+  end
+
+end
+
+alt System failure during attempt counting
+  LS -> PATP : verifyPIN(userID, PIN)
+  PATP --> LS : failure (database error)
+  LS -> LNP : notifyError(userID)
+  LNP -> LI : show "System error – try later or contact support"
+  LI --> EU : display error
+  LS --> LC : return 500 Internal Server Error
+  LC --> LI : HTTP 500
+end
+
+== Unlock Flow ==
+
+AD -> LI : request unlock (userID, adminToken)
+LI -> UC : POST /admin/unlock (userID, adminToken)
+UC -> US : unlockAccount(adminToken, userID)
+
+alt Admin permission check fails
+  US -> Perm : checkPermission(adminToken, Admin)
+  Perm --> US : denied
+  US -> LNP : notifyUnauthorized(adminID)
+  LNP -> LI : show "Admin permission required"
+  LI --> AD : display error
+  US --> UC : return 403 Forbidden
+  UC --> LI : HTTP 403
+
+else Admin permission granted
+  US -> Perm : checkPermission(adminToken, Admin)
+  Perm --> US : granted
+  US -> A : loadAccount(userID)
+  note right: using UserAccountPort internally
+  US -> PATP : resetAttempts(userID)
+  PATP -> DB : UPDATE failed_attempt SET count=0 WHERE actor_id=:uid [TLS]
+  DB --> PATP : OK
+  PATP --> US : reset done
+  US -> A : setLockStatus(unlocked)
+  A -> A : set consecutiveFailedCount = 0
+  note right: State transition: Post1 → Post0 (unlocked)
+  US -> UAP : saveAccount(updated Account)
+  UAP -> DB : UPDATE account [TLS, encrypted at rest]
+  DB --> UAP : OK
+  UAP --> US : saved
+  US -> LNP : notifyUnlocked(userID)
+  LNP -> LI : show "Your account has been unlocked"
+  LI --> AD : confirmation
+  LI --> EU : notification (if online)
+  US --> UC : return 200 OK
+  UC --> LI : HTTP 200
+end
+
+== State Transitions (Domain Object) ==
+
+participant S as "State (StateValue)"
+
+note over S : Pre1: three consecutive fails recorded
+note over S : Post0: unlocked/normal
+note over S : Post1: locked
+
+S -> S : correct PIN → StateValue.Post0
+S -> S : three consecutive fails → StateValue.Pre1
+S -> S : incorrect PIN when Pre1 → StateValue.Post1
+S -> S : admin unlock → StateValue.Post0
+note right of S : Cooldown period also triggers Post0 (not modelled here)
+
+== Implementation Constraints ==
+
+note over LS, UAP : Consecutive failed attempts must be counted atomically (no race conditions)
+note over LS, A : Invariant enforcement: consecutiveFailedCount >= 3 ⇒ lockStatus = locked
+note over LS, PATP : All communication channels must be authenticated (authenticated=True)
+note over UC, Perm : Only actors with Admin permission can unlock accounts
+
+@enduml

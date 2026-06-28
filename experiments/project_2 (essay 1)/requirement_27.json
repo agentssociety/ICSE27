@@ -1,0 +1,93 @@
+{
+  "id": "REQ-TRANSFUSION-01",
+  "title": "Blood Unit Compatibility Matching",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall match transfusion requests to compatible blood units based on ABO blood group and Rh factor compatibility, excluding incompatible matches.",
+  "rationale": "To ensure patient safety by preventing the use of incompatible blood units in transfusions.",
+  "business_value": "Improves patient safety and reduces the risk of adverse reactions from incompatible blood transfusions.",
+  "source": {
+    "type": "User Story",
+    "id": 27,
+    "description": "As a lab technician I need to match transfusion requests to compatible blood units based on type and Rh factor So that patients receive safe transfusions"
+  },
+  "stakeholders": [
+    "Lab Technicians",
+    "Clinical Staff",
+    "Medical Directors"
+  ],
+  "acceptance_criteria": [
+    "Given a transfusion request for blood type A positive\nWhen the system searches for compatible blood units\nThen it returns only units that are A positive or O positive"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "Compatible blood units based on type and Rh factor are suggested",
+    "Incompatible matches are excluded"
+  ],
+  "functional_constraints": [
+    "Matching considers ABO blood group and Rh factor compatibility",
+    "Only units with identical or compatible type and Rh factor are suggested"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "When a transfusion request is made for a blood type not supported by the system (e.g., AB negative)",
+    "When there are no compatible units available in the inventory",
+    "When the request specifies a Rh factor that is not recognized or supported"
+  ],
+  "dependencies": [
+    "Blood unit inventory management system",
+    "ABO blood group and Rh factor database"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Blood Unit Inventory Database",
+      "description": "The requirement interacts with the database to retrieve and update information about available blood units."
+    },
+    {
+      "type": "API",
+      "name": "ABO Blood Group API",
+      "description": "The requirement uses an external API to validate and fetch ABO blood group and Rh factor compatibility."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-TRANSFUSION-01",
+      "description": "Given a transfusion request for blood type A positive, When the system searches for compatible blood units, Then it returns only units that are A positive or O positive.",
+      "expected_result": "The system filters and returns compatible blood units (A+ and O+) while excluding incompatible units."
+    },
+    {
+      "id": "TC-TRANSFUSION-02",
+      "description": "Given a transfusion request for an unsupported blood type, When the system searches for compatible blood units, Then it should return an error message.",
+      "expected_result": "The system displays an error indicating that the requested blood type is not supported."
+    },
+    {
+      "id": "TC-TRANSFUSION-03",
+      "description": "Given a transfusion request with an unrecognized Rh factor, When the system searches for compatible blood units, Then it should return an error message.",
+      "expected_result": "The system displays an error stating that the specified Rh factor is not recognized or supported."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T14:48:18.165821",
+  "last_updated": "2026-06-14T14:50:51.460391",
+  "traceability": {
+    "related_requirements": [
+      "REQ-INV-01"
+    ],
+    "design_components": [
+      "TransfusionRequest",
+      "BloodUnit"
+    ],
+    "test_artifacts": []
+  }
+}

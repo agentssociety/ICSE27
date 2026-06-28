@@ -1,0 +1,173 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classStyle bold
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 11
+skinparam backgroundColor #FEFEFE
+skinparam noteBackgroundColor #FFFFDD
+skinparam noteBorderColor #DDBB66
+
+' ===========================================================================
+' Enums
+' ===========================================================================
+package "Enums" {
+    enum PermissionLevel {
+        Read
+        Write
+        Execute
+        Admin
+    }
+
+    enum ViolationType {
+        OVERLAP
+        GAP_VIOLATION
+    }
+
+    enum InterfaceKind {
+        API
+        UI
+        Database
+    }
+}
+
+' ===========================================================================
+' Domain Model
+' ===========================================================================
+package "Domain Model" {
+
+    class FlightAssignment {
+        - flightId : String
+        - startTime : DateTime
+        - endTime : DateTime
+        - aircraft : String
+        - assignedTimeSlot : TimeSlot
+  + checkOverlap(newAssignment: FlightAssignment, existing: List<FlightAssignment>) : boolean
+    }
+    note right of FlightAssignment
+        "Invariant: No two flights may occupy overlapping time windows\nGap between consecutive assignments must be >= 3 minutes"
+    end note
+
+    class TimeSlot {
+        - start : DateTime
+        - end : DateTime
+        - duration : Duration
+  + computeGap(endTime1: DateTime, startTime2: DateTime) : Duration
+  + normalizeToUTC(slot: TimeSlot) : TimeSlot
+    }
+    note left of TimeSlot : "Duration must be positive"
+
+    class Alert {
+        - timestamp : DateTime
+        - flightIds : List<String>
+        - violationType : ViolationType
+        - message : String
+  + createAlert(flightIds: List<String>, violationType: ViolationType.OVERLAP, message: String) : Alert
+  + createAlert(flightIds: List<String>, violationType: ViolationType.GAP_VIOLATION, message: String) : Alert
+    }
+    note left of Alert : "Must be generated within 1 minute of violation detection"
+
+    class Actor {
+        - name : String
+  + getPermissions() : List<Permission>
+  + isOwner(actor: Actor) : boolean
+    }
+    note top of Actor : "Must have at least Read permission for scheduling data"
+
+    class Permission {
+        ' level is an attribute
+  + hasRequiredLevel(permissions: List<Permission>, required: PermissionLevel) : boolean
+    }
+    note bottom of Permission : "Hierarchy: Read < Write < Execute < Admin"
+
+    class Resource {
+        - owner : Actor
+        - accessible : List<Actor>
+  + isAccessibleBy(actor: Actor) : boolean
+  + checkAccessibleActors(actor: Actor) : boolean
+    }
+    note right of Resource : "Owner always accessible"
+
+    class State {
+        - name : String
+  + transitionTo(Post1)
+  + transitionTo(Monitoring)
+  + transitionTo(ErrorState)
+  + transitionTo(Post2)
+    }
+    note left of State : "Distinct pre and post states"
+}
+
+' ===========================================================================
+' Application
+' ===========================================================================
+package "Application" {
+    class Operation {
+        ' attributes may be added later
+  + processOverlapDetection(assignments: List<FlightAssignment>)
+  + retryLogic(maxRetries: int = 3)
+  + logFailure(error: String)
+  + processGapViolationDetection(assignments: List<FlightAssignment>)
+  + logViolation(alert: Alert)
+  + scheduleRetryDisplay(alert: Alert, retryInterval: Duration)
+  + checkPermission(actor: Actor, requiredPermission: PermissionLevel)
+  + proceedWithOperation()
+    }
+    note bottom of Operation
+        "Constraint: preState != postState\nAffect at least one resource\nUse exactly 2 channels\nNo two operations share a channel\n..."
+    end note
+}
+
+' ===========================================================================
+' Infrastructure — Ports
+' ===========================================================================
+package "Infrastructure — Ports" {
+    interface "Interface" as GenericInterface {
+        - kind : InterfaceKind
+        - isEncrypted : boolean
+        - isAuthenticated : boolean
+    }
+
+    interface "Flight Data API" as FlightDataAPI {
+    }
+    FlightDataAPI --|> GenericInterface
+
+    interface "Scheduling Database" as SchedulingDatabase {
+    }
+    SchedulingDatabase --|> GenericInterface
+
+    interface "Alert UI" as AlertUI {
+    }
+    AlertUI --|> GenericInterface
+}
+
+' ===========================================================================
+' Relationships
+' ===========================================================================
+' Actor – Permission
+Actor "1" -- "0..*" Permission : may perform
+
+' Resource – Actor
+Resource "1" -- "1" Actor : owned by
+Resource "1" -- "0..*" Actor : accessible by
+
+' Operation – other domain classes
+Operation "1" -- "1" Actor : initiated by
+Operation "1" -- "1..*" Resource : targets
+Operation "1" -- "1..*" GenericInterface : uses
+Operation "1" -- "1" Permission : requires
+Operation "1" -- "1" State : preState
+Operation "1" -- "1" State : postState
+
+' FlightAssignment – TimeSlot
+FlightAssignment "1" -- "1" TimeSlot : assigned time slot
+
+' Alert – ViolationType (enum)
+Alert "1" -- ViolationType : violation type
+
+' Permission – PermissionLevel (enum)
+Permission *-- PermissionLevel : level
+
+' GenericInterface – InterfaceKind (enum)
+GenericInterface "1" -- InterfaceKind : kind
+
+@enduml

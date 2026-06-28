@@ -1,0 +1,114 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam class {
+    BorderColor #333333
+    FontColor #333333
+    BackgroundColor #FFFFFF
+}
+skinparam interface {
+    BorderColor #336699
+    FontColor #336699
+    BackgroundColor #F0F5FA
+}
+skinparam enum {
+    BorderColor #669933
+    FontColor #669933
+    BackgroundColor #F5FAF0
+}
+
+package "Domain Model" {
+    class Account {
+        - availableBalance : float
+        - dailyWithdrawalLimit : float
+        - cumulativeDailyWithdrawals : float
+        .. invariants ..
+        cumulativeDailyWithdrawals <= dailyWithdrawalLimit
+        availableBalance >= 0
+  + checkBalance(transaction: Transaction, balance: float) : boolean
+  + checkDailyLimit(transaction: Transaction, cumulativeWithdrawals: float, dailyLimit: float) : boolean
+  + deductBalance(amount: float) : float
+  + updateCumulativeWithdrawals(amount: float) : float
+    }
+
+    class Transaction {
+        - amount : float
+        .. invariants ..
+        amount > 0
+    }
+
+    class User {
+        - userId : String
+        - permissions : set of Permission
+    }
+
+    enum Permission <<enum>> {
+        Read
+        Write
+        Execute
+        Admin
+        .. invariants ..
+        Admin subsumes all others
+        Execute subsumes Read
+        Write subsumes Read
+    }
+
+    enum State <<enum>> {
+        Pre1
+        Pre2
+        Post1
+        Post2
+    }
+}
+
+package "Application" {
+    class Operation {
+        - initiator : Actor
+        - target : Resource
+        - channel : Interface
+        - grant : Permission
+        - pre : State
+        - post : State
+        .. invariants ..
+        initiator has grant permission
+        initiator is in target.accessible
+        operation has at least one target and one channel
+        pre != post
+        post in {Post1, Post2}
+  + createOperation(pre: Pre1, post: Post2)
+  + createOperation(pre: Pre2, post: Post2)
+  + createOperation(pre: Pre1, post: Post1)
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface User_Balance_and_Limit_Database <<interface>> {
+        + getBalance(userId) : float
+        + getDailyLimit(userId) : float
+        + getCumulativeWithdrawals(userId) : float
+        + updateAccount(userId, newBalance, newCumulative) : void
+        .. security ..
+        encrypted = True
+        authenticated = True
+  + getBalance(userId: String) : float
+  + getDailyLimit(userId: String) : float
+  + getCumulativeWithdrawals(userId: String) : float
+  + updateAccount(userId: String, newBalance: float, newCumulative: float)
+    }
+
+    class UserBalanceAndLimitDB {
+        - encrypted : Bool = True
+        - authenticated : Bool = True
+  + updateAccount(userId, newBalance, newCumulative)
+    }
+}
+
+' Relationships
+User "1" --> "1" Account : owns
+User "1" --> "0..*" Operation : initiates
+Operation "1" --> "1" User_Balance_and_Limit_Database : targets
+Operation "1" --> "1" State : transitions
+Account "1" --> "0..*" Transaction : validates
+UserBalanceAndLimitDB ..|> User_Balance_and_Limit_Database : implements
+
+@enduml

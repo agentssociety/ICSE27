@@ -1,0 +1,101 @@
+{
+  "id": "REQ-SEC-01",
+  "title": "Account Lock After Three Consecutive Failed PIN Attempts",
+  "type": "Security",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "High",
+  "version": "1.0",
+  "description": "The system shall lock the user's account after three consecutive failed PIN attempts.",
+  "rationale": "Prevent brute force attacks by locking accounts after multiple unsuccessful login attempts.",
+  "business_value": "Enhances security and protects against unauthorized access to user accounts.",
+  "source": {
+    "type": "User Story",
+    "id": 89,
+    "description": "As a user I need my account to be locked after three consecutive failed PIN attempts So that brute force attacks are prevented"
+  },
+  "stakeholders": [
+    "Security Team",
+    "Customer Support"
+  ],
+  "acceptance_criteria": [
+    "The account is locked after three consecutive failed PIN attempts.",
+    "The user is notified of the lock."
+  ],
+  "preconditions": [
+    "The system has a mechanism to track and store PIN attempts."
+  ],
+  "postconditions": [
+    "The account remains locked until manually unlocked by an administrator or after a defined cooldown period."
+  ],
+  "functional_constraints": [
+    "The system must accurately count consecutive failed PIN attempts.",
+    "The lock status must be reset when the user enters the correct PIN."
+  ],
+  "security_requirements": [
+    "Prevent brute force attacks by locking accounts after multiple unsuccessful login attempts."
+  ],
+  "non_functional_requirements": {
+    "performance": "Low latency in detecting and applying account locks.",
+    "availability": "The system must be available during all user sessions.",
+    "scalability": "The system should handle a reasonable number of concurrent users without performance degradation.",
+    "usability": "Error messages should clearly indicate that the account is locked."
+  },
+  "edge_cases": [
+    "What happens if a user attempts to lock their account multiple times?",
+    "How does the system handle simultaneous login attempts from different devices?",
+    "What happens if the system experiences a failure in counting consecutive failed attempts?"
+  ],
+  "dependencies": [
+    "A mechanism to track and store PIN attempts",
+    "An administrative interface for unlocking accounts"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "PIN Attempt Tracking API",
+      "description": "The system will use this API to record each PIN attempt and check the count of consecutive failed attempts."
+    },
+    {
+      "type": "Database",
+      "name": "User Account Database",
+      "description": "This database stores user account information, including lock status and failed attempt counts."
+    },
+    {
+      "type": "UI",
+      "name": "Login Interface",
+      "description": "The UI will display error messages when a user enters an incorrect PIN and notify the user when their account is locked."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-SEC-01",
+      "description": "User enters correct PIN after three consecutive failed attempts.",
+      "expected_result": "The account remains unlocked, and no notification of lock is shown."
+    },
+    {
+      "id": "TC-SEC-02",
+      "description": "User enters incorrect PIN four times consecutively.",
+      "expected_result": "The account is locked, and a notification is shown to the user."
+    },
+    {
+      "id": "TC-SEC-03",
+      "description": "Admin attempts to unlock a locked account.",
+      "expected_result": "The admin can successfully unlock the account."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-16T21:41:27.997221",
+  "last_updated": "2026-06-16T22:06:35.762628",
+  "traceability": {
+    "related_requirements": [
+      "REQ-AUTH-01"
+    ],
+    "design_components": [
+      "Account",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

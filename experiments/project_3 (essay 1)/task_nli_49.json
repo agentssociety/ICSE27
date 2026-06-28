@@ -1,0 +1,30 @@
+{
+  "task_id": 49,
+  "confidence": 0.8894,
+  "evidence": [
+    {
+      "claim": "The system detects when a flight assignment would result in two flights occupying the same slot or runway at the same time.",
+      "fact": "The system detects overlapping assignments on the same runway.",
+      "score": 0.9938,
+      "user_story_span": "detect and prevent overlapping assignments where two flights would occupy the same slot or runway simultaneously",
+      "fact_span": "detects overlapping assignments on the same runway"
+    },
+    {
+      "claim": "The system rejects any flight assignment that would create an overlap.",
+      "fact": "The system prevents gap-violating assignments on the same runway.",
+      "score": 0.8748,
+      "user_story_span": "reject the assignment and notify the air traffic controller of the conflict",
+      "fact_span": "prevents gap-violating assignments on the same runway"
+    },
+    {
+      "claim": "The system monitors all flight assignments for slot and runway usage.",
+      "fact": "This system assigns departure and arrival slots while enforcing a minimum separation interval between consecutive uses of the same runway.",
+      "score": 0.7997,
+      "user_story_span": "monitors all flight assignments for slot and runway usage",
+      "fact_span": "assigns departure and arrival slots while enforcing a minimum separation interval between consecutive uses of the same runway"
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

@@ -1,0 +1,9 @@
+{
+  "BloodUnit": [
+    "Reservation",
+    "Alert"
+  ],
+  "TransfusionRequest": [],
+  "Reservation": [],
+  "Alert": []
+}

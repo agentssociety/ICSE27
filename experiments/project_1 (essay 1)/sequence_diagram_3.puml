@@ -1,0 +1,116 @@
+@startuml
+skinparam boxpadding 10
+skinparam participantpadding 10
+skinparam sequenceMessageAlign center
+title Patient Queue Sorting Sequence Diagrams
+
+box "Controller" #LightBlue
+participant "SortingController" as Controller
+end box
+
+box "Application" #LightGreen
+participant "SortingService" as Service
+end box
+
+box "Domain" #LightCoral
+participant "SortingStrategy" as Strategy
+participant "PatientQueue" as Queue
+participant "Patient" as Patient
+participant "User" as User
+participant "Role" as Role
+participant "Permission" as Permission
+end box
+
+box "Infrastructure" #LightYellow
+participant "Patient_Queue_Database" as DB
+end box
+
+box "External" #LightGray
+actor "Initiator" as Actor
+end box
+
+== Main Happy Path ==
+Actor -> Controller : POST /sort-queue\n(authenticated, encrypted)
+note right: Only actors with\nExecute permission
+Controller -> User : getRole(actorId) : Role
+User -> Role : hasPermission(Execute) : bool
+alt permission granted
+    Controller -> Service : sortQueue()
+    Service -> Queue : readAllPatients() : List<Patient>
+    Queue -> DB : SELECT * FROM patients [authenticated]
+    DB --> Queue : patients
+    Queue --> Service : patients
+    Service -> Strategy : sort(patients : List<Patient>)
+    note right: Sorting: urgency descending,\n then arrival time ascending;\n stable sort for ties
+    Strategy -> Patient : compareBy(urgencyLevel, arrivalTime)
+    Patient -> UrgencyLevel : getHierarchy() : int
+    Patient -> arrivalTime : getTime() : DateTime
+    Strategy --> Service : sortedPatients
+    Service -> Queue : updateOrder(sortedPatients)
+    Queue -> DB : UPDATE patients SET order_index = ... [authenticated]
+    DB --> Queue : success
+    Queue -> Queue : transition state from Pre1 to Post1
+    Service --> Controller : 200 OK, sorted queue
+    Controller --> Actor : HTTP 200\n{ sortedPatients }
+else permission denied
+    Controller --> Actor : HTTP 403 Forbidden
+end
+
+== Edge Case: Single Patient ==
+Actor -> Controller : POST /sort-queue
+Controller -> Service : sortQueue()
+Service -> Queue : readAllPatients() : List<Patient>
+alt queue size == 1
+    Service --> Controller : 200 OK (no change)
+    Controller --> Actor : HTTP 200\n{ same single patient }
+else
+    ... proceed with normal sort ...
+end
+
+== Edge Case: Missing Arrival Time ==
+Service -> Strategy : sort(patients)
+Strategy -> Patient : filter/flag patients\nwithout arrival time
+note right: Sort by urgency only\nfor those patients\n(ignored or placed after\npatients with time)
+Strategy --> Service : sortedPatients (correctly ordered)
+
+== Error: Urgency Level Changed During Sort ==
+Service -> Queue : readAllPatients()
+Queue -> DB : SELECT * [authenticated]
+DB --> Queue : patientsSnapshot
+Service -> Strategy : sort(patientsSnapshot)
+Service -> Queue : checkForUrgencyChange(originalUrgencies)
+alt urgency changed
+    Queue ->> DB : ROLLBACK (if transaction open)
+    Queue --> Service : inconsistency detected
+    Service --> Controller : 409 Conflict
+    Controller --> Actor : HTTP 409\n"Urgency changed, retry"
+else
+    Queue -> DB : UPDATE [authenticated]
+    DB --> Queue : committed
+end
+
+== Error: Power Outage / Write Failure ==
+Service -> Queue : updateOrder(sortedPatients)
+Queue -> DB : BEGIN TRANSACTION
+Queue -> DB : UPDATE [authenticated]
+DB --> Queue : failure (e.g., connection lost)
+Queue -> DB : ROLLBACK
+Queue --> Service : write failed
+Service --> Controller : 500 Internal Server Error
+Controller --> Actor : HTTP 500\n"Sorting failed, no partial state persisted"
+
+== Error: Read Failure ==
+Queue -> DB : SELECT * [authenticated]
+DB --> Queue : error (e.g., timeout)
+Queue --> Service : read failed
+Service --> Controller : 503 Service Unavailable
+Controller --> Actor : HTTP 503\n"Database unavailable"
+
+== Security: Authentication Required on Every Operation ==
+Controller -> User : authenticate(credentials)
+alt authentication fails
+    Controller --> Actor : HTTP 401 Unauthorized
+end
+
+note over Controller, DB : All calls to Patient_Queue_Database\nare authenticated (not encrypted)\nAll calls to Sorting_API are encrypted
+@enduml

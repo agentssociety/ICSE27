@@ -1,0 +1,310 @@
+@startuml
+title Multi-factor Authentication Sequence
+
+' Participants grouped by layer
+box "External" #LightBlue
+  actor "User" as user
+end box
+
+box "Controller" #LightCoral
+  participant "AuthController" as controller
+end box
+
+box "Application" #LightGoldenrodYellow
+  participant "AuthenticationService" as service
+end box
+
+box "Domain" #LightGreen
+  participant "Actor" as actor
+  participant "Permission" as permission
+  participant "Resource" as resource
+  participant "Credential" as credential
+  participant "Pin" as pin
+  participant "State" as state
+  participant "REQ_AUTH_01" as operation
+end box
+
+box "Infrastructure" #LightGrey
+  participant "CardReader" as cardReader
+  participant "PIN_Verification_Service" as pinService
+  database "AccountDB" as db
+end box
+
+' ============================================
+== Successful Authentication ==
+' ============================================
+user -> controller : POST /authenticate (cardData: String, pin: String)
+activate controller
+
+controller -> service : authenticate(cardData, pin) : AuthenticationResult
+activate service
+
+service -> actor : getActorByCard(cardData: String) : Actor
+activate actor
+actor -> db : SELECT * FROM accounts WHERE card_number = :cardData
+db --> actor : actor instance (or null)
+deactivate actor
+
+alt actor == null
+  service --> controller : 401 Unauthorized
+  controller --> user : 401 Invalid card
+else
+  ' Credential retrieval
+  service -> credential : getCredential(actor: Actor) : Credential
+  activate credential
+  credential -> pin : getPin() : Pin
+  activate pin
+  note right of pin : PIN digits: 4-12 digits enforced
+  alt pin.digits.size < 4 or pin.digits.size > 12
+    service --> controller : 422 Unprocessable Entity (PIN length violation)
+    controller --> user : 422 PIN must be between 4 and 12 digits
+  else
+    ' Two‑factor check: both interfaces must be used simultaneously
+    service -> cardReader : readCard(cardData: String) : ReadResult [encrypted]
+    activate cardReader
+    service -> pinService : verifyPin(pin: Pin, actor: Actor) : VerificationResult [TLS]
+    activate pinService
+
+    alt cardReader is malfunctioning
+      service --> controller : 500 Internal Server Error
+      controller --> user : 500 Card reader malfunction
+    else pinService is unavailable
+      service --> controller : 503 Service Unavailable
+      controller --> user : 503 PIN service unavailable
+    else both interfaces respond successfully
+      note right of service : Both hardware and service interface used – two‑factor satisfied
+
+      ' Create the operation domain object
+      service -> operation : create(actor, targetResource, grant=Read, pre=Pre3, post=Post1) : REQ_AUTH_01
+      activate operation
+
+      ' Permission check
+      alt not actor.mayPerform.contains(grant)
+        operation --> service : PermissionDenied
+        service --> controller : 403 Forbidden (permission mismatch)
+        controller --> user : 403 Operation not permitted
+      else not resource.accessible.contains(actor)
+        operation --> service : AccessDenied
+        service --> controller : 403 Forbidden (resource access)
+        controller --> user : 403 Access to target resource denied
+      else pre == post
+        operation --> service : NoStateChange
+        service --> controller : 500 Internal Server Error (state must change)
+        controller --> user : 500 No state transition possible
+      else
+        ' State transitions: Pre3 -> Post1 -> Post2 -> Post3
+        operation -> state : transition(from=Pre3, to=Post1) : boolean
+        activate state
+        state --> operation : true
+        deactivate state
+
+        operation -> state : transition(from=Post1, to=Post2) : boolean
+        activate state
+        state --> operation : true
+        deactivate state
+
+        operation -> state : transition(from=Post2, to=Post3) : boolean
+        activate state
+        state --> operation : true
+        deactivate state
+
+        operation --> service : Success
+        service --> controller : 200 OK
+        controller --> user : 200 Authentication successful, access granted
+      end
+    end
+  end
+  deactivate pin
+  deactivate credential
+end
+deactivate service
+deactivate controller
+
+' ============================================
+== Invalid Card/PIN Combination (not lockout) ==
+' ============================================
+== Invalid Card/PIN (1st or 2nd failure) ==
+user -> controller : POST /authenticate (cardData, pin)
+activate controller
+controller -> service : authenticate(cardData, pin)
+activate service
+' ... similar steps until pin verification
+service -> pinService : verifyPin(pin, actor)
+activate pinService
+alt pinService returns : FAILURE (incorrect PIN)
+  pinService --> service : Failure
+  service -> db : UPDATE failed_attempts SET count = count+1 WHERE actor_id = :actorId
+  note right of db : Failed attempt count stored per actor
+  alt count < 3
+    service --> controller : 401 Unauthorized
+    controller --> user : 401 Invalid PIN – attempt X of 3
+  else count == 3
+    ' triggers lockout flow – see separate section
+  end
+else cardData does not match any actor
+  service --> controller : 401 Unauthorized
+  controller --> user : 401 Invalid card
+end
+deactivate pinService
+deactivate service
+deactivate controller
+
+' ============================================
+== Lockout After Three Failures ==
+' ============================================
+== Lockout State ==
+user -> controller : POST /authenticate (cardData, pin)
+activate controller
+controller -> service : authenticate
+activate service
+service -> credential : getCredential(actor)
+activate credential
+credential -> pin : getPin()
+activate pin
+service -> pinService : verifyPin(pin, actor)
+activate pinService
+pinService --> service : Failure
+service -> db : UPDATE failed_attempts SET count = 3 WHERE actor_id = :actorId
+note right of db : Third failure – lockout activated
+service -> state : transition(from=Pre3, to=Locked) : boolean
+activate state
+state --> service : true
+deactivate state
+service --> controller : 403 Account Locked
+controller --> user : 403 Account locked after three failed attempts
+deactivate pinService
+deactivate pin
+deactivate credential
+deactivate service
+deactivate controller
+
+' ============================================
+== Card Reader Malfunction ==
+' ============================================
+== Card Reader Malfunction ==
+user -> controller : POST /authenticate (cardData, pin)
+activate controller
+controller -> service : authenticate
+activate service
+service -> cardReader : readCard(cardData) [encrypted]
+activate cardReader
+cardReader --> service : Error (e.g., hardware fault, tamper detection)
+service --> controller : 500 Internal Server Error (card reader malfunction)
+controller --> user : 500 Card reader error – please retry or contact support
+deactivate service
+deactivate controller
+
+' ============================================
+== PIN Service Unavailable ==
+' ============================================
+== PIN Service Unavailable ==
+user -> controller : POST /authenticate (cardData, pin)
+activate controller
+controller -> service : authenticate
+activate service
+service -> pinService : verifyPin(pin, actor) [TLS]
+activate pinService
+pinService --> service : Timeout / Service Unavailable
+service --> controller : 503 Service Unavailable
+controller --> user : 503 PIN verification service temporarily unavailable – try later
+deactivate service
+deactivate controller
+
+' ============================================
+== Two-Factor Not Satisfied ==
+' ============================================
+== Two-Factor Not Satisfied ==
+user -> controller : POST /authenticate (cardData, pin)  ' only one interface used intentionally
+activate controller
+controller -> service : authenticate
+activate service
+alt cardData missing or empty
+  service --> controller : 400 Bad Request (card required)
+  controller --> user : 400 Card data missing
+else pin missing or empty
+  service --> controller : 400 Bad Request (PIN required)
+  controller --> user : 400 PIN missing
+else
+  service -> cardReader : readCard(cardData) [encrypted]
+  activate cardReader
+  cardReader --> service : Success
+  ' but PIN not sent to service? Actually both must be used simultaneously.
+  ' Assume the request contains both, but we simulate missing one:
+  note right of service : Only card used; operation must include both interfaces.
+  service --> controller : 422 Unprocessable Entity (two-factor not satisfied)
+  controller --> user : 422 Both card and PIN are required for authentication
+end
+deactivate service
+deactivate controller
+
+' ============================================
+== Permission or Resource Access Denied ==
+' ============================================
+== Permission Denied ==
+user -> controller : POST /authenticate (cardData, pin)
+activate controller
+controller -> service : authenticate
+activate service
+service -> actor : getActorByCard(cardData)
+actor -> db : query
+db --> actor : actor
+service -> credential : getCredential(actor)
+credential -> pin : getPin()
+pin --> credential
+service -> cardReader : readCard(cardData)
+service -> pinService : verifyPin(pin, actor)
+' both succeed
+service -> operation : create(actor, targetResource, grant=Admin, pre=Pre3, post=Post1)
+activate operation
+operation -> actor : mayPerform(grant=Admin) : bool
+actor --> operation : false   ' user only has Read/Execute
+operation --> service : PermissionDenied
+service --> controller : 403 Forbidden (insufficient permission)
+controller --> user : 403 You do not have the required permission
+deactivate operation
+deactivate service
+deactivate controller
+
+== Resource Access Denied ==
+user -> controller : POST /authenticate (cardData, pin)
+activate controller
+controller -> service : authenticate
+activate service
+' ... verification succeeds
+service -> operation : create(actor, targetResource, grant=Read, pre=Pre3, post=Post1)
+activate operation
+operation -> resource : accessible.contains(actor) : bool
+resource --> operation : false
+operation --> service : AccessDenied
+service --> controller : 403 Forbidden (resource not accessible)
+controller --> user : 403 You are not allowed to access this resource
+deactivate operation
+deactivate service
+deactivate controller
+
+' ============================================
+== PIN Length Validation Error ==
+' ============================================
+== PIN Length Violation ==
+user -> controller : POST /authenticate (cardData, pin)
+activate controller
+controller -> service : authenticate
+activate service
+service -> credential : getCredential(actor)
+activate credential
+credential -> pin : getPin()
+activate pin
+note right of pin : PIN digits count check
+alt pin.digits.size < 4
+  service --> controller : 422 Unprocessable Entity (PIN too short)
+  controller --> user : 422 PIN must be at least 4 digits
+else pin.digits.size > 12
+  service --> controller : 422 Unprocessable Entity (PIN too long)
+  controller --> user : 422 PIN must be at most 12 digits
+end
+deactivate pin
+deactivate credential
+deactivate service
+deactivate controller
+
+@enduml

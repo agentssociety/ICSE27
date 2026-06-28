@@ -1,0 +1,165 @@
+@startuml
+' Transfusion Request System - Complete Sequence Diagram
+
+box "Controller Layer" #LightBlue
+  participant "TransfusionRequestAPI" as API
+end box
+
+box "Application Layer" #LightGreen
+  participant "RequestValidator" as Validator
+  participant "DuplicateDetector" as DuplicateDetector
+  participant "UniqueIDGenerator" as IDGen
+end box
+
+box "Domain Layer" #LightYellow
+  participant "TransfusionRequest" as Request
+  participant "PatientDetails" as Patient
+  participant "BloodType" as Blood
+  participant "Quantity" as Qty
+  participant "Urgency" as Urgency
+  participant "UniqueID" as UniqueID
+  participant "StateEnum" as State
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "TransfusionRequestDB" as DB
+end box
+
+box "External Actors" #LightGray
+  participant "HealthcareProvider" as Provider
+  participant "BloodBankTechnician" as Tech
+  participant "IT_Team" as IT
+end box
+
+== Main Flow: Accept and Log Transfusion Request ==
+
+Provider -> API : submitRequest(patientDetails, bloodType, quantity, urgency)
+note right: [TLS encrypted] [Authenticated]
+
+API -> Validator : validateCompleteness(request)
+alt [Request incomplete]
+    Validator --> API : return validationError("Missing required fields")
+    API --> Provider : 400 Bad Request
+    note right: No state change - Precondition fails
+else [Request complete]
+    Validator -> Request : create(patientDetails, bloodType, quantity, urgency)
+    Request -> State : setState(Pre1)
+    
+    alt [Duplicate detected - same patient and blood type]
+        DuplicateDetector -> DB : checkExisting(patientDetails, bloodType)
+        DB --> DuplicateDetector : foundExisting()
+        DuplicateDetector -> Request : flagDuplicate()
+        DuplicateDetector --> API : returnWarning("Duplicate request - proceeding with warning")
+    else [No duplicate]
+        DuplicateDetector -> Request : noDuplicate()
+    end
+    
+    Tech -> API : acceptRequest(requestID)
+    API -> Request : accept()
+    Request -> State : setState(Post1)
+    
+    API -> DB : store(requestData)
+    note right: [TLS encrypted] [encrypted at rest]
+    
+    alt [Database unavailable]
+        DB --> API : storeError("Database connection failed")
+        API --> Tech : 503 Service Unavailable
+        note right: No state change - operation not allowed
+    else [Database available]
+        DB -> Request : persist()
+        Request -> State : setState(Post2)
+        
+        IT -> DB : assignUniqueID(requestID)
+        DB -> UniqueID : generate()
+        UniqueID --> IT : uniqueID
+        IT -> Request : setUniqueID(uniqueID)
+        Request -> State : setState(Post3)
+        
+        API --> Tech : 200 OK
+        API --> Provider : 200 OK (with duplicate warning if applicable)
+    end
+end
+
+== Error Path: Authentication Failure ==
+
+Provider -> API : submitRequest(data)
+alt [Authentication token missing]
+    API --> Provider : 401 Unauthorized
+    note right: Access control: initiator must be authenticated
+else [Invalid permissions]
+    API --> Provider : 403 Forbidden
+    note right: Initiator must hold required Write permission
+end
+
+== Error Path: Validation Failure ==
+
+Provider -> API : submitRequest(incompleteData)
+API -> Validator : validateCompleteness(data)
+
+alt [Missing patientDetails]
+    Validator --> API : validationError("patientDetails required")
+    API --> Provider : 400 Bad Request
+else [Missing bloodType]
+    Validator --> API : validationError("bloodType required")
+    API --> Provider : 400 Bad Request
+else [Missing quantity]
+    Validator --> API : validationError("quantity required")
+    API --> Provider : 400 Bad Request
+else [Missing urgency]
+    Validator --> API : validationError("urgency required")
+    API --> Provider : 400 Bad Request
+end
+
+== Error Path: Duplicate Handling ==
+
+Provider -> API : submitRequest(patientDetails, bloodType, quantity, urgency)
+API -> Validator : validateCompleteness(data)
+Validator -> Request : create(data)
+Request -> State : setState(Pre1)
+
+DuplicateDetector -> DB : checkExisting(patientDetails, bloodType)
+DB --> DuplicateDetector : foundExisting()
+
+alt [Duplicate with warning]
+    DuplicateDetector -> Request : flagDuplicate()
+    DuplicateDetector --> API : returnWarning("Duplicate request - proceeding with warning")
+    Tech -> API : acceptRequest(requestID)
+    API -> Request : accept()
+    Request -> State : setState(Post1)
+    API -> DB : store(requestData)
+    DB -> Request : persist()
+    Request -> State : setState(Post2)
+    IT -> DB : assignUniqueID(requestID)
+    DB -> UniqueID : generate()
+    UniqueID --> IT : uniqueID
+    IT -> Request : setUniqueID(uniqueID)
+    Request -> State : setState(Post3)
+    API --> Provider : 200 OK (with duplicate warning)
+else [Duplicate rejected]
+    API --> Provider : 409 Conflict
+    note right: No state change - operation not allowed
+end
+
+== Error Path: Database Unavailable ==
+
+Provider -> API : submitRequest(data)
+API -> Validator : validateCompleteness(data)
+Validator -> Request : create(data)
+Request -> State : setState(Pre1)
+
+Tech -> API : acceptRequest(requestID)
+API -> Request : accept()
+Request -> State : setState(Post1)
+
+API -> DB : store(requestData)
+alt [Database connection timeout]
+    DB --> API : timeoutError()
+    API --> Tech : 503 Service Unavailable
+    note right: Request queued for retry
+else [Database write failure]
+    DB --> API : writeError()
+    API --> Tech : 500 Internal Server Error
+    note right: No state change - operation not allowed
+end
+
+@enduml

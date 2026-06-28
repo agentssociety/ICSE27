@@ -1,0 +1,128 @@
+@startuml
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam classBorderColor #2E4057
+skinparam classHeaderBackgroundColor #B0C4DE
+skinparam interfaceBorderColor #2E4057
+skinparam interfaceHeaderBackgroundColor #D3D3D3
+skinparam enumBorderColor #2E4057
+skinparam enumHeaderBackgroundColor #F0E68C
+skinparam exceptionBorderColor #FF6347
+skinparam exceptionHeaderBackgroundColor #FFA07A
+
+package "Domain Model" {
+  abstract class Actor {
+    - mayPerform : Set<Permission>
+  }
+  class Hospital_Administrator extends Actor
+  class Authorized_Hospital_Staff extends Actor
+
+  abstract class Resource {
+    - owner : Actor
+    - accessible : Set<Actor>
+  }
+  note right of Resource::owner_always_accessible
+    Invariant: owner in accessible
+  end note
+
+  class PatientData extends Resource
+
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  enum State {
+    Pre1
+    Post1
+  }
+
+  enum IfaceKind {
+    UI
+    API
+    BackendService
+  }
+
+  interface Interface {
+    - kind : IfaceKind
+    - encrypted : Boolean
+    - authenticated : Boolean
+  }
+
+  class ResourceCapacity {
+    - resource : Resource
+    - maxConcurrent : Integer
+  + checkCapacity(resource: PatientData.resource)
+  + checkCapacity(resource: overallResource)
+  }
+  note right of ResourceCapacity::capacity_constraints
+    Invariant: maxConcurrent > 0
+  end note
+
+  class UrgencyChange {
+    - patient : Actor
+    - oldPermission : Permission
+    - newPermission : Permission
+  + createUrgencyChange(patient: Actor, oldPermission: Permission, newPermission: Permission)
+  }
+  note right of UrgencyChange::urgency_consistency
+    Invariant: oldPermission != newPermission
+  end note
+
+  class AuditLog {
+    - entries : Set<DashboardAccessOperation>
+  + logAccess(initiator: HA, resource: patientData, action: "Read")
+  + logAccess(initiator: "System", resource: patientData, action: "Write")
+  }
+
+  class DashboardAccessOperation {
+    ' Associations as attributes are not shown here; they will be shown as relationships
+  + authenticate(credentials)
+  + spikeUpdate(newPatientData: List<PatientData>)
+  + requestWaitTimeUpdate()
+  + urgencyChange(patientId: String, newPermission: Permission)
+  + requestWaitTimeRecalc()
+  }
+  DashboardAccessOperation "1" --> "1" Actor : initiator
+  DashboardAccessOperation "1" --> "some" Resource : target
+  DashboardAccessOperation "1" --> "some" Interface : channel
+  DashboardAccessOperation "1" --> "1" Permission : grant
+  DashboardAccessOperation "1" --> "1" State : pre
+  DashboardAccessOperation "1" --> "1" State : post
+}
+
+package "Infrastructure — Ports" {
+  interface Live_Dashboard_Interface implements Interface {
+    - kind : IfaceKind = IfaceKind.UI
+    - encrypted : Boolean = True
+    - authenticated : Boolean = True
+  }
+
+  interface Patient_Management_API implements Interface {
+    - kind : IfaceKind = IfaceKind.API
+    - encrypted : Boolean = True
+    - authenticated : Boolean = True
+  }
+
+  interface Wait_Time_Estimation_Service implements Interface {
+    - kind : IfaceKind = IfaceKind.BackendService
+    - encrypted : Boolean = True
+    - authenticated : Boolean = True
+  }
+}
+
+package "Exceptions" {
+  exception AccessDeniedException {
+    - message : String
+  }
+}
+
+' Additional associations
+ResourceCapacity "1" --> "1" Resource : resource
+UrgencyChange "1" --> "1" Actor : patient
+AuditLog --> DashboardAccessOperation : entries
+
+@enduml

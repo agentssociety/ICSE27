@@ -1,0 +1,188 @@
+@startuml
+title Triage Urgency Assignment - Complete Flows
+
+box "Controller Layer" #LightBlue
+    participant "TriageNurseController" as TNC
+end box
+
+box "Application Layer" #LightGreen
+    participant "UrgencyAssignmentService" as UAS
+end box
+
+box "Domain Layer" #LightYellow
+    participant "Patient" as P
+    participant "Queue" as Q
+    participant "TriageNurse" as TN
+    participant "UrgencyState" as US <<enum>>
+end box
+
+box "Infrastructure Layer" #LightCoral
+    participant "PatientDatabase" as PDB <<interface>>
+    participant "QueueManagementAPI" as QAPI
+end box
+
+== Flow: Happy Path - Assign Urgency Level ==
+
+TNC -> TNC : authenticateNurse(nurseId: String) : boolean
+note right: Must verify Write permission
+
+alt Authentication Failed
+    TNC -> TNC : return 401 Unauthorized
+    TNC -> TNC : displayError("Authentication required")
+else Authentication Success
+    TNC -> UAS : assignUrgency(patientId: String, urgencyLevel: Integer, nurseId: String) : Result
+    
+    UAS -> US : validateUrgencyRange(level: Integer) : boolean
+    note right: Must be between 1 and 5
+    
+    alt Invalid Urgency Level (outside 1..5)
+        UAS -> TNC : return Error("Urgency level must be 1 (most urgent) to 5 (least urgent)")
+        TNC -> TNC : return 400 Bad Request
+        TNC -> TNC : displayError("Please enter a valid urgency level (1-5)")
+    
+    else Valid Urgency Level
+        UAS -> TN : getNursePermissions(nurseId: String) : boolean
+        
+        alt Insufficient Permissions
+            UAS -> TNC : return Error("Nurse does not have Write permission")
+            TNC -> TNC : return 403 Forbidden
+            TNC -> TNC : displayError("Access denied: Write permission required")
+        
+        else Permissions OK
+            UAS -> P : assignUrgency(level: Integer) : void
+            note left: State: PreIdle -> Post1
+            
+            UAS -> UAS : checkConcurrentAccess(patientId: String, nurseId: String) : boolean
+            note right: Verify no conflicting updates
+            
+            alt Concurrent Access Conflict
+                UAS -> TNC : return Error("Patient is being updated by another session")
+                TNC -> TNC : return 409 Conflict
+                TNC -> TNC : displayError("Please retry, patient is currently being updated")
+            
+            else No Conflict
+                UAS -> PDB : updatePatientUrgency(patientId: String, urgencyLevel: Integer) : boolean [TLS][encrypted at rest]
+                
+                alt Database Update Failed
+                    UAS -> PDB : rollbackTransaction()
+                    UAS -> TNC : return Error("Database update failed")
+                    TNC -> TNC : return 500 Internal Server Error
+                    TNC -> TNC : displayError("System error: Unable to update urgency level")
+                else Database Update Success
+                    UAS -> Q : recalculateQueuePosition(patientId: String, urgencyLevel: Integer) : Integer
+                    note left: State: Post1 -> Post2
+                    
+                    UAS -> QAPI : recalculateQueue(patientId: String, urgencyLevel: Integer) : Boolean [TLS][authenticated]
+                    note right: Real-time queue recalculation
+                    
+                    alt Queue API Unavailable
+                        UAS -> Q : rollbackQueueCalculation(patientId: String)
+                        note left: Revert to Post1 state, no queue change
+                        
+                        alt Retry Success
+                            UAS -> QAPI : recalculateQueue(patientId: String, urgencyLevel: Integer) : Boolean [retry]
+                            note right: Optional retry mechanism
+                            
+                            UAS -> Q : updateQueuePosition(newPosition: Integer) : void
+                            UAS -> TNC : return Success(queuePosition: Integer)
+                            TNC -> TNC : return 200 OK
+                            TNC -> TNC : displayQueuePosition(newPosition)
+                        
+                        else Retry Failed or Not Configured
+                            UAS -> UAS : logFailure("Queue unavailable", patientId)
+                            UAS -> TNC : return Success(queuePosition: null, warning: "Queue temporarily unavailable")
+                            TNC -> TNC : return 200 OK with warning
+                            TNC -> TNC : displayWarning("Queue update pending", urgencyLevel)
+                        end
+                    
+                    else Queue API Success
+                        UAS -> Q : updateQueuePosition(newPosition: Integer) : void
+                        UAS -> TNC : return Success(queuePosition: Integer)
+                        TNC -> TNC : return 200 OK
+                        TNC -> TNC : displayConfirmation(patientId, urgencyLevel, queuePosition)
+                    end
+                end
+            end
+        end
+    end
+end
+
+== Flow: Bulk Urgency Assignment ==
+
+TNC -> UAS : assignBulkUrgency(assignments: List<PatientUrgency>) : List<AssignmentResult>
+
+alt Invalid Input
+    UAS -> TNC : return Error("Empty or malformed assignment list")
+    TNC -> TNC : return 400 Bad Request
+else Valid Input
+    loop for each assignment
+        UAS -> UAS : processSingleAssignment(patientId, urgencyLevel, nurseId)
+        alt Assignment Success
+            UAS -> UAS : addToSuccessResults(patientId, queuePosition)
+        else Assignment Failed
+            UAS -> UAS : addToErrorResults(patientId, errorMessage)
+        end
+    end
+    UAS -> TNC : return BatchResult(successes, failures)
+    TNC -> TNC : return 207 Multi-Status
+    TNC -> TNC : displayBatchResults(successes, failures)
+end
+
+== Flow: Query Urgency and Queue Position ==
+
+TNC -> TNC : authenticateViewer(viewerId: String) : boolean
+note right: Supports HospitalManagement and PatientCareTeam roles
+
+alt Authentication Failed
+    TNC -> TNC : return 401 Unauthorized
+else Authentication Success
+    TNC -> UAS : getPatientQueueInfo(patientId: String) : QueueInfo
+    
+    UAS -> PDB : getPatientUrgency(patientId: String) : Integer [encrypted at rest]
+    UAS -> QAPI : getPatientQueuePosition(patientId: String) : Integer [TLS][authenticated]
+    
+    alt Patient Not Found
+        UAS -> TNC : return Error("Patient not found")
+        TNC -> TNC : return 404 Not Found
+    else Patient Found
+        UAS -> TNC : return QueueInfo(urgencyLevel, queuePosition)
+        TNC -> TNC : return 200 OK
+        TNC -> TNC : displayPatientInfo(urgencyLevel, queuePosition)
+    end
+end
+
+== Flow: Error - Performance Degradation ==
+
+TNC -> UAS : assignUrgency(patientId: String, urgencyLevel: Integer, nurseId: String)
+
+note right: System must respond within 2 seconds
+UAS -> UAS : startTimer()
+UAS -> US : validateUrgencyRange(level: Integer) : boolean
+
+alt Response Time Exceeds 2 Seconds
+    UAS -> UAS : timeoutDueToLoad()
+    UAS -> TNC : return Error("Request timed out")
+    TNC -> TNC : return 503 Service Unavailable
+    TNC -> TNC : displayError("System under high load, please retry")
+    
+else Response Within Time
+    UAS -> PDB : updatePatientUrgency(patientId: String, urgencyLevel: Integer) : boolean [encrypted at rest]
+    note right: System handles up to 100 simultaneous patients
+    
+    alt Database Connection Pool Exhausted
+        UAS -> TNC : return Error("System busy, try again")
+        TNC -> TNC : return 429 Too Many Requests
+    else Database Success
+        UAS -> QAPI : recalculateQueue(patientId: String, urgencyLevel: Integer) : Boolean [TLS]
+        
+        alt Queue API Rate Limited
+            UAS -> TNC : return Error("Queue system busy")
+            TNC -> TNC : return 429 Too Many Requests
+        else Queue API Success
+            UAS -> TNC : return Success(queuePosition: Integer)
+            TNC -> TNC : return 200 OK
+        end
+    end
+end
+
+@enduml

@@ -1,0 +1,58 @@
+{
+  "task_id": 58,
+  "confidence": 0.9801,
+  "evidence": [
+    {
+      "claim": "The dashboard updates in real time.",
+      "fact": "The dashboard continuously updates to reflect changes in the queue.",
+      "score": 0.9963,
+      "user_story_span": "The dashboard updates in real time.",
+      "fact_span": "The dashboard continuously updates"
+    },
+    {
+      "claim": "Wait time data is available from the system.",
+      "fact": "The dashboard shows wait time calculations.",
+      "score": 0.9956,
+      "user_story_span": "wait time data are available from the system",
+      "fact_span": "shows wait time calculations"
+    },
+    {
+      "claim": "Urgency data is available from the system.",
+      "fact": "The system automatically recalculates the order after any urgency update.",
+      "score": 0.9921,
+      "user_story_span": "",
+      "fact_span": "any urgency update"
+    },
+    {
+      "claim": "When the interaction occurs, urgency data is updated.",
+      "fact": "The system automatically recalculates the order after any urgency update.",
+      "score": 0.9814,
+      "user_story_span": "",
+      "fact_span": "any urgency update"
+    },
+    {
+      "claim": "When the interaction occurs, wait time data is updated.",
+      "fact": "The dashboard continuously updates to reflect changes in the queue.",
+      "score": 0.9782,
+      "user_story_span": "",
+      "fact_span": "continuously updates to reflect changes"
+    },
+    {
+      "claim": "The dashboard shows the current wait time value.",
+      "fact": "The dashboard continuously updates to reflect changes in the queue.",
+      "score": 0.9708,
+      "user_story_span": "shows the current urgency and wait time values",
+      "fact_span": ""
+    },
+    {
+      "claim": "The user has access to view the dashboard.",
+      "fact": "The dashboard continuously updates to reflect changes in the queue.",
+      "score": 0.9466,
+      "user_story_span": "The user has access to view the dashboard.",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 7,
+  "threshold": 0.6
+}

@@ -1,0 +1,195 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+  abstract class Resource {
+    - owner: Actor
+    - accessible: Set<Actor>
+    {abstract} + isAccessibleBy(actor: Actor): Boolean
+    note right of Resource::owner
+      owner is always in accessible
+    end note
+  + checkAccessible(actorId) : Boolean
+  }
+
+  class Flight {
+    - id: String
+    - isEmergency: Boolean
+    - assignedSlot: Slot [0..1]
+    note right of Flight::isEmergency
+      A flight cannot be both emergency and non-emergency
+    end note
+  + isEmergency() : Boolean
+  + checkClassification() : Classification
+  + assignSlot(slot: Slot)
+  }
+
+  class Slot {
+    - id: String
+    - type: String {dynamic}
+    - assignedFlight: Flight [0..1]
+    note right of Slot::type
+      Slots can be dynamically reassigned
+    end note
+  + assignFlight(flight: Flight)
+  }
+
+  class Queue {
+    - flights: List<Flight>
+    note right of Queue::flights
+      Maintains original ordering of non-emergency flights
+    end note
+  + getNonEmergencyFlights() : List<Flight>
+  + reQueue(nonEmergencyFlights)
+  }
+
+  class Actor {
+    - id: String
+    - name: String
+    - permissions: List<Permission>
+  + checkPermission(actorId, Permission.WRITE)
+  + displayError("Access Denied - Insufficient Permissions")
+  + displayError("Flight classification unclear - manual intervention required")
+  + displayUpdatedSchedule()
+  + displayError("Access Denied - Resource not in accessible set")
+  + displayError("No authenticated channel available")
+  }
+
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+
+  note right of Permission
+    Write supersedes Read
+    Execute supersedes Read
+    Admin supersedes all
+  end note
+
+  Flight "0..1" -- "0..1" Slot : assigned to
+  Queue "1" *-- "0..*" Flight : contains
+  Actor "1" -- "0..*" Resource : owns
+  Actor "0..*" -- "0..*" Resource : accessible by
+}
+
+package "Application" {
+  class SlotReassignmentService {
+    - flightInfoApi: FlightInformationAPI
+    - schedulingDb: SchedulingDatabase
+    - atcInterface: AirTrafficControlInterface
+    + reassignSlot(initiator: Actor, emergencyFlight: Flight): void
+    + requeueNonEmergencyFlights(): void
+    note right of SlotReassignmentService::reassignSlot
+      Pre1: Emergency flight detected
+      Post1: Emergency flight assigned immediate slot
+    end note
+  }
+
+  class AccessControlService {
+    + checkPermission(actor: Actor, required: Permission): Boolean
+    + checkAccessibility(actor: Actor, resource: Resource): Boolean
+    + checkAuthentication(channel: Channel): Boolean
+  }
+
+  class Channel {
+    - id: String
+    - authenticated: Boolean
+  }
+
+  SlotReassignmentService --> AccessControlService : uses
+  SlotReassignmentService --> Channel : uses at least 1
+}
+
+package "Infrastructure — Ports" {
+  interface "FlightInformationAPI" as FlightInfoAPI {
+    + getFlightInfo(flightId: String): Flight
+    + isEmergencyFlight(flightId: String): Boolean
+  }
+
+  interface "SchedulingDatabase" as SchedulingDB {
+    + assignSlot(flight: Flight, slot: Slot): void
+    + updateQueue(queue: Queue): void
+    + getQueue(): Queue
+    + getSlot(slotId: String): Slot
+  }
+
+  interface "AirTrafficControlInterface" as ATCInterface {
+    + displaySlotAssignments(assignments: Map<Flight, Slot>): void
+    + displayQueue(queue: Queue): void
+    + notifyEmergencyFlight(flight: Flight): void
+  }
+}
+
+package "Controllers" {
+  class SlotReassignmentController {
+    - service: SlotReassignmentService
+    + handleSlotReassignment(initiator: Actor, emergencyFlightId: String): void
+  }
+
+  class QueueManagementController {
+    - schedulingDb: SchedulingDatabase
+    + getCurrentQueue(): Queue
+    + getSlotAssignments(): Map<Flight, Slot>
+  }
+}
+
+package "DTOs" {
+  class SlotAssignmentDTO <<dto>> {
+    - flightId: String
+    - slotId: String
+    - slotType: String
+    - isEmergency: Boolean
+  }
+
+  class QueueDTO <<dto>> {
+    - flightIds: List<String>
+    - orderPreserved: Boolean
+  }
+
+  class FlightInfoDTO <<dto>> {
+    - flightId: String
+    - isEmergency: Boolean
+    - assignedSlotId: String [0..1]
+  }
+}
+
+package "Exceptions" {
+  class InsufficientPermissionException <<exception>> {
+    - actorId: String
+    - requiredPermission: Permission
+  }
+
+  class AuthenticationRequiredException <<exception>> {
+    - channelId: String
+  }
+
+  class ResourceNotAccessibleException <<exception>> {
+    - actorId: String
+    - resourceId: String
+  }
+
+  class AmbiguousFlightClassificationException <<exception>> {
+    - flightId: String
+  }
+}
+
+SlotReassignmentController --> SlotReassignmentService : uses
+QueueManagementController --> SchedulingDB : uses
+SlotReassignmentService --> FlightInfoAPI : uses
+SlotReassignmentService --> SchedulingDB : uses
+SlotReassignmentService --> ATCInterface : uses
+SlotReassignmentService --> SlotAssignmentDTO : creates
+SlotReassignmentService --> QueueDTO : creates
+SlotReassignmentService --> FlightInfoDTO : creates
+SlotReassignmentService --> InsufficientPermissionException : throws
+SlotReassignmentService --> AuthenticationRequiredException : throws
+SlotReassignmentService --> ResourceNotAccessibleException : throws
+SlotReassignmentService --> AmbiguousFlightClassificationException : throws
+
+@enduml

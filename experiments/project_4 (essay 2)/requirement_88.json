@@ -1,0 +1,110 @@
+{
+  "id": "REQ-AUTH-01",
+  "title": "Card and PIN Authentication Requirement",
+  "type": "Security",
+  "status": "Proposed",
+  "priority": "Critical",
+  "risk_level": "High",
+  "version": "1.0",
+  "description": "The system shall require both a physical card and a valid PIN to authenticate users, ensuring secure access control.",
+  "rationale": "To enhance user security by implementing a dual-factor authentication mechanism.",
+  "business_value": "Improves the overall security of the system, reducing the risk of unauthorized access and protecting sensitive data.",
+  "source": {
+    "type": "User Story",
+    "id": 88,
+    "description": "As a user I need card and PIN authentication so that I can securely access the system."
+  },
+  "stakeholders": [
+    "Security Team",
+    "System Administrators",
+    "End Users"
+  ],
+  "acceptance_criteria": [
+    "A registered user with a valid card and known PIN",
+    "The user inserts the card and enters their PIN",
+    "The system authenticates the user and grants access"
+  ],
+  "preconditions": [
+    "The user has a registered account",
+    "The user possesses a valid physical card associated with their account",
+    "The user knows their correct PIN"
+  ],
+  "postconditions": [
+    "The system confirms successful authentication",
+    "Access is granted to the system for the authenticated user",
+    "No unauthorized access is granted to other users or systems"
+  ],
+  "functional_constraints": [
+    "The card and PIN must be inserted/entered simultaneously for authentication to proceed",
+    "The system must process the input within a specified time limit to ensure timely response"
+  ],
+  "security_requirements": [
+    "Two-factor authentication (card + PIN) is mandatory for user access",
+    "PINs should have a minimum length of 4 digits and maximum length of 12 digits",
+    "Card readers must be tamper-resistant and secure against unauthorized access",
+    "Authentication attempts with incorrect card or PIN combinations should result in lockout after a specified number of attempts"
+  ],
+  "non_functional_requirements": {
+    "performance": "The system should authenticate users within 5 seconds under normal conditions",
+    "availability": "99.9% uptime guarantee for continuous access without downtime",
+    "scalability": "The system must support up to 10,000 concurrent authentication requests per hour without performance degradation",
+    "usability": "Error messages should be clear and user-friendly; PIN entry should have visual feedback for security"
+  },
+  "edge_cases": [
+    "What happens if the card is magnetic stripe instead of chip?",
+    "How does the system handle simultaneous authentication requests from multiple users?",
+    "If a user enters an incorrect PIN three times, what should the lockout period be?",
+    "What happens if the card reader malfunctions or is tampered with?"
+  ],
+  "dependencies": [
+    "Card Reader Hardware",
+    "PIN Verification Service"
+  ],
+  "interfaces": [
+    {
+      "type": "Hardware Interface",
+      "name": "Card Reader",
+      "description": "The system will communicate with a card reader to verify the physical card."
+    },
+    {
+      "type": "Service Interface",
+      "name": "PIN Verification Service",
+      "description": "The system will interact with a service that verifies the entered PIN against the user's record."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-AUTH-01",
+      "description": "User successfully enters valid card and PIN.",
+      "expected_result": "System authenticates the user and grants access."
+    },
+    {
+      "id": "TC-AUTH-02",
+      "description": "User enters an incorrect PIN three times.",
+      "expected_result": "System locks out the user after three attempts."
+    },
+    {
+      "id": "TC-AUTH-03",
+      "description": "User enters a valid card but an invalid PIN.",
+      "expected_result": "System rejects the authentication attempt and denies access."
+    },
+    {
+      "id": "TC-AUTH-04",
+      "description": "Card reader malfunctions during authentication.",
+      "expected_result": "System handles the error gracefully and prompts for retry or reports an issue to support."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-16T21:40:59.417420",
+  "last_updated": "2026-06-16T22:06:26.102416",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "User",
+      "Card",
+      "Pin"
+    ],
+    "test_artifacts": []
+  }
+}

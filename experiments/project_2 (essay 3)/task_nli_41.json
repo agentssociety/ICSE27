@@ -1,0 +1,23 @@
+{
+  "task_id": 41,
+  "confidence": 0.9773,
+  "evidence": [
+    {
+      "claim": "Compatibility rules are not user-configurable.",
+      "fact": "Blood units that have passed their 42-day shelf life are automatically marked as expired and removed from matching consideration.",
+      "score": 0.9797,
+      "user_story_span": "Compatibility rules are predefined and not user-configurable",
+      "fact_span": ""
+    },
+    {
+      "claim": "Compatibility rules are predefined.",
+      "fact": "Blood units that have passed their 42-day shelf life are automatically marked as expired and removed from matching consideration.",
+      "score": 0.9749,
+      "user_story_span": "Compatibility rules are predefined and not user-configurable",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 7,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

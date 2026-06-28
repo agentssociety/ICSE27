@@ -1,0 +1,91 @@
+{
+  "id": "REQ-INV-MANAGE-01",
+  "title": "Automated Expiration of Blood Units",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall automatically mark blood units as expired after 42 days from their collection date and remove them from available inventory.",
+  "rationale": "To ensure that only valid, non-expired blood units are available for distribution, reducing the risk of distributing expired or contaminated blood.",
+  "business_value": "Improves patient safety by preventing the use of expired blood units, potentially saving lives and reducing healthcare risks.",
+  "source": {
+    "type": "User Story",
+    "id": 36,
+    "description": "As a inventory manager, I need the system to automatically mark blood units as expired after 42 days so that expired units are removed from available inventory and their status is updated accordingly."
+  },
+  "stakeholders": [
+    "Inventory Manager",
+    "Blood Bank Staff",
+    "Quality Assurance Team"
+  ],
+  "acceptance_criteria": [
+    "A blood unit with a collection date over 42 days ago is marked as expired.",
+    "The blood unit is removed from available inventory.",
+    "The unit's status is updated to 'expired'."
+  ],
+  "preconditions": [
+    "The system has access to the collection date of the blood units.",
+    "The current date and time are accurately synchronized."
+  ],
+  "postconditions": [
+    "Expired blood units are no longer available in the inventory pool.",
+    "The status of expired blood units is updated to 'expired'."
+  ],
+  "functional_constraints": [
+    "Expiry check must be performed daily or as configured by an administrator.",
+    "The system must handle potential discrepancies between recorded collection dates and actual collection dates."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens if the system's date and time are not synchronized?",
+    "How does the system handle blood units collected on a weekend or holiday?"
+  ],
+  "dependencies": [
+    "A reliable data source for the collection dates of blood units.",
+    "A method to accurately track the current date and time."
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Inventory Database",
+      "description": "The requirement interacts with the inventory database to retrieve and update blood unit data."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-INV-MANAGE-01",
+      "description": "Check expiration of a blood unit collected exactly 42 days ago.",
+      "expected_result": "The blood unit is marked as expired and removed from the inventory pool."
+    },
+    {
+      "id": "TC-INV-MANAGE-02",
+      "description": "Check expiration of a blood unit collected 43 days ago.",
+      "expected_result": "The blood unit is marked as expired and removed from the inventory pool."
+    },
+    {
+      "id": "TC-INV-MANAGE-03",
+      "description": "Verify system handles date synchronization issues.",
+      "expected_result": "The system correctly identifies expired units even if the date and time are slightly off."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-14T20:14:23.364216",
+  "last_updated": "2026-06-14T20:15:43.304576",
+  "traceability": {
+    "related_requirements": [
+      "REQ-BLOOD-01"
+    ],
+    "design_components": [
+      "BloodUnit"
+    ],
+    "test_artifacts": []
+  }
+}

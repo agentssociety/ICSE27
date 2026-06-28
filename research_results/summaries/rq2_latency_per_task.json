@@ -1,0 +1,879 @@
+{
+  "metric": "latency_per_task",
+  "description": "Per-task wall-clock latency per SDLC phase. Computed as total phase step-time / task count per run, then mean ± std across 3 essay seeds per project. Note: phase step-times may sum to >100% of wall-clock because nested agent steps overlap parent steps.",
+  "unit": "seconds",
+  "projects": [
+    {
+      "project_id": 1,
+      "n_essays": 3,
+      "wall_clock_per_task_s": {
+        "mean": 1236.53,
+        "std": 282.89,
+        "max": 1552.56,
+        "values": [
+          1552.56,
+          1006.95,
+          1150.09
+        ]
+      },
+      "phases": [
+        {
+          "phase": "INIT",
+          "label": "Project Init",
+          "per_task_dur_s": {
+            "mean": 0.56,
+            "std": 0.97,
+            "max": 1.68,
+            "values": [
+              0.0,
+              0.0,
+              1.68
+            ]
+          }
+        },
+        {
+          "phase": "USER_STORIES",
+          "label": "User Stories",
+          "per_task_dur_s": {
+            "mean": 125.93,
+            "std": 56.0,
+            "max": 190.55,
+            "values": [
+              95.79,
+              91.46,
+              190.55
+            ]
+          }
+        },
+        {
+          "phase": "PLANNING",
+          "label": "Planning",
+          "per_task_dur_s": {
+            "mean": 11.92,
+            "std": 9.81,
+            "max": 20.32,
+            "values": [
+              1.14,
+              20.32,
+              14.29
+            ]
+          }
+        },
+        {
+          "phase": "REQUIREMENTS",
+          "label": "Requirements",
+          "per_task_dur_s": {
+            "mean": 215.03,
+            "std": 48.99,
+            "max": 271.46,
+            "values": [
+              271.46,
+              190.3,
+              183.34
+            ]
+          }
+        },
+        {
+          "phase": "FORMAL_SPEC",
+          "label": "Formal Spec",
+          "per_task_dur_s": {
+            "mean": 209.21,
+            "std": 165.39,
+            "max": 399.16,
+            "values": [
+              399.16,
+              131.37,
+              97.11
+            ]
+          }
+        },
+        {
+          "phase": "DESIGN_UML",
+          "label": "UML Design",
+          "per_task_dur_s": {
+            "mean": 116.91,
+            "std": 32.49,
+            "max": 153.81,
+            "values": [
+              153.81,
+              92.61,
+              104.32
+            ]
+          }
+        },
+        {
+          "phase": "ARCHITECTURE",
+          "label": "Architecture",
+          "per_task_dur_s": {
+            "mean": 23.79,
+            "std": 10.55,
+            "max": 35.03,
+            "values": [
+              35.03,
+              14.09,
+              22.26
+            ]
+          }
+        },
+        {
+          "phase": "IMPLEMENTATION",
+          "label": "Implementation",
+          "per_task_dur_s": {
+            "mean": 186.97,
+            "std": 33.69,
+            "max": 220.59,
+            "values": [
+              153.22,
+              220.59,
+              187.11
+            ]
+          }
+        },
+        {
+          "phase": "TESTING",
+          "label": "Testing",
+          "per_task_dur_s": {
+            "mean": 31.07,
+            "std": 10.08,
+            "max": 40.91,
+            "values": [
+              31.54,
+              20.76,
+              40.91
+            ]
+          }
+        },
+        {
+          "phase": "FRONTEND",
+          "label": "Frontend",
+          "per_task_dur_s": {
+            "mean": 132.77,
+            "std": 44.22,
+            "max": 182.19,
+            "values": [
+              96.94,
+              119.17,
+              182.19
+            ]
+          }
+        },
+        {
+          "phase": "DEVOPS",
+          "label": "DevOps",
+          "per_task_dur_s": {
+            "mean": 50.7,
+            "std": 30.16,
+            "max": 72.07,
+            "values": [
+              72.07,
+              63.84,
+              16.2
+            ]
+          }
+        },
+        {
+          "phase": "VERIFICATION",
+          "label": "Verification",
+          "per_task_dur_s": {
+            "mean": 128.86,
+            "std": 69.73,
+            "max": 202.99,
+            "values": [
+              202.99,
+              119.02,
+              64.58
+            ]
+          }
+        },
+        {
+          "phase": "ORCHESTRATION",
+          "label": "Orchestration",
+          "per_task_dur_s": {
+            "mean": 106.47,
+            "std": 89.32,
+            "max": 192.1,
+            "values": [
+              13.86,
+              113.44,
+              192.1
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "project_id": 2,
+      "n_essays": 3,
+      "wall_clock_per_task_s": {
+        "mean": 2940.82,
+        "std": 2419.61,
+        "max": 5682.59,
+        "values": [
+          2035.29,
+          1104.59,
+          5682.59
+        ]
+      },
+      "phases": [
+        {
+          "phase": "INIT",
+          "label": "Project Init",
+          "per_task_dur_s": {
+            "mean": 1.09,
+            "std": 1.21,
+            "max": 2.39,
+            "values": [
+              2.39,
+              0.0,
+              0.88
+            ]
+          }
+        },
+        {
+          "phase": "USER_STORIES",
+          "label": "User Stories",
+          "per_task_dur_s": {
+            "mean": 117.52,
+            "std": 48.8,
+            "max": 169.72,
+            "values": [
+              73.05,
+              169.72,
+              109.78
+            ]
+          }
+        },
+        {
+          "phase": "PLANNING",
+          "label": "Planning",
+          "per_task_dur_s": {
+            "mean": 28.17,
+            "std": 33.97,
+            "max": 66.18,
+            "values": [
+              66.18,
+              17.57,
+              0.77
+            ]
+          }
+        },
+        {
+          "phase": "REQUIREMENTS",
+          "label": "Requirements",
+          "per_task_dur_s": {
+            "mean": 251.71,
+            "std": 123.7,
+            "max": 394.52,
+            "values": [
+              182.89,
+              394.52,
+              177.73
+            ]
+          }
+        },
+        {
+          "phase": "FORMAL_SPEC",
+          "label": "Formal Spec",
+          "per_task_dur_s": {
+            "mean": 92.99,
+            "std": 22.1,
+            "max": 117.12,
+            "values": [
+              117.12,
+              88.12,
+              73.74
+            ]
+          }
+        },
+        {
+          "phase": "DESIGN_UML",
+          "label": "UML Design",
+          "per_task_dur_s": {
+            "mean": 236.18,
+            "std": 231.4,
+            "max": 503.07,
+            "values": [
+              91.69,
+              113.78,
+              503.07
+            ]
+          }
+        },
+        {
+          "phase": "ARCHITECTURE",
+          "label": "Architecture",
+          "per_task_dur_s": {
+            "mean": 26.79,
+            "std": 20.97,
+            "max": 50.97,
+            "values": [
+              50.97,
+              15.89,
+              13.51
+            ]
+          }
+        },
+        {
+          "phase": "IMPLEMENTATION",
+          "label": "Implementation",
+          "per_task_dur_s": {
+            "mean": 350.62,
+            "std": 372.46,
+            "max": 771.88,
+            "values": [
+              771.88,
+              64.97,
+              215.0
+            ]
+          }
+        },
+        {
+          "phase": "TESTING",
+          "label": "Testing",
+          "per_task_dur_s": {
+            "mean": 58.99,
+            "std": 48.24,
+            "max": 105.81,
+            "values": [
+              61.73,
+              9.44,
+              105.81
+            ]
+          }
+        },
+        {
+          "phase": "FRONTEND",
+          "label": "Frontend",
+          "per_task_dur_s": {
+            "mean": 94.69,
+            "std": 32.45,
+            "max": 124.73,
+            "values": [
+              60.27,
+              99.08,
+              124.73
+            ]
+          }
+        },
+        {
+          "phase": "DEVOPS",
+          "label": "DevOps",
+          "per_task_dur_s": {
+            "mean": 37.48,
+            "std": 23.18,
+            "max": 63.37,
+            "values": [
+              63.37,
+              30.39,
+              18.67
+            ]
+          }
+        },
+        {
+          "phase": "VERIFICATION",
+          "label": "Verification",
+          "per_task_dur_s": {
+            "mean": 76.67,
+            "std": 53.09,
+            "max": 135.74,
+            "values": [
+              135.74,
+              61.34,
+              32.94
+            ]
+          }
+        },
+        {
+          "phase": "ORCHESTRATION",
+          "label": "Orchestration",
+          "per_task_dur_s": {
+            "mean": 125.51,
+            "std": 52.78,
+            "max": 186.3,
+            "values": [
+              186.3,
+              91.4,
+              98.82
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "project_id": 3,
+      "n_essays": 3,
+      "wall_clock_per_task_s": {
+        "mean": 1184.91,
+        "std": 133.72,
+        "max": 1326.87,
+        "values": [
+          1326.87,
+          1166.55,
+          1061.32
+        ]
+      },
+      "phases": [
+        {
+          "phase": "INIT",
+          "label": "Project Init",
+          "per_task_dur_s": {
+            "mean": 0.68,
+            "std": 0.3,
+            "max": 1.01,
+            "values": [
+              0.59,
+              0.44,
+              1.01
+            ]
+          }
+        },
+        {
+          "phase": "USER_STORIES",
+          "label": "User Stories",
+          "per_task_dur_s": {
+            "mean": 119.7,
+            "std": 30.65,
+            "max": 139.34,
+            "values": [
+              139.34,
+              135.37,
+              84.38
+            ]
+          }
+        },
+        {
+          "phase": "PLANNING",
+          "label": "Planning",
+          "per_task_dur_s": {
+            "mean": 23.31,
+            "std": 25.73,
+            "max": 52.94,
+            "values": [
+              52.94,
+              6.68,
+              10.3
+            ]
+          }
+        },
+        {
+          "phase": "REQUIREMENTS",
+          "label": "Requirements",
+          "per_task_dur_s": {
+            "mean": 224.33,
+            "std": 26.63,
+            "max": 255.07,
+            "values": [
+              208.47,
+              209.45,
+              255.07
+            ]
+          }
+        },
+        {
+          "phase": "FORMAL_SPEC",
+          "label": "Formal Spec",
+          "per_task_dur_s": {
+            "mean": 97.68,
+            "std": 9.81,
+            "max": 108.98,
+            "values": [
+              108.98,
+              92.8,
+              91.27
+            ]
+          }
+        },
+        {
+          "phase": "DESIGN_UML",
+          "label": "UML Design",
+          "per_task_dur_s": {
+            "mean": 130.8,
+            "std": 7.19,
+            "max": 135.12,
+            "values": [
+              135.12,
+              134.78,
+              122.5
+            ]
+          }
+        },
+        {
+          "phase": "ARCHITECTURE",
+          "label": "Architecture",
+          "per_task_dur_s": {
+            "mean": 77.69,
+            "std": 53.39,
+            "max": 138.53,
+            "values": [
+              55.85,
+              138.53,
+              38.68
+            ]
+          }
+        },
+        {
+          "phase": "IMPLEMENTATION",
+          "label": "Implementation",
+          "per_task_dur_s": {
+            "mean": 374.97,
+            "std": 244.92,
+            "max": 568.75,
+            "values": [
+              568.75,
+              456.48,
+              99.69
+            ]
+          }
+        },
+        {
+          "phase": "TESTING",
+          "label": "Testing",
+          "per_task_dur_s": {
+            "mean": 44.83,
+            "std": 19.04,
+            "max": 66.55,
+            "values": [
+              36.91,
+              66.55,
+              31.03
+            ]
+          }
+        },
+        {
+          "phase": "FRONTEND",
+          "label": "Frontend",
+          "per_task_dur_s": {
+            "mean": 122.66,
+            "std": 49.5,
+            "max": 175.45,
+            "values": [
+              115.24,
+              77.28,
+              175.45
+            ]
+          }
+        },
+        {
+          "phase": "DEVOPS",
+          "label": "DevOps",
+          "per_task_dur_s": {
+            "mean": 55.06,
+            "std": 56.29,
+            "max": 119.29,
+            "values": [
+              119.29,
+              14.36,
+              31.52
+            ]
+          }
+        },
+        {
+          "phase": "VERIFICATION",
+          "label": "Verification",
+          "per_task_dur_s": {
+            "mean": 128.37,
+            "std": 129.0,
+            "max": 274.74,
+            "values": [
+              274.74,
+              31.25,
+              79.12
+            ]
+          }
+        },
+        {
+          "phase": "ORCHESTRATION",
+          "label": "Orchestration",
+          "per_task_dur_s": {
+            "mean": 92.23,
+            "std": 26.62,
+            "max": 118.1,
+            "values": [
+              118.1,
+              64.91,
+              93.69
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "project_id": 4,
+      "n_essays": 3,
+      "wall_clock_per_task_s": {
+        "mean": 1767.1,
+        "std": 601.6,
+        "max": 2366.74,
+        "values": [
+          2366.74,
+          1163.56,
+          1771.0
+        ]
+      },
+      "phases": [
+        {
+          "phase": "INIT",
+          "label": "Project Init",
+          "per_task_dur_s": {
+            "mean": 0.35,
+            "std": 0.31,
+            "max": 0.6,
+            "values": [
+              0.46,
+              0.0,
+              0.6
+            ]
+          }
+        },
+        {
+          "phase": "USER_STORIES",
+          "label": "User Stories",
+          "per_task_dur_s": {
+            "mean": 152.3,
+            "std": 73.69,
+            "max": 202.13,
+            "values": [
+              187.12,
+              67.66,
+              202.13
+            ]
+          }
+        },
+        {
+          "phase": "PLANNING",
+          "label": "Planning",
+          "per_task_dur_s": {
+            "mean": 27.45,
+            "std": 22.42,
+            "max": 48.8,
+            "values": [
+              29.46,
+              4.1,
+              48.8
+            ]
+          }
+        },
+        {
+          "phase": "REQUIREMENTS",
+          "label": "Requirements",
+          "per_task_dur_s": {
+            "mean": 211.41,
+            "std": 20.0,
+            "max": 223.06,
+            "values": [
+              188.31,
+              222.85,
+              223.06
+            ]
+          }
+        },
+        {
+          "phase": "FORMAL_SPEC",
+          "label": "Formal Spec",
+          "per_task_dur_s": {
+            "mean": 104.09,
+            "std": 7.33,
+            "max": 112.43,
+            "values": [
+              101.16,
+              98.67,
+              112.43
+            ]
+          }
+        },
+        {
+          "phase": "DESIGN_UML",
+          "label": "UML Design",
+          "per_task_dur_s": {
+            "mean": 158.5,
+            "std": 19.76,
+            "max": 181.13,
+            "values": [
+              181.13,
+              149.76,
+              144.62
+            ]
+          }
+        },
+        {
+          "phase": "ARCHITECTURE",
+          "label": "Architecture",
+          "per_task_dur_s": {
+            "mean": 21.76,
+            "std": 15.26,
+            "max": 32.27,
+            "values": [
+              32.27,
+              4.26,
+              28.75
+            ]
+          }
+        },
+        {
+          "phase": "IMPLEMENTATION",
+          "label": "Implementation",
+          "per_task_dur_s": {
+            "mean": 833.91,
+            "std": 716.99,
+            "max": 1555.04,
+            "values": [
+              1555.04,
+              121.14,
+              825.56
+            ]
+          }
+        },
+        {
+          "phase": "TESTING",
+          "label": "Testing",
+          "per_task_dur_s": {
+            "mean": 75.52,
+            "std": 48.47,
+            "max": 124.58,
+            "values": [
+              74.31,
+              27.66,
+              124.58
+            ]
+          }
+        },
+        {
+          "phase": "FRONTEND",
+          "label": "Frontend",
+          "per_task_dur_s": {
+            "mean": 90.0,
+            "std": 55.63,
+            "max": 125.54,
+            "values": [
+              118.58,
+              25.89,
+              125.54
+            ]
+          }
+        },
+        {
+          "phase": "DEVOPS",
+          "label": "DevOps",
+          "per_task_dur_s": {
+            "mean": 46.28,
+            "std": 57.0,
+            "max": 112.08,
+            "values": [
+              12.13,
+              14.63,
+              112.08
+            ]
+          }
+        },
+        {
+          "phase": "VERIFICATION",
+          "label": "Verification",
+          "per_task_dur_s": {
+            "mean": 460.21,
+            "std": 476.04,
+            "max": 1007.42,
+            "values": [
+              1007.42,
+              141.46,
+              231.75
+            ]
+          }
+        },
+        {
+          "phase": "ORCHESTRATION",
+          "label": "Orchestration",
+          "per_task_dur_s": {
+            "mean": 265.96,
+            "std": 199.91,
+            "max": 496.67,
+            "values": [
+              157.36,
+              143.86,
+              496.67
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "cross_project_latency": [
+    {
+      "phase": "INIT",
+      "label": "Project Init",
+      "cross_project_mean": 0.7,
+      "cross_project_std": 0.7
+    },
+    {
+      "phase": "USER_STORIES",
+      "label": "User Stories",
+      "cross_project_mean": 128.9,
+      "cross_project_std": 52.3
+    },
+    {
+      "phase": "PLANNING",
+      "label": "Planning",
+      "cross_project_mean": 22.7,
+      "cross_project_std": 23.0
+    },
+    {
+      "phase": "REQUIREMENTS",
+      "label": "Requirements",
+      "cross_project_mean": 225.6,
+      "cross_project_std": 54.8
+    },
+    {
+      "phase": "FORMAL_SPEC",
+      "label": "Formal Spec",
+      "cross_project_mean": 126.0,
+      "cross_project_std": 51.2
+    },
+    {
+      "phase": "DESIGN_UML",
+      "label": "UML Design",
+      "cross_project_mean": 160.6,
+      "cross_project_std": 72.7
+    },
+    {
+      "phase": "ARCHITECTURE",
+      "label": "Architecture",
+      "cross_project_mean": 37.5,
+      "cross_project_std": 25.0
+    },
+    {
+      "phase": "IMPLEMENTATION",
+      "label": "Implementation",
+      "cross_project_mean": 436.6,
+      "cross_project_std": 342.0
+    },
+    {
+      "phase": "TESTING",
+      "label": "Testing",
+      "cross_project_mean": 52.6,
+      "cross_project_std": 31.5
+    },
+    {
+      "phase": "FRONTEND",
+      "label": "Frontend",
+      "cross_project_mean": 110.0,
+      "cross_project_std": 45.5
+    },
+    {
+      "phase": "DEVOPS",
+      "label": "DevOps",
+      "cross_project_mean": 47.4,
+      "cross_project_std": 41.7
+    },
+    {
+      "phase": "VERIFICATION",
+      "label": "Verification",
+      "cross_project_mean": 198.5,
+      "cross_project_std": 182.0
+    },
+    {
+      "phase": "ORCHESTRATION",
+      "label": "Orchestration",
+      "cross_project_mean": 147.5,
+      "cross_project_std": 92.2
+    }
+  ]
+}

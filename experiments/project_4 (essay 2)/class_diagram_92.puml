@@ -1,0 +1,106 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F0F8FF
+skinparam interfaceBackgroundColor #E6E6FA
+skinparam enumBackgroundColor #FFFACD
+
+package "Domain Model" {
+  class Transaction {
+    - id: String
+    - amount: BigDecimal
+    - timestamp: DateTime
+    - accountId: String
+    - status: TransactionStatus
+  + initiate(amount: Money, account: Account) : Transaction
+  + markFlagged(flagId: String) : void
+  }
+
+  class FlaggedTransaction {
+    - transactionId: String
+    - flagTime: DateTime
+    - reviewStatus: FlaggedTransactionStatus
+  + create(transaction: Transaction) : FlaggedTransaction
+  + changeStatus(newStatus: FlaggedTransactionStatus) : void
+  + changeStatus(FlaggedTransactionStatus.RESOLVED) : void
+  }
+
+  class User {
+    - userId: String
+    - account: String
+  + createWithdrawalRequest()
+  }
+
+  class FraudAnalyst {
+    - analystId: String
+    - permissions: Permission[]
+  }
+
+  class System {
+    - permissions: Permission[]
+  + checkFrequencyAndSpeed(accountId: String, timeframe: Duration) : DetectionResult
+  + getPendingFlaggedTransactions() : List<FlaggedTransaction>
+  + updateFlaggedTransactionStatus(flagId: String, newStatus: FlaggedTransactionStatus)
+  + resolveFlaggedTransaction(flagId: String, resolution: String)
+  + logOutageEvent(details: OutageEvent) : void
+  + startFallbackBuffer(tx: Transaction) : void
+  + waitForNetworkRecovery(timeout: Duration)
+  + clearBuffer() : void
+  + alertITTeam(outageEvent: OutageEvent) : void
+  + persistBufferToLocalStorage() : void
+  + checkCurrentLoad() : LoadMetrics
+  + activateThrottling(policy: ThrottlingPolicy) : void
+  + processBatch(transactions: List<Transaction>) : void
+  + processTransaction(transaction: Transaction) : void
+  + checkPermission(initiator: Principal, resource: Resource) : boolean
+  }
+
+  enum Permission {
+    READ
+    WRITE
+    ADMIN
+    EXECUTE
+  }
+
+  enum State {
+    PRE_IDLE
+    POST_1
+    PENDING
+    UNDER_REVIEW
+    RESOLVED
+  }
+
+  enum TransactionStatus {
+    NORMAL
+    FLAGGED
+  }
+
+  enum FlaggedTransactionStatus {
+    PENDING
+    UNDER_REVIEW
+    RESOLVED
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface "TransactionMonitoringAPI" as TMA {
+    + receiveTransaction(data: TransactionData): void
+  }
+
+  interface "FraudAnalystDashboard" as FAD {
+    + showFlaggedTransactions(): List<FlaggedTransaction>
+    + updateReviewStatus(transactionId: String, status: FlaggedTransactionStatus): void
+  }
+}
+
+' Relationships
+User "1" -- "*" Transaction : initiates
+System "1" -- "*" Transaction : monitors
+System "1" -- "*" FlaggedTransaction : creates
+FraudAnalyst "1" -- "*" FlaggedTransaction : reviews
+FlaggedTransaction "*" -- "1" Transaction : references
+
+System ..> TMA : uses
+FraudAnalyst ..> FAD : uses
+
+@enduml

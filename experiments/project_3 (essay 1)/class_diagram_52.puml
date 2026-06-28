@@ -1,0 +1,170 @@
+@startuml
+!define RECTANGLE class
+
+skinparam backgroundColor #FEFEFE
+skinparam class {
+    BackgroundColor #F8F8F8
+    BorderColor #333333
+    FontColor #333333
+    HeaderBackgroundColor #E0E0E0
+}
+skinparam package {
+    BackgroundColor #F0F0F0
+    BorderColor #666666
+    FontColor #333333
+}
+skinparam interface {
+    BackgroundColor #E8F0FE
+    BorderColor #3366CC
+}
+skinparam enum {
+    BackgroundColor #FFF8E1
+    BorderColor #CC9900
+}
+
+package "Domain Model" {
+    abstract class Actor {
+        - mayPerform: set Permission
+    }
+    
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+    }
+    
+    abstract class Resource {
+        - owner: Actor
+        - accessible: set Actor
+    }
+    
+    class Runway {
+        - instance: String
+  + selectRunway(runwayId: String) : Runway
+  + getSlots() : List<Slot>
+  + pollForUpdates(runwayId: String) : List<Slot>
+  + selectRunway(runwayId1: String) : Runway
+  + selectRunway(runwayId2: String) : Runway
+    }
+    
+    class Slot {
+        - time: Time
+        - status: SlotStatus
+  + getSlotDetails() : SlotStatus
+    }
+    
+    enum SlotStatus {
+        Available
+        Allocated
+        Occupied
+    }
+    
+    class Flight {
+        - flightId: String
+        - status: FlightStatus
+        - details: String
+    }
+    
+    enum FlightStatus {
+        Scheduled
+        Delayed
+        Cancelled
+        Departed
+        Arrived
+    }
+    
+    class State {
+        - name: String
+        - description: String
+  + checkPrecondition(Pre1, Pre2) : Boolean
+  + setPostcondition(Post1)
+  + checkPermission(initiator, grant) : Boolean
+    }
+    
+    class Operation {
+        - initiator: Actor
+        - grant: Permission
+  + createOperation(initiator: ATC, target: RW, grant: Permission.Read)
+    }
+    
+    Actor <|-- Air_Traffic_Controllers
+    Actor <|-- Operations_Management
+    Actor <|-- Flight_Schedule_Managers
+    
+    class Air_Traffic_Controllers
+{
+  + login(username: String, password: String) : Boolean
+}
+    class Operations_Management
+    class Flight_Schedule_Managers
+    
+    Resource <|-- Runway
+    
+    Runway *-- Slot : has
+    Slot --> Flight : references
+    
+    Actor --> Permission : mayPerform
+    Resource --> Actor : owner
+    Resource --> Actor : accessible
+    
+    Operation --> Actor : initiator
+    Operation --> Resource : target
+    Operation --> Permission : grant
+    Operation --> State : pre
+    Operation --> State : post
+}
+
+package "Infrastructure — Ports" {
+    interface Runway_API {
+        +{abstract} fetchRunwayData()
+        +{abstract} getTimeSlots()
+    }
+    
+    interface Flight_Database {
+        +{abstract} getFlightDetails()
+  + getFlightDetails(flightId: String) : Flight
+    }
+    
+    interface Runway_Timetable_UI {
+        +{abstract} displayTimetable()
+  + displayRunwaySelection()
+  + displayTimetable(slots, flights)
+  + displayError("Unable to load timetable")
+  + displayError("Invalid credentials")
+  + displayMessage("No time slots available")
+  + refreshDisplay(updatedSlots)
+  + displayTimetable(slots1, flights1)
+  + displayTimetable(slots2, flights2)
+  + displayError("Unable to retrieve flight data. Please try again.")
+  + displayError("Access denied. You do not have permission to view this timetable.")
+    }
+}
+
+package "Exceptions" {
+    class AuthenticationException <<exception>> {
+        - message: String
+    }
+    
+    class AuthorizationException <<exception>> {
+        - message: String
+    }
+    
+    class ResourceNotFoundException <<exception>> {
+        - message: String
+    }
+}
+
+Runway_Timetable_UI ..> Flight_Database : retrieves flight details
+Runway_Timetable_UI ..> Runway_API : fetches runway data
+
+note top of Operation : "Core operation: REQ_ATC_TIMETABLE_01"
+note bottom of Operation : "pre != post (INV-5)\nAt least one channel must be authenticated (INV-6)"
+
+note top of Runway : "Owned by Air_Traffic_Controllers\nAccessible to Air_Traffic_Controllers + Operations_Management"
+
+note top of Permission : "Hierarchy: Read < Write+Execute < Admin"
+
+note top of Actor : "Abstract; subtypes:\nAir_Traffic_Controllers,\nOperations_Management,\nFlight_Schedule_Managers"
+
+@enduml

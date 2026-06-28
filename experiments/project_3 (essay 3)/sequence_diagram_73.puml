@@ -1,0 +1,110 @@
+@startuml
+!pragma layout smetana
+
+skinparam backgroundColor #FEFEFE
+
+box "External" #LightGray
+participant "Scheduler" as Scheduler <<Actor>>
+end box
+
+box "Controller" #AliceBlue
+participant "SchedulingAPI" as API
+end box
+
+box "Domain" #LightYellow
+participant "Slot" as SlotEntity
+participant "Operation" as OperationEntity
+participant "Resource" as ResourceEntity
+participant "Permission" as PermissionEntity
+participant "State" as StateEntity
+end box
+
+box "Infrastructure" #LightCyan
+participant "SchedulingDatabase" as DB
+end box
+
+== Create Slot (Success) ==
+
+Scheduler -> API : POST /slots \n(slotData, resourceId)
+activate API
+
+alt Authentication fails
+  API --> Scheduler : 401 Unauthorized
+  deactivate API
+else Authorization fails (missing Write permission)
+  API -> PermissionEntity : checkPermission(actor, \nPermission::Write) : boolean
+  PermissionEntity --> API : false
+  API --> Scheduler : 403 Forbidden
+  deactivate API
+else Resource access denied
+  API -> ResourceEntity : isAccessible(actor) : boolean
+  ResourceEntity --> API : false
+  API --> Scheduler : 403 Forbidden
+  deactivate API
+else Duration validation fails
+  API -> SlotEntity : validateDuration(duration) \nexpect 5 min : boolean
+  SlotEntity --> API : false
+  API --> Scheduler : 400 Bad Request \n"Invalid duration"
+  deactivate API
+else Gap validation fails
+  API -> SlotEntity : validateGap(gapAfter) \nexpect 3 min : boolean
+  SlotEntity --> API : false
+  API --> Scheduler : 400 Bad Request \n"Invalid gap"
+  deactivate API
+else Overlap detection
+  API -> DB : querySlots(startTime, endTime) : Slot[]
+  DB --> API : existingSlots
+  API -> SlotEntity : checkOverlap(newSlot, existingSlots) : boolean
+  SlotEntity --> API : true  'overlap found
+  API --> Scheduler : 409 Conflict \n"Overlapping slots not allowed"
+  deactivate API
+else Gap conflict (adjacent slot mismatch)
+  API -> SlotEntity : checkAdjacentGap(newSlot, existingSlots) : boolean
+  SlotEntity --> API : false
+  API --> Scheduler : 409 Conflict \n"Insufficient gap"
+  deactivate API
+else Success
+  API -> SlotEntity : create(startTime, endTime, \nduration=5, gapAfter=3)
+  activate SlotEntity
+  SlotEntity --> API : slot
+  deactivate SlotEntity
+
+  API -> DB : insertSlot(slot) [TLS]
+  activate DB
+  DB --> API : ok
+  deactivate DB
+
+  API -> OperationEntity : create(actor, resource, slot)
+  activate OperationEntity
+  OperationEntity --> API : operation
+  deactivate OperationEntity
+
+  API -> StateEntity : transition(PreIdle, Post1)
+  activate StateEntity
+  StateEntity --> API : state changed
+  deactivate StateEntity
+
+  API --> Scheduler : 201 Created \n{slot, operation}
+  deactivate API
+end
+
+== Verify System (Post1 -> Post2) ==
+
+Scheduler -> API : GET /system/verify
+activate API
+
+API -> DB : querySlots(all) : Slot[]
+DB --> API : allSlots
+
+API -> SlotEntity : verifyAllocations(allSlots) : boolean
+SlotEntity --> API : true
+
+API -> StateEntity : transition(Post1, Post2)
+activate StateEntity
+StateEntity --> API : state changed
+deactivate StateEntity
+
+API --> Scheduler : 200 OK \n"System verified, state=Post2"
+deactivate API
+
+@enduml

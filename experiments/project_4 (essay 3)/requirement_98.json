@@ -1,0 +1,109 @@
+{
+  "id": "REQ-WD-01",
+  "title": "Atomic Withdrawal Transactions",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Critical",
+  "version": "1.0",
+  "description": "The system shall ensure that withdrawal transactions are atomic, meaning all steps (deducting balance, updating limits, logging) either succeed together or fail entirely, with no partial changes allowed.",
+  "rationale": "Ensuring atomicity prevents partial transactions which could lead to inconsistent data and potential financial discrepancies.",
+  "business_value": "Maintaining data consistency is crucial for the trust and reliability of the financial system. This requirement protects users' funds from being partially withdrawn, thereby reducing risk and enhancing user confidence.",
+  "source": {
+    "type": "User Story",
+    "id": 98,
+    "description": "As a user I need withdrawal transactions to be atomic with full rollback if any part fails So that data remains consistent and no partial changes occur"
+  },
+  "stakeholders": [
+    "Finance Team",
+    "IT Development Team",
+    "User Support Team"
+  ],
+  "acceptance_criteria": [
+    "Given the user has a sufficient balance for a withdrawal",
+    "When the user initiates a withdrawal transaction",
+    "And a step in the transaction (e.g., logging) fails",
+    "Then the entire transaction is rolled back",
+    "And the user's balance is unchanged",
+    "And the withdrawal limits are unchanged",
+    "And no transaction log is recorded"
+  ],
+  "preconditions": [
+    "The user must have an existing account with sufficient funds",
+    "The system must be operational and available for transactions"
+  ],
+  "postconditions": [
+    "The user's balance remains unchanged after a failed withdrawal attempt",
+    "No changes are made to the withdrawal limits",
+    "Transaction logs are not recorded in case of failure"
+  ],
+  "functional_constraints": [
+    "All steps (deducting balance, updating limits, logging) must be executed atomically",
+    "If any step fails, all previous steps must be rolled back to their initial state"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "Transaction response time should be less than 5 seconds under normal load conditions",
+    "availability": "The system must be available 99.9% of the time",
+    "scalability": "The system must support up to 1,000 transactions per minute without performance degradation",
+    "usability": "Error messages should clearly communicate the failure reason and provide guidance on how to proceed"
+  },
+  "edge_cases": [
+    "User has insufficient balance but tries to initiate a withdrawal",
+    "System is under high load and cannot handle additional transactions",
+    "Transaction log storage reaches its maximum capacity"
+  ],
+  "dependencies": [
+    "Account Management System",
+    "Limit Management System",
+    "Logging System",
+    "Database for storing transaction records"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "AccountService API",
+      "description": "The requirement interacts with this API to deduct the user's balance."
+    },
+    {
+      "type": "API",
+      "name": "LimitService API",
+      "description": "The requirement interacts with this API to update withdrawal limits."
+    },
+    {
+      "type": "Database",
+      "name": "TransactionLog Database",
+      "description": "The requirement uses this database to record transaction logs and ensure they are rolled back on failure."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-WD-01",
+      "description": "User attempts withdrawal with sufficient balance but logging fails.",
+      "expected_result": "Transaction is rolled back, balance unchanged, limits unchanged, no log recorded."
+    },
+    {
+      "id": "TC-WD-02",
+      "description": "System under high load during withdrawal transaction initiation.",
+      "expected_result": "Transaction is rejected or delayed until system capacity increases, user is informed of delay/rejection reason."
+    },
+    {
+      "id": "TC-WD-03",
+      "description": "Database reaches its maximum capacity while recording transaction logs.",
+      "expected_result": "Transaction is rolled back, balance unchanged, limits unchanged, no log recorded. Error message indicating high load or maintenance is displayed to user."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-17T09:55:00.735025",
+  "last_updated": "2026-06-17T09:59:08.588901",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "WithdrawalTransaction",
+      "Account",
+      "DailyWithdrawalLimit"
+    ],
+    "test_artifacts": []
+  }
+}

@@ -1,0 +1,200 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+skinparam backgroundColor #FEFEFE
+
+package "Domain Model" {
+    enum FlightType {
+        EMERGENCY
+        NON_EMERGENCY
+    }
+
+    enum SlotStatus {
+        AVAILABLE
+        ALLOCATED
+    }
+
+    class Flight {
+        - id: String
+        - type: FlightType
+        - slot: Slot
+        {method} +Flight(id: String, type: FlightType)
+        {method} +isEmergency(): Boolean
+    }
+
+    class Slot {
+        - id: String
+        - time: DateTime
+        - status: SlotStatus
+        {method} +Slot(id: String, time: DateTime)
+        {method} +allocate(): void
+        {method} +release(): void
+  + allocate(slotId: String) : void
+  + adjustSlot(flight: Flight, newTime: DateTime) : void
+    }
+
+    class FlightQueue {
+        - flights: List<Flight>
+        {method} +FlightQueue()
+        {method} +addFlight(flight: Flight): void
+        {method} +insertEmergency(flight: EmergencyFlight): void
+        {method} +requeueNonEmergency(): void
+        {method} +getNextAvailableSlot(): Slot
+        {method} +getOrderedFlights(): List<Flight>
+  + insertEmergencyFlight(emergency: EmergencyFlight, slot: Slot) : void
+  + reQueueFlights(excludeEmergency: Flight) : List<Flight>
+  + insertEmergencyFlight(emergency: EF, slot: Slot) : void
+  + reQueueAllNonEmergency() : void
+  + removeFlight(flight: Flight) : void
+  + insertFlightAtPosition(flight: Flight, position: Integer) : void
+    }
+
+    class EmergencyFlight {
+        - id: String
+        - detectionTime: DateTime
+        {method} +EmergencyFlight(id: String, detectionTime: DateTime)
+        {method} +getDetectionTime(): DateTime
+  + create(id: String, detectionTime: DateTime) : EmergencyFlight
+    }
+
+    note top of FlightQueue
+        Queue order is preserved for non-emergency flights after re-queuing.
+    end note
+
+    note top of EmergencyFlight
+        Emergency flights are automatically allocated the next available slot without manual confirmation.
+    end note
+
+    note top of Flight
+        Emergency flights are flagged and prioritized above all others.
+    end note
+
+    note top of Slot
+        Slots are allocated sequentially; next available slot is assigned to emergency.
+    end note
+}
+
+package "Application" {
+    interface FlightQueueAPI {
+        {method} +retrieveQueue(): FlightQueue
+        {method} +updateSlot(flightId: String, slot: Slot): void
+        {method} +requeueFlights(): void
+        {method} +handleEmergency(emergency: EmergencyFlight): void
+    }
+
+    interface FlightScheduleDatabase {
+        {method} +storeFlight(flight: Flight): void
+        {method} +updateFlight(flight: Flight): void
+        {method} +getFlight(flightId: String): Flight
+        {method} +getAllFlights(): List<Flight>
+    }
+}
+
+package "Infrastructure — Ports" {
+    class EmergencyHandler {
+        - queueAPI: FlightQueueAPI
+        - scheduleDB: FlightScheduleDatabase
+        {method} +EmergencyHandler(queueAPI: FlightQueueAPI, scheduleDB: FlightScheduleDatabase)
+        {method} +handleSingleEmergency(emergency: EmergencyFlight): void
+        {method} +handleMultipleEmergencies(emergencies: List<EmergencyFlight>): void
+  + handleEmergencyFlight(flightId: String) : void
+  + handleBatchEmergencyFlights(flightIds: List<String>) : void
+    }
+
+    class QueueManager {
+        - queueAPI: FlightQueueAPI
+        - scheduleDB: FlightScheduleDatabase
+        {method} +QueueManager(queueAPI: FlightQueueAPI, scheduleDB: FlightScheduleDatabase)
+        {method} +requeueNonEmergencyFlights(): void
+        {method} +getNextAvailableSlot(): Slot
+  + reQueueFlight(flightId: String, newPosition: Integer) : void
+    }
+}
+
+package "Controllers" {
+    class FlightQueueController {
+        - emergencyHandler: EmergencyHandler
+        - queueManager: QueueManager
+        {method} +FlightQueueController(emergencyHandler: EmergencyHandler, queueManager: QueueManager)
+        {method} +handleEmergencyRequest(emergencyData: EmergencyRequestDTO): void
+        {method} +getQueueStatus(): QueueStatusDTO
+        {method} +requeueFlight(flightId: String): void
+    }
+}
+
+package "DTOs" {
+    class EmergencyRequestDTO <<dto>> {
+        - flightId: String
+        - detectionTime: DateTime
+        - actorId: String
+        {method} +EmergencyRequestDTO(flightId: String, detectionTime: DateTime, actorId: String)
+    }
+
+    class QueueStatusDTO <<dto>> {
+        - flights: List<FlightDTO>
+        - emergencyCount: Integer
+        - nextAvailableSlot: SlotDTO
+        {method} +QueueStatusDTO(flights: List<FlightDTO>, emergencyCount: Integer, nextAvailableSlot: SlotDTO)
+    }
+
+    class FlightDTO <<dto>> {
+        - id: String
+        - type: FlightType
+        - slotTime: DateTime
+        {method} +FlightDTO(id: String, type: FlightType, slotTime: DateTime)
+    }
+
+    class SlotDTO <<dto>> {
+        - id: String
+        - time: DateTime
+        - status: SlotStatus
+        {method} +SlotDTO(id: String, time: DateTime, status: SlotStatus)
+    }
+}
+
+package "Exceptions" {
+    class UnauthorizedAccessException <<exception>> {
+        - message: String
+        {method} +UnauthorizedAccessException(message: String)
+    }
+
+    class NoSlotAvailableException <<exception>> {
+        - message: String
+        {method} +NoSlotAvailableException(message: String)
+    }
+
+    class ConcurrentModificationException <<exception>> {
+        - message: String
+        {method} +ConcurrentModificationException(message: String)
+    }
+
+    class AuthenticationFailedException <<exception>> {
+        - message: String
+        {method} +AuthenticationFailedException(message: String)
+    }
+}
+
+' Relationships
+EmergencyFlight --|> Flight : extends
+FlightQueue *-- Flight : contains
+FlightQueue --> Slot : manages
+Flight --> Slot : has
+
+EmergencyHandler ..> FlightQueueAPI : uses
+EmergencyHandler ..> FlightScheduleDatabase : uses
+QueueManager ..> FlightQueueAPI : uses
+QueueManager ..> FlightScheduleDatabase : uses
+
+FlightQueueController --> EmergencyHandler : delegates
+FlightQueueController --> QueueManager : delegates
+FlightQueueController ..> EmergencyRequestDTO : receives
+FlightQueueController ..> QueueStatusDTO : returns
+
+EmergencyHandler ..> UnauthorizedAccessException : throws
+EmergencyHandler ..> NoSlotAvailableException : throws
+EmergencyHandler ..> ConcurrentModificationException : throws
+EmergencyHandler ..> AuthenticationFailedException : throws
+
+@enduml

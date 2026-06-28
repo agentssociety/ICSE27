@@ -1,0 +1,246 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+
+box "Controller Layer" #LightBlue
+participant "TransactionManagementAPI" as API
+end box
+
+box "Application Layer" #LightGreen
+participant "TransactionCoordinator" as Coordinator
+end box
+
+box "Domain Layer" #LightYellow
+participant "Transaction" as Transaction
+participant "Operation" as Operation
+participant "Resource" as Resource
+participant "Actor" as Actor
+participant "Permission" as Permission
+participant "State" as State
+end box
+
+box "Infrastructure Layer" #LightCoral
+participant "Interface" as Interface
+participant "DataStorage" as DataStorage
+end box
+
+== Successful Transaction Flow ==
+
+Actor -> API : POST /transactions [TLS]
+note right: Authentication required
+API -> Coordinator : startTransaction(actorId: String) : String
+Coordinator -> Actor : getPermissions(actorId: String) : Permission
+Coordinator -> Resource : checkAccessibility(resourceId: String, actorId: String) : Boolean
+Coordinator -> Transaction : create(actor: Actor, resources: List<Resource>) : Transaction
+Transaction -> State : setPreState(type: String) : void
+note right: Pre1, Pre2, Pre3 states set
+Coordinator -> Operation : execute(data: Object) : Boolean
+alt Operation succeeds
+    Operation -> Resource : applyChange(data: Object) : Boolean
+    Resource -> DataStorage : save(data: Object) [encrypted at rest]
+    DataStorage --> Resource : success
+    Resource --> Operation : true
+    Operation --> Coordinator : true
+else Operation fails
+    Operation --> Coordinator : false
+end
+
+alt All operations succeed
+    Coordinator -> Transaction : commit() : Boolean
+    Transaction -> State : setPostState(type: String) : void
+    note right: Post1 state set
+    Transaction -> DataStorage : persistChanges() [encrypted at rest]
+    DataStorage --> Transaction : success
+    Transaction --> Coordinator : true
+    Coordinator --> API : 200 OK
+    API --> Actor : Transaction committed
+else Any operation fails
+    Coordinator -> Transaction : rollback() : Boolean
+    Transaction -> State : setPostState(type: String) : void
+    note right: Post2 state set
+    Transaction -> DataStorage : revertChanges() [encrypted at rest]
+    DataStorage --> Transaction : success
+    Transaction --> Coordinator : true
+    Coordinator --> API : 500 Internal Server Error
+    API --> Actor : Transaction failed - rolled back
+end
+
+== System Crash Mid-Transaction Flow ==
+
+Actor -> API : POST /transactions [TLS]
+API -> Coordinator : startTransaction(actorId: String) : String
+Coordinator -> Transaction : create(actor: Actor, resources: List<Resource>) : Transaction
+Transaction -> State : setPreState(type: String) : void
+note right: Pre3 state set
+Coordinator -> Operation : execute(data: Object) : Boolean
+note right #FF0000: System crash occurs here
+== Recovery Process ==
+Coordinator -> DataStorage : detectIncompleteTransactions() : List<Transaction>
+DataStorage --> Coordinator : [incomplete transactions]
+Coordinator -> Transaction : rollback() : Boolean
+Transaction -> State : setPostState(type: String) : void
+note right: Post2 state set
+Transaction -> DataStorage : revertChanges() [encrypted at rest]
+DataStorage --> Transaction : success
+Transaction --> Coordinator : true
+Coordinator --> API : 500 Internal Server Error
+API --> Actor : Transaction rolled back due to system crash
+
+== Network Failure During Transaction Flow ==
+
+Actor -> API : POST /transactions [TLS]
+API -> Coordinator : startTransaction(actorId: String) : String
+Coordinator -> Transaction : create(actor: Actor, resources: List<Resource>) : Transaction
+Transaction -> State : setPreState(type: String) : void
+note right: Pre3 state set
+Coordinator -> Operation : execute(data: Object) : Boolean
+note right #FF0000: Network failure occurs
+alt Network failure detected
+    Coordinator -> Transaction : rollback() : Boolean
+    Transaction -> State : setPostState(type: String) : void
+    note right: Post2 state set
+    Transaction -> DataStorage : revertChanges() [encrypted at rest]
+    DataStorage --> Transaction : success
+    Transaction --> Coordinator : true
+    Coordinator --> API : 500 Internal Server Error
+    API --> Actor : Transaction rolled back due to network failure
+else Network failure not detected
+    Coordinator -> Transaction : rollback() : Boolean
+    Transaction -> State : setPostState(type: String) : void
+    note right: Post2 state set
+    Transaction -> DataStorage : revertChanges() [encrypted at rest]
+    DataStorage --> Transaction : success
+    Transaction --> Coordinator : true
+    Coordinator --> API : 500 Internal Server Error
+    API --> Actor : Transaction rolled back due to network failure
+end
+
+== Permission Validation Flow ==
+
+Actor -> API : POST /transactions [TLS]
+API -> Coordinator : startTransaction(actorId: String) : String
+Coordinator -> Actor : getPermissions(actorId: String) : Permission
+alt Permission level sufficient (Read, Write, Execute, Admin)
+    Coordinator -> Resource : checkAccessibility(resourceId: String, actorId: String) : Boolean
+    alt Resource accessible
+        Coordinator -> Transaction : create(actor: Actor, resources: List<Resource>) : Transaction
+        Transaction -> State : setPreState(type: String) : void
+        note right: Pre1, Pre2, Pre3 states set
+        Coordinator -> Operation : execute(data: Object) : Boolean
+        alt Operation succeeds
+            Operation -> Resource : applyChange(data: Object) : Boolean
+            Resource -> DataStorage : save(data: Object) [encrypted at rest]
+            DataStorage --> Resource : success
+            Resource --> Operation : true
+            Operation --> Coordinator : true
+            Coordinator -> Transaction : commit() : Boolean
+            Transaction -> State : setPostState(type: String) : void
+            note right: Post1 state set
+            Transaction -> DataStorage : persistChanges() [encrypted at rest]
+            DataStorage --> Transaction : success
+            Transaction --> Coordinator : true
+            Coordinator --> API : 200 OK
+            API --> Actor : Transaction committed
+        else Operation fails
+            Coordinator -> Transaction : rollback() : Boolean
+            Transaction -> State : setPostState(type: String) : void
+            note right: Post2 state set
+            Transaction -> DataStorage : revertChanges() [encrypted at rest]
+            DataStorage --> Transaction : success
+            Transaction --> Coordinator : true
+            Coordinator --> API : 500 Internal Server Error
+            API --> Actor : Transaction failed - rolled back
+        end
+    else Resource not accessible
+        Coordinator --> API : 403 Forbidden
+        API --> Actor : Access denied - resource not accessible
+    end
+else Permission level insufficient
+    Coordinator --> API : 403 Forbidden
+    API --> Actor : Access denied - insufficient permissions
+end
+
+== Edge Case: Owner Write Permission ==
+
+Actor -> API : POST /transactions [TLS]
+API -> Coordinator : startTransaction(actorId: String) : String
+Coordinator -> Actor : getPermissions(actorId: String) : Permission
+alt Permission level is Write
+    Coordinator -> Resource : checkOwnership(resourceId: String, actorId: String) : Boolean
+    alt Actor is owner
+        Coordinator -> Resource : checkAccessibility(resourceId: String, actorId: String) : Boolean
+        alt Resource accessible
+            Coordinator -> Transaction : create(actor: Actor, resources: List<Resource>) : Transaction
+            Transaction -> State : setPreState(type: String) : void
+            note right: Pre1, Pre2, Pre3 states set
+            Coordinator -> Operation : execute(data: Object) : Boolean
+            alt Operation succeeds
+                Operation -> Resource : applyChange(data: Object) : Boolean
+                Resource -> DataStorage : save(data: Object) [encrypted at rest]
+                DataStorage --> Resource : success
+                Resource --> Operation : true
+                Operation --> Coordinator : true
+                Coordinator -> Transaction : commit() : Boolean
+                Transaction -> State : setPostState(type: String) : void
+                note right: Post1 state set
+                Transaction -> DataStorage : persistChanges() [encrypted at rest]
+                DataStorage --> Transaction : success
+                Transaction --> Coordinator : true
+                Coordinator --> API : 200 OK
+                API --> Actor : Transaction committed
+            else Operation fails
+                Coordinator -> Transaction : rollback() : Boolean
+                Transaction -> State : setPostState(type: String) : void
+                note right: Post2 state set
+                Transaction -> DataStorage : revertChanges() [encrypted at rest]
+                DataStorage --> Transaction : success
+                Transaction --> Coordinator : true
+                Coordinator --> API : 500 Internal Server Error
+                API --> Actor : Transaction failed - rolled back
+            end
+        else Resource not accessible
+            Coordinator --> API : 403 Forbidden
+            API --> Actor : Access denied - resource not accessible
+        end
+    else Actor is not owner
+        Coordinator --> API : 403 Forbidden
+        API --> Actor : Only resource owner can have Write permission
+    end
+else Permission level is not Write
+    Coordinator -> Resource : checkAccessibility(resourceId: String, actorId: String) : Boolean
+    alt Resource accessible
+        Coordinator -> Transaction : create(actor: Actor, resources: List<Resource>) : Transaction
+        Transaction -> State : setPreState(type: String) : void
+        note right: Pre1, Pre2, Pre3 states set
+        Coordinator -> Operation : execute(data: Object) : Boolean
+        alt Operation succeeds
+            Operation -> Resource : applyChange(data: Object) : Boolean
+            Resource -> DataStorage : save(data: Object) [encrypted at rest]
+            DataStorage --> Resource : success
+            Resource --> Operation : true
+            Operation --> Coordinator : true
+            Coordinator -> Transaction : commit() : Boolean
+            Transaction -> State : setPostState(type: String) : void
+            note right: Post1 state set
+            Transaction -> DataStorage : persistChanges() [encrypted at rest]
+            DataStorage --> Transaction : success
+            Transaction --> Coordinator : true
+            Coordinator --> API : 200 OK
+            API --> Actor : Transaction committed
+        else Operation fails
+            Coordinator -> Transaction : rollback() : Boolean
+            Transaction -> State : setPostState(type: String) : void
+            note right: Post2 state set
+            Transaction -> DataStorage : revertChanges() [encrypted at rest]
+            DataStorage --> Transaction : success
+            Transaction --> Coordinator : true
+            Coordinator --> API : 500 Internal Server Error
+            API --> Actor : Transaction failed - rolled back
+        end
+    else Resource not accessible
+        Coordinator --> API : 403 Forbidden
+        API --> Actor : Access denied - resource not accessible
+    end
+end
+
+@enduml

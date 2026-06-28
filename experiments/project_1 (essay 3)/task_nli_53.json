@@ -1,0 +1,23 @@
+{
+  "task_id": 53,
+  "confidence": 0.9826,
+  "evidence": [
+    {
+      "claim": "The user is a patient with symptoms to report.",
+      "fact": "Patients log their ailments into the platform to begin the evaluation workflow.",
+      "score": 0.998,
+      "user_story_span": "The user is a patient with symptoms to report",
+      "fact_span": "Patients log their ailments into the platform"
+    },
+    {
+      "claim": "The system needs to process symptom information.",
+      "fact": "The system calculates a triage score based on reported symptoms to assign a priority rank.",
+      "score": 0.9672,
+      "user_story_span": "The system needs to process and store symptom information",
+      "fact_span": "The system calculates a triage score based on reported symptoms"
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

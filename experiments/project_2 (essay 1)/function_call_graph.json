@@ -1,0 +1,1507 @@
+{
+  "src.api.alert.alert_router.InventoryApiAdapter.__init__": {
+    "file": "src/api/alert/alert_router.py",
+    "line": 16,
+    "end_line": 17,
+    "class": "InventoryApiAdapter",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.alert.alert_router.NotificationGatewayAdapter.__init__": {
+    "file": "src/api/alert/alert_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": "NotificationGatewayAdapter",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.blood_type_alert_operation.blood_type_alert_operation_router.get_db": {
+    "file": "src/api/blood_type_alert_operation/blood_type_alert_operation_router.py",
+    "line": 18,
+    "end_line": 20,
+    "class": null,
+    "name": "get_db",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.blood_type_alert_operation.blood_type_alert_operation_router._repo": {
+    "file": "src/api/blood_type_alert_operation/blood_type_alert_operation_router.py",
+    "line": 26,
+    "end_line": 27,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.blood_type_alert_operation.blood_type_alert_operation_router.list_blood_type_alert_operations": {
+    "file": "src/api/blood_type_alert_operation/blood_type_alert_operation_router.py",
+    "line": 31,
+    "end_line": 36,
+    "class": null,
+    "name": "list_blood_type_alert_operations",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_type_alert_operation.blood_type_alert_operation_router.get_blood_type_alert_operation": {
+    "file": "src/api/blood_type_alert_operation/blood_type_alert_operation_router.py",
+    "line": 40,
+    "end_line": 50,
+    "class": null,
+    "name": "get_blood_type_alert_operation",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_type_alert_operation.blood_type_alert_operation_router.create_blood_type_alert_operation": {
+    "file": "src/api/blood_type_alert_operation/blood_type_alert_operation_router.py",
+    "line": 56,
+    "end_line": 60,
+    "class": null,
+    "name": "create_blood_type_alert_operation",
+    "calls": [
+      "src.domain.alert.Alert.BloodTypeAlertOperation.create"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_type_alert_operation.blood_type_alert_operation_router.update_blood_type_alert_operation": {
+    "file": "src/api/blood_type_alert_operation/blood_type_alert_operation_router.py",
+    "line": 64,
+    "end_line": 75,
+    "class": null,
+    "name": "update_blood_type_alert_operation",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_type_alert_operation.blood_type_alert_operation_router.delete_blood_type_alert_operation": {
+    "file": "src/api/blood_type_alert_operation/blood_type_alert_operation_router.py",
+    "line": 79,
+    "end_line": 87,
+    "class": null,
+    "name": "delete_blood_type_alert_operation",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_type_resource.blood_type_resource_router._repo": {
+    "file": "src/api/blood_type_resource/blood_type_resource_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.blood_type_resource.blood_type_resource_router.list_blood_type_resources": {
+    "file": "src/api/blood_type_resource/blood_type_resource_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_blood_type_resources",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_type_resource.blood_type_resource_router.get_blood_type_resource": {
+    "file": "src/api/blood_type_resource/blood_type_resource_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_blood_type_resource",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_type_resource.blood_type_resource_router.create_blood_type_resource": {
+    "file": "src/api/blood_type_resource/blood_type_resource_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_blood_type_resource",
+    "calls": [
+      "src.domain.alert.Alert.BloodTypeAlertOperation.create"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_type_resource.blood_type_resource_router.update_blood_type_resource": {
+    "file": "src/api/blood_type_resource/blood_type_resource_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_blood_type_resource",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_type_resource.blood_type_resource_router.delete_blood_type_resource": {
+    "file": "src/api/blood_type_resource/blood_type_resource_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_blood_type_resource",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.blood_unit.blood_unit_router.BloodUnitController.__init__": {
+    "file": "src/api/blood_unit/blood_unit_router.py",
+    "line": 23,
+    "end_line": 24,
+    "class": "BloodUnitController",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.blood_unit.blood_unit_router.BloodUnitController.recordBloodUnit": {
+    "file": "src/api/blood_unit/blood_unit_router.py",
+    "line": 26,
+    "end_line": 27,
+    "class": "BloodUnitController",
+    "name": "recordBloodUnit",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.blood_unit.blood_unit_router.BloodUnitController.getExpirationDate": {
+    "file": "src/api/blood_unit/blood_unit_router.py",
+    "line": 29,
+    "end_line": 30,
+    "class": "BloodUnitController",
+    "name": "getExpirationDate",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.blood_unit.blood_unit_router.BloodUnitController.getFlaggedUnits": {
+    "file": "src/api/blood_unit/blood_unit_router.py",
+    "line": 32,
+    "end_line": 33,
+    "class": "BloodUnitController",
+    "name": "getFlaggedUnits",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.reservation.reservation_router.ReservationRouter.__init__": {
+    "file": "src/api/reservation/reservation_router.py",
+    "line": 16,
+    "end_line": 17,
+    "class": "ReservationRouter",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.resource.resource_router._repo": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.list_resources": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_resources",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.get_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_resource",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.create_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_resource",
+    "calls": [
+      "src.domain.alert.Alert.BloodTypeAlertOperation.create"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.update_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_resource",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.delete_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_resource",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.transfusion_request.transfusion_request_router.TransfusionRequestRouter.__init__": {
+    "file": "src/api/transfusion_request/transfusion_request_router.py",
+    "line": 18,
+    "end_line": 19,
+    "class": "TransfusionRequestRouter",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.user.user_router.get_db": {
+    "file": "src/api/user/user_router.py",
+    "line": 14,
+    "end_line": 15,
+    "class": null,
+    "name": "get_db",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.user.user_router._repo": {
+    "file": "src/api/user/user_router.py",
+    "line": 18,
+    "end_line": 19,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.user.user_router.list_users": {
+    "file": "src/api/user/user_router.py",
+    "line": 23,
+    "end_line": 24,
+    "class": null,
+    "name": "list_users",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.user.user_router.get_user": {
+    "file": "src/api/user/user_router.py",
+    "line": 28,
+    "end_line": 32,
+    "class": null,
+    "name": "get_user",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.user.user_router.create_user": {
+    "file": "src/api/user/user_router.py",
+    "line": 36,
+    "end_line": 37,
+    "class": null,
+    "name": "create_user",
+    "calls": [
+      "src.domain.alert.Alert.BloodTypeAlertOperation.create"
+    ],
+    "called_by": []
+  },
+  "src.api.user.user_router.update_user": {
+    "file": "src/api/user/user_router.py",
+    "line": 41,
+    "end_line": 45,
+    "class": null,
+    "name": "update_user",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.user.user_router.delete_user": {
+    "file": "src/api/user/user_router.py",
+    "line": 49,
+    "end_line": 51,
+    "class": null,
+    "name": "delete_user",
+    "calls": [
+      "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.config.database.get_db": {
+    "file": "src/config/database.py",
+    "line": 18,
+    "end_line": 23,
+    "class": null,
+    "name": "get_db",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.Container.__init__": {
+    "file": "src/config/dependencies.py",
+    "line": 14,
+    "end_line": 15,
+    "class": "Container",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.settings.Settings.__init__": {
+    "file": "src/config/settings.py",
+    "line": 14,
+    "end_line": 15,
+    "class": "Settings",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.alert.Alert.User.hasPermission": {
+    "file": "src/domain/alert/Alert.py",
+    "line": 38,
+    "end_line": 39,
+    "class": "User",
+    "name": "hasPermission",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.alert.Alert.Resource.checkAccess": {
+    "file": "src/domain/alert/Alert.py",
+    "line": 47,
+    "end_line": 48,
+    "class": "Resource",
+    "name": "checkAccess",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.alert.Alert.BloodTypeResource.isAccessible": {
+    "file": "src/domain/alert/Alert.py",
+    "line": 55,
+    "end_line": 56,
+    "class": "BloodTypeResource",
+    "name": "isAccessible",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.alert.Alert.BloodTypeAlertOperation.create": {
+    "file": "src/domain/alert/Alert.py",
+    "line": 67,
+    "end_line": 68,
+    "class": "BloodTypeAlertOperation",
+    "name": "create",
+    "calls": [],
+    "called_by": [
+      "src.api.blood_type_alert_operation.blood_type_alert_operation_router.create_blood_type_alert_operation",
+      "src.api.blood_type_resource.blood_type_resource_router.create_blood_type_resource",
+      "src.api.resource.resource_router.create_resource",
+      "src.api.user.user_router.create_user"
+    ]
+  },
+  "src.domain.alert.Alert.BloodTypeAlertOperation.checkStock": {
+    "file": "src/domain/alert/Alert.py",
+    "line": 70,
+    "end_line": 71,
+    "class": "BloodTypeAlertOperation",
+    "name": "checkStock",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.alert.Alert.BloodTypeAlertOperation.updateState": {
+    "file": "src/domain/alert/Alert.py",
+    "line": 73,
+    "end_line": 74,
+    "class": "BloodTypeAlertOperation",
+    "name": "updateState",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.blood_unit.BloodUnit.BloodUnit.getBloodType": {
+    "file": "src/domain/blood_unit/BloodUnit.py",
+    "line": 39,
+    "end_line": 40,
+    "class": "BloodUnit",
+    "name": "getBloodType",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.blood_unit.BloodUnit.BloodUnit.getRhFactor": {
+    "file": "src/domain/blood_unit/BloodUnit.py",
+    "line": 42,
+    "end_line": 43,
+    "class": "BloodUnit",
+    "name": "getRhFactor",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.blood_unit.BloodUnit.BloodUnit.getDonationDate": {
+    "file": "src/domain/blood_unit/BloodUnit.py",
+    "line": 45,
+    "end_line": 46,
+    "class": "BloodUnit",
+    "name": "getDonationDate",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.blood_unit.BloodUnit.BloodUnit.setExpirationDate": {
+    "file": "src/domain/blood_unit/BloodUnit.py",
+    "line": 48,
+    "end_line": 49,
+    "class": "BloodUnit",
+    "name": "setExpirationDate",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.State.checkStateChange": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 40,
+    "end_line": 41,
+    "class": "State",
+    "name": "checkStateChange",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.State.transitionState": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 46,
+    "end_line": 47,
+    "class": "State",
+    "name": "transitionState",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.Actor.checkPermission": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 59,
+    "end_line": 60,
+    "class": "Actor",
+    "name": "checkPermission",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.Resource.checkAccess": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 70,
+    "end_line": 71,
+    "class": "Resource",
+    "name": "checkAccess",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.Interface.checkAuthentication": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 82,
+    "end_line": 83,
+    "class": "Interface",
+    "name": "checkAuthentication",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.Blood_Inventory_Database.queryReservation": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 93,
+    "end_line": 94,
+    "class": "Blood_Inventory_Database",
+    "name": "queryReservation",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.Blood_Inventory_Database.releaseReservation": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 96,
+    "end_line": 97,
+    "class": "Blood_Inventory_Database",
+    "name": "releaseReservation",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.Blood_Inventory_Database.updateReservationStatus": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 102,
+    "end_line": 103,
+    "class": "Blood_Inventory_Database",
+    "name": "updateReservationStatus",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.REQ_BB_01.createOperation": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 135,
+    "end_line": 136,
+    "class": "REQ_BB_01",
+    "name": "createOperation",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.REQ_BB_01.authorized": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 117,
+    "end_line": 118,
+    "class": "REQ_BB_01",
+    "name": "authorized",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.REQ_BB_01.accessible": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 120,
+    "end_line": 121,
+    "class": "REQ_BB_01",
+    "name": "accessible",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.REQ_BB_01.authenticated": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 123,
+    "end_line": 124,
+    "class": "REQ_BB_01",
+    "name": "authenticated",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.REQ_BB_01.valid": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 126,
+    "end_line": 127,
+    "class": "REQ_BB_01",
+    "name": "valid",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.CancellationRecord.createCancellationRecord": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 144,
+    "end_line": 145,
+    "class": "CancellationRecord",
+    "name": "createCancellationRecord",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.OverlapRecord.recordOverlap": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 153,
+    "end_line": 154,
+    "class": "OverlapRecord",
+    "name": "recordOverlap",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.reservation.Reservation.OutageRecord.createOutageRecord": {
+    "file": "src/domain/reservation/Reservation.py",
+    "line": 164,
+    "end_line": 165,
+    "class": "OutageRecord",
+    "name": "createOutageRecord",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.transfusion_request.TransfusionRequest.UniqueID.generate": {
+    "file": "src/domain/transfusion_request/TransfusionRequest.py",
+    "line": 56,
+    "end_line": 57,
+    "class": "UniqueID",
+    "name": "generate",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.__init__": {
+    "file": "src/infra/alert/alert_repo_impl.py",
+    "line": 11,
+    "end_line": 12,
+    "class": "SQLAlchemyAlertRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.get_by_id": {
+    "file": "src/infra/alert/alert_repo_impl.py",
+    "line": 14,
+    "end_line": 15,
+    "class": "SQLAlchemyAlertRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": [
+      "src.api.blood_type_alert_operation.blood_type_alert_operation_router.get_blood_type_alert_operation",
+      "src.api.blood_type_resource.blood_type_resource_router.get_blood_type_resource",
+      "src.api.resource.resource_router.get_resource",
+      "src.api.user.user_router.get_user"
+    ]
+  },
+  "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.get_all": {
+    "file": "src/infra/alert/alert_repo_impl.py",
+    "line": 17,
+    "end_line": 18,
+    "class": "SQLAlchemyAlertRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": [
+      "src.api.blood_type_alert_operation.blood_type_alert_operation_router.list_blood_type_alert_operations",
+      "src.api.blood_type_resource.blood_type_resource_router.list_blood_type_resources",
+      "src.api.resource.resource_router.list_resources",
+      "src.api.user.user_router.list_users"
+    ]
+  },
+  "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.create": {
+    "file": "src/infra/alert/alert_repo_impl.py",
+    "line": 20,
+    "end_line": 21,
+    "class": "SQLAlchemyAlertRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.update": {
+    "file": "src/infra/alert/alert_repo_impl.py",
+    "line": 23,
+    "end_line": 24,
+    "class": "SQLAlchemyAlertRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": [
+      "src.api.blood_type_alert_operation.blood_type_alert_operation_router.update_blood_type_alert_operation",
+      "src.api.blood_type_resource.blood_type_resource_router.update_blood_type_resource",
+      "src.api.resource.resource_router.update_resource",
+      "src.api.user.user_router.update_user"
+    ]
+  },
+  "src.infra.alert.alert_repo_impl.SQLAlchemyAlertRepository.delete": {
+    "file": "src/infra/alert/alert_repo_impl.py",
+    "line": 26,
+    "end_line": 27,
+    "class": "SQLAlchemyAlertRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": [
+      "src.api.blood_type_alert_operation.blood_type_alert_operation_router.delete_blood_type_alert_operation",
+      "src.api.blood_type_resource.blood_type_resource_router.delete_blood_type_resource",
+      "src.api.resource.resource_router.delete_resource",
+      "src.api.user.user_router.delete_user"
+    ]
+  },
+  "src.infra.blood_type_alert_operation.blood_type_alert_operation_repo_impl.SQLAlchemyBloodTypeAlertOperationRepository.__init__": {
+    "file": "src/infra/blood_type_alert_operation/blood_type_alert_operation_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyBloodTypeAlertOperationRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_type_alert_operation.blood_type_alert_operation_repo_impl.SQLAlchemyBloodTypeAlertOperationRepository.get_by_id": {
+    "file": "src/infra/blood_type_alert_operation/blood_type_alert_operation_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyBloodTypeAlertOperationRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_type_alert_operation.blood_type_alert_operation_repo_impl.SQLAlchemyBloodTypeAlertOperationRepository.get_all": {
+    "file": "src/infra/blood_type_alert_operation/blood_type_alert_operation_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyBloodTypeAlertOperationRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_type_alert_operation.blood_type_alert_operation_repo_impl.SQLAlchemyBloodTypeAlertOperationRepository.create": {
+    "file": "src/infra/blood_type_alert_operation/blood_type_alert_operation_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyBloodTypeAlertOperationRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_type_alert_operation.blood_type_alert_operation_repo_impl.SQLAlchemyBloodTypeAlertOperationRepository.update": {
+    "file": "src/infra/blood_type_alert_operation/blood_type_alert_operation_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyBloodTypeAlertOperationRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_type_alert_operation.blood_type_alert_operation_repo_impl.SQLAlchemyBloodTypeAlertOperationRepository.delete": {
+    "file": "src/infra/blood_type_alert_operation/blood_type_alert_operation_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyBloodTypeAlertOperationRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_type_resource.blood_type_resource_repo_impl.SQLAlchemyBloodTypeResourceRepository.__init__": {
+    "file": "src/infra/blood_type_resource/blood_type_resource_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyBloodTypeResourceRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_type_resource.blood_type_resource_repo_impl.SQLAlchemyBloodTypeResourceRepository.get_by_id": {
+    "file": "src/infra/blood_type_resource/blood_type_resource_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyBloodTypeResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_type_resource.blood_type_resource_repo_impl.SQLAlchemyBloodTypeResourceRepository.get_all": {
+    "file": "src/infra/blood_type_resource/blood_type_resource_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyBloodTypeResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_type_resource.blood_type_resource_repo_impl.SQLAlchemyBloodTypeResourceRepository.create": {
+    "file": "src/infra/blood_type_resource/blood_type_resource_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyBloodTypeResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_type_resource.blood_type_resource_repo_impl.SQLAlchemyBloodTypeResourceRepository.update": {
+    "file": "src/infra/blood_type_resource/blood_type_resource_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyBloodTypeResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_type_resource.blood_type_resource_repo_impl.SQLAlchemyBloodTypeResourceRepository.delete": {
+    "file": "src/infra/blood_type_resource/blood_type_resource_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyBloodTypeResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.__init__": {
+    "file": "src/infra/blood_unit/blood_unit_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyBloodUnitRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.get_by_id": {
+    "file": "src/infra/blood_unit/blood_unit_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyBloodUnitRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.get_all": {
+    "file": "src/infra/blood_unit/blood_unit_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyBloodUnitRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.create": {
+    "file": "src/infra/blood_unit/blood_unit_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyBloodUnitRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.update": {
+    "file": "src/infra/blood_unit/blood_unit_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyBloodUnitRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.blood_unit.blood_unit_repo_impl.SQLAlchemyBloodUnitRepository.delete": {
+    "file": "src/infra/blood_unit/blood_unit_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyBloodUnitRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.reservation.reservation_repo_impl.SQLAlchemyReservationRepository.__init__": {
+    "file": "src/infra/reservation/reservation_repo_impl.py",
+    "line": 16,
+    "end_line": 17,
+    "class": "SQLAlchemyReservationRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.__init__": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 11,
+    "end_line": 12,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.get_by_id": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 14,
+    "end_line": 17,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.get_all": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 19,
+    "end_line": 22,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.create": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 24,
+    "end_line": 30,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.update": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 32,
+    "end_line": 41,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.delete": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 43,
+    "end_line": 50,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.transfusion_request.transfusion_request_repo_impl.SQLAlchemyTransfusionRequestRepository.__init__": {
+    "file": "src/infra/transfusion_request/transfusion_request_repo_impl.py",
+    "line": 18,
+    "end_line": 19,
+    "class": "SQLAlchemyTransfusionRequestRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user.user_repo_impl.SQLAlchemyUserRepository.__init__": {
+    "file": "src/infra/user/user_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyUserRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user.user_repo_impl.SQLAlchemyUserRepository.get_by_id": {
+    "file": "src/infra/user/user_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyUserRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user.user_repo_impl.SQLAlchemyUserRepository.get_all": {
+    "file": "src/infra/user/user_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyUserRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user.user_repo_impl.SQLAlchemyUserRepository.create": {
+    "file": "src/infra/user/user_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyUserRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user.user_repo_impl.SQLAlchemyUserRepository.update": {
+    "file": "src/infra/user/user_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyUserRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user.user_repo_impl.SQLAlchemyUserRepository.delete": {
+    "file": "src/infra/user/user_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyUserRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.alert.alert_repository.AlertRepository.get_by_id": {
+    "file": "src/repository/alert/alert_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "AlertRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.alert.alert_repository.AlertRepository.get_all": {
+    "file": "src/repository/alert/alert_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "AlertRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.alert.alert_repository.AlertRepository.create": {
+    "file": "src/repository/alert/alert_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "AlertRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.alert.alert_repository.AlertRepository.update": {
+    "file": "src/repository/alert/alert_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "AlertRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.alert.alert_repository.AlertRepository.delete": {
+    "file": "src/repository/alert/alert_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "AlertRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_type_alert_operation.blood_type_alert_operation_repository.BloodTypeAlertOperationRepository.get_by_id": {
+    "file": "src/repository/blood_type_alert_operation/blood_type_alert_operation_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "BloodTypeAlertOperationRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_type_alert_operation.blood_type_alert_operation_repository.BloodTypeAlertOperationRepository.get_all": {
+    "file": "src/repository/blood_type_alert_operation/blood_type_alert_operation_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "BloodTypeAlertOperationRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_type_alert_operation.blood_type_alert_operation_repository.BloodTypeAlertOperationRepository.create": {
+    "file": "src/repository/blood_type_alert_operation/blood_type_alert_operation_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "BloodTypeAlertOperationRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_type_alert_operation.blood_type_alert_operation_repository.BloodTypeAlertOperationRepository.update": {
+    "file": "src/repository/blood_type_alert_operation/blood_type_alert_operation_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "BloodTypeAlertOperationRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_type_alert_operation.blood_type_alert_operation_repository.BloodTypeAlertOperationRepository.delete": {
+    "file": "src/repository/blood_type_alert_operation/blood_type_alert_operation_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "BloodTypeAlertOperationRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_type_resource.blood_type_resource_repository.BloodTypeResourceRepository.get_by_id": {
+    "file": "src/repository/blood_type_resource/blood_type_resource_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "BloodTypeResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_type_resource.blood_type_resource_repository.BloodTypeResourceRepository.get_all": {
+    "file": "src/repository/blood_type_resource/blood_type_resource_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "BloodTypeResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_type_resource.blood_type_resource_repository.BloodTypeResourceRepository.create": {
+    "file": "src/repository/blood_type_resource/blood_type_resource_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "BloodTypeResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_type_resource.blood_type_resource_repository.BloodTypeResourceRepository.update": {
+    "file": "src/repository/blood_type_resource/blood_type_resource_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "BloodTypeResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_type_resource.blood_type_resource_repository.BloodTypeResourceRepository.delete": {
+    "file": "src/repository/blood_type_resource/blood_type_resource_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "BloodTypeResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_unit.blood_unit_repository.BloodUnitRepository.get_by_id": {
+    "file": "src/repository/blood_unit/blood_unit_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "BloodUnitRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_unit.blood_unit_repository.BloodUnitRepository.get_all": {
+    "file": "src/repository/blood_unit/blood_unit_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "BloodUnitRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_unit.blood_unit_repository.BloodUnitRepository.create": {
+    "file": "src/repository/blood_unit/blood_unit_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "BloodUnitRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_unit.blood_unit_repository.BloodUnitRepository.update": {
+    "file": "src/repository/blood_unit/blood_unit_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "BloodUnitRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.blood_unit.blood_unit_repository.BloodUnitRepository.delete": {
+    "file": "src/repository/blood_unit/blood_unit_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "BloodUnitRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.get_by_id": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "ResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.get_all": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "ResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.create": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "ResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.update": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "ResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.delete": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "ResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transfusion_request.transfusion_request_repository.TransfusionRequestDB.checkExisting": {
+    "file": "src/repository/transfusion_request/transfusion_request_repository.py",
+    "line": 21,
+    "end_line": 22,
+    "class": "TransfusionRequestDB",
+    "name": "checkExisting",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transfusion_request.transfusion_request_repository.TransfusionRequestDB.store": {
+    "file": "src/repository/transfusion_request/transfusion_request_repository.py",
+    "line": 24,
+    "end_line": 25,
+    "class": "TransfusionRequestDB",
+    "name": "store",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.transfusion_request.transfusion_request_repository.TransfusionRequestDB.assignUniqueID": {
+    "file": "src/repository/transfusion_request/transfusion_request_repository.py",
+    "line": 27,
+    "end_line": 28,
+    "class": "TransfusionRequestDB",
+    "name": "assignUniqueID",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user.user_repository.UserRepository.get_by_id": {
+    "file": "src/repository/user/user_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "UserRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user.user_repository.UserRepository.get_all": {
+    "file": "src/repository/user/user_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "UserRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user.user_repository.UserRepository.create": {
+    "file": "src/repository/user/user_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "UserRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user.user_repository.UserRepository.update": {
+    "file": "src/repository/user/user_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "UserRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user.user_repository.UserRepository.delete": {
+    "file": "src/repository/user/user_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "UserRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.blood_unit.blood_unit_service.BloodUnitService.recordBloodUnit": {
+    "file": "src/service/blood_unit/blood_unit_service.py",
+    "line": 24,
+    "end_line": 25,
+    "class": "BloodUnitService",
+    "name": "recordBloodUnit",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.blood_unit.blood_unit_service.BloodUnitService.calculateExpiration": {
+    "file": "src/service/blood_unit/blood_unit_service.py",
+    "line": 27,
+    "end_line": 28,
+    "class": "BloodUnitService",
+    "name": "calculateExpiration",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.blood_unit.blood_unit_service.BloodUnitService.flagExpiringUnits": {
+    "file": "src/service/blood_unit/blood_unit_service.py",
+    "line": 30,
+    "end_line": 31,
+    "class": "BloodUnitService",
+    "name": "flagExpiringUnits",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.reservation.reservation_service.ReservationServiceImpl.__init__": {
+    "file": "src/service/reservation/reservation_service.py",
+    "line": 19,
+    "end_line": 20,
+    "class": "ReservationServiceImpl",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.transfusion_request.transfusion_request_service.HealthcareProvider.__init__": {
+    "file": "src/service/transfusion_request/transfusion_request_service.py",
+    "line": 18,
+    "end_line": 20,
+    "class": "HealthcareProvider",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.transfusion_request.transfusion_request_service.BloodBankTechnician.__init__": {
+    "file": "src/service/transfusion_request/transfusion_request_service.py",
+    "line": 23,
+    "end_line": 25,
+    "class": "BloodBankTechnician",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.transfusion_request.transfusion_request_service.IT_Team.__init__": {
+    "file": "src/service/transfusion_request/transfusion_request_service.py",
+    "line": 28,
+    "end_line": 29,
+    "class": "IT_Team",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.conftest.test_conftest_placeholder": {
+    "file": "tests/integration/conftest.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_conftest_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_alert_flow.test_test_alert_flow_placeholder": {
+    "file": "tests/integration/test_alert_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_alert_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_api_contracts.test_test_api_contracts_placeholder": {
+    "file": "tests/integration/test_api_contracts.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_api_contracts_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_blood_unit_flow.test_test_blood_unit_flow_placeholder": {
+    "file": "tests/integration/test_blood_unit_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_blood_unit_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_reservation_flow.test_test_reservation_flow_placeholder": {
+    "file": "tests/integration/test_reservation_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_reservation_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_transfusion_request_flow.test_test_transfusion_request_flow_placeholder": {
+    "file": "tests/integration/test_transfusion_request_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_transfusion_request_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.alert.test_alert_api.test_test_alert_api_placeholder": {
+    "file": "tests/unit/alert/test_alert_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_alert_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.alert.test_alert_domain.test_test_alert_domain_placeholder": {
+    "file": "tests/unit/alert/test_alert_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_alert_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.alert.test_alert_service.test_test_alert_service_placeholder": {
+    "file": "tests/unit/alert/test_alert_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_alert_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_api.test_test_blood_unit_api_placeholder": {
+    "file": "tests/unit/blood_unit/test_blood_unit_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_blood_unit_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_domain.test_test_blood_unit_domain_placeholder": {
+    "file": "tests/unit/blood_unit/test_blood_unit_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_blood_unit_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.blood_unit.test_blood_unit_service.test_test_blood_unit_service_placeholder": {
+    "file": "tests/unit/blood_unit/test_blood_unit_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_blood_unit_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_api.test_test_reservation_api_placeholder": {
+    "file": "tests/unit/reservation/test_reservation_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_reservation_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_domain.test_test_reservation_domain_placeholder": {
+    "file": "tests/unit/reservation/test_reservation_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_reservation_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.reservation.test_reservation_service.test_test_reservation_service_placeholder": {
+    "file": "tests/unit/reservation/test_reservation_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_reservation_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_api.test_test_transfusion_request_api_placeholder": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_transfusion_request_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_domain.test_test_transfusion_request_domain_placeholder": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_transfusion_request_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.transfusion_request.test_transfusion_request_service.test_test_transfusion_request_service_placeholder": {
+    "file": "tests/unit/transfusion_request/test_transfusion_request_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_transfusion_request_service_placeholder",
+    "calls": [],
+    "called_by": []
+  }
+}

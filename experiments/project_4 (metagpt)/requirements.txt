@@ -1,0 +1,8 @@
+flask-bcrypt==1.0.1
+flask-sqlalchemy==3.0.0
+python-dateutil==2.8.2
+flask-migrate==4.0.0
+flask==2.3.0
+flask-restful==0.3.9
+sqlalchemy==2.0.0
+flask-jwt-extended==4.5.0

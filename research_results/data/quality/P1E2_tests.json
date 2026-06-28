@@ -1,0 +1,24 @@
+{
+  "run_id": "P1E2",
+  "project": 1,
+  "essay": 2,
+  "n_tasks": 6,
+  "backend": {
+    "passed": 25,
+    "failed": 0,
+    "skipped": 2,
+    "pass_rate": 1.0
+  },
+  "frontend": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": false,
+    "pass_rate": 1.0
+  },
+  "combined": {
+    "passed": 29,
+    "failed": 0,
+    "skipped": 2,
+    "pass_rate": 1.0
+  }
+}

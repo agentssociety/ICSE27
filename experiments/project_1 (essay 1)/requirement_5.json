@@ -1,0 +1,107 @@
+{
+  "id": "REQ-PAT-DEQ-01",
+  "title": "Dequeue Next Highest-Priority Patient",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall dequeue the patient with the highest priority from the queue and present their details to the physician.",
+  "rationale": "This requirement ensures that patients receive timely care based on their urgency, improving overall patient satisfaction and reducing wait times for critical cases.",
+  "business_value": "By prioritizing patient care, this feature enhances hospital efficiency, reduces operational costs associated with prolonged patient stays, and improves patient outcomes.",
+  "source": {
+    "type": "User Story",
+    "id": 5,
+    "description": "As a physician I need to dequeue the next highest-priority patient from the queue so that I can attend to them"
+  },
+  "stakeholders": [
+    "physicians",
+    "hospital administration",
+    "patient care team"
+  ],
+  "acceptance_criteria": [
+    "the system returns the patient with the highest priority",
+    "that patient is removed from the queue"
+  ],
+  "preconditions": [
+    "there is a queue of patients with different priorities"
+  ],
+  "postconditions": [
+    "the physician has been presented with the details of the next highest-priority patient",
+    "the patient is no longer in the queue"
+  ],
+  "functional_constraints": [
+    "The patient queue must be sorted by priority.",
+    "Dequeuing removes the patient from the queue and presents their details to the physician."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The system should respond within 5 seconds for a dequeue request under normal conditions.",
+    "availability": "The system must be available 99.9% of the time.",
+    "scalability": "The system must handle up to 100 concurrent physician requests without degradation in performance.",
+    "usability": "Error handling should provide clear and concise messages to the physician."
+  },
+  "edge_cases": [
+    "What happens if the patient queue is empty when the physician attempts to dequeue a patient?",
+    "How should the system handle situations where multiple patients have the same highest priority?",
+    "What if there is a network failure during the dequeue process?",
+    "What happens if the system receives concurrent dequeue requests from different physicians?"
+  ],
+  "dependencies": [
+    "Patient Queue Management System",
+    "Triage and Priority Assignment System"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Patient Queue Dequeue API",
+      "description": "Provides an endpoint for physicians to request the next highest-priority patient from the queue."
+    },
+    {
+      "type": "Database",
+      "name": "Patient Queue Database",
+      "description": "Stores and manages the list of patients with their respective priorities. The system interacts with this database to retrieve and update patient information during the dequeue process."
+    },
+    {
+      "type": "UI",
+      "name": "Physician Interface",
+      "description": "The physician interface allows physicians to initiate a dequeue request. It displays the details of the dequeued patient once the request is processed."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-PAT-DEQ-01",
+      "description": "Dequeue patient from an empty queue.",
+      "expected_result": "System should return an error message indicating that the queue is empty."
+    },
+    {
+      "id": "TC-PAT-DEQ-02",
+      "description": "Dequeue patient with highest priority when multiple patients have same priority.",
+      "expected_result": "System should dequeue a patient based on their secondary priority (if configured) and present their details to the physician."
+    },
+    {
+      "id": "TC-PAT-DEQ-03",
+      "description": "Dequeue patient during network failure.",
+      "expected_result": "System should handle network failures gracefully, log the error, and attempt reconnection or notify maintenance team."
+    },
+    {
+      "id": "TC-PAT-DEQ-04",
+      "description": "Simultaneous dequeue requests from different physicians.",
+      "expected_result": "System should manage concurrent requests efficiently, ensuring that each physician receives their highest-priority patient without conflict."
+    }
+  ],
+  "traceability": {
+    "related_requirements": [
+      "REQ-TRIAGE-01"
+    ],
+    "design_components": [
+      "Patient",
+      "PatientQueue"
+    ],
+    "test_artifacts": []
+  },
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-12T10:10:58.160374",
+  "last_updated": "2026-06-12T10:22:51.863377"
+}

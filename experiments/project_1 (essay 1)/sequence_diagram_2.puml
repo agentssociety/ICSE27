@@ -1,0 +1,90 @@
+@startuml
+!theme plain
+
+actor "TriageNurse" as TN
+actor "MedicalStaff" as MS
+
+box "Controller" #LightBlue
+  participant "TriageNurseInterface" as UI
+end box
+
+box "Application" #LightGreen
+  participant "TriageSystem" as Sys
+end box
+
+box "Domain" #LightYellow
+  participant "Patient" as P
+  participant "PatientRecord" as PR
+end box
+
+box "Infrastructure" #LightCoral
+  participant "PatientInformationDatabase" as DB
+end box
+
+== Assign Urgency Level - Main Flow ==
+
+TN -> UI : input symptoms
+note over UI : encrypted and authenticated channel
+UI -> Sys : POST /triage/assign (symptoms)
+note over Sys : validate symptoms not empty
+Sys -> P : createPatient(symptoms)
+
+alt Symptoms Missing (empty input)
+  P --> Sys : validationError("Symptoms cannot be empty")
+  Sys -> UI : 422 Unprocessable Entity (error message)
+  UI -> TN : alert "Enter valid symptoms"
+else Symptoms Provided
+  P -> P : validateSymptoms() : boolean
+  alt Symptoms Not Covered by Standardized Criteria
+    P --> Sys : validationError("Symptoms not in criteria")
+    Sys -> UI : 422 Unprocessable Entity (promptAdditionalInfo)
+    UI -> TN : prompt "Provide more details" or assign default urgency
+    note over TN : default urgency = 4 (medium)
+    TN -> UI : additional info or confirm default
+    UI -> Sys : PUT /triage/assign (updated symptoms or default flag)
+    Sys -> P : assignDefaultUrgency(4)
+  else Symptoms Valid
+    P -> P : computeUrgencyLevel() : int (1-5)
+    P -> P : setUrgencyLevel(int)
+    note over P : State: urgency assigned
+    P -> P : computePriorityStatus() : PriorityStatus
+    P -> P : setPriorityStatus(PriorityStatus)
+    note over P : State: priority determined
+  end
+
+  Sys -> P : getUrgencyLevel() : int
+  Sys -> P : getPriorityStatus() : PriorityStatus
+
+  alt System Malfunction (DB write fails)
+    P -> PR : updateRecord(urgency, priority)
+    PR -> DB : save() [TLS + encrypted at rest]
+    DB --> PR : failure (database timeout)
+    PR --> P : failure
+    P --> Sys : systemError("Database unavailable")
+    Sys -> UI : 500 Internal Server Error (reset required)
+    UI -> TN : alert "System malfunction, manually correct urgency level"
+    note over TN : Manual override procedure activated
+  else DB write success
+    P -> PR : updateRecord(urgency, priority)
+    PR -> DB : save() [TLS + encrypted at rest]
+    DB --> PR : success
+    PR --> P : success
+    P --> Sys : success
+    Sys -> UI : 200 OK (urgency, priority)
+    UI -> TN : display assigned urgency level
+  end
+
+  alt Urgency Level is 1
+    Sys -> P : markHighestPriority()
+    note over P : State: highest priority
+    Sys -> MS : notify (patient ID, priority = highest)
+    note over MS : Notification via secure channel
+  else Urgency Level is 2
+    Sys -> MS : notify (patient ID, priority = high)
+  else else
+    Sys -> MS : (no notification)
+  end
+
+end
+
+@enduml

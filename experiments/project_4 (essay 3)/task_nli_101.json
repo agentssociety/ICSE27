@@ -1,0 +1,23 @@
+{
+  "task_id": 101,
+  "confidence": 0.999,
+  "evidence": [
+    {
+      "claim": "The system records all transaction state changes with timestamps",
+      "fact": "The system records every transaction state change with a timestamp.",
+      "score": 0.999,
+      "user_story_span": "record all authentication attempts (successful/failed) and all transaction state changes with timestamps",
+      "fact_span": "The system records every transaction state change with a timestamp."
+    },
+    {
+      "claim": "The system records all authentication attempts with timestamps",
+      "fact": "The system records every authentication attempt with a timestamp.",
+      "score": 0.9989,
+      "user_story_span": "record all authentication attempts (successful/failed) and all transaction state changes with timestamps",
+      "fact_span": "The system records every authentication attempt with a timestamp."
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

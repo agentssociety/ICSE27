@@ -1,0 +1,118 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Arial
+skinparam backgroundColor #fdfdfd
+
+package "Domain Model" {
+  class Slot {
+    + startTime: DateTime
+    + endTime: DateTime
+  + createSlot(slotData)
+  + updateSlot(existingSlot, modifications)
+  }
+  note top of Slot : invariant: Slots must not overlap in time when created or modified
+
+  class Schedule {
+    + state: ScheduleState
+  + checkOverlap(newSlot, existingSlots)
+  + addSlot(slot)
+  + checkOverlap(modifiedSlot, otherSlots)
+  + updateSlot(updatedSlot)
+  }
+  note top of Schedule : invariant: Must contain at least one existing slot for state Pre1
+
+  class ScheduleData {
+    + owner: Actor
+    + accessible: List<Actor>
+  + isAccessibleBy(initiator)
+  + updateContents(schedule)
+  }
+  note top of ScheduleData : invariant: Owned by exactly one Actor, accessible at minimum by its owner
+
+  class Actor {
+    + name: String
+  }
+
+  class Role {
+    + name: String
+  + checkPermission(initiator, Permission.Write)
+  }
+
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+
+  enum ScheduleState {
+    PRE1
+    POST1
+    POST2
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface ScheduleDatabase {
+  }
+  note top of ScheduleDatabase : Authenticated and encrypted channel for slot storage
+}
+
+package "Controllers" {
+  interface SchedulerInterface {
+  }
+  note top of SchedulerInterface : Authenticated UI channel for slot creation/modification
+
+  class SlotController {
+  }
+  note top of SlotController : Handles user requests and delegates to application layer
+}
+
+package "Application" {
+  class ScheduleService {
+  }
+  note top of ScheduleService : Orchestrates slot creation/modification, enforces permissions and overlap rules
+}
+
+package "DTOs" {
+  class SlotRequest <<dto>> {
+    + startTime: DateTime
+    + endTime: DateTime
+  }
+
+  class SlotResponse <<dto>> {
+    + id: String
+    + startTime: DateTime
+    + endTime: DateTime
+  }
+}
+
+package "Exceptions" {
+  class SlotOverlapException <<exception>> {
+  }
+
+  class UnauthorizedException <<exception>> {
+  }
+
+  class AuthenticationFailedException <<exception>> {
+  }
+}
+
+' Relationships
+Schedule "1" *-- "many" Slot : contains
+ScheduleData "1" *-- "1" Actor : owned by
+ScheduleData "1" *-- "many" Actor : accessible
+Actor "1" -- "1" Role : has
+Role "1" -- "many" Permission : has permissions
+SlotController ..|> SchedulerInterface : implements
+ScheduleService ..|> ScheduleDatabase : implements
+SlotController ..> SlotRequest : uses
+SlotController ..> SlotResponse : produces
+ScheduleService ..> Slot : manages
+ScheduleService ..> Schedule : manages
+ScheduleService ..> ScheduleData : manages
+ScheduleService ..> SlotOverlapException : throws on overlap
+ScheduleService ..> UnauthorizedException : throws on insufficient permission
+ScheduleService ..> AuthenticationFailedException : throws on auth failure
+@enduml

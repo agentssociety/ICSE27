@@ -1,0 +1,148 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+box "External" #White
+participant "System (Cron)" as Cron
+participant "Inventory_Manager" as Manager
+participant "Blood_Bank_Staff" as Staff
+end box
+
+box "Controller" #LightBlue
+participant "InventoryController" as Controller
+end box
+
+box "Application" #LightGreen
+participant "ExpirationCheckService" as Service
+participant "Operation" as Op
+end box
+
+box "Domain" #LightYellow
+participant "Inventory" as Inventory
+participant "BloodUnit" as BloodUnit
+participant "BloodUnitStatus" as StatusEnum
+participant "Actor" as Actor
+participant "Permission" as Permission
+participant "Resource" as Resource
+participant "State" as State
+end box
+
+box "Infrastructure" #LightGray
+participant "InventoryDatabase" as DB
+end box
+
+== Automated Daily Expiration Check ==
+
+Cron -> Controller: HTTP POST /expiration-check
+activate Controller
+Controller -> Service: runExpirationCheck()
+activate Service
+
+Service -> Op: create(pre: State.Pre1|Pre2, post: State.Post1|Post2) : Operation
+activate Op
+Op --> Service: operation
+note right: Operation must have at least one channel authenticated & encrypted
+deactivate Op
+
+Service -> DB: getAllBloodUnits() [TLS]
+activate DB
+DB --> Service: List<BloodUnit>
+deactivate DB
+
+Service -> Service: currentDate = System.currentTimeMillis()
+note right: If clock not sync, use system time as is (ec_safe_1 determinism)
+
+loop for each BloodUnit unit
+  alt unit.collectionDate is null
+    Service -> Service: logWarning("Missing collection date for unit " + unit.id)
+    break
+  else
+    Service -> BloodUnit: isExpired(collectionDate, currentDate) : boolean
+    alt condition: true (expired)
+      Service -> BloodUnit: setStatus(BloodUnitStatus.EXPIRED)
+      note right #FFAAAA: State transition:\nBloodUnitActive -> BloodUnitExpired
+      Service -> Inventory: removeBloodUnit(unit)
+      Service -> DB: updateStatus(unit) [encrypted at rest]
+      activate DB
+      DB --> Service: success
+      deactivate DB
+    else condition: false
+      ' skip
+    end alt
+  end alt
+end loop
+
+Service -> Op: complete()
+Service --> Controller: result (list of expired units)
+deactivate Service
+Controller --> Cron: 200 OK
+deactivate Controller
+
+== Manual Expiration Check (Authorized Admin) ==
+
+Manager -> Controller: HTTP POST /expiration-check (Authorization: Bearer token)
+activate Controller
+Controller -> Controller: authenticate(token)
+Controller -> Actor: getActor(token)
+Actor --> Controller: actor
+Controller -> Permission: checkPermission(actor, PermissionType.ADMIN)
+Permission --> Controller: granted
+
+alt granted
+  Controller -> Service: runExpirationCheck(actor)
+  activate Service
+  Service -> Resource: checkAccess(actor, Inventory)
+  Resource --> Service: ok
+  Service -> Op: create(pre: State.Pre1|Pre2, post: State.Post1|Post2) : Operation
+  activate Op
+  Op --> Service: operation
+  deactivate Op
+  Service -> DB: getAllBloodUnits() [TLS]
+  activate DB
+  DB --> Service: List<BloodUnit>
+  deactivate DB
+  loop for each BloodUnit unit
+    alt unit.collectionDate is null
+      Service -> Service: logWarning("Missing collection date for unit " + unit.id)
+      break
+    else
+      Service -> BloodUnit: isExpired(collectionDate, currentDate) : boolean
+      alt expired
+        Service -> BloodUnit: setStatus(BloodUnitStatus.EXPIRED)
+        note right #FFAAAA: State transition:\nBloodUnitActive -> BloodUnitExpired
+        Service -> Inventory: removeBloodUnit(unit)
+        Service -> DB: updateStatus(unit) [encrypted at rest]
+        activate DB
+        DB --> Service: success
+        deactivate DB
+      end alt
+    end alt
+  end loop
+  Service -> Op: complete()
+  Service --> Controller: result
+  deactivate Service
+  Controller --> Manager: 200 OK
+else denied (insufficient permission)
+  Controller --> Manager: 403 Forbidden "Admin permission required"
+end
+deactivate Controller
+
+== Manual Expiration Check (Unauthorized Staff) ==
+
+Staff -> Controller: HTTP POST /expiration-check (Authorization: Bearer token)
+activate Controller
+Controller -> Controller: authenticate(token)
+Controller -> Actor: getActor(token)
+Actor --> Controller: actor
+Controller -> Permission: checkPermission(actor, PermissionType.WRITE)
+Permission --> Controller: granted (Write, not Admin)
+
+alt permission != Admin
+  Controller --> Staff: 403 Forbidden "Insufficient permissions to run expiration check"
+else
+  ' not reached
+end
+deactivate Controller
+
+@enduml

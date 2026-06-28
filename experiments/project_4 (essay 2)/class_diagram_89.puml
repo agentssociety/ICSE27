@@ -1,0 +1,238 @@
+@startuml
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam class {
+    BorderColor #333333
+    FontColor #333333
+    BackgroundColor #F8F8F8
+}
+skinparam interface {
+    BorderColor #336699
+    FontColor #336699
+    BackgroundColor #E8F0F8
+}
+skinparam enum {
+    BorderColor #669933
+    FontColor #669933
+    BackgroundColor #F0F8E8
+}
+skinparam stereotype {
+    FontColor #666666
+    FontSize 10
+}
+
+package "Domain Model" {
+    class Account {
+        - lockStatus: LockStatus
+        - failedAttemptCount: Integer
+        - consecutiveFailedCount: Integer
+        {field} invariants:
+        {field} consecutiveFailedCount >= 3 implies lockStatus = locked
+        {field} lockStatus = locked implies consecutiveFailedCount >= 3
+    }
+
+    class User {
+        - userId: String
+        - account: Account
+    }
+
+    class Actor {
+        - actorId: String
+    }
+
+    class Resource {
+        - resourceId: String
+        - owner: Actor
+    }
+
+    class Operation {
+        - operationId: String
+        - preCondition: State
+        - postCondition: State
+    }
+
+    enum LockStatus {
+        unlocked
+        locked
+    }
+
+    enum PermissionType {
+        Read
+        Write
+        Execute
+        Admin
+        {field} Admin subsumes all others
+    }
+
+    class Permission {
+        - type: PermissionType
+    }
+
+    class FailedAttempt {
+        - actor: Actor
+        - count: Integer
+        {field} invariants:
+        {field} each actor has exactly one FailedAttempt record
+        {field} count >= 3 indicates locked actor
+    }
+
+    class State {
+        - value: StateValue
+    }
+
+    enum StateValue {
+        Pre1
+        Post0
+        Post1
+        {field} Pre1: three consecutive fails recorded
+        {field} Post0: unlocked/normal
+        {field} Post1: locked
+    }
+
+    User "1" -- "1" Account : owns
+    Actor "1" -- "1" FailedAttempt : has
+    Actor "*" -- "*" Permission : mayPerform
+    Resource "*" -- "1" Actor : owner
+    Resource "*" -- "*" Actor : accessible
+    Operation "*" -- "1" State : precondition
+    Operation "*" -- "1" State : postcondition
+    Operation "*" -- "*" Resource : targets
+}
+
+package "Application" {
+    interface "PINAttemptTrackingAPI" as PINAPI {
+        + recordAttempt(actor: Actor, pin: String): Boolean
+        + getConsecutiveFailedCount(actor: Actor): Integer
+        + resetFailedCount(actor: Actor): void
+        + isLocked(actor: Actor): Boolean
+    }
+
+    interface "UserAccountDatabase" as UADB {
+        + getAccount(userId: String): Account
+        + updateLockStatus(account: Account, status: LockStatus): void
+        + updateFailedAttemptCount(account: Account, count: Integer): void
+    }
+
+    interface "LoginInterface" as LoginUI {
+        + displayError(message: String): void
+        + displayLockNotification(): void
+        + displaySuccess(): void
+    }
+
+    class LoginService {
+        - pinAPI: PINAttemptTrackingAPI
+        - accountDB: UserAccountDatabase
+        - loginUI: LoginInterface
+    }
+
+    class AdminService {
+        - pinAPI: PINAttemptTrackingAPI
+        - accountDB: UserAccountDatabase
+    }
+
+    LoginService --> PINAPI : uses
+    LoginService --> UADB : uses
+    LoginService --> LoginUI : uses
+    AdminService --> PINAPI : uses
+    AdminService --> UADB : uses
+}
+
+package "Infrastructure — Ports" {
+    interface "PINAttemptTrackingPort" as PINPort {
+        + recordAttempt(actor: Actor, pin: String): Boolean
+        + getConsecutiveFailedCount(actor: Actor): Integer
+        + resetFailedCount(actor: Actor): void
+        + isLocked(actor: Actor): Boolean
+    }
+
+    interface "UserAccountPort" as UAPort {
+        + getAccount(userId: String): Account
+        + updateLockStatus(account: Account, status: LockStatus): void
+        + updateFailedAttemptCount(account: Account, count: Integer): void
+    }
+
+    interface "LoginNotificationPort" as LoginPort {
+        + displayError(message: String): void
+        + displayLockNotification(): void
+        + displaySuccess(): void
+    }
+
+    PINAPI ..|> PINPort : implements
+    UADB ..|> UAPort : implements
+    LoginUI ..|> LoginPort : implements
+}
+
+package "Controllers" {
+    class LoginController {
+        - loginService: LoginService
+        + handleLoginRequest(userId: String, pin: String): void
+    }
+
+    class AdminController {
+        - adminService: AdminService
+        + handleUnlockRequest(userId: String, adminId: String): void
+    }
+
+    LoginController --> LoginService : delegates
+    AdminController --> AdminService : delegates
+}
+
+package "Exceptions" {
+    class AccountLockedException <<exception>> {
+        - accountId: String
+        - message: String
+    }
+
+    class AuthenticationFailedException <<exception>> {
+        - userId: String
+        - message: String
+    }
+
+    class InsufficientPermissionException <<exception>> {
+        - actorId: String
+        - requiredPermission: PermissionType
+        - message: String
+    }
+
+    class InvalidOperationException <<exception>> {
+        - operationId: String
+        - message: String
+    }
+
+    LoginService --> AccountLockedException : throws
+    LoginService --> AuthenticationFailedException : throws
+    AdminService --> InsufficientPermissionException : throws
+    AdminService --> AccountLockedException : throws
+}
+
+package "DTOs" {
+    class LoginRequestDTO <<dto>> {
+        - userId: String
+        - pin: String
+    }
+
+    class LoginResponseDTO <<dto>> {
+        - success: Boolean
+        - lockStatus: LockStatus
+        - message: String
+    }
+
+    class UnlockRequestDTO <<dto>> {
+        - userId: String
+        - adminId: String
+    }
+
+    class UnlockResponseDTO <<dto>> {
+        - success: Boolean
+        - message: String
+    }
+
+    LoginController --> LoginRequestDTO : receives
+    LoginController --> LoginResponseDTO : returns
+    AdminController --> UnlockRequestDTO : receives
+    AdminController --> UnlockResponseDTO : returns
+}
+
+@enduml

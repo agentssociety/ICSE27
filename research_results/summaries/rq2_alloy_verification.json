@@ -1,0 +1,138 @@
+{
+  "metric": "rq2_alloy_verification",
+  "description": "Alloy formal specification verification rate. Each task produces one .als spec file; the verify_all_specifications tool runs Alloy's SAT solver to check all assert/check commands. Rate = verified_specs / total_specs per run. A spec is counted as FAILED if (a) the log records an explicit failure, OR (b) the file contains [[INVALID_BLOCK_MARKER]] — a marker the pipeline inserts when a code block could not be fixed after max retries and was commented out. Such specs remain partially disabled; the agent gave up. Values reported as mean ± std across 3 essay seeds per project.",
+  "projects": [
+    {
+      "project_id": 1,
+      "n_essays": 3,
+      "verification_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "total_specs": {
+        "mean": 6.0,
+        "std": 0.0,
+        "values": [
+          6.0,
+          6.0,
+          6.0
+        ]
+      },
+      "verified_specs": {
+        "mean": 6.0,
+        "std": 0.0,
+        "values": [
+          6.0,
+          6.0,
+          6.0
+        ]
+      }
+    },
+    {
+      "project_id": 2,
+      "n_essays": 3,
+      "verification_rate": {
+        "mean": 0.9048,
+        "std": 0.1649,
+        "values": [
+          0.7143,
+          1.0,
+          1.0
+        ]
+      },
+      "total_specs": {
+        "mean": 7.0,
+        "std": 0.0,
+        "values": [
+          7.0,
+          7.0,
+          7.0
+        ]
+      },
+      "verified_specs": {
+        "mean": 6.3,
+        "std": 1.2,
+        "values": [
+          5.0,
+          7.0,
+          7.0
+        ]
+      }
+    },
+    {
+      "project_id": 3,
+      "n_essays": 3,
+      "verification_rate": {
+        "mean": 0.9524,
+        "std": 0.0825,
+        "values": [
+          0.8571,
+          1.0,
+          1.0
+        ]
+      },
+      "total_specs": {
+        "mean": 7.0,
+        "std": 0.0,
+        "values": [
+          7.0,
+          7.0,
+          7.0
+        ]
+      },
+      "verified_specs": {
+        "mean": 6.7,
+        "std": 0.6,
+        "values": [
+          6.0,
+          7.0,
+          7.0
+        ]
+      }
+    },
+    {
+      "project_id": 4,
+      "n_essays": 3,
+      "verification_rate": {
+        "mean": 0.9583,
+        "std": 0.0722,
+        "values": [
+          1.0,
+          0.875,
+          1.0
+        ]
+      },
+      "total_specs": {
+        "mean": 7.3,
+        "std": 1.2,
+        "values": [
+          8.0,
+          8.0,
+          6.0
+        ]
+      },
+      "verified_specs": {
+        "mean": 7.0,
+        "std": 1.0,
+        "values": [
+          8.0,
+          7.0,
+          6.0
+        ]
+      }
+    }
+  ],
+  "cross_run_aggregate": {
+    "total_runs": 12,
+    "total_specs": 82,
+    "verified_specs": 78,
+    "failed_specs": 4,
+    "specs_with_commented_blocks": 4,
+    "overall_rate": 0.9512
+  }
+}

@@ -1,0 +1,102 @@
+@startuml
+skinparam style strictuml
+skinparam backgroundColor #FEFEFE
+skinparam class {
+  BackgroundColor #F5F5F5
+  BorderColor #333333
+}
+
+package "Domain Model" {
+  abstract class Actor {
+    + name : String
+    + permissions : List<Permission>
+  }
+  class User extends Actor {
+    + userID : String
+  }
+  class Card {
+    + owner : Actor
+    + accessible : Set<Actor>
+    + expiryDate : Date [optional]
+  + validate(cardData: String) : Boolean
+  }
+  class PIN {
+    + owner : Actor
+    + accessible : Set<Actor>
+  + validate(pinData: String) : Boolean
+  }
+  class Account {
+    + failedAttempts : int
+    + state : AccountState
+  + authenticate()
+  + recordFailedAttempt()
+  }
+  enum AccountState {
+    ACTIVE
+    LOCKED
+  + transitionTo(AUTHENTICATED)
+  + transitionTo(LOCKED)
+  }
+  enum Permission {
+    READ
+    WRITE
+    ADMIN
+  }
+}
+
+package "Application" {
+  class AuthenticationFlow {
+  + authenticate(cardData: String, pinData: String) : Result
+  + false(expired)
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface AuthenticationAPI {
+  }
+  interface UserAuthenticationDatabase {
+  }
+}
+
+package "Controllers" {
+  class AuthenticationController implements AuthenticationAPI {
+  }
+}
+
+package "DTOs" {
+  class AuthenticationRequest {
+    + cardID : String
+    + pinHash : String
+  }
+  class AuthenticationResponse {
+    + success : boolean
+    + message : String
+  }
+}
+
+package "Exceptions" {
+  class AuthenticationException <<exception>> {
+    + errorCode : int
+  }
+  class LockedException <<exception>> {
+  }
+  class CardExpiredException <<exception>> {
+  }
+}
+
+' Relationships
+User "1" *-- "1" Card : owns
+User "1" *-- "1" PIN : owns
+User "1" --> "1" Account : has
+AuthenticationFlow ..> Card : uses
+AuthenticationFlow ..> PIN : uses
+AuthenticationController ..> AuthenticationFlow : uses
+AuthenticationController ..> UserAuthenticationDatabase : uses
+
+' Constraints
+note right of Card : Only owner accessible
+note right of PIN : Unique per user, only owner
+note bottom of Account : Locked after 3 failed attempts
+note bottom of AuthenticationFlow : Must complete within 2s
+
+@enduml

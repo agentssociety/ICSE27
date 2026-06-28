@@ -1,0 +1,187 @@
+@startuml
+skinparam defaultFontSize 12
+skinparam sequenceArrowThickness 2
+skinparam ParticipantPadding 20
+skinparam BoxPadding 10
+
+actor "Physician (Actor)" as PhysicianActor
+boundary "PhysicianInterface" as UI
+control "PatientQueueDequeueAPI" as API
+control "DequeueService" as Service
+entity "PatientQueue" as Queue
+entity "Patient" as Patient
+entity "Physician (Domain)" as PhysicianDomain
+database "PatientQueueDatabase" as DB
+
+box "Controller Layer" #LightBlue
+  participant API
+end box
+box "Application Layer" #LightGreen
+  participant Service
+end box
+box "Domain Layer" #LightYellow
+  participant Queue
+  participant Patient
+  participant PhysicianDomain
+end box
+box "Infrastructure Layer" #LightCoral
+  participant DB
+end box
+
+== Main Flow (Successful Dequeue) ==
+
+PhysicianActor -> UI: dequeue request
+UI -> API: POST /dequeue [TLS]
+API -> Service: dequeue(physicianId: String)
+Service -> PhysicianDomain: getPermissions(physicianId: String)
+PhysicianDomain --> Service: permissions: Set<Permission>
+alt permissions contains Write
+  Service -> DB: getHighestPriorityPatient() [TLS]
+  note right: Tie-breaking by arrival time if same priority
+  DB --> Service: patientData: Patient (or null)
+  alt patientData != null
+    Service -> Queue: removePatient(patientId: String)
+    note right: State: patients list updated
+    Service -> DB: removePatient(patientId: String) [TLS]
+    DB --> Service: success
+    Service -> Patient: createDetails(patientData: Patient)
+    Patient --> Service: details: PatientDetails
+    Service --> API: 200 OK, patientDetails
+    API --> UI: display patient details
+    UI --> PhysicianActor: show patient info
+  else patientData == null
+    Service --> API: 404 Not Found, "Queue is empty"
+    API --> UI: display error
+    UI --> PhysicianActor: show "No patients in queue"
+  end
+else permissions lacks Write
+  Service --> API: 403 Forbidden, "Insufficient permissions"
+  API --> UI: display error
+  UI --> PhysicianActor: show "Access denied"
+end
+
+== Empty Queue Error ==
+
+PhysicianActor -> UI: dequeue request
+UI -> API: POST /dequeue [TLS]
+API -> Service: dequeue(physicianId: String)
+Service -> PhysicianDomain: getPermissions(physicianId: String)
+PhysicianDomain --> Service: permissions: Set<Permission>
+alt permissions contains Write
+  Service -> DB: getHighestPriorityPatient() [TLS]
+  DB --> Service: null
+  Service --> API: 404 Not Found, "Queue is empty"
+  API --> UI: display error
+  UI --> PhysicianActor: show "No patients in queue"
+else permissions lacks Write
+  Service --> API: 403 Forbidden, "Insufficient permissions"
+  API --> UI: display error
+  UI --> PhysicianActor: show "Access denied"
+end
+
+== Network Failure ==
+
+PhysicianActor -> UI: dequeue request
+UI -> API: POST /dequeue [TLS]
+API -> Service: dequeue(physicianId: String)
+Service -> PhysicianDomain: getPermissions(physicianId: String)
+PhysicianDomain --> Service: permissions: Set<Permission>
+alt permissions contains Write
+  Service -> DB: getHighestPriorityPatient() [TLS]
+  note right: Network failure occurs
+  DB --> Service: failure (timeout/connection error)
+  Service -> Service: log error
+  Service -> Service: attempt reconnection (retry)
+  alt reconnection succeeds
+    Service -> DB: getHighestPriorityPatient() [TLS]
+    DB --> Service: patientData: Patient
+    Service -> Queue: removePatient(patientId: String)
+    Service -> DB: removePatient(patientId: String) [TLS]
+    DB --> Service: success
+    Service -> Patient: createDetails(patientData: Patient)
+    Patient --> Service: details: PatientDetails
+    Service --> API: 200 OK, patientDetails
+    API --> UI: display patient details
+    UI --> PhysicianActor: show patient info
+  else reconnection fails
+    Service -> Service: notify maintenance team (async)
+    Service --> API: 503 Service Unavailable, "Network error, please try again"
+    API --> UI: display error
+    UI --> PhysicianActor: show "Network error"
+  end
+else permissions lacks Write
+  Service --> API: 403 Forbidden, "Insufficient permissions"
+  API --> UI: display error
+  UI --> PhysicianActor: show "Access denied"
+end
+
+== Concurrent Requests (Mutual Exclusion) ==
+
+par
+  PhysicianActor1 -> UI1: dequeue request
+  PhysicianActor2 -> UI2: dequeue request
+end
+
+UI1 -> API: POST /dequeue [TLS]
+UI2 -> API: POST /dequeue [TLS]
+
+API -> Service: dequeue(physician1Id: String)
+API -> Service: dequeue(physician2Id: String)
+
+Service -> PhysicianDomain: getPermissions(physician1Id: String)
+Service -> PhysicianDomain: getPermissions(physician2Id: String)
+PhysicianDomain --> Service: permissions1: Set<Permission>
+PhysicianDomain --> Service: permissions2: Set<Permission>
+
+alt permissions1 contains Write && permissions2 contains Write
+  Service -> DB: begin transaction [TLS]
+  Service -> DB: SELECT ... FOR UPDATE (lock queue)
+  DB --> Service: patientA: Patient (highest priority)
+  Service -> Queue: removePatient(patientA.id)
+  Service -> DB: DELETE patientA [TLS]
+  DB --> Service: success
+  Service -> DB: commit
+  Service -> Patient: createDetails(patientA)
+  Patient --> Service: detailsA
+  Service --> API: 200 OK, detailsA
+
+  Service -> DB: begin transaction [TLS]
+  Service -> DB: SELECT ... FOR UPDATE (lock queue)
+  DB --> Service: patientB: Patient (next highest)
+  Service -> Queue: removePatient(patientB.id)
+  Service -> DB: DELETE patientB [TLS]
+  DB --> Service: success
+  Service -> DB: commit
+  Service -> Patient: createDetails(patientB)
+  Patient --> Service: detailsB
+  Service --> API: 200 OK, detailsB
+
+  API --> UI1: display patientA
+  API --> UI2: display patientB
+  UI1 --> PhysicianActor1: show patientA
+  UI2 --> PhysicianActor2: show patientB
+else permissions lack Write
+  Service --> API: 403 Forbidden, "Insufficient permissions"
+  API --> UI1: display error
+  API --> UI2: display error
+  UI1 --> PhysicianActor1: show "Access denied"
+  UI2 --> PhysicianActor2: show "Access denied"
+end
+note right: Implementation constraint: Use database-level locking or atomic transactions to ensure mutual exclusion.
+
+== Authentication Failure ==
+
+PhysicianActor -> UI: dequeue request (with invalid token)
+UI -> API: POST /dequeue [TLS]
+API -> API: validateToken(token: String)
+alt token invalid or expired
+  API --> UI: 401 Unauthorized, "Invalid authentication"
+  UI --> PhysicianActor: show "Authentication failed"
+else token valid
+  API -> Service: dequeue(physicianId: String)
+  ' continue as main flow (not shown for brevity)
+end
+
+note right: All communications use TLS encryption.
+
+@enduml

@@ -1,0 +1,189 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "FlightManagementDashboard" as Dashboard
+end box
+
+box "Application Layer" #LightGreen
+  participant "FlightRegistrationAPI" as API
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Flight" as Flight
+  participant "Resource" as Resource
+  participant "Permission" as Permission
+  participant "State" as State
+  participant "FlightType" as FlightType
+  participant "FlightStatus" as FlightStatus
+  participant "FlightOperationsTeam" as OperationsTeam
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "FlightDataStore" as DB
+end box
+
+== Register New Arrival Flight (Happy Path) ==
+
+Dashboard -> API : POST /flights (arrival)
+note right: [TLS encrypted, Authentication required]
+
+API -> API : validateRequiredFields(flightData: FlightDTO) : boolean
+
+alt Missing Required Fields
+  API --> Dashboard : 400 Bad Request
+  note right: "Missing required field(s)"
+else Fields Valid
+  API -> Flight : create(fields: FlightDTO) : Flight
+  Flight -> Flight : setFlightNumber(fn: String)
+  Flight -> Flight : setType(type: FlightType)
+  Flight -> Flight : setStatus(status: FlightStatus)
+  
+  API -> DB : findByFlightNumber(fn: String) : Flight
+  
+  alt Duplicate Flight Number
+    DB --> API : Flight exists
+    API --> Dashboard : 409 Conflict
+    note right: "Duplicate flight number - state remains Pre1"
+  else Unique Flight Number
+    DB --> API : null (not found)
+    API -> DB : save(flight: Flight) : Flight
+    note right: [encrypted at rest]
+    
+    DB --> API : success
+    API --> Dashboard : 201 Created
+    
+    note over Dashboard: State transitions: Pre1 -> Post1
+    note over Flight: State: Post1 (new flight added to database)
+    note over Resource: Write permission on Flight Data Store
+  end
+end
+
+== Edit Existing Departure Flight's Scheduled Time (Happy Path) ==
+
+Dashboard -> API : PUT /flights/{flightNumber}/schedule
+note right: [TLS encrypted, Authentication required]
+
+API -> DB : findByFlightNumber(fn: String) : Flight
+
+alt Flight Not Found
+  DB --> API : null
+  API --> Dashboard : 404 Not Found
+  note right: "Flight not found - state unchanged"
+else Flight Found
+  API -> Flight : validateNewSchedule(time: DateTime) : boolean
+  
+  alt Invalid Time Format
+    Flight --> API : Validation error
+    API --> Dashboard : 400 Bad Request
+    note right: "Invalid time format - state unchanged"
+  else Valid Time
+    Flight -> Flight : setScheduledTime(newTime: DateTime)
+    note right: Timezone conversion to UTC
+    
+    API -> DB : update(flight: Flight) : Flight
+    note right: [encrypted at rest]
+    
+    DB --> API : success
+    API --> Dashboard : 200 OK
+    
+    note over Dashboard: State transitions: Pre1 -> Post2
+    note over Flight: State: Post2 (existing flight data updated)
+    note over Resource: Write permission on Flight Data Store
+  end
+end
+
+== Cancel Registered Incoming Flight (Happy Path) ==
+
+Dashboard -> API : POST /flights/{flightNumber}/cancel
+note right: [TLS encrypted, Authentication required]
+
+API -> DB : findByFlightNumber(fn: String) : Flight
+
+alt Flight Not Found
+  DB --> API : null
+  API --> Dashboard : 404 Not Found
+  note right: "Flight not found - state unchanged"
+else Flight Found
+  API -> Flight : getStatus() : FlightStatus
+  
+  alt Already Cancelled
+    Flight --> API : FlightStatus.CANCELLED
+    API --> Dashboard : 409 Conflict
+    note right: "Flight already cancelled - no state change"
+  else Active Flight
+    Flight -> Flight : setStatus(FlightStatus.CANCELLED)
+    
+    API -> DB : saveHistory(flight: Flight) : Flight
+    note right: [encrypted at rest] - Remains in history
+    
+    API -> DB : removeFromActiveListings(fn: String) : boolean
+    note right: [encrypted at rest]
+    
+    DB --> API : success
+    API --> Dashboard : 200 OK
+    
+    note over Dashboard: State transitions: Pre1 -> Post3
+    note over Flight: State: Post3 (flight registration history maintained)
+    note over Resource: Read permission on Flight Management Dashboard
+  end
+end
+
+== Attempt Registration With Incomplete Details ==
+
+Dashboard -> API : POST /flights (arrival)
+note right: [TLS encrypted, Authentication required]
+
+API -> API : validateRequiredFields(incompleteData: FlightDTO) : boolean
+
+alt Missing Fields Detected
+  API --> Dashboard : 400 Bad Request
+  note right: "Missing required field(s) - state remains Pre1"
+  
+  alt Empty Flight Number
+    note right: Error: "Flight number is required"
+  else Empty Airline
+    note right: Error: "Airline is required"
+  else Empty Origin/Destination
+    note right: Error: "Origin and destination are required"
+  else Empty Scheduled Time
+    note right: Error: "Scheduled time is required"
+  end
+  
+  note over Dashboard: No flight record created
+  note over Flight: No state change (Pre1 remains)
+end
+
+== Authorization and Permission Checking (All Paths) ==
+
+note right of API: Permission check occurs for all operations
+
+API -> API : checkPermission(actor: User, resourceType: String) : boolean
+
+alt Insufficient Permission
+  note right: Only Read, Write, Execute permissions allowed
+  API --> Dashboard : 403 Forbidden
+  note right: "Insufficient permissions - operation denied"
+else Valid Permission
+  note right: Permission granted based on role
+end
+
+note right of Resource: Owner must be in accessible set
+note right of Permission: Write includes Read, Execute includes Read, Admin includes all
+
+== Concurrent Registration Handling ==
+
+note right of API: System handles up to 100 concurrent registrations
+API -> DB : saveWithLock(flight: Flight) : Flight
+note right: Optimistic locking for concurrent access
+
+alt Lock Acquired
+  DB --> API : success
+  API --> Dashboard : 201 Created
+else Lock Failed
+  DB --> API : ConcurrentModificationException
+  API --> Dashboard : 503 Service Unavailable
+  note right: "Try again - concurrent registration conflict"
+end
+
+@enduml

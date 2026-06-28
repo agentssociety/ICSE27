@@ -1,0 +1,16 @@
+{
+  "task_id": 45,
+  "confidence": 0.9985,
+  "evidence": [
+    {
+      "claim": "The dashboard displays a section titled 'Current Stock Levels' listing each blood type with its quantity.",
+      "fact": "The dashboard displays current stock levels per blood type, units expiring in the next seven days, and any open transfusion requests.",
+      "score": 0.9985,
+      "user_story_span": "a section titled \"Current Stock Levels\" listing each blood type with quantity",
+      "fact_span": "displays current stock levels per blood type"
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

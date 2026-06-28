@@ -1,0 +1,178 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "TimetableUI" as UI
+end box
+
+box "Application Layer" #LightGreen
+  participant "Operation" as Op
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Actor" as Actor
+  participant "Resource" as Res
+  participant "RunwaySlotData" as Slot
+  participant "FlightData" as Flight
+  participant "Permission" as Perm
+  participant "State" as St
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "Interface" as IF
+  participant "RunwaySlotDB" as DB
+  participant "FlightDataAPI" as API
+end box
+
+== View Runway Slot Timetable - Happy Path ==
+
+UI -> Actor : authenticateUser(credentials) : Bool
+note right: TLS encrypted, authenticated channel
+
+alt Authentication Failed
+  Actor --> UI : returnError(401, "Unauthorized")
+  note right: ec_safe_4 - resource missing check
+else Authentication Success
+  Actor -> Actor : checkPermission(Read, RunwaySlotData)
+  
+  alt Permission Denied
+    Actor --> UI : returnError(403, "Forbidden")
+  else Permission Granted
+    Actor -> Op : createOperation(initiator: Actor, target: Resource, permission: Read, pre: Pre1)
+    Op -> St : validateState(Pre1)
+    
+    alt State Invalid
+      St --> Op : returnError("Precondition failed")
+      Op --> UI : returnError(412, "Precondition failed")
+    else State Valid
+      Op -> IF : openEncryptedChannel()
+      note right: encrypted=True, authenticated=True
+      
+      UI -> DB : fetchSlots(filters: Runway/Time) : List<RunwaySlotData> [TLS]
+      note right: encrypted in transit, authenticated
+      
+      alt No Slots Found
+        DB --> UI : returnEmptyList()
+        UI -> UI : displayEmptyTimetable()
+        note right: Empty timetable with informative message
+      else Slots Found
+        DB --> UI : slotList: List<RunwaySlotData>
+        
+        loop For each slot
+          UI -> API : fetchFlightData(slotId: String) : FlightData [TLS]
+          note right: encrypted in transit, authenticated
+          
+          alt Flight Data Missing
+            API --> UI : returnError(404, "Flight data not found")
+            UI -> UI : markSlotWithError(slotId)
+            note right: Show partial data with error marker
+          else Flight Data Found
+            API --> UI : flightData: FlightData
+            
+            alt Flight Delayed
+              UI -> UI : highlightByDuration(delayDuration: Int)
+              note right: Color coding by delay duration
+            end
+            
+            alt Flight Emergency
+              UI -> UI : markEmergency(slotId)
+              note right: Special marker/red highlight
+            end
+            
+            alt Both Delayed and Emergency
+              UI -> UI : showBothIndicators(slotId)
+              note right: Both indicators displayed
+            end
+          end
+        end
+        
+        UI -> UI : renderTimetable()
+        note right: Response time < 500ms
+        
+        Op -> St : transitionState(Post1)
+        note right: All allocated slots visible per runway
+      end
+    end
+  end
+end
+
+== View Runway Slot Timetable - Filter Edge Cases ==
+
+UI -> DB : fetchSlots(filter: nonExistentRunway) [TLS]
+
+alt No Results
+  DB --> UI : returnEmptyList()
+  UI -> UI : displayMessage("No slots found for specified runway")
+  note right: Informative empty result message
+else Results Found
+  DB --> UI : slotList: List<RunwaySlotData>
+  UI -> UI : filterAndDisplay(slotList)
+end
+
+== Update Slot Data - Happy Path ==
+
+UI -> Actor : authenticateUser(credentials) : Bool
+
+alt Authentication Failed
+  Actor --> UI : returnError(401, "Unauthorized")
+else Authentication Success
+  Actor -> Actor : checkPermission(Write, RunwaySlotData)
+  
+  alt Permission Denied
+    Actor --> UI : returnError(403, "Forbidden")
+  else Permission Granted
+    Actor -> Op : createOperation(initiator: Actor, target: Resource, permission: Write, pre: Pre2)
+    Op -> St : validateState(Pre2)
+    
+    alt State Invalid
+      St --> Op : returnError("Precondition failed")
+      Op --> UI : returnError(412, "Precondition failed")
+    else State Valid
+      Op -> IF : openEncryptedChannel()
+      note right: encrypted=True, authenticated=True
+      
+      UI -> DB : updateSlot(slotData: RunwaySlotData) : Bool [TLS]
+      note right: encrypted in transit, authenticated
+      
+      alt Update Successful
+        DB --> UI : returnSuccess()
+        Op -> St : transitionState(Post2)
+        note right: RunwaySlotData updated
+        UI -> UI : confirmUpdate()
+      else Update Failed
+        DB --> UI : returnError("Update failed")
+        UI -> UI : displayError("Failed to update slot data")
+      end
+    end
+  end
+end
+
+== Update Slot Data - Access Control Edge Cases ==
+
+UI -> Actor : authenticateUser(credentials) : Bool
+
+alt User Not in Accessible Set
+  Actor -> Res : checkAccessibility(actor: Actor, resource: Resource)
+  Res --> Actor : returnFalse()
+  Actor --> UI : returnError(403, "Actor not in resource accessible set")
+  note right: ec_safe_4 - resource access denied
+else Resource Missing
+  Actor -> Res : checkResourceExists(resourceId: String)
+  Res --> Actor : returnFalse()
+  Actor --> UI : returnError(404, "Target resource not found")
+  note right: ec_safe_1 - cannot reach Post4
+end
+
+== State Transition Validation ==
+
+Op -> St : validateTransition(pre: State, post: State)
+
+alt Pre == Post
+  St --> Op : returnError("State must change")
+  note right: Operation state must change (pre != post)
+else Valid Transition
+  St --> Op : returnSuccess()
+  St -> St : applyTransition(newState: State)
+end
+
+@enduml

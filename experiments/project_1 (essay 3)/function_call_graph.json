@@ -1,0 +1,2086 @@
+{
+  "main.lifespan": {
+    "file": "main.py",
+    "line": 31,
+    "end_line": 37,
+    "class": null,
+    "name": "lifespan",
+    "calls": [
+      "src.config.database.create_tables"
+    ],
+    "called_by": []
+  },
+  "main.health": {
+    "file": "main.py",
+    "line": 66,
+    "end_line": 67,
+    "class": null,
+    "name": "health",
+    "calls": [],
+    "called_by": []
+  },
+  "migrations.env.run_migrations_offline": {
+    "file": "migrations/env.py",
+    "line": 21,
+    "end_line": 24,
+    "class": null,
+    "name": "run_migrations_offline",
+    "calls": [
+      "migrations.env.run_migrations"
+    ],
+    "called_by": [
+      "migrations.env.run_migrations"
+    ]
+  },
+  "migrations.env.run_migrations_online": {
+    "file": "migrations/env.py",
+    "line": 27,
+    "end_line": 36,
+    "class": null,
+    "name": "run_migrations_online",
+    "calls": [
+      "migrations.env.run_migrations"
+    ],
+    "called_by": [
+      "migrations.env.run_migrations"
+    ]
+  },
+  "migrations.env.run_migrations": {
+    "file": "migrations/env.py",
+    "line": 40,
+    "end_line": 44,
+    "class": null,
+    "name": "run_migrations",
+    "calls": [
+      "migrations.env.run_migrations_offline",
+      "migrations.env.run_migrations_online"
+    ],
+    "called_by": [
+      "migrations.env.run_migrations_offline",
+      "migrations.env.run_migrations_online"
+    ]
+  },
+  "src.api.actor.actor_router._repo": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.list_actors": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_actors",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.get_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_actor",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.create_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_actor",
+    "calls": [
+      "src.domain.patient.Patient.Symptom.create"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.update_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_actor",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.actor.actor_router.delete_actor": {
+    "file": "src/api/actor/actor_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_actor",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.interface.interface_router._repo": {
+    "file": "src/api/interface/interface_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.interface.interface_router.list_interfaces": {
+    "file": "src/api/interface/interface_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_interfaces",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.interface.interface_router.get_interface": {
+    "file": "src/api/interface/interface_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_interface",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.interface.interface_router.create_interface": {
+    "file": "src/api/interface/interface_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_interface",
+    "calls": [
+      "src.domain.patient.Patient.Symptom.create"
+    ],
+    "called_by": []
+  },
+  "src.api.interface.interface_router.update_interface": {
+    "file": "src/api/interface/interface_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_interface",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.interface.interface_router.delete_interface": {
+    "file": "src/api/interface/interface_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_interface",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router._repo": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.list_patients": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_patients",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.get_patient": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_patient",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.create_patient": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_patient",
+    "calls": [
+      "src.domain.patient.Patient.Symptom.create"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.update_patient": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_patient",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.patient.patient_router.delete_patient": {
+    "file": "src/api/patient/patient_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_patient",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.queue.queue_router.QueueRouter.__init__": {
+    "file": "src/api/queue/queue_router.py",
+    "line": 19,
+    "end_line": 20,
+    "class": "QueueRouter",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.resource.resource_router._repo": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.list_resources": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_resources",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.get_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_resource",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.create_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_resource",
+    "calls": [
+      "src.domain.patient.Patient.Symptom.create"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.update_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_resource",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.resource.resource_router.delete_resource": {
+    "file": "src/api/resource/resource_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_resource",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom.symptom_router._repo": {
+    "file": "src/api/symptom/symptom_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.symptom.symptom_router.list_symptoms": {
+    "file": "src/api/symptom/symptom_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_symptoms",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom.symptom_router.get_symptom": {
+    "file": "src/api/symptom/symptom_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_symptom",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom.symptom_router.create_symptom": {
+    "file": "src/api/symptom/symptom_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_symptom",
+    "calls": [
+      "src.domain.patient.Patient.Symptom.create"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom.symptom_router.update_symptom": {
+    "file": "src/api/symptom/symptom_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_symptom",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom.symptom_router.delete_symptom": {
+    "file": "src/api/symptom/symptom_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_symptom",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_record.symptom_record_router._repo": {
+    "file": "src/api/symptom_record/symptom_record_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.symptom_record.symptom_record_router.list_symptom_records": {
+    "file": "src/api/symptom_record/symptom_record_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_symptom_records",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_record.symptom_record_router.get_symptom_record": {
+    "file": "src/api/symptom_record/symptom_record_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_symptom_record",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_record.symptom_record_router.create_symptom_record": {
+    "file": "src/api/symptom_record/symptom_record_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_symptom_record",
+    "calls": [
+      "src.domain.patient.Patient.Symptom.create"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_record.symptom_record_router.update_symptom_record": {
+    "file": "src/api/symptom_record/symptom_record_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_symptom_record",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.symptom_record.symptom_record_router.delete_symptom_record": {
+    "file": "src/api/symptom_record/symptom_record_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_symptom_record",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.api.user_authentication_system.user_authentication_system_router._repo": {
+    "file": "src/api/user_authentication_system/user_authentication_system_router.py",
+    "line": 15,
+    "end_line": 16,
+    "class": null,
+    "name": "_repo",
+    "calls": [],
+    "called_by": []
+  },
+  "src.api.user_authentication_system.user_authentication_system_router.list_user_authentication_systems": {
+    "file": "src/api/user_authentication_system/user_authentication_system_router.py",
+    "line": 20,
+    "end_line": 21,
+    "class": null,
+    "name": "list_user_authentication_systems",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all"
+    ],
+    "called_by": []
+  },
+  "src.api.user_authentication_system.user_authentication_system_router.get_user_authentication_system": {
+    "file": "src/api/user_authentication_system/user_authentication_system_router.py",
+    "line": 25,
+    "end_line": 29,
+    "class": null,
+    "name": "get_user_authentication_system",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id"
+    ],
+    "called_by": []
+  },
+  "src.api.user_authentication_system.user_authentication_system_router.create_user_authentication_system": {
+    "file": "src/api/user_authentication_system/user_authentication_system_router.py",
+    "line": 33,
+    "end_line": 34,
+    "class": null,
+    "name": "create_user_authentication_system",
+    "calls": [
+      "src.domain.patient.Patient.Symptom.create"
+    ],
+    "called_by": []
+  },
+  "src.api.user_authentication_system.user_authentication_system_router.update_user_authentication_system": {
+    "file": "src/api/user_authentication_system/user_authentication_system_router.py",
+    "line": 38,
+    "end_line": 42,
+    "class": null,
+    "name": "update_user_authentication_system",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update"
+    ],
+    "called_by": []
+  },
+  "src.api.user_authentication_system.user_authentication_system_router.delete_user_authentication_system": {
+    "file": "src/api/user_authentication_system/user_authentication_system_router.py",
+    "line": 46,
+    "end_line": 48,
+    "class": null,
+    "name": "delete_user_authentication_system",
+    "calls": [
+      "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete"
+    ],
+    "called_by": []
+  },
+  "src.config.database.get_db": {
+    "file": "src/config/database.py",
+    "line": 24,
+    "end_line": 29,
+    "class": null,
+    "name": "get_db",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.database.create_tables": {
+    "file": "src/config/database.py",
+    "line": 32,
+    "end_line": 34,
+    "class": null,
+    "name": "create_tables",
+    "calls": [],
+    "called_by": [
+      "main.lifespan"
+    ]
+  },
+  "src.config.dependencies.get_actor_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 16,
+    "end_line": 17,
+    "class": null,
+    "name": "get_actor_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_interface_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 19,
+    "end_line": 20,
+    "class": null,
+    "name": "get_interface_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_patient_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 22,
+    "end_line": 23,
+    "class": null,
+    "name": "get_patient_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_resource_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 25,
+    "end_line": 26,
+    "class": null,
+    "name": "get_resource_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_symptom_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 28,
+    "end_line": 29,
+    "class": null,
+    "name": "get_symptom_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_symptom_record_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 31,
+    "end_line": 32,
+    "class": null,
+    "name": "get_symptom_record_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.config.dependencies.get_user_authentication_system_repository": {
+    "file": "src/config/dependencies.py",
+    "line": 34,
+    "end_line": 35,
+    "class": null,
+    "name": "get_user_authentication_system_repository",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.patient.Patient.UserAuthenticationSystem.authenticate": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 29,
+    "end_line": 32,
+    "class": "UserAuthenticationSystem",
+    "name": "authenticate",
+    "calls": [],
+    "called_by": [
+      "src.service.patient.patient_service.PatientSymptomService.register_symptom",
+      "tests.unit.patient.test_patient_domain.TestPatientDomain.test_authenticate_success",
+      "tests.unit.patient.test_patient_domain.TestPatientDomain.test_authenticate_failure"
+    ]
+  },
+  "src.domain.patient.Patient.Symptom.create": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 44,
+    "end_line": 51,
+    "class": "Symptom",
+    "name": "create",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.create_actor",
+      "src.api.interface.interface_router.create_interface",
+      "src.api.patient.patient_router.create_patient",
+      "src.api.resource.resource_router.create_resource",
+      "src.api.symptom.symptom_router.create_symptom",
+      "src.api.symptom_record.symptom_record_router.create_symptom_record",
+      "src.api.user_authentication_system.user_authentication_system_router.create_user_authentication_system",
+      "src.domain.patient.Patient.Patient.inputSymptoms",
+      "tests.unit.patient.test_patient_domain.TestPatientDomain.test_symptom_create",
+      "tests.unit.patient.test_patient_domain.TestPatientDomain.test_symptom_record_map_to_record",
+      "tests.unit.patient.test_patient_domain.TestPatientDomain.test_set_encrypted_at_rest"
+    ]
+  },
+  "src.domain.patient.Patient.SymptomRecord.mapToRecord": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 63,
+    "end_line": 70,
+    "class": "SymptomRecord",
+    "name": "mapToRecord",
+    "calls": [],
+    "called_by": [
+      "src.domain.patient.Patient.Patient.inputSymptoms",
+      "tests.unit.patient.test_patient_domain.TestPatientDomain.test_symptom_record_map_to_record",
+      "tests.unit.patient.test_patient_domain.TestPatientDomain.test_set_encrypted_at_rest"
+    ]
+  },
+  "src.domain.patient.Patient.SymptomRecord.setEncryptedAtRest": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 72,
+    "end_line": 74,
+    "class": "SymptomRecord",
+    "name": "setEncryptedAtRest",
+    "calls": [],
+    "called_by": [
+      "tests.unit.patient.test_patient_domain.TestPatientDomain.test_set_encrypted_at_rest"
+    ]
+  },
+  "src.domain.patient.Patient.Patient.inputSymptoms": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 82,
+    "end_line": 90,
+    "class": "Patient",
+    "name": "inputSymptoms",
+    "calls": [
+      "src.domain.patient.Patient.Symptom.create",
+      "src.domain.patient.Patient.SymptomRecord.mapToRecord"
+    ],
+    "called_by": [
+      "src.service.patient.patient_service.PatientSymptomService.register_symptom",
+      "tests.unit.patient.test_patient_domain.TestPatientDomain.test_input_symptoms_creates_record"
+    ]
+  },
+  "src.domain.patient.Patient.Patient.displayConfirmation": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 92,
+    "end_line": 93,
+    "class": "Patient",
+    "name": "displayConfirmation",
+    "calls": [],
+    "called_by": [
+      "tests.unit.patient.test_patient_domain.TestPatientDomain.test_display_methods"
+    ]
+  },
+  "src.domain.patient.Patient.Patient.displayMessage": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 95,
+    "end_line": 96,
+    "class": "Patient",
+    "name": "displayMessage",
+    "calls": [],
+    "called_by": [
+      "tests.unit.patient.test_patient_domain.TestPatientDomain.test_display_methods"
+    ]
+  },
+  "src.domain.patient.Patient.Patient.displayError": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 98,
+    "end_line": 99,
+    "class": "Patient",
+    "name": "displayError",
+    "calls": [],
+    "called_by": [
+      "tests.unit.patient.test_patient_domain.TestPatientDomain.test_display_methods"
+    ]
+  },
+  "src.domain.patient.Patient.Patient.retryOnReconnection": {
+    "file": "src/domain/patient/Patient.py",
+    "line": 101,
+    "end_line": 102,
+    "class": "Patient",
+    "name": "retryOnReconnection",
+    "calls": [],
+    "called_by": [
+      "tests.unit.patient.test_patient_domain.TestPatientDomain.test_display_methods"
+    ]
+  },
+  "src.domain.queue.Queue.Queue.sortItems": {
+    "file": "src/domain/queue/Queue.py",
+    "line": 30,
+    "end_line": 31,
+    "class": "Queue",
+    "name": "sortItems",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.queue.Queue.Queue.findItemById": {
+    "file": "src/domain/queue/Queue.py",
+    "line": 33,
+    "end_line": 34,
+    "class": "Queue",
+    "name": "findItemById",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.queue.Queue.QueueItem.compareUrgency": {
+    "file": "src/domain/queue/Queue.py",
+    "line": 43,
+    "end_line": 44,
+    "class": "QueueItem",
+    "name": "compareUrgency",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.queue.Queue.QueueItem.compareTimestamp": {
+    "file": "src/domain/queue/Queue.py",
+    "line": 46,
+    "end_line": 47,
+    "class": "QueueItem",
+    "name": "compareTimestamp",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.queue.Queue.QueueItem.compareId": {
+    "file": "src/domain/queue/Queue.py",
+    "line": 49,
+    "end_line": 50,
+    "class": "QueueItem",
+    "name": "compareId",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.queue.Queue.QueueItem.updateUrgency": {
+    "file": "src/domain/queue/Queue.py",
+    "line": 52,
+    "end_line": 53,
+    "class": "QueueItem",
+    "name": "updateUrgency",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.urgency_level.UrgencyLevel.UrgencyLevel.__post_init__": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 36,
+    "end_line": 38,
+    "class": "UrgencyLevel",
+    "name": "__post_init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.urgency_level.UrgencyLevel.UrgencyLevel.label": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 41,
+    "end_line": 49,
+    "class": "UrgencyLevel",
+    "name": "label",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.urgency_level.UrgencyLevel.UrgencyLevel.increase": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 51,
+    "end_line": 54,
+    "class": "UrgencyLevel",
+    "name": "increase",
+    "calls": [],
+    "called_by": [
+      "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_increase",
+      "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_increase_max"
+    ]
+  },
+  "src.domain.urgency_level.UrgencyLevel.UrgencyLevel.decrease": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 56,
+    "end_line": 59,
+    "class": "UrgencyLevel",
+    "name": "decrease",
+    "calls": [],
+    "called_by": [
+      "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_decrease",
+      "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_decrease_min"
+    ]
+  },
+  "src.domain.urgency_level.UrgencyLevel.Actor.hasPermission": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 73,
+    "end_line": 74,
+    "class": "Actor",
+    "name": "hasPermission",
+    "calls": [],
+    "called_by": [
+      "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_actor_has_permission"
+    ]
+  },
+  "src.domain.urgency_level.UrgencyLevel.Resource.findResource": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 83,
+    "end_line": 84,
+    "class": "Resource",
+    "name": "findResource",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.urgency_level.UrgencyLevel.Resource.isInAccessibleSet": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 86,
+    "end_line": 87,
+    "class": "Resource",
+    "name": "isInAccessibleSet",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.urgency_level.UrgencyLevel.Resource.setUrgency": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 89,
+    "end_line": 91,
+    "class": "Resource",
+    "name": "setUrgency",
+    "calls": [],
+    "called_by": [
+      "src.service.urgency_level.urgency_level_service.UrgencyAssignmentService.assign_urgency",
+      "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_resource_set_urgency"
+    ]
+  },
+  "src.domain.urgency_level.UrgencyLevel.Resource.validateOwnerInAccessible": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 93,
+    "end_line": 95,
+    "class": "Resource",
+    "name": "validateOwnerInAccessible",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.urgency_level.UrgencyLevel.Resource.saveState": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 97,
+    "end_line": 98,
+    "class": "Resource",
+    "name": "saveState",
+    "calls": [],
+    "called_by": [
+      "src.service.urgency_level.urgency_level_service.UrgencyAssignmentService.assign_urgency"
+    ]
+  },
+  "src.domain.urgency_level.UrgencyLevel.Resource.checkVersion": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 100,
+    "end_line": 101,
+    "class": "Resource",
+    "name": "checkVersion",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.urgency_level.UrgencyLevel.State.getPreState": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 108,
+    "end_line": 109,
+    "class": "State",
+    "name": "getPreState",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.urgency_level.UrgencyLevel.State.transitionTo": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 111,
+    "end_line": 112,
+    "class": "State",
+    "name": "transitionTo",
+    "calls": [],
+    "called_by": [
+      "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_state_transitions"
+    ]
+  },
+  "src.domain.urgency_level.UrgencyLevel.State.updateState": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 114,
+    "end_line": 115,
+    "class": "State",
+    "name": "updateState",
+    "calls": [],
+    "called_by": []
+  },
+  "src.domain.urgency_level.UrgencyLevel.State.getPostState": {
+    "file": "src/domain/urgency_level/UrgencyLevel.py",
+    "line": 117,
+    "end_line": 118,
+    "class": "State",
+    "name": "getPostState",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.__init__": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyActorRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_by_id": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyActorRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.get_actor",
+      "src.api.interface.interface_router.get_interface",
+      "src.api.patient.patient_router.get_patient",
+      "src.api.resource.resource_router.get_resource",
+      "src.api.symptom.symptom_router.get_symptom",
+      "src.api.symptom_record.symptom_record_router.get_symptom_record",
+      "src.api.user_authentication_system.user_authentication_system_router.get_user_authentication_system"
+    ]
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.get_all": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyActorRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.list_actors",
+      "src.api.interface.interface_router.list_interfaces",
+      "src.api.patient.patient_router.list_patients",
+      "src.api.resource.resource_router.list_resources",
+      "src.api.symptom.symptom_router.list_symptoms",
+      "src.api.symptom_record.symptom_record_router.list_symptom_records",
+      "src.api.user_authentication_system.user_authentication_system_router.list_user_authentication_systems"
+    ]
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.create": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyActorRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.update": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyActorRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.update_actor",
+      "src.api.interface.interface_router.update_interface",
+      "src.api.patient.patient_router.update_patient",
+      "src.api.resource.resource_router.update_resource",
+      "src.api.symptom.symptom_router.update_symptom",
+      "src.api.symptom_record.symptom_record_router.update_symptom_record",
+      "src.api.user_authentication_system.user_authentication_system_router.update_user_authentication_system"
+    ]
+  },
+  "src.infra.actor.actor_repo_impl.SQLAlchemyActorRepository.delete": {
+    "file": "src/infra/actor/actor_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyActorRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": [
+      "src.api.actor.actor_router.delete_actor",
+      "src.api.interface.interface_router.delete_interface",
+      "src.api.patient.patient_router.delete_patient",
+      "src.api.resource.resource_router.delete_resource",
+      "src.api.symptom.symptom_router.delete_symptom",
+      "src.api.symptom_record.symptom_record_router.delete_symptom_record",
+      "src.api.user_authentication_system.user_authentication_system_router.delete_user_authentication_system"
+    ]
+  },
+  "src.infra.interface.interface_repo_impl.SQLAlchemyInterfaceRepository.__init__": {
+    "file": "src/infra/interface/interface_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyInterfaceRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.interface.interface_repo_impl.SQLAlchemyInterfaceRepository.get_by_id": {
+    "file": "src/infra/interface/interface_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyInterfaceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.interface.interface_repo_impl.SQLAlchemyInterfaceRepository.get_all": {
+    "file": "src/infra/interface/interface_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyInterfaceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.interface.interface_repo_impl.SQLAlchemyInterfaceRepository.create": {
+    "file": "src/infra/interface/interface_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyInterfaceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.interface.interface_repo_impl.SQLAlchemyInterfaceRepository.update": {
+    "file": "src/infra/interface/interface_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyInterfaceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.interface.interface_repo_impl.SQLAlchemyInterfaceRepository.delete": {
+    "file": "src/infra/interface/interface_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyInterfaceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.__init__": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.get_by_id": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.get_all": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.create": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.update": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.patient.patient_repo_impl.SQLAlchemyPatientRepository.delete": {
+    "file": "src/infra/patient/patient_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyPatientRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.queue.queue_repo_impl.SQLAlchemyQueueRepository.__init__": {
+    "file": "src/infra/queue/queue_repo_impl.py",
+    "line": 19,
+    "end_line": 20,
+    "class": "SQLAlchemyQueueRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.__init__": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.get_by_id": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.get_all": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.create": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.update": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.resource.resource_repo_impl.SQLAlchemyResourceRepository.delete": {
+    "file": "src/infra/resource/resource_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom.symptom_repo_impl.SQLAlchemySymptomRepository.__init__": {
+    "file": "src/infra/symptom/symptom_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemySymptomRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom.symptom_repo_impl.SQLAlchemySymptomRepository.get_by_id": {
+    "file": "src/infra/symptom/symptom_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemySymptomRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom.symptom_repo_impl.SQLAlchemySymptomRepository.get_all": {
+    "file": "src/infra/symptom/symptom_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemySymptomRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom.symptom_repo_impl.SQLAlchemySymptomRepository.create": {
+    "file": "src/infra/symptom/symptom_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemySymptomRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom.symptom_repo_impl.SQLAlchemySymptomRepository.update": {
+    "file": "src/infra/symptom/symptom_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemySymptomRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom.symptom_repo_impl.SQLAlchemySymptomRepository.delete": {
+    "file": "src/infra/symptom/symptom_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemySymptomRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_record.symptom_record_repo_impl.SQLAlchemySymptomRecordRepository.__init__": {
+    "file": "src/infra/symptom_record/symptom_record_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemySymptomRecordRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_record.symptom_record_repo_impl.SQLAlchemySymptomRecordRepository.get_by_id": {
+    "file": "src/infra/symptom_record/symptom_record_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemySymptomRecordRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_record.symptom_record_repo_impl.SQLAlchemySymptomRecordRepository.get_all": {
+    "file": "src/infra/symptom_record/symptom_record_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemySymptomRecordRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_record.symptom_record_repo_impl.SQLAlchemySymptomRecordRepository.create": {
+    "file": "src/infra/symptom_record/symptom_record_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemySymptomRecordRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_record.symptom_record_repo_impl.SQLAlchemySymptomRecordRepository.update": {
+    "file": "src/infra/symptom_record/symptom_record_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemySymptomRecordRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.symptom_record.symptom_record_repo_impl.SQLAlchemySymptomRecordRepository.delete": {
+    "file": "src/infra/symptom_record/symptom_record_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemySymptomRecordRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user_authentication_system.user_authentication_system_repo_impl.SQLAlchemyUserAuthenticationSystemRepository.__init__": {
+    "file": "src/infra/user_authentication_system/user_authentication_system_repo_impl.py",
+    "line": 12,
+    "end_line": 13,
+    "class": "SQLAlchemyUserAuthenticationSystemRepository",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user_authentication_system.user_authentication_system_repo_impl.SQLAlchemyUserAuthenticationSystemRepository.get_by_id": {
+    "file": "src/infra/user_authentication_system/user_authentication_system_repo_impl.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "SQLAlchemyUserAuthenticationSystemRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user_authentication_system.user_authentication_system_repo_impl.SQLAlchemyUserAuthenticationSystemRepository.get_all": {
+    "file": "src/infra/user_authentication_system/user_authentication_system_repo_impl.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "SQLAlchemyUserAuthenticationSystemRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user_authentication_system.user_authentication_system_repo_impl.SQLAlchemyUserAuthenticationSystemRepository.create": {
+    "file": "src/infra/user_authentication_system/user_authentication_system_repo_impl.py",
+    "line": 23,
+    "end_line": 28,
+    "class": "SQLAlchemyUserAuthenticationSystemRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user_authentication_system.user_authentication_system_repo_impl.SQLAlchemyUserAuthenticationSystemRepository.update": {
+    "file": "src/infra/user_authentication_system/user_authentication_system_repo_impl.py",
+    "line": 30,
+    "end_line": 38,
+    "class": "SQLAlchemyUserAuthenticationSystemRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.infra.user_authentication_system.user_authentication_system_repo_impl.SQLAlchemyUserAuthenticationSystemRepository.delete": {
+    "file": "src/infra/user_authentication_system/user_authentication_system_repo_impl.py",
+    "line": 40,
+    "end_line": 46,
+    "class": "SQLAlchemyUserAuthenticationSystemRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.get_by_id": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "ActorRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.get_all": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "ActorRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.create": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "ActorRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.update": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "ActorRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.actor.actor_repository.ActorRepository.delete": {
+    "file": "src/repository/actor/actor_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "ActorRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.interface.interface_repository.InterfaceRepository.get_by_id": {
+    "file": "src/repository/interface/interface_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "InterfaceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.interface.interface_repository.InterfaceRepository.get_all": {
+    "file": "src/repository/interface/interface_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "InterfaceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.interface.interface_repository.InterfaceRepository.create": {
+    "file": "src/repository/interface/interface_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "InterfaceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.interface.interface_repository.InterfaceRepository.update": {
+    "file": "src/repository/interface/interface_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "InterfaceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.interface.interface_repository.InterfaceRepository.delete": {
+    "file": "src/repository/interface/interface_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "InterfaceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.get_by_id": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "PatientRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.get_all": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "PatientRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.create": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "PatientRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.update": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "PatientRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.patient.patient_repository.PatientRepository.delete": {
+    "file": "src/repository/patient/patient_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "PatientRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.get_by_id": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "ResourceRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.get_all": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "ResourceRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.create": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "ResourceRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.update": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "ResourceRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.resource.resource_repository.ResourceRepository.delete": {
+    "file": "src/repository/resource/resource_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "ResourceRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom.symptom_repository.SymptomRepository.get_by_id": {
+    "file": "src/repository/symptom/symptom_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "SymptomRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom.symptom_repository.SymptomRepository.get_all": {
+    "file": "src/repository/symptom/symptom_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "SymptomRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom.symptom_repository.SymptomRepository.create": {
+    "file": "src/repository/symptom/symptom_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "SymptomRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom.symptom_repository.SymptomRepository.update": {
+    "file": "src/repository/symptom/symptom_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "SymptomRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom.symptom_repository.SymptomRepository.delete": {
+    "file": "src/repository/symptom/symptom_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "SymptomRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_record.symptom_record_repository.SymptomRecordRepository.get_by_id": {
+    "file": "src/repository/symptom_record/symptom_record_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "SymptomRecordRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_record.symptom_record_repository.SymptomRecordRepository.get_all": {
+    "file": "src/repository/symptom_record/symptom_record_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "SymptomRecordRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_record.symptom_record_repository.SymptomRecordRepository.create": {
+    "file": "src/repository/symptom_record/symptom_record_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "SymptomRecordRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_record.symptom_record_repository.SymptomRecordRepository.update": {
+    "file": "src/repository/symptom_record/symptom_record_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "SymptomRecordRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.symptom_record.symptom_record_repository.SymptomRecordRepository.delete": {
+    "file": "src/repository/symptom_record/symptom_record_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "SymptomRecordRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user_authentication_system.user_authentication_system_repository.UserAuthenticationSystemRepository.get_by_id": {
+    "file": "src/repository/user_authentication_system/user_authentication_system_repository.py",
+    "line": 9,
+    "end_line": 9,
+    "class": "UserAuthenticationSystemRepository",
+    "name": "get_by_id",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user_authentication_system.user_authentication_system_repository.UserAuthenticationSystemRepository.get_all": {
+    "file": "src/repository/user_authentication_system/user_authentication_system_repository.py",
+    "line": 10,
+    "end_line": 10,
+    "class": "UserAuthenticationSystemRepository",
+    "name": "get_all",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user_authentication_system.user_authentication_system_repository.UserAuthenticationSystemRepository.create": {
+    "file": "src/repository/user_authentication_system/user_authentication_system_repository.py",
+    "line": 11,
+    "end_line": 11,
+    "class": "UserAuthenticationSystemRepository",
+    "name": "create",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user_authentication_system.user_authentication_system_repository.UserAuthenticationSystemRepository.update": {
+    "file": "src/repository/user_authentication_system/user_authentication_system_repository.py",
+    "line": 12,
+    "end_line": 12,
+    "class": "UserAuthenticationSystemRepository",
+    "name": "update",
+    "calls": [],
+    "called_by": []
+  },
+  "src.repository.user_authentication_system.user_authentication_system_repository.UserAuthenticationSystemRepository.delete": {
+    "file": "src/repository/user_authentication_system/user_authentication_system_repository.py",
+    "line": 13,
+    "end_line": 13,
+    "class": "UserAuthenticationSystemRepository",
+    "name": "delete",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.patient.patient_service.SymptomRegistrationService.register_symptom": {
+    "file": "src/service/patient/patient_service.py",
+    "line": 25,
+    "end_line": 26,
+    "class": "SymptomRegistrationService",
+    "name": "register_symptom",
+    "calls": [],
+    "called_by": [
+      "tests.unit.patient.test_patient_service.TestPatientSymptomService.test_register_symptom_success",
+      "tests.unit.patient.test_patient_service.TestPatientSymptomService.test_register_symptom_patient_not_found",
+      "tests.unit.patient.test_patient_service.TestPatientSymptomService.test_register_symptom_authentication_failure"
+    ]
+  },
+  "src.service.patient.patient_service.PatientSymptomService.__init__": {
+    "file": "src/service/patient/patient_service.py",
+    "line": 32,
+    "end_line": 33,
+    "class": "PatientSymptomService",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.patient.patient_service.PatientSymptomService.add_patient": {
+    "file": "src/service/patient/patient_service.py",
+    "line": 35,
+    "end_line": 36,
+    "class": "PatientSymptomService",
+    "name": "add_patient",
+    "calls": [],
+    "called_by": [
+      "tests.unit.patient.test_patient_service.TestPatientSymptomService.test_register_symptom_success",
+      "tests.unit.patient.test_patient_service.TestPatientSymptomService.test_register_symptom_authentication_failure"
+    ]
+  },
+  "src.service.patient.patient_service.PatientSymptomService.register_symptom": {
+    "file": "src/service/patient/patient_service.py",
+    "line": 38,
+    "end_line": 48,
+    "class": "PatientSymptomService",
+    "name": "register_symptom",
+    "calls": [
+      "src.domain.patient.Patient.UserAuthenticationSystem.authenticate",
+      "src.domain.patient.Patient.Patient.inputSymptoms"
+    ],
+    "called_by": []
+  },
+  "src.service.queue.queue_service.QueueServiceImpl.__init__": {
+    "file": "src/service/queue/queue_service.py",
+    "line": 22,
+    "end_line": 23,
+    "class": "QueueServiceImpl",
+    "name": "__init__",
+    "calls": [],
+    "called_by": []
+  },
+  "src.service.urgency_level.urgency_level_service.UrgencyAssignmentService.assign_urgency": {
+    "file": "src/service/urgency_level/urgency_level_service.py",
+    "line": 25,
+    "end_line": 28,
+    "class": "UrgencyAssignmentService",
+    "name": "assign_urgency",
+    "calls": [
+      "src.domain.urgency_level.UrgencyLevel.Resource.setUrgency",
+      "src.domain.urgency_level.UrgencyLevel.Resource.saveState"
+    ],
+    "called_by": [
+      "tests.unit.urgency_level.test_urgency_level_service.TestUrgencyAssignmentService.test_assign_urgency"
+    ]
+  },
+  "tests.integration.conftest.test_conftest_placeholder": {
+    "file": "tests/integration/conftest.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_conftest_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_api_contracts.test_test_api_contracts_placeholder": {
+    "file": "tests/integration/test_api_contracts.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_api_contracts_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_patient_flow.test_test_patient_flow_placeholder": {
+    "file": "tests/integration/test_patient_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_patient_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_queue_flow.test_test_queue_flow_placeholder": {
+    "file": "tests/integration/test_queue_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_queue_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.integration.test_urgency_level_flow.test_test_urgency_level_flow_placeholder": {
+    "file": "tests/integration/test_urgency_level_flow.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_urgency_level_flow_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_api.TestPatientAPI.test_list_patients": {
+    "file": "tests/unit/patient/test_patient_api.py",
+    "line": 13,
+    "end_line": 16,
+    "class": "TestPatientAPI",
+    "name": "test_list_patients",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_api.TestPatientAPI.test_create_patient": {
+    "file": "tests/unit/patient/test_patient_api.py",
+    "line": 18,
+    "end_line": 22,
+    "class": "TestPatientAPI",
+    "name": "test_create_patient",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_domain.TestPatientDomain.test_symptom_create": {
+    "file": "tests/unit/patient/test_patient_domain.py",
+    "line": 12,
+    "end_line": 29,
+    "class": "TestPatientDomain",
+    "name": "test_symptom_create",
+    "calls": [
+      "src.domain.patient.Patient.Symptom.create"
+    ],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_domain.TestPatientDomain.test_symptom_record_map_to_record": {
+    "file": "tests/unit/patient/test_patient_domain.py",
+    "line": 31,
+    "end_line": 44,
+    "class": "TestPatientDomain",
+    "name": "test_symptom_record_map_to_record",
+    "calls": [
+      "src.domain.patient.Patient.Symptom.create",
+      "src.domain.patient.Patient.SymptomRecord.mapToRecord"
+    ],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_domain.TestPatientDomain.test_input_symptoms_creates_record": {
+    "file": "tests/unit/patient/test_patient_domain.py",
+    "line": 46,
+    "end_line": 56,
+    "class": "TestPatientDomain",
+    "name": "test_input_symptoms_creates_record",
+    "calls": [
+      "src.domain.patient.Patient.Patient.inputSymptoms"
+    ],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_domain.TestPatientDomain.test_authenticate_success": {
+    "file": "tests/unit/patient/test_patient_domain.py",
+    "line": 58,
+    "end_line": 62,
+    "class": "TestPatientDomain",
+    "name": "test_authenticate_success",
+    "calls": [
+      "src.domain.patient.Patient.UserAuthenticationSystem.authenticate"
+    ],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_domain.TestPatientDomain.test_authenticate_failure": {
+    "file": "tests/unit/patient/test_patient_domain.py",
+    "line": 64,
+    "end_line": 68,
+    "class": "TestPatientDomain",
+    "name": "test_authenticate_failure",
+    "calls": [
+      "src.domain.patient.Patient.UserAuthenticationSystem.authenticate"
+    ],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_domain.TestPatientDomain.test_display_methods": {
+    "file": "tests/unit/patient/test_patient_domain.py",
+    "line": 70,
+    "end_line": 80,
+    "class": "TestPatientDomain",
+    "name": "test_display_methods",
+    "calls": [
+      "src.domain.patient.Patient.Patient.displayConfirmation",
+      "src.domain.patient.Patient.Patient.displayMessage",
+      "src.domain.patient.Patient.Patient.displayError",
+      "src.domain.patient.Patient.Patient.retryOnReconnection"
+    ],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_domain.TestPatientDomain.test_set_encrypted_at_rest": {
+    "file": "tests/unit/patient/test_patient_domain.py",
+    "line": 82,
+    "end_line": 89,
+    "class": "TestPatientDomain",
+    "name": "test_set_encrypted_at_rest",
+    "calls": [
+      "src.domain.patient.Patient.Symptom.create",
+      "src.domain.patient.Patient.SymptomRecord.mapToRecord",
+      "src.domain.patient.Patient.SymptomRecord.setEncryptedAtRest"
+    ],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_domain.TestPatientDomain.test_enums": {
+    "file": "tests/unit/patient/test_patient_domain.py",
+    "line": 91,
+    "end_line": 97,
+    "class": "TestPatientDomain",
+    "name": "test_enums",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_service.TestPatientSymptomService.test_register_symptom_success": {
+    "file": "tests/unit/patient/test_patient_service.py",
+    "line": 9,
+    "end_line": 25,
+    "class": "TestPatientSymptomService",
+    "name": "test_register_symptom_success",
+    "calls": [
+      "src.service.patient.patient_service.PatientSymptomService.add_patient",
+      "src.service.patient.patient_service.SymptomRegistrationService.register_symptom"
+    ],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_service.TestPatientSymptomService.test_register_symptom_patient_not_found": {
+    "file": "tests/unit/patient/test_patient_service.py",
+    "line": 27,
+    "end_line": 35,
+    "class": "TestPatientSymptomService",
+    "name": "test_register_symptom_patient_not_found",
+    "calls": [
+      "src.service.patient.patient_service.SymptomRegistrationService.register_symptom"
+    ],
+    "called_by": []
+  },
+  "tests.unit.patient.test_patient_service.TestPatientSymptomService.test_register_symptom_authentication_failure": {
+    "file": "tests/unit/patient/test_patient_service.py",
+    "line": 37,
+    "end_line": 51,
+    "class": "TestPatientSymptomService",
+    "name": "test_register_symptom_authentication_failure",
+    "calls": [
+      "src.service.patient.patient_service.PatientSymptomService.add_patient",
+      "src.service.patient.patient_service.SymptomRegistrationService.register_symptom"
+    ],
+    "called_by": []
+  },
+  "tests.unit.queue.test_queue_api.test_test_queue_api_placeholder": {
+    "file": "tests/unit/queue/test_queue_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_queue_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.queue.test_queue_domain.test_test_queue_domain_placeholder": {
+    "file": "tests/unit/queue/test_queue_domain.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_queue_domain_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.queue.test_queue_service.test_test_queue_service_placeholder": {
+    "file": "tests/unit/queue/test_queue_service.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_queue_service_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_api.test_test_urgency_level_api_placeholder": {
+    "file": "tests/unit/urgency_level/test_urgency_level_api.py",
+    "line": 10,
+    "end_line": 11,
+    "class": null,
+    "name": "test_test_urgency_level_api_placeholder",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_create_valid_level": {
+    "file": "tests/unit/urgency_level/test_urgency_level_domain.py",
+    "line": 10,
+    "end_line": 13,
+    "class": "TestUrgencyLevel",
+    "name": "test_create_valid_level",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_create_invalid_level_low": {
+    "file": "tests/unit/urgency_level/test_urgency_level_domain.py",
+    "line": 15,
+    "end_line": 17,
+    "class": "TestUrgencyLevel",
+    "name": "test_create_invalid_level_low",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_create_invalid_level_high": {
+    "file": "tests/unit/urgency_level/test_urgency_level_domain.py",
+    "line": 19,
+    "end_line": 21,
+    "class": "TestUrgencyLevel",
+    "name": "test_create_invalid_level_high",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_increase": {
+    "file": "tests/unit/urgency_level/test_urgency_level_domain.py",
+    "line": 23,
+    "end_line": 26,
+    "class": "TestUrgencyLevel",
+    "name": "test_increase",
+    "calls": [
+      "src.domain.urgency_level.UrgencyLevel.UrgencyLevel.increase"
+    ],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_increase_max": {
+    "file": "tests/unit/urgency_level/test_urgency_level_domain.py",
+    "line": 28,
+    "end_line": 31,
+    "class": "TestUrgencyLevel",
+    "name": "test_increase_max",
+    "calls": [
+      "src.domain.urgency_level.UrgencyLevel.UrgencyLevel.increase"
+    ],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_decrease": {
+    "file": "tests/unit/urgency_level/test_urgency_level_domain.py",
+    "line": 33,
+    "end_line": 36,
+    "class": "TestUrgencyLevel",
+    "name": "test_decrease",
+    "calls": [
+      "src.domain.urgency_level.UrgencyLevel.UrgencyLevel.decrease"
+    ],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_decrease_min": {
+    "file": "tests/unit/urgency_level/test_urgency_level_domain.py",
+    "line": 38,
+    "end_line": 41,
+    "class": "TestUrgencyLevel",
+    "name": "test_decrease_min",
+    "calls": [
+      "src.domain.urgency_level.UrgencyLevel.UrgencyLevel.decrease"
+    ],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_labels": {
+    "file": "tests/unit/urgency_level/test_urgency_level_domain.py",
+    "line": 43,
+    "end_line": 45,
+    "class": "TestUrgencyLevel",
+    "name": "test_labels",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_urgency_level_value_enum": {
+    "file": "tests/unit/urgency_level/test_urgency_level_domain.py",
+    "line": 47,
+    "end_line": 49,
+    "class": "TestUrgencyLevel",
+    "name": "test_urgency_level_value_enum",
+    "calls": [],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_resource_set_urgency": {
+    "file": "tests/unit/urgency_level/test_urgency_level_domain.py",
+    "line": 51,
+    "end_line": 56,
+    "class": "TestUrgencyLevel",
+    "name": "test_resource_set_urgency",
+    "calls": [
+      "src.domain.urgency_level.UrgencyLevel.Resource.setUrgency"
+    ],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_actor_has_permission": {
+    "file": "tests/unit/urgency_level/test_urgency_level_domain.py",
+    "line": 58,
+    "end_line": 62,
+    "class": "TestUrgencyLevel",
+    "name": "test_actor_has_permission",
+    "calls": [
+      "src.domain.urgency_level.UrgencyLevel.Actor.hasPermission"
+    ],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_domain.TestUrgencyLevel.test_state_transitions": {
+    "file": "tests/unit/urgency_level/test_urgency_level_domain.py",
+    "line": 64,
+    "end_line": 66,
+    "class": "TestUrgencyLevel",
+    "name": "test_state_transitions",
+    "calls": [
+      "src.domain.urgency_level.UrgencyLevel.State.transitionTo"
+    ],
+    "called_by": []
+  },
+  "tests.unit.urgency_level.test_urgency_level_service.TestUrgencyAssignmentService.test_assign_urgency": {
+    "file": "tests/unit/urgency_level/test_urgency_level_service.py",
+    "line": 9,
+    "end_line": 16,
+    "class": "TestUrgencyAssignmentService",
+    "name": "test_assign_urgency",
+    "calls": [
+      "src.service.urgency_level.urgency_level_service.UrgencyAssignmentService.assign_urgency"
+    ],
+    "called_by": []
+  }
+}

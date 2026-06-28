@@ -1,0 +1,100 @@
+@startuml
+skinparam classFontName Arial
+skinparam classFontSize 12
+skinparam packageFontSize 14
+skinparam packageBorderColor #4A4A4A
+skinparam classBorderColor #4A4A4A
+skinparam classHeaderBackgroundColor #F0F0F0
+
+package "Domain Model" {
+    class Patient {
+        - identifier: String
+        - served: Bool
+        .. invariants ..
+        + {abstract} if served is True then patient must not be in queue
+  + setServed(true)
+    }
+
+    class Queue {
+        - identifier: String
+        - empty: Bool
+        .. invariants ..
+        + {abstract} Queue.empty = True implies no Patient is a member
+  + isEmpty() : Bool
+  + getHead() : Patient
+  + removeHead() : Patient
+  + updateEmptyFlag()
+    }
+
+    class Healthcare_Practitioner {
+    }
+
+    class Patient_Care_Coordinator {
+    }
+
+    class System_Administrator {
+    }
+
+    Queue *-- "ordered list" Patient : contains
+}
+
+package "Application" {
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+    }
+
+    enum SystemState {
+        Pre1
+        PostDone
+    }
+
+    class AccessControl {
+        + checkPermission(user: Healthcare_Practitioner, required: Permission): Bool
+        + isAuthenticated(user: Healthcare_Practitioner): Bool
+  + authorize(HP, "Queue", Permission.Read)
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface Queue_Service_API <<interface>> {
+        + {abstract} getQueueStatus(): Queue
+        + {abstract} getNextPatient(): Patient
+        + {abstract} removePatient(patient: Patient): Bool
+    }
+}
+
+package "Controllers" {
+    class QueueController {
+        - queueService: Queue_Service_API
+        - accessControl: AccessControl
+        + displayNextPatient(practitioner: Healthcare_Practitioner): Patient
+        + confirmRemovePatient(practitioner: Healthcare_Practitioner, patient: Patient): Bool
+    }
+}
+
+package "Exceptions" {
+    class QueueEmptyException <<exception>> {
+        + message: String
+    }
+
+    class PatientAlreadyServedException <<exception>> {
+        + message: String
+    }
+
+    class UnauthorizedAccessException <<exception>> {
+        + message: String
+    }
+}
+
+QueueController --> Queue_Service_API : uses
+QueueController --> AccessControl : uses
+QueueController --> QueueEmptyException : throws
+QueueController --> PatientAlreadyServedException : throws
+QueueController --> UnauthorizedAccessException : throws
+Queue_Service_API --> Queue : returns
+Queue_Service_API --> Patient : returns
+
+@enduml

@@ -1,0 +1,108 @@
+@startuml
+skinparam sequenceMessageAlign center
+
+actor "User\n(Actor)" as User
+actor "IT Support\n(Actor)" as ITAdmin
+
+box "Controller" #LightBlue
+  participant DashboardController
+end box
+
+box "Application" #LightGreen
+  participant OperationService
+end box
+
+box "Domain" #LightYellow
+  participant Operation
+  participant State
+  participant Permission
+  participant Resource
+  participant Interface
+  participant Actor as ActorDomain
+end box
+
+box "Infrastructure" #LightCoral
+  participant LiveDashboardInterface as DashboardUI
+  participant DataFeedAPI as DataFeedClient
+end box
+
+box "External" #LightGray
+  participant "Data Feed API" as DataFeedAPI_Ext
+end box
+
+== Normal Live Dashboard Update ==
+
+User -> DashboardUI : viewDashboard()
+DashboardUI -> DashboardController : GET /api/dashboard/priority-values
+activate DashboardController
+
+DashboardController -> OperationService : fetchPriorityData(user: Actor, target: Resource, channels: Interface[]): PriorityData
+activate OperationService
+
+OperationService -> Operation : create(user, target, channels, grant=Read): Operation
+activate Operation
+
+alt Permission check succeeds
+  Operation -> Permission : checkPermission(actor: Actor, grant: Permission): Boolean
+  Note right: Verifies actor.mayPerform contains grant
+  Permission --> Operation : true
+  
+  Operation -> Resource : isAccessibleBy(actor: Actor): Boolean
+  Note right: Verifies actor in resource.accessible
+  Resource --> Operation : true
+  
+  Operation -> Interface : areAllChannelsAuthenticated(channels: Interface[]): Boolean
+  Note right: At least one channel must be authenticated (security invariant)
+  Interface --> Operation : true
+
+  alt Data fetch succeeds (no network outage)
+    OperationService -> DataFeedClient : fetchUrgencyAndWaitTime(target: Resource) [TLS]: UrgencyAndWaitTime
+    DataFeedClient -> DataFeedAPI_Ext : HTTP GET /urgency-wait [TLS]
+    DataFeedAPI_Ext --> DataFeedClient : { urgency: UrgencyLevel, waitTime: Duration }
+    DataFeedClient --> OperationService : urgencyData
+
+    OperationService -> Operation : updateState(newState: State): State
+    Operation -> State : transition(Post1)
+    Note right: State changes from PreIdle to Post1
+    State --> Operation : stateUpdated
+
+    OperationService -> Operation : updateState(newState: State): State
+    Operation -> State : transition(Post2)
+    Note right: User now can prioritize tasks
+    State --> Operation : stateUpdated
+
+    OperationService --> DashboardController : PriorityData(data, state=Post2)
+    DashboardController --> DashboardUI : HTTP 200 OK (data)
+    DashboardUI -> User : display urgency and wait time
+    DashboardUI -> User : enable prioritize button
+
+  else Network outage (channel not encrypted)
+    Note right: Safety invariant – block state change
+    OperationService --> DashboardController : 502 Bad Gateway
+    DashboardController --> DashboardUI : HTTP 502
+    DashboardUI -> User : show network error\nkeep old data (PreIdle)
+  end
+
+else Permission check fails (data corruption)
+  Note over Operation: Actor lacks required permission\nto access resource
+  Operation --> OperationService : permissionDeniedError
+  OperationService --> DashboardController : 403 Forbidden
+  DashboardController --> DashboardUI : HTTP 403
+  DashboardUI -> User : show error message (no state change)
+else Accessibility check fails
+  Operation --> OperationService : accessDeniedError
+  OperationService --> DashboardController : 403 Forbidden
+  DashboardController --> DashboardUI : HTTP 403
+  DashboardUI -> User : show error message (no state change)
+else Authentication check fails (data volume spike)
+  Note right: With multiple targets, every channel must be authenticated
+  Operation --> OperationService : authenticationError
+  OperationService --> DashboardController : 400 Bad Request
+  DashboardController --> DashboardUI : HTTP 400
+  DashboardUI -> User : show error message (no state change)
+end
+
+deactivate OperationService
+deactivate DashboardController
+
+@enduml

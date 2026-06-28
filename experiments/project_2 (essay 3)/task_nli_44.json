@@ -1,0 +1,30 @@
+{
+  "task_id": 44,
+  "confidence": 0.9961,
+  "evidence": [
+    {
+      "claim": "The system monitors inventory levels.",
+      "fact": "The system presents a real-time overview of stock by type, upcoming expirations within a week, and active orders.",
+      "score": 0.9983,
+      "user_story_span": "monitor inventory levels",
+      "fact_span": ""
+    },
+    {
+      "claim": "The threshold for alerts is 5 units per blood type.",
+      "fact": "A shortage alert is triggered whenever the available stock for any blood type falls below five units.",
+      "score": 0.9965,
+      "user_story_span": "",
+      "fact_span": "A shortage alert is triggered whenever the available stock for any blood type falls below five units"
+    },
+    {
+      "claim": "The system tracks inventory by ABO/Rh blood type.",
+      "fact": "The matching algorithm finds compatible inventory units based on standard ABO and Rh donor rules, prioritizing exact matches then closest expiry.",
+      "score": 0.9936,
+      "user_story_span": "tracks inventory by ABO/Rh blood type",
+      "fact_span": "The matching algorithm finds compatible inventory units based on standard ABO and Rh donor rules"
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

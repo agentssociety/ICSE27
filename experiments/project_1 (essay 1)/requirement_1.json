@@ -1,0 +1,106 @@
+{
+  "id": "REQ-TRIAGE-01",
+  "title": "Register New Patient with Symptoms",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall allow a triage nurse to register a new patient and capture their symptoms for medical attention.",
+  "rationale": "This requirement is necessary to ensure that patients can be properly assessed and prioritized based on the severity of their symptoms, leading to more efficient and effective medical care.",
+  "business_value": "Implementing this requirement will improve patient flow through the healthcare system, reduce wait times, and ensure that patients receive appropriate treatment based on the urgency of their condition.",
+  "source": {
+    "type": "User Story",
+    "id": 1,
+    "description": "As a triage nurse I need to register a new patient with their symptoms So that they can be added to the queue for medical attention"
+  },
+  "stakeholders": [
+    "Triage Nurse Team",
+    "Medical Staff",
+    "Patient Care Coordination Team"
+  ],
+  "acceptance_criteria": [
+    "A new patient record is created in the system.",
+    "The patient's symptoms are recorded accurately.",
+    "The patient is placed in a queue based on the severity of their symptoms."
+  ],
+  "preconditions": [
+    "The triage nurse is logged into the system.",
+    "The system is operational and accessible to the nurse."
+  ],
+  "postconditions": [
+    "The new patient record is visible to medical staff.",
+    "The patient's queue position is updated appropriately based on symptom severity.",
+    "Notification is sent to relevant medical staff if action is required immediately."
+  ],
+  "functional_constraints": [
+    "The patient's symptoms must be recorded accurately and comprehensively.",
+    "The system must automatically prioritize patients based on the severity of their symptoms."
+  ],
+  "security_requirements": [
+    "All patient data must be encrypted both at rest and in transit.",
+    "Access to the registration functionality is restricted to authorized triage nurses only."
+  ],
+  "non_functional_requirements": {
+    "performance": "The system should process new patient registrations within 30 seconds.",
+    "availability": "The system must be available 99.9% of the time during operational hours.",
+    "scalability": "The system must support up to 50 concurrent triage nurse users without performance degradation.",
+    "usability": "Error messages should be clear and actionable, guiding the user on how to correct input errors."
+  },
+  "edge_cases": [
+    "Patient provides no symptoms.",
+    "Symptoms are entered incorrectly or ambiguously.",
+    "System fails to process registration within the expected time frame."
+  ],
+  "dependencies": [
+    "Operational system availability and performance must be maintained.",
+    "Medical staff must have access to the patient queue for timely intervention.",
+    "Security protocols must ensure patient data privacy and confidentiality."
+  ],
+  "interfaces": [
+    {
+      "type": "UI",
+      "name": "Triage Nurse Registration Form",
+      "description": "The user interface where triage nurses input patient information and symptoms."
+    },
+    {
+      "type": "Database",
+      "name": "Patient Database",
+      "description": "Stores new patient records with their symptoms for medical attention."
+    },
+    {
+      "type": "API",
+      "name": "Medical Attention Queue API",
+      "description": "Integrates the registration process with the queue management system, placing patients based on symptom severity."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-TRIAGE-01",
+      "description": "Registering a patient with no symptoms.",
+      "expected_result": "The system creates a new patient record without symptoms, and the patient is placed at the end of the queue."
+    },
+    {
+      "id": "TC-TRIAGE-02",
+      "description": "Registering a patient with incorrectly entered symptoms.",
+      "expected_result": "The system records the incorrect symptoms as input errors, prompting the nurse to correct them before proceeding."
+    },
+    {
+      "id": "TC-TRIAGE-03",
+      "description": "System failure during registration process.",
+      "expected_result": "The system fails to register the patient and displays an error message indicating the issue, requiring manual intervention to resolve."
+    }
+  ],
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Patient",
+      "PatientQueue"
+    ],
+    "test_artifacts": []
+  },
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-12T10:08:20.306661",
+  "last_updated": "2026-06-12T10:21:28.886133"
+}

@@ -1,0 +1,187 @@
+@startuml
+title Flight Queue Emergency Handling - Sequence Diagrams
+
+box "Controller Layer" #LightBlue
+    participant "FlightQueueController" as FQC
+end box
+
+box "Application Layer" #LightGreen
+    participant "EmergencyHandler" as EH
+    participant "QueueManager" as QM
+end box
+
+box "Domain Layer" #LightYellow
+    participant "FlightQueue" as FQ
+    participant "Flight" as F
+    participant "EmergencyFlight" as EF
+    participant "Slot" as S
+end box
+
+box "Infrastructure Layer" #LightCoral
+    participant "FlightScheduleDatabase" as FSD
+end box
+
+box "External Actors" #LightGray
+    participant "Emergency Services" as ES
+    participant "Air Traffic Controller" as ATC
+    participant "Flight Operator" as FO
+end box
+
+== Handle Single Emergency Flight (Happy Path) ==
+
+ES -> FQC : POST /emergency/flight [TLS]
+note right: Authenticated & encrypted channel required
+
+FQC -> EH : handleEmergencyFlight(flightId: String) : void
+
+EH -> FQC : checkPermissions(actor: ES, permission: Write) : boolean
+alt Permission denied
+    FQC --> ES : 403 Forbidden
+    note right: Unauthorized actor
+else Permission granted
+    EH -> FSD : getNextAvailableSlot() : Slot [TLS]
+    FSD --> EH : slot: Slot
+    
+    alt No slots available
+        EH --> FQC : EmergencyInsertionException
+        FQC --> ES : 409 Conflict - No slots available
+        note right: Safety assertion - emergency cannot be queued
+    else Slot available
+        EH -> EF : create(id: String, detectionTime: DateTime) : EmergencyFlight
+        note right: Automatic allocation - no manual confirmation
+        
+        EH -> FQ : insertEmergencyFlight(emergency: EmergencyFlight, slot: Slot) : void
+        note right: State: Pre1 -> Post1
+        
+        FQ -> S : allocate(slotId: String) : void
+        note right: SlotStatus: available -> allocated
+        
+        FQ -> FSD : saveFlightQueue(queue: FlightQueue) : void [TLS]
+        
+        alt Re-queue non-emergency flights
+            QM -> FQ : reQueueFlights(excludeEmergency: Flight) : List<Flight>
+            note right: Preserve original order for non-emergency
+            
+            loop for each non-emergency flight
+                FQ -> S : adjustSlot(flight: Flight, newTime: DateTime) : void
+                FQ -> FSD : updateFlightSlot(flight: Flight) : void [TLS]
+            end loop
+            
+            FQ -> FSD : saveQueueOrder(queue: FlightQueue) : void [TLS]
+            note right: State: Post2, Post3, Post4 achieved
+        end
+        
+        FQC --> ES : 200 OK - Emergency flight queued
+        note right: Emergency at front of queue
+    end
+end
+
+== Handle Multiple Simultaneous Emergencies (Happy Path) ==
+
+ES -> FQC : POST /emergency/flights/batch [TLS]
+note right: Multiple emergencies detected (Pre2 state)
+
+FQC -> EH : handleBatchEmergencyFlights(flightIds: List<String>) : void
+
+EH -> FSD : acquireQueueLock(queueId: String) : boolean [TLS]
+alt Lock acquisition failed
+    FQC --> ES : 409 Conflict - Queue locked
+    note right: Concurrent write prevention
+else Lock acquired
+    EH -> FSD : getNextAvailableSlots(count: Integer) : List<Slot> [TLS]
+    FSD --> EH : slots: List<Slot>
+    
+    alt Insufficient slots
+        EH --> FQC : InsufficientSlotsException
+        FQC --> ES : 409 Conflict - Not enough slots
+    else Sufficient slots
+        loop for each emergency flight in detection order
+            EH -> EF : create(id: String, detectionTime: DateTime) : EmergencyFlight
+            EH -> FQ : insertEmergencyFlight(emergency: EF, slot: Slot) : void
+            note right: Sequential allocation in detection order
+            
+            FQ -> S : allocate(slotId: String) : void
+            FQ -> FSD : saveFlight(queue: FlightQueue) : void [TLS]
+        end loop
+        
+        QM -> FQ : reQueueAllNonEmergency() : void
+        note right: All non-emergency flights re-queued after emergencies
+        
+        FQ -> FSD : saveQueueOrder(queue: FlightQueue) : void [TLS]
+        EH -> FSD : releaseQueueLock(queueId: String) : void [TLS]
+        
+        FQC --> ES : 200 OK - All emergencies queued
+        note right: Postcondition: All emergencies allocated in order
+    end
+end
+
+== Re-queue Flight (Non-Emergency) ==
+
+ATC -> FQC : PUT /queue/reorder [TLS]
+note right: Authenticated channel required
+
+FQC -> QM : reQueueFlight(flightId: String, newPosition: Integer) : void
+
+QM -> FSD : getFlightById(flightId: String) : Flight [TLS]
+FSD --> QM : flight: Flight
+
+alt Flight is emergency type
+    QM --> FQC : InvalidOperationException
+    FQC --> ATC : 400 Bad Request - Cannot re-queue emergency flight
+else Flight is non-emergency
+    QM -> FQ : removeFlight(flight: Flight) : void
+    QM -> FQ : insertFlightAtPosition(flight: Flight, position: Integer) : void
+    
+    loop for affected flights
+        FQ -> S : adjustSlot(flight: Flight, newTime: DateTime) : void
+        FQ -> FSD : updateFlightSlot(flight: Flight) : void [TLS]
+    end loop
+    
+    FQ -> FSD : saveQueueOrder(queue: FlightQueue) : void [TLS]
+    FQC --> ATC : 200 OK - Flight re-queued
+    note right: Original order preserved for non-emergency flights
+end
+
+== Error Paths - Authentication & Authorization ==
+
+FO -> FQC : POST /emergency/flight [TLS]
+note right: Flight Operator has Read/Write only
+
+FQC -> EH : handleEmergencyFlight(flightId: String) : void
+
+EH -> FQC : checkPermissions(actor: FO, permission: Execute) : boolean
+alt Permission denied
+    FQC --> FO : 403 Forbidden - Insufficient permissions
+    note right: Emergency operations require Execute/Admin
+end
+
+== Error Paths - Resource Access ==
+
+ES -> FQC : POST /emergency/flight [No TLS]
+
+FQC -> EH : handleEmergencyFlight(flightId: String) : void
+
+alt Channel not encrypted
+    FQC --> ES : 426 Upgrade Required - TLS required
+    note right: Emergency operations require encrypted channel
+else Channel encrypted
+    EH -> FSD : getNextAvailableSlot() : Slot [TLS]
+    
+    alt Database unavailable
+        FQC --> ES : 503 Service Unavailable
+        note right: Resource not accessible
+    else Database error
+        FQC --> ES : 500 Internal Server Error
+        note right: Operation failed
+    end
+end
+
+== State Verification ==
+
+note over FQ, S : Pre1: System has queue of scheduled flights with assigned slots
+note over FQ, S : Post1: Emergency flight handled immediately with next available slot
+note over FQ, S : Post2: All previously queued flights re-queued with adjusted slots
+note over FQ, S : Post3: No non-emergency flight loses original order
+note over FQ, S : Post4: Emergency flight placed at front of queue
+
+@enduml

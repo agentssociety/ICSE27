@@ -1,0 +1,219 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+    class Flight {
+        - owner : Actor
+        - accessible : Set<Actor>
+        + {abstract} isOwnerInAccessible() : boolean
+        + {abstract} hasAtLeastOneInstance() : boolean
+  + checkState() : State
+  + isAccessible(actor) : boolean
+  + assignEmergencyState() : State
+  + getResources() : Set<Resource>
+  + isAccessible() : boolean
+  + lockResource(flightA)
+  + lockResource(flightB)
+    }
+    note right of Flight::isOwnerInAccessible
+        invariant: owner must be in accessible set
+    end note
+    note right of Flight::hasAtLeastOneInstance
+        invariant: must have at least one Flight instance
+    end note
+
+    class Slot {
+        - owner : Actor
+        - accessible : Set<Actor>
+        + {abstract} isOwnerInAccessible() : boolean
+        + {abstract} hasAtLeastOneInstance() : boolean
+  + assignPrioritySlot(flightId, resources)
+  + adjustOtherSlots(flightId)
+    }
+    note right of Slot::isOwnerInAccessible
+        invariant: owner must be in accessible set
+    end note
+    note right of Slot::hasAtLeastOneInstance
+        invariant: must have at least one Slot instance
+    end note
+
+    class EmergencyStateMarker {
+        - states : Set<State>
+        + {abstract} isNonEmpty() : boolean
+  + addState(EMERGENCY)
+    }
+    note right of EmergencyStateMarker::isNonEmpty
+        invariant: non-empty
+    end note
+
+    class CriticalFlight {
+        - resources : Set<Resource>
+        + {abstract} isNonEmpty() : boolean
+    }
+    note right of CriticalFlight::isNonEmpty
+        invariant: non-empty
+    end note
+
+    class Resource {
+        - owner : Actor
+        - accessible : Set<Actor>
+    }
+
+    class Actor {
+        - mayPerform : Set<Permission>
+  + authenticate(credentials) : Actor
+  + getPermissions() : Set<Permission>
+    }
+
+    enum Permission {
+        EXECUTE
+        ADMIN
+        WRITE
+    }
+
+    enum State {
+        PRE1
+        PRE2
+        POST1
+        POST2
+    }
+
+    class Operation {
+        - targetResource : Resource
+        - channels : List<Channel>
+        - requiredPermission : Permission
+        - preState : State
+        - postState : State
+    }
+
+    class Channel {
+        - isEncrypted : boolean
+        - isAuthenticated : boolean
+    }
+}
+
+package "Application" {
+    interface EmergencyDeclarationAPI {
+        + {abstract} markFlightAsEmergency(flightId : String, controller : Actor) : void
+    }
+    note right of EmergencyDeclarationAPI
+        encrypted: Required for emergency operations
+        authenticated: Required for emergency operations
+    end note
+
+    interface FlightManagementDatabase {
+        + {abstract} storeFlight(flight : Flight) : void
+        + {abstract} storeSlot(slot : Slot) : void
+        + {abstract} getFlightById(id : String) : Flight
+        + {abstract} getSlotById(id : String) : Slot
+        + {abstract} updateSlot(slot : Slot) : void
+  + fetchFlight(flightId)
+  + fetchFlight(flightA)
+  + fetchFlight(flightB)
+    }
+    note right of FlightManagementDatabase
+        encrypted: Required for sensitive scheduling data
+        authenticated: Required
+    end note
+}
+
+package "Infrastructure — Ports" {
+    class EmergencyOperationHandler {
+        - operation : Operation
+        - emergencyApi : EmergencyDeclarationAPI
+        - flightDb : FlightManagementDatabase
+  + validateInput(flightId) : boolean
+  + checkTargetSlots(slotIds)
+  + allocateSlot()
+    }
+
+    class SlotAdjustmentService {
+        - flightDb : FlightManagementDatabase
+    }
+}
+
+package "Controllers" {
+    class AirTrafficController {
+        - permissions : Set<Permission>
+        + initiateEmergencyMarking(flight : Flight, slot : Slot) : void
+        + adjustSlots(slot : Slot) : void
+    }
+
+    class FlightDispatch {
+        - permissions : Set<Permission>
+    }
+
+    class SafetyManagement {
+        - permissions : Set<Permission>
+    }
+}
+
+package "DTOs" {
+    class EmergencyDeclarationRequest {
+        - flightId : String
+        - controllerId : String
+        - targetSlotId : String
+    }
+
+    class SlotAdjustmentRequest {
+        - slotId : String
+        - newPriority : int
+    }
+}
+
+package "Exceptions" {
+    class InvalidFlightIdentifierException <<exception>> {
+        - message : String
+        - flightId : String
+    }
+
+    class UnauthorizedOperationException <<exception>> {
+        - message : String
+        - requiredPermission : Permission
+    }
+
+    class ResourceConflictException <<exception>> {
+        - message : String
+        - conflictingResource : Resource
+    }
+
+    class CriticalFlightResourceException <<exception>> {
+        - message : String
+        - resource : Resource
+    }
+}
+
+' Relationships
+Actor "1" -- "0..*" Resource : owns
+Actor "1" -- "0..*" Resource : accessible by
+Actor "1" -- "0..*" Permission : mayPerform
+
+Flight "1" -- "0..*" Slot : has
+Flight "1" -- "0..1" EmergencyStateMarker : marked as
+Flight "1" -- "0..1" CriticalFlight : is critical
+
+Operation "1" -- "1" Resource : targets
+Operation "1" -- "1..2" Channel : uses
+Operation "1" -- "1" Permission : requires
+Operation "1" -- "1" State : transitions from
+Operation "1" -- "1" State : transitions to
+
+AirTrafficController "1" -- "0..*" Operation : initiates
+EmergencyOperationHandler "1" -- "1" Operation : handles
+EmergencyOperationHandler "1" -- "1" EmergencyDeclarationAPI : uses
+EmergencyOperationHandler "1" -- "1" FlightManagementDatabase : uses
+SlotAdjustmentService "1" -- "1" FlightManagementDatabase : uses
+
+EmergencyDeclarationRequest "1" -- "1" Operation : maps to
+SlotAdjustmentRequest "1" -- "1" Operation : maps to
+
+InvalidFlightIdentifierException "1" -- "1" Flight : references
+UnauthorizedOperationException "1" -- "1" Actor : references
+ResourceConflictException "1" -- "1" Resource : references
+CriticalFlightResourceException "1" -- "1" CriticalFlight : references
+
+@enduml

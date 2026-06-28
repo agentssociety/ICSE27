@@ -1,0 +1,246 @@
+@startuml PackageArchitecture
+!pragma layout smetana
+scale 0.75
+
+title Package Architecture — Project 12
+
+skinparam {
+  BackgroundColor transparent
+  ComponentBorderColor #AAAAAA
+  ComponentFontSize 11
+  PackageFontSize 12
+  PackageFontStyle bold
+  ArrowColor #666666
+  ArrowThickness 1
+  Shadowing false
+}
+
+skinparam package<<Domain>> {
+  BackgroundColor #E1F5E1
+}
+skinparam package<<DTO>> {
+  BackgroundColor #E3F2FD
+}
+skinparam package<<Repository>> {
+  BackgroundColor #FCE4EC
+}
+skinparam package<<ORM>> {
+  BackgroundColor #FFF3E0
+}
+skinparam package<<Infra>> {
+  BackgroundColor #F3E5F5
+}
+skinparam package<<Service>> {
+  BackgroundColor #E0F2F1
+}
+skinparam package<<API>> {
+  BackgroundColor #FFF9C4
+}
+skinparam package<<UI>> {
+  BackgroundColor #F1F8E9
+}
+skinparam package<<Tests>> {
+  BackgroundColor #EEEEEE
+}
+skinparam package<<Config>> {
+  BackgroundColor #C8E6C9
+}
+skinparam package<<Docs>> {
+  BackgroundColor #BBDEFB
+}
+skinparam package<<Shared>> {
+  BackgroundColor #F5F5F5
+}
+
+package "Domain layer" <<Domain>> {
+  [domain.account] as domain_account
+  [domain.audit_log_entry] as domain_audit_log_entry
+  [domain.card] as domain_card
+  [domain.pin] as domain_pin
+  [domain.transaction] as domain_transaction
+  [domain.user] as domain_user
+}
+
+package "DTO layer" <<DTO>> {
+  [dto.account] as dto_account
+  [dto.audit_log_entry] as dto_audit_log_entry
+  [dto.card] as dto_card
+  [dto.pin] as dto_pin
+  [dto.transaction] as dto_transaction
+  [dto.user] as dto_user
+}
+
+package "Repository layer" <<Repository>> {
+  [repository.account] as repository_account
+  [repository.audit_log_entry] as repository_audit_log_entry
+  [repository.card] as repository_card
+  [repository.pin] as repository_pin
+  [repository.transaction] as repository_transaction
+  [repository.user] as repository_user
+}
+
+package "ORM layer" <<ORM>> {
+  [orm.account] as orm_account
+  [orm.audit_log_entry] as orm_audit_log_entry
+  [orm.card] as orm_card
+  [orm.pin] as orm_pin
+  [orm.transaction] as orm_transaction
+  [orm.user] as orm_user
+}
+
+package "Infra layer" <<Infra>> {
+  [infra.account] as infra_account
+  [infra.audit_log_entry] as infra_audit_log_entry
+  [infra.card] as infra_card
+  [infra.pin] as infra_pin
+  [infra.transaction] as infra_transaction
+  [infra.user] as infra_user
+}
+
+package "Service layer" <<Service>> {
+  [service.account] as service_account
+  [service.audit_log_entry] as service_audit_log_entry
+  [service.card] as service_card
+  [service.pin] as service_pin
+  [service.transaction] as service_transaction
+  [service.user] as service_user
+}
+
+package "API layer" <<API>> {
+  [api.account] as api_account
+  [api.audit_log_entry] as api_audit_log_entry
+  [api.card] as api_card
+  [api.pin] as api_pin
+  [api.transaction] as api_transaction
+  [api.user] as api_user
+}
+
+package "Config layer" <<Config>> {
+  [config.settings] as config_settings
+}
+
+package "Docs layer" <<Docs>> {
+  [docs.api_and_deployment] as docs_api_and_deployment
+}
+
+package "Tests layer" <<Tests>> {
+  [tests.integration] as tests_integration
+  [tests.unit.account] as tests_unit_account
+  [tests.unit.audit_log_entry] as tests_unit_audit_log_entry
+  [tests.unit.card] as tests_unit_card
+  [tests.unit.pin] as tests_unit_pin
+  [tests.unit.transaction] as tests_unit_transaction
+  [tests.unit.user] as tests_unit_user
+}
+
+' ── Dependencies ──
+dto_user --> domain_user
+repository_user --> domain_user
+orm_user --> domain_user
+infra_user --> domain_user
+infra_user --> repository_user
+infra_user --> orm_user
+service_user --> domain_user
+service_user --> repository_user
+service_user --> dto_user
+api_user --> service_user
+api_user --> dto_user
+dto_card --> domain_card
+repository_card --> domain_card
+orm_card --> domain_card
+infra_card --> domain_card
+infra_card --> repository_card
+infra_card --> orm_card
+service_card --> domain_card
+service_card --> repository_card
+service_card --> dto_card
+api_card --> service_card
+api_card --> dto_card
+dto_pin --> domain_pin
+repository_pin --> domain_pin
+orm_pin --> domain_pin
+infra_pin --> domain_pin
+infra_pin --> repository_pin
+infra_pin --> orm_pin
+service_pin --> domain_pin
+service_pin --> repository_pin
+service_pin --> dto_pin
+api_pin --> service_pin
+api_pin --> dto_pin
+dto_audit_log_entry --> domain_audit_log_entry
+repository_audit_log_entry --> domain_audit_log_entry
+orm_audit_log_entry --> domain_audit_log_entry
+infra_audit_log_entry --> domain_audit_log_entry
+infra_audit_log_entry --> repository_audit_log_entry
+infra_audit_log_entry --> orm_audit_log_entry
+service_audit_log_entry --> domain_audit_log_entry
+service_audit_log_entry --> repository_audit_log_entry
+service_audit_log_entry --> dto_audit_log_entry
+service_audit_log_entry --> service_user
+api_audit_log_entry --> service_audit_log_entry
+api_audit_log_entry --> dto_audit_log_entry
+dto_transaction --> domain_transaction
+repository_transaction --> domain_transaction
+orm_transaction --> domain_transaction
+infra_transaction --> domain_transaction
+infra_transaction --> repository_transaction
+infra_transaction --> orm_transaction
+service_transaction --> domain_transaction
+service_transaction --> repository_transaction
+service_transaction --> dto_transaction
+service_transaction --> service_user
+api_transaction --> service_transaction
+api_transaction --> dto_transaction
+dto_account --> domain_account
+repository_account --> domain_account
+orm_account --> domain_account
+infra_account --> domain_account
+infra_account --> repository_account
+infra_account --> orm_account
+service_account --> domain_account
+service_account --> repository_account
+service_account --> dto_account
+service_account --> service_user
+service_account --> service_transaction
+api_account --> service_account
+api_account --> dto_account
+tests_unit_user --> domain_user
+tests_unit_user --> service_user
+tests_unit_user --> api_user
+tests_unit_card --> domain_card
+tests_unit_card --> service_card
+tests_unit_card --> api_card
+tests_unit_pin --> domain_pin
+tests_unit_pin --> service_pin
+tests_unit_pin --> api_pin
+tests_unit_audit_log_entry --> domain_audit_log_entry
+tests_unit_audit_log_entry --> service_audit_log_entry
+tests_unit_audit_log_entry --> api_audit_log_entry
+tests_unit_transaction --> domain_transaction
+tests_unit_transaction --> service_transaction
+tests_unit_transaction --> api_transaction
+tests_unit_account --> domain_account
+tests_unit_account --> service_account
+tests_unit_account --> api_account
+tests_integration --> api_user
+tests_integration --> api_card
+tests_integration --> api_pin
+tests_integration --> api_audit_log_entry
+tests_integration --> api_transaction
+tests_integration --> api_account
+
+legend right
+  **Layers (top → bottom)**
+  Domain → DTO → Repository → ORM → Infra
+  → Service → API → UI
+  Shared: cross-cutting utilities
+  Tests: mirrors every layer
+  Config / Docs: support concerns
+  ----
+  Packages: 51
+  Tasks: 8
+  Domain classes: 6
+  Generated: 2026-06-16 22:55 UTC
+end legend
+
+@enduml

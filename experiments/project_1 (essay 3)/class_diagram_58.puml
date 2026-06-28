@@ -1,0 +1,143 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam classFontColor #333333
+skinparam classBorderColor #666666
+skinparam packageBorderColor #888888
+skinparam stereotypeFontStyle bold
+skinparam classAttributeIconSize 0
+
+package "Domain Model" {
+  class Permission <<enum>> {
+    Read
+    Write
+    Execute
+    Admin
+    {field} stronger(Permission) : Permission
+  + checkPermission(actor: Actor, grant: Permission) : Boolean
+  }
+
+  class UrgencyLevel <<enum>> {
+    {field} values
+  }
+
+  class State <<enum>> {
+    PreIdle
+    Post1
+    Post2
+  + transition(Post1)
+  + transition(Post2)
+  }
+
+  class Actor {
+    - mayPerform : Set<Permission>
+    {field} instances : ["All users", "IT support"]
+  }
+
+  class Resource {
+    - owner : Actor
+    - accessible : Set<Actor>
+    {field} owner always in accessible
+  + isAccessibleBy(actor: Actor) : Boolean
+  }
+
+  class Interface {
+    - kind : IfaceKind
+    - encrypted : Bool
+    - authenticated : Bool
+  + areAllChannelsAuthenticated(channels: Interface[]) : Boolean
+  }
+
+  class Operation {
+    - initiator : Actor
+    - target : Set<Resource>
+    - channel : Set<Interface>
+    - grant : Permission
+    - pre : State
+    - post : State
+    {field} post ∈ {Post1, Post2}
+    {field} |channel| >= 1
+    {field} |target| >= 1
+    {field} encrypted channel if outage
+    {field} all channels authenticated if spiked
+  + create(user, target, channels, grant=Read) : Operation
+  + updateState(newState: State) : State
+  }
+
+  class IfaceKind <<enum>> {
+    UI
+    API
+  }
+}
+
+package "Application" {
+  class Queue {
+    - patients : List<Patient>
+    - urgencyLevels : Map<Patient, UrgencyLevel>
+  }
+
+  class Patient {
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface DataFeedAPI <<interface>> {
+    {field} encrypted = True
+    {field} authenticated = True
+  }
+
+  interface LiveDashboardInterface <<interface>> {
+    {field} authenticated = True
+  }
+}
+
+package "Exceptions" {
+  class NetworkOutageException <<exception>> {
+    - message : String
+    - timestamp : DateTime
+  }
+
+  class DataCorruptionException <<exception>> {
+    - message : String
+    - details : String
+  }
+
+  class AuthenticationRequiredException <<exception>> {
+    - message : String
+    - missingChannel : Interface
+  }
+
+  class OperationBlockedException <<exception>> {
+    - message : String
+    - reason : String
+  }
+}
+
+' Domain relationships
+Actor --> Permission : "mayPerform"
+Resource --> Actor : "owner"
+Resource --> Actor : "accessible"
+
+Operation --> Actor : "initiator"
+Operation --> Resource : "target"
+Operation --> Interface : "channel"
+Operation --> Permission : "grant"
+Operation --> State : "pre"
+Operation --> State : "post"
+
+' Interface realization
+DataFeedAPI ..|> Interface
+LiveDashboardInterface ..|> Interface
+
+' Exception relationships
+Operation ..> NetworkOutageException : "throws if channel not encrypted"
+Operation ..> DataCorruptionException : "throws on actor without Admin"
+Operation ..> AuthenticationRequiredException : "throws if missing auth"
+Operation ..> OperationBlockedException : "throws on security violation"
+
+' State transitions
+State --> State : "transitions from/to"
+note right of State
+  PreIdle -> Post1, Post2
+end note
+
+@enduml

@@ -1,0 +1,16 @@
+{
+  "task_id": 92,
+  "confidence": 0.9958,
+  "evidence": [
+    {
+      "claim": "Transactions are flagged for review",
+      "fact": "Suspicious withdrawals are tagged in the system, alerting administrators to review them for possible fraud.",
+      "score": 0.9958,
+      "user_story_span": "the transactions are flagged for review",
+      "fact_span": "alerting administrators to review them"
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 1,
+  "threshold": 0.6
+}
