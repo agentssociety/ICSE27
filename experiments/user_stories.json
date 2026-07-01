@@ -1,0 +1,1506 @@
+[
+  {
+    "project_id": 1,
+    "project_name": "Hospital Triage Queue System",
+    "user_stories": [
+      {
+        "task_id": 1,
+        "title": "Patient Registration with Symptoms",
+        "user_story": "**As a** triage nurse\n**I need** to register a new patient with their symptoms\n**So that** they can be added to the queue for medical attention\n\n### Details and Assumptions\n* The triage nurse is responsible for initial patient intake.\n* Symptoms will be collected during registration.\n* The patient will be placed in a queue for medical attention.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am a triage nurse logged into the system\nWhen I register a new patient with their symptoms\nThen the patient is added to the queue for medical attention\n```",
+        "column_id": 4,
+        "swimlane_id": 1,
+        "priority": 0,
+        "tags": [
+          "registration",
+          "patient",
+          "symptoms"
+        ],
+        "date_creation": "2026-06-12T10:08:20.306661"
+      },
+      {
+        "task_id": 2,
+        "title": "Urgency Level Assignment",
+        "user_story": "**As a** triage nurse\n**I need** assign an urgency level (1-5) to each patient based on their symptoms\n**So that** the most critical cases are prioritized\n\n### Details and Assumptions\n* The urgency level corresponds to severity: 1 is most urgent, 5 is least urgent.\n* Symptoms are evaluated by the nurse using a standardized assessment.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a patient with severe chest pain and shortness of breath\nWhen the triage nurse evaluates symptoms\nThen the assigned urgency level is 1\nAnd the patient is marked as highest priority\n```",
+        "column_id": 4,
+        "swimlane_id": 1,
+        "priority": 0,
+        "tags": [
+          "triage",
+          "urgency",
+          "priority"
+        ],
+        "date_creation": "2026-06-12T10:08:45.965806"
+      },
+      {
+        "task_id": 3,
+        "title": "Queue Sorting by Urgency and Arrival Time",
+        "user_story": "**As a** system  \n**I need** to sort the patient queue first by urgency level (highest first) and then by arrival time (earliest first)  \n**So that** patients are seen in the correct order  \n\n### Details and Assumptions\n* The system manages a patient queue.\n* Urgency levels have a defined hierarchy (e.g., critical, high, medium, low).\n* Arrival time is recorded for each patient.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the patient queue contains multiple patients with different urgency levels and arrival times\nWhen the sorting function is applied\nThen the queue is ordered with the highest urgency patients first\nAnd patients with the same urgency level are ordered by earliest arrival time first\n```",
+        "column_id": 4,
+        "swimlane_id": 1,
+        "priority": 0,
+        "tags": [
+          "queue",
+          "sorting",
+          "priority"
+        ],
+        "date_creation": "2026-06-12T10:09:03.425485"
+      },
+      {
+        "task_id": 4,
+        "title": "Dynamic Requeuing on New Patient or Re-triage",
+        "user_story": "**As a** system\n**I need** to automatically re-sort the queue whenever a new patient is registered or an existing patient's urgency level is updated (re-triage)\n**So that** the queue always reflects current priorities\n\n### Details and Assumptions\n* The system maintains a queue of patients.\n* New patients can be registered at any time.\n* Existing patients' urgency levels can be updated (re-triage).\n* The queue sorting order is based on urgency/priority.\n* The re-sort occurs immediately upon the triggering event.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a queue containing patients sorted by urgency\nWhen a new patient is registered\nThen the queue is automatically re-sorted to include the new patient based on urgency\n\nGiven a queue containing patients sorted by urgency\nWhen an existing patient's urgency level is updated\nThen the queue is automatically re-sorted to reflect the changed urgency\n```",
+        "column_id": 4,
+        "swimlane_id": 1,
+        "priority": 0,
+        "tags": [
+          "queue",
+          "dynamic",
+          "re-triage"
+        ],
+        "date_creation": "2026-06-12T10:09:58.576918"
+      },
+      {
+        "task_id": 5,
+        "title": "Patient Dequeue for Physician",
+        "user_story": "**As a** physician\n**I need** dequeue the next highest-priority patient from the queue\n**So that** I can attend to them\n\n### Details and Assumptions\n* The patient queue is sorted by priority (e.g., triage level, severity).\n* Dequeuing removes the patient from the queue and presents their details to the physician.\n* The system ensures that the highest-priority patient is selected next.\n\n### Acceptance Criteria\n\n```gherkin\nGiven there is a queue of patients with different priorities\nWhen the physician requests to dequeue the next patient\nThen the system returns the patient with the highest priority\nAnd that patient is removed from the queue\n```",
+        "column_id": 4,
+        "swimlane_id": 1,
+        "priority": 0,
+        "tags": [
+          "queue",
+          "dequeue",
+          "physician"
+        ],
+        "date_creation": "2026-06-12T10:10:58.160374"
+      },
+      {
+        "task_id": 6,
+        "title": "Live Dashboard with Urgency and Wait Time",
+        "user_story": "**As a** hospital administrator\n**I need** a live dashboard that displays each patient's urgency level and estimated wait time\n**So that** staff can monitor the queue status in real time\n\n### Details and Assumptions\n* The dashboard updates in real time without manual refresh.\n* Urgency levels are predefined (e.g., critical, high, medium, low).\n* Estimated wait times are calculated based on current queue and resource availability.\n* Accessible to authorized hospital staff only.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the hospital administrator is logged into the system\nWhen the administrator opens the live dashboard\nThen the dashboard shows each patient's urgency level and estimated wait time\nAnd the data updates automatically in real time\n```",
+        "column_id": 4,
+        "swimlane_id": 1,
+        "priority": 0,
+        "tags": [
+          "dashboard",
+          "live",
+          "urgency",
+          "wait-time"
+        ],
+        "date_creation": "2026-06-12T10:11:48.629452"
+      }
+    ]
+  },
+  {
+    "project_id": 2,
+    "project_name": "Emergency Room Intake System",
+    "user_stories": [
+      {
+        "task_id": 7,
+        "title": "Patient Registration with Symptoms",
+        "user_story": "**As a** triage nurse\n**I need** to register a new patient with their symptoms\n**So that** they can be added to the queue for evaluation\n\n### Details and Assumptions\n* The triage nurse is responsible for patient intake.\n* Symptoms are collected during registration.\n* The patient is added to an evaluation queue.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am a triage nurse\nWhen I register a new patient with their symptoms\nThen the patient is added to the queue for evaluation\n```",
+        "column_id": 8,
+        "swimlane_id": 2,
+        "priority": 0,
+        "tags": [
+          "registration",
+          "symptoms"
+        ],
+        "date_creation": "2026-06-12T21:57:48.090459"
+      },
+      {
+        "task_id": 8,
+        "title": "Urgency Level Assignment (1-5)",
+        "user_story": "**As a** triage nurse\n**I need** to assign an urgency level from 1 (most urgent) to 5 (least urgent) to each patient based on their symptoms\n**So that** the queue can be prioritized correctly\n\n### Details and Assumptions\n* The triage nurse will assess patient symptoms and assign a corresponding urgency level.\n* The system supports urgency levels 1 through 5.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a patient has been registered with symptoms\nWhen the triage nurse assigns an urgency level from 1 to 5\nThen the patient's priority in the queue is updated according to the assigned level\n```",
+        "column_id": 8,
+        "swimlane_id": 2,
+        "priority": 0,
+        "tags": [
+          "urgency",
+          "triage"
+        ],
+        "date_creation": "2026-06-12T21:58:18.78955"
+      },
+      {
+        "task_id": 9,
+        "title": "Queue Sorting by Urgency and Time",
+        "user_story": "**As a** triage nurse\n**I need** the queue to be sorted first by urgency level (lowest number first) and then by arrival time (earliest first)\n**So that** the most critical patients are seen first\n\n### Details and Assumptions\n* Urgency level is represented by a numeric value where lower numbers indicate higher urgency.\n* Arrival time is recorded as a timestamp.\n* Sorting applies to the entire patient queue.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the patient queue contains multiple patients with different urgency levels and arrival times\nWhen the queue is sorted\nThen patients are ordered by urgency level ascending (lowest number first)\nAnd for patients with the same urgency level, they are ordered by arrival time ascending (earliest first)\n```",
+        "column_id": 8,
+        "swimlane_id": 2,
+        "priority": 0,
+        "tags": [
+          "queue",
+          "sorting"
+        ],
+        "date_creation": "2026-06-12T21:59:12.218031"
+      },
+      {
+        "task_id": 10,
+        "title": "Queue Reordering on New Patient or Re-triage",
+        "user_story": "**As a** triage nurse\n**I need** the queue to automatically reorder when a new patient is added or when an existing patient's urgency level is changed (re-triage)\n**So that** the queue always reflects the current priority\n\n### Details and Assumptions\n* The queue reordering should be based on the patient's urgency level (e.g., critical, urgent, non-urgent).\n* Re-triage occurs when a nurse updates a patient's urgency level after reassessment.\n* The system should handle concurrent updates (e.g., multiple patients added or re-triaged at the same time) without errors.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a queue with existing patients sorted by urgency level\nWhen a new patient is added with a specific urgency level\nThen the queue reorders to place the new patient in the correct position based on priority\n\nGiven a queue with a patient whose urgency level is \"non-urgent\"\nWhen the nurse changes that patient's urgency level to \"critical\"\nThen the queue reorders to move that patient to the front of the queue\n```",
+        "column_id": 8,
+        "swimlane_id": 2,
+        "priority": 0,
+        "tags": [
+          "queue",
+          "reordering",
+          "dynamic"
+        ],
+        "date_creation": "2026-06-12T21:59:58.160417"
+      },
+      {
+        "task_id": 11,
+        "title": "Physician Takes Next Patient",
+        "user_story": "**As a** physician\n**I need** to take the next patient from the top of the sorted queue\n**So that** I can attend to the most urgent case first\n\n### Details and Assumptions\n* The queue is sorted by patient urgency\n* The physician has access to the queue system\n* Taking a patient removes them from the queue\n\n### Acceptance Criteria\n\n```gherkin\nGiven the patient queue is sorted by urgency\nWhen the physician requests the next patient\nThen the system provides the patient at the top of the queue\n```",
+        "column_id": 8,
+        "swimlane_id": 2,
+        "priority": 0,
+        "tags": [
+          "physician",
+          "queue",
+          "next patient"
+        ],
+        "date_creation": "2026-06-12T22:00:23.57917"
+      },
+      {
+        "task_id": 12,
+        "title": "Live Dashboard with Urgency and Wait Time",
+        "user_story": "**As a** triage nurse or physician\n**I need** a live dashboard that displays each patient's urgency level and estimated wait time\n**So that** I can monitor the queue status in real time\n\n### Details and Assumptions\n* The dashboard is used in a hospital or clinic setting.\n* It requires real\u2011time data updates to reflect changes in patient status.\n* Patients are already triaged and assigned an urgency level.\n* Estimated wait times are calculated based on current queue and resource availability.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am a triage nurse or physician\nWhen I access the live dashboard\nThen I see each patient's urgency level and estimated wait time\n```",
+        "column_id": 8,
+        "swimlane_id": 2,
+        "priority": 0,
+        "tags": [
+          "dashboard",
+          "live",
+          "urgency",
+          "wait time"
+        ],
+        "date_creation": "2026-06-12T22:01:15.129984"
+      }
+    ]
+  },
+  {
+    "project_id": 3,
+    "project_name": "Blood Bank Inventory Manager",
+    "user_stories": [
+      {
+        "task_id": 25,
+        "title": "Blood Unit Tracking",
+        "user_story": "**As a** inventory manager  \n**I need** to track blood units by type, Rh factor, and donation date  \n**So that** I can ensure proper matching and expiration management  \n\n### Details and Assumptions  \n* Blood units are categorized by type (e.g., A, B, AB, O) and Rh factor (positive/negative)  \n* Donation date is recorded for each unit to monitor shelf life  \n\n### Acceptance Criteria  \n\n```gherkin\nGiven a blood unit is received  \nWhen the unit is logged into the system  \nThen its blood type, Rh factor, and donation date are recorded  \n\nGiven a blood unit with a known donation date  \nWhen the expiration date is calculated  \nThen the system can flag units near or past expiration  \n```",
+        "column_id": 16,
+        "swimlane_id": 4,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T14:47:37.534112"
+      },
+      {
+        "task_id": 26,
+        "title": "Transfusion Request Acceptance",
+        "user_story": "**As a** blood bank technician\n**I need** accept and log transfusion requests from healthcare providers\n**So that** we can process and track transfusion requests efficiently\n\n### Details and Assumptions\n* Transfusion requests come from healthcare providers (e.g., hospitals, clinics).\n* Each request includes patient details, blood type, quantity, and urgency.\n* Logging stores the request in a database with a unique identifier for tracking.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a healthcare provider submits a transfusion request\nWhen the request is received by the system\nThen the request is accepted and logged in the database with a unique ID\n```",
+        "column_id": 16,
+        "swimlane_id": 4,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T14:47:58.447251"
+      },
+      {
+        "task_id": 27,
+        "title": "Compatibility Matching",
+        "user_story": "**As a** lab technician\n**I need** to match transfusion requests to compatible blood units based on type and Rh factor\n**So that** patients receive safe transfusions\n\n### Details and Assumptions\n* The matching considers ABO blood group and Rh factor compatibility.\n* Only units with identical or compatible type and Rh factor are suggested.\n* Incompatible matches are excluded.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a transfusion request for blood type A positive\nWhen the system searches for compatible blood units\nThen it returns only units that are A positive or O positive\n```",
+        "column_id": 16,
+        "swimlane_id": 4,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T14:48:18.165821"
+      },
+      {
+        "task_id": 28,
+        "title": "Reservation and Auto-Release",
+        "user_story": "**As a** blood bank manager\n**I need** units to be reserved for scheduled transfusions and automatically released if not used within a timeframe\n**So that** blood products are available for scheduled patients without being wasted if unused\n\n### Details and Assumptions\n* The system supports scheduling transfusions in advance.\n* A defined timeframe (e.g., hours or days) for unit release is configured.\n* Units are reserved only for confirmed scheduled transfusions.\n* Automatic release occurs once the timeframe expires without usage.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a scheduled transfusion with reserved units\nWhen the scheduled time passes without the units being used\nThen the reservation is automatically released\n```",
+        "column_id": 16,
+        "swimlane_id": 4,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T14:49:16.095241"
+      },
+      {
+        "task_id": 29,
+        "title": "Automatic Expiration",
+        "user_story": "**As a** blood bank administrator\n**I need** blood units older than 42 days to be automatically expired\n**So that** outdated blood is not mistakenly used for transfusions\n\n### Details and Assumptions\n* Blood units have a maximum shelf life of 42 days.\n* The system should automatically flag or deactivate units that exceed this age.\n* This reduces manual checking and human error.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a blood unit has a collection date\nWhen the current date is more than 42 days after the collection date\nThen the blood unit is automatically marked as expired\n```",
+        "column_id": 16,
+        "swimlane_id": 4,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T14:49:33.865724"
+      },
+      {
+        "task_id": 30,
+        "title": "Shortage Alert",
+        "user_story": "**As a** blood bank manager\n**I need** the system to raise an alert when stock of any blood type drops below 5 units\n**So that** I can replenish supplies before a shortage occurs\n\n### Details and Assumptions\n* The system tracks inventory levels for each blood type (A+, A-, B+, B-, AB+, AB-, O+, O-).\n* The threshold for triggering an alert is 5 units.\n* Alerts can be sent via email, SMS, or in-app notification.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the blood bank has inventory levels for each blood type\nWhen the stock of any blood type falls below 5 units\nThen the system raises an alert to notify the blood bank manager\n```",
+        "column_id": 16,
+        "swimlane_id": 4,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T14:49:47.730727"
+      },
+      {
+        "task_id": 31,
+        "title": "Dashboard",
+        "user_story": "**As a** inventory manager\n**I need** a dashboard that shows current stock levels, expiring units, and pending requests\n**So that** I can monitor inventory health, prioritize actions to reduce waste, and respond to urgent needs\n\n### Details and Assumptions\n* The dashboard is a single view consolidating three key data points: stock, expiration, and requests.\n* It is intended for daily or shift-based monitoring.\n* Users have access to a system with inventory and request data.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am on the inventory dashboard\nWhen I view the summary section\nThen I see current stock levels for each item\nAnd I see a list of units approaching expiration\nAnd I see a count of pending requests\n```",
+        "column_id": 16,
+        "swimlane_id": 4,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T14:50:19.076673"
+      }
+    ]
+  },
+  {
+    "project_id": 4,
+    "project_name": "Blood Bank Inventory Manager",
+    "user_stories": [
+      {
+        "task_id": 32,
+        "title": "Track Blood Units by ABO Type, Rh Factor, Collection Date, and Expiry",
+        "user_story": "**As a** blood bank manager  \n**I need** to track blood units by ABO type, Rh factor, collection date, and enforce 42-day expiry with each unit uniquely identified and its status tracked  \n**So that** blood inventory is safe, traceable, and compliant with expiration regulations  \n\n### Details and Assumptions  \n* A blood unit is collected with all necessary details  \n* The current date is known to calculate the expiry date  \n\n### Acceptance Criteria  \n\n```gherkin\nGiven a blood unit is collected with ABO type, Rh factor, and collection date  \nWhen it is registered in the system  \nThen a unique ID is assigned and expiry date is set to 42 days from collection  \n\nGiven a blood unit's expiry date has passed  \nWhen the system checks inventory  \nThen the unit is marked as expired and is no longer available for use  \n```",
+        "column_id": 20,
+        "swimlane_id": 5,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T16:16:19.709191"
+      },
+      {
+        "task_id": 33,
+        "title": "Accept and Store Transfusion Requests",
+        "user_story": "**As a** blood bank staff member  \n**I need** to accept transfusion requests specifying required blood type, Rh factor, and quantity, and validate and store them for matching against available inventory  \n**So that** requests can be accurately processed and matched with available blood supply  \n\n### Details and Assumptions  \n* The system must be running and accessible to blood bank staff members  \n\n### Acceptance Criteria  \n\n```gherkin\nGiven a transfusion request with blood type, Rh factor, and quantity  \nWhen the request parameters are validated  \nThen the request is stored for matching against available inventory  \n\nGiven a transfusion request with missing or invalid parameters  \nWhen the request parameters are validated  \nThen an error is returned and the request is not stored  \n```",
+        "column_id": 20,
+        "swimlane_id": 5,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T16:16:19.709191"
+      },
+      {
+        "task_id": 34,
+        "title": "Exact ABO/Rh Match First",
+        "user_story": "**As a** blood bank technician  \n**I need** to match transfusion requests to compatible blood units, prioritizing exact ABO/Rh type matches first, then selecting units with the closest expiry date among compatible types  \n**So that** patients receive the safest and freshest compatible blood units  \n\n### Details and Assumptions  \n* The system has access to up-to-date blood unit inventory with ABO/Rh type, expiry date, and cross-match status  \n* The transfusion request includes a specific ABO/Rh type  \n\n### Acceptance Criteria  \n\n```gherkin\nGiven a transfusion request for a specific ABO/Rh type  \nWhen matching blood units are searched  \nThen the system first returns units with exact ABO/Rh match sorted by closest expiry date  \n\nGiven a transfusion request with no exact ABO/Rh match available  \nWhen compatible types are considered  \nThen the system selects units with the closest expiry date among compatible types  \n\nGiven a blood unit that has not passed cross-match validation  \nWhen matching units are evaluated  \nThen that unit is excluded from the results  \n```",
+        "column_id": 20,
+        "swimlane_id": 5,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T16:16:19.709191"
+      },
+      {
+        "task_id": 35,
+        "title": "Automated Blood Unit Reservation and Release",
+        "user_story": "**As a** blood bank system  \n**I need** to automatically reserve matched blood units for pending transfusion requests and release reservations after 24 hours if not issued  \n**So that** units are not unnecessarily held and remain available for other urgent requests  \n\n### Details and Assumptions  \n* There are pending transfusion requests in the system  \n* Blood units of compatible types are available in stock  \n\n### Acceptance Criteria  \n\n```gherkin\nGiven a blood unit is reserved for a pending transfusion request  \nWhen 24 hours have elapsed without the unit being issued  \nThen the reservation is automatically released and the unit is marked as available  \n```",
+        "column_id": 20,
+        "swimlane_id": 5,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T16:16:19.709191"
+      },
+      {
+        "task_id": 36,
+        "title": "Automated Expiration of Blood Units",
+        "user_story": "**As a** inventory manager  \n**I need** the system to automatically mark blood units as expired after 42 days from their collection date  \n**So that** expired units are removed from available inventory and their status is updated accordingly  \n\n### Details and Assumptions  \n* The system has access to the collection date of the blood units  \n* The current date and time are accurately synchronized  \n\n### Acceptance Criteria  \n\n```gherkin\nGiven a blood unit with a collection date over 42 days ago exists in inventory  \nWhen the system checks for expired units  \nThen the unit is marked as expired, removed from available inventory, and its status updated  \n```",
+        "column_id": 20,
+        "swimlane_id": 5,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T16:16:19.709191"
+      },
+      {
+        "task_id": 37,
+        "title": "Monitor Blood Inventory Levels and Alert on Low Stock",
+        "user_story": "**As a** blood bank manager  \n**I need** to monitor blood inventory levels per ABO/Rh type and be alerted when stock for any blood type falls below 5 units  \n**So that** I can notify relevant personnel to initiate restocking procedures  \n\n### Details and Assumptions  \n* The blood bank inventory tracking system is active  \n\n### Acceptance Criteria  \n\n```gherkin\nGiven the blood bank inventory tracking system is monitoring stock levels  \nWhen stock for any ABO/Rh blood type falls below 5 units  \nThen the system raises an alert  \nAnd relevant personnel are notified to initiate restocking procedures  \n```",
+        "column_id": 20,
+        "swimlane_id": 5,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T16:16:19.709191"
+      },
+      {
+        "task_id": 38,
+        "title": "Dashboard displaying current stock levels, expiration warnings, and transfusion requests",
+        "user_story": "**As a** blood bank manager  \n**I need** a dashboard displaying current stock levels per ABO/Rh type, units nearing expiration, and open transfusion requests  \n**So that** I can have a quick visual overview of blood bank status  \n\n### Details and Assumptions  \n* The blood bank has current inventory data  \n* Units nearing expiration have been identified in the inventory system  \n* There are open transfusion requests in the system  \n\n### Acceptance Criteria  \n\n```gherkin\nGiven the blood bank dashboard is opened  \nWhen the system loads the latest inventory data  \nThen current stock levels per ABO/Rh type are displayed  \nAnd units nearing expiration are highlighted  \nAnd open transfusion requests are listed  \n```",
+        "column_id": 20,
+        "swimlane_id": 5,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T16:16:19.709191"
+      }
+    ]
+  },
+  {
+    "project_id": 5,
+    "project_name": "Blood Bank Inventory Manager",
+    "user_stories": [
+      {
+        "task_id": 39,
+        "title": "Blood Unit Tracking",
+        "user_story": "**As a** blood bank manager\n**I need** to track blood units with ABO/Rh type and collection date\n**So that** I can achieve full inventory management\n\n### Details and Assumptions\n* The system must store at least ABO/Rh type and collection date for each blood unit.\n* Additional attributes (e.g., unit ID, expiration date) may be needed later for full inventory management.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a new blood unit is received\nWhen I record its ABO/Rh type and collection date\nThen the unit is added to the inventory with the provided details\nAnd I can view all tracked units in the inventory\n```",
+        "column_id": 32,
+        "swimlane_id": 8,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T23:30:13.968498"
+      },
+      {
+        "task_id": 40,
+        "title": "Transfusion Request Intake",
+        "user_story": "**As a** blood bank technician\n**I need** to accept and record transfusion requests from medical staff, including patient details and required blood type\n**So that** transfusion requests are properly documented and can be processed\n\n### Details and Assumptions\n* Requests are submitted by medical staff.\n* Each request includes patient details (e.g., name, ID) and required blood type.\n* The system must store the request for further processing.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a medical staff submits a transfusion request with patient details and required blood type\nWhen the blood bank technician accepts and records the request\nThen the request is stored in the system and is available for processing\n```",
+        "column_id": 32,
+        "swimlane_id": 8,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T23:31:18.125724"
+      },
+      {
+        "task_id": 41,
+        "title": "Request-Unit Compatibility Matching",
+        "user_story": "**As a** transfusion service user\n**I need** the system to automatically match transfusion requests to compatible blood units based on ABO/Rh compatibility rules\n**So that** I can ensure safe and efficient blood allocation without manual cross-checking\n\n### Details and Assumptions\n* The system will use standard ABO/Rh compatibility rules (e.g., O- is universal donor, AB+ is universal recipient)\n* Compatibility rules are predefined and not user-configurable\n* The matching process occurs in real-time when a transfusion request is submitted\n\n### Acceptance Criteria\n\n```gherkin\nGiven a transfusion request for a patient with a specific ABO/Rh type\nWhen the system processes the request\nThen it should only return blood units that are ABO/Rh compatible with the patient\n```",
+        "column_id": 32,
+        "swimlane_id": 8,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T23:31:46.70161"
+      },
+      {
+        "task_id": 42,
+        "title": "Reservation System with Auto-Release",
+        "user_story": "**As a** blood bank manager\n**I need** to reserve specific blood units for pending requests and automatically release them after a defined period or when no longer needed\n**So that** blood units are efficiently allocated and not wasted\n\n### Details and Assumptions\n* Blood units have unique identifiers and types\n* Pending requests have a reservation timeout period configurable by the admin\n* Automatic release occurs when the request is fulfilled or cancelled, or when the timeout expires\n\n### Acceptance Criteria\n\n```gherkin\nGiven a pending request for a specific blood type and components\nWhen the system reserves the matching blood units\nThen those units are marked as reserved and unavailable for other requests\n\nGiven a reservation timeout period is configured\nWhen the timeout expires for a reserved unit\nThen that unit is automatically released and becomes available\n\nGiven a pending request is cancelled\nWhen the cancellation is processed\nThen all units reserved for that request are released\n```",
+        "column_id": 32,
+        "swimlane_id": 8,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T23:33:07.77638"
+      },
+      {
+        "task_id": 43,
+        "title": "Automatic Unit Expiration",
+        "user_story": "**As a** inventory manager\n**I need** the system to automatically mark blood units as expired when their shelf life (based on collection date) is exceeded\n**So that** expired units are removed from available inventory and not used for patients\n\n### Details and Assumptions\n* The system maintains collection dates for each blood unit.\n* The shelf life duration is predefined (e.g., 42 days for red blood cells).\n* The expiration check runs periodically or is triggered by a scheduled job.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a blood unit with a collection date that makes it past its shelf life\nWhen the expiration check runs\nThen the system marks the blood unit as expired\nAnd removes it from the available inventory\n```",
+        "column_id": 32,
+        "swimlane_id": 8,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T23:33:45.917627"
+      },
+      {
+        "task_id": 44,
+        "title": "Shortage Alert Threshold",
+        "user_story": "**As a** inventory manager\n**I need** the system to monitor inventory levels and raise alerts when the count of any ABO/Rh type drops below 5 units\n**So that** I can restock blood supplies in time to meet demand\n\n### Details and Assumptions\n* The system tracks inventory by ABO/Rh blood type.\n* The threshold for alerts is 5 units per type.\n* Alerts can be sent via email, dashboard notification, or other standard method.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the current inventory for a specific ABO/Rh type is below 5 units\nWhen the system checks inventory levels\nThen an alert is raised for that blood type\n```",
+        "column_id": 32,
+        "swimlane_id": 8,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T23:34:19.79841"
+      },
+      {
+        "task_id": 45,
+        "title": "Inventory Dashboard",
+        "user_story": "**As a** blood bank manager\n**I need** a dashboard displaying current stock levels, units nearing expiration, and open transfusion requests\n**So that** I can efficiently manage inventory, reduce waste, and meet transfusion demands\n\n### Details and Assumptions\n* The dashboard should update in real-time to reflect current data.\n* \"Units nearing expiration\" means blood units within a configurable threshold (e.g., 5 days) of their expiration date.\n* \"Open transfusion requests\" are requests that have been placed but not yet fulfilled.\n* The dashboard should be accessible from a web browser or internal system.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am logged in as a blood bank manager\nWhen I open the inventory dashboard\nThen I see a section titled \"Current Stock Levels\" listing each blood type with quantity\nAnd I see a section titled \"Units Nearing Expiration\" listing each unit's type, expiration date, and days until expiry\nAnd I see a section titled \"Open Transfusion Requests\" listing each request with patient ID, blood type, urgency, and request date\n```",
+        "column_id": 32,
+        "swimlane_id": 8,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-14T23:35:21.028676"
+      }
+    ]
+  },
+  {
+    "project_id": 6,
+    "project_name": "Airport Runway Scheduling System",
+    "user_stories": [
+      {
+        "task_id": 46,
+        "title": "Flight Registration System",
+        "user_story": "**As a** air traffic controller\n**I need** register incoming and outgoing flights with their details (flight number, type, scheduled time)\n**So that** the system can track all aircraft movements\n\n### Details and Assumptions\n* The system must store flight number, aircraft type, and scheduled time for each flight.\n* Both incoming and outgoing flights need to be registered separately.\n* The registration process should validate that all required fields are provided.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the system is ready to accept flight registrations\nWhen the air traffic controller registers an incoming flight with flight number \"AA123\", type \"Boeing 737\", and scheduled time \"14:30\"\nThen the system records the flight and it appears in the aircraft movement log\n```",
+        "column_id": 36,
+        "swimlane_id": 9,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T10:34:50.640468"
+      },
+      {
+        "task_id": 47,
+        "title": "Slot Allocation Algorithm",
+        "user_story": "**As a** air traffic controller\n**I need** the system to automatically allocate the earliest available 5-minute time slot with a mandatory 3-minute gap between consecutive slots\n**So that** safe separation between flights is ensured\n\n### Details and Assumptions\n* The system will manage a rolling schedule of time slots.\n* A mandatory 3-minute gap must be enforced between the end of one slot and the start of the next.\n* The \"earliest available\" slot is calculated based on current time or a given reference time.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a schedule with existing allocated slots\nWhen I request a new time slot allocation\nThen the system assigns the earliest 5-minute slot that respects a 3-minute gap before and after any existing allocations\n```",
+        "column_id": 36,
+        "swimlane_id": 9,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T10:35:41.812923"
+      },
+      {
+        "task_id": 48,
+        "title": "Arrival Priority Handling",
+        "user_story": "**As a** air traffic controller  \n**I need** arrival flights to be given priority over departure flights when allocating slots  \n**So that** incoming aircraft can land safely and efficiently.  \n\n### Details and Assumptions\n* The system manages runway slots for both arriving and departing aircraft.  \n* Priority is to be given to arrival flights over departure flights in slot allocation decisions.  \n* The system must not compromise safety or create conflicts with other constraints (e.g., separation minima).  \n* The assumption is that all flights have valid schedules and no other overriding priorities exist.  \n\n### Acceptance Criteria\n\n```gherkin\nGiven a set of arrival flights and departure flights competing for the same slot window\nWhen the slot allocation process runs\nThen all arrival flights are allocated slots before any departure flights are considered.\n\nGiven an arrival flight and a departure flight that both request the same slot time\nWhen the conflict is resolved by the system\nThen the arrival flight receives the slot.\n\nGiven a departure flight has already been allocated a slot\nWhen an arrival flight requests that same slot\nThen the system reallocates the slot to the arrival flight and reassigns the departure flight to the next available slot.\n```",
+        "column_id": 36,
+        "swimlane_id": 9,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T10:36:34.135173"
+      },
+      {
+        "task_id": 49,
+        "title": "Overlap Detection and Prevention",
+        "user_story": "**As a** air traffic controller\n**I need** the system to detect and prevent overlapping assignments where two flights would occupy the same slot or runway simultaneously\n**So that** safe operations are ensured\n\n### Details and Assumptions\n* The system monitors all flight assignments for slot and runway usage.\n* Overlaps are defined as two or more flights assigned to the same resource at the same time.\n* The system should proactively prevent such overlaps from being created, not just detect them after the fact.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a flight assignment is being created or modified\nWhen the assignment would result in two flights occupying the same slot or runway at the same time\nThen the system should reject the assignment and notify the air traffic controller of the conflict\n```",
+        "column_id": 36,
+        "swimlane_id": 9,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T10:37:33.001803"
+      },
+      {
+        "task_id": 50,
+        "title": "Runway Closure Management",
+        "user_story": "**As a** air traffic controller\n**I need** the system to handle runway closures by automatically reassigning affected flights to alternative runways and marking them with appropriate delays\n**So that** flights are safely and efficiently rerouted while maintaining separation rules\n\n### Details and Assumptions\n* The system has real-time knowledge of runway closures and available alternative runways.\n* Flights scheduled to use the closed runway are identified automatically.\n* Alternative runways have sufficient capacity and configuration for the aircraft types.\n* Delay marking adjusts estimated departure/arrival times accordingly.\n* Separation rules (e.g., wake turbulence, runway spacing) are enforced during reassignment.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a runway closure has been declared for runway 27L\nAnd flight A123 is scheduled to depart from runway 27L\nWhen the system processes the runway closure\nThen flight A123 is reassigned to an alternative runway (e.g., 27R)\nAnd flight A123's departure time is updated with an appropriate delay\nAnd separation rules between all affected flights are maintained\n\nGiven a runway closure for runway 27L\nAnd multiple flights are affected (e.g., flight B456, C789)\nWhen the system reassigns flights\nThen each flight is assigned to a suitable alternative runway based on aircraft type and current traffic\nAnd no two flights are assigned to the same runway within minimum separation time\n```",
+        "column_id": 36,
+        "swimlane_id": 9,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T10:38:34.755626"
+      },
+      {
+        "task_id": 51,
+        "title": "Emergency Flight Handling",
+        "user_story": "**As a** air traffic controller  \n**I need** the system to handle emergency flights by immediately allocating the next available slot and re-queuing all other affected flights to make room for the emergency  \n**So that** ensuring rapid response to critical situations  \n\n### Details and Assumptions  \n* The system maintains a queue of scheduled flights with assigned slots.  \n* Emergency flights are flagged and prioritized above all others.  \n* Re-queuing affected flights may shift their departure/arrival times, but they remain in a consistent order.  \n* The slot allocation for emergencies does not require manual confirmation\u2014it happens automatically.  \n\n### Acceptance Criteria  \n\n```gherkin\nGiven an incoming emergency flight is detected  \nWhen the system allocates the next available slot  \nThen the emergency flight is inserted into that slot  \nAnd all other previously queued flights are re-queued in order with adjusted slots  \n\nGiven a queue of non-emergency flights exists  \nWhen an emergency flight is allocated a slot  \nThen no non-emergency flight loses its original order  \nAnd the emergency flight is placed at the front of the queue (in the next available slot)  \n```",
+        "column_id": 36,
+        "swimlane_id": 9,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T10:39:10.878469"
+      },
+      {
+        "task_id": 52,
+        "title": "Runway Slot Timetable Display",
+        "user_story": "**As a** air traffic controller\n**I need** to view a slot timetable per runway showing all allocated time slots, flight details, and status\n**So that** I can monitor and manage runway utilization at a glance.\n\n### Details and Assumptions\n* The timetable should display data organized per runway.\n* It must include allocated time slots, flight details (e.g., flight number, aircraft type), and status (e.g., scheduled, landed, delayed).\n* The view is intended for quick monitoring and decision support.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am an air traffic controller accessing the runway management system\nWhen I select a specific runway to view its timetable\nThen I should see a slot timetable showing allocated time slots, flight details, and status for that runway\n```",
+        "column_id": 36,
+        "swimlane_id": 9,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T10:39:45.137739"
+      }
+    ]
+  },
+  {
+    "project_id": 8,
+    "project_name": "Hospital Triage Queue System",
+    "user_stories": [
+      {
+        "task_id": 53,
+        "title": "Register patient with symptoms",
+        "user_story": "**As a** patient\n**I need** to register my symptoms\n**So that** the system can handle my case\n\n### Details and Assumptions\n* The user is a patient with symptoms to report\n* The system needs to process and store symptom information\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am a patient\nWhen I register my symptoms\nThen the system records my symptom information\n```",
+        "column_id": 39,
+        "swimlane_id": 10,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T17:31:50.859348"
+      },
+      {
+        "task_id": 54,
+        "title": "Assign urgency level (1-5)",
+        "user_story": "**As a** user\n**I need** to assign an urgency level (1-5)\n**So that** I can prioritize items based on urgency\n\n### Details and Assumptions\n* The urgency level is a numeric scale from 1 to 5 (1 being lowest urgency, 5 being highest).\n* Items can have their urgency level set or changed as needed.\n\n### Acceptance Criteria\n\n```gherkin\nGiven an item exists with no urgency level assigned\nWhen I assign urgency level 3 to that item\nThen the item's urgency level is set to 3\n```",
+        "column_id": 39,
+        "swimlane_id": 10,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T17:32:26.053619"
+      },
+      {
+        "task_id": 55,
+        "title": "Order queue by urgency then time",
+        "user_story": "**As a** user\n**I need** the system to order the queue by urgency then time\n**So that** I can address the most urgent items first and maintain chronological order within same urgency\n\n### Details and Assumptions\n* The queue contains items, each with an urgency level and a timestamp.\n* \"Urgency\" implies a priority value (e.g., high, medium, low) and sorting is descending (highest urgency first).\n* \"Time\" refers to the creation or submission time, and sorting is ascending (oldest first).\n\n### Acceptance Criteria\n\n```gherkin\nGiven there is a queue with items of varying urgencies and timestamps\nWhen the queue is ordered by urgency then time\nThen the items are sorted first by urgency (highest to lowest) and then by time (oldest to newest)\n```",
+        "column_id": 39,
+        "swimlane_id": 10,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T17:32:49.9093"
+      },
+      {
+        "task_id": 56,
+        "title": "Reorder queue on change",
+        "user_story": "**As a** user\n**I need** the system to reorder the queue when a change occurs\n**So that** the queue reflects the updated order based on the change\n\n### Details and Assumptions\n* The system automatically reorders the queue when a change is detected.\n* The change could be an addition, removal, or modification of an item in the queue.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the queue has items in a specific order\nWhen a change is made to the queue\nThen the queue is automatically reordered according to the defined rules\n```",
+        "column_id": 39,
+        "swimlane_id": 10,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T17:33:04.517967"
+      },
+      {
+        "task_id": 57,
+        "title": "Take next patient from head",
+        "user_story": "**As a** healthcare practitioner  \n**I need** to take the next patient from the head of the queue  \n**So that** patients are seen in order of arrival\n\n### Details and Assumptions\n* There is a queue of waiting patients.\n* \"Head\" refers to the first patient in the queue.\n* The system should automatically provide the next patient when requested.\n\n### Acceptance Criteria\n\n```gherkin\nGiven there is a queue with multiple patients\nWhen the practitioner requests to take the next patient\nThen the system displays the patient at the head of the queue\nAnd removes that patient from the queue\n```",
+        "column_id": 39,
+        "swimlane_id": 10,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T17:33:34.982082"
+      },
+      {
+        "task_id": 58,
+        "title": "Live dashboard with urgency and wait time",
+        "user_story": "**As a** user\n**I need** a live dashboard that displays urgency and wait time\n**So that** I can prioritize tasks based on current urgency and waiting duration\n\n### Details and Assumptions\n* The dashboard updates in real time.\n* Urgency and wait time data are available from the system.\n* The user has access to view the dashboard.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am on the live dashboard\nWhen urgency and wait time data are updated\nThen the dashboard shows the current urgency and wait time values\n```",
+        "column_id": 39,
+        "swimlane_id": 10,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T17:34:30.67755"
+      },
+      {
+        "task_id": 59,
+        "title": "Register Patient with Symptoms",
+        "user_story": "**As a** healthcare provider\n**I need** to register a new patient including personal information and their reported symptoms\n**So that** the patient is documented in the system and their initial health concerns are recorded for care planning\n\n### Details and Assumptions\n* Personal information includes name, date of birth, contact details, and possibly insurance information.\n* Reported symptoms include a description, duration, and severity as provided by the patient.\n* The registration process may involve checking for duplicate records.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am on the new patient registration page\nWhen I enter the patient's personal information and reported symptoms\nThen the patient is successfully registered and their details are saved in the system\n```",
+        "column_id": 37,
+        "swimlane_id": 10,
+        "priority": 0,
+        "tags": [
+          "patient",
+          "registration",
+          "symptoms"
+        ],
+        "date_creation": "2026-06-15T17:36:43.487375"
+      },
+      {
+        "task_id": 60,
+        "title": "Assign Urgency Level 1-5",
+        "user_story": "**As a** medical staff member\n**I need** to assign a numeric urgency level from 1 to 5 to each registered patient based on symptom severity and clinical criteria\n**So that** I can prioritize patient care according to medical need\n\n### Details and Assumptions\n* Urgency levels range from 1 (lowest) to 5 (highest)\n* Assignment is based on symptom severity and established clinical criteria\n* Patients are already registered in the system\n\n### Acceptance Criteria\n\n```gherkin\nGiven a patient is registered in the system\nWhen symptom severity and clinical criteria are evaluated\nThen the patient is assigned a numeric urgency level between 1 and 5\n```",
+        "column_id": 37,
+        "swimlane_id": 10,
+        "priority": 0,
+        "tags": [
+          "urgency",
+          "triage",
+          "scoring"
+        ],
+        "date_creation": "2026-06-15T17:37:02.362244"
+      },
+      {
+        "task_id": 61,
+        "title": "Order Queue by Urgency then Time",
+        "user_story": "**As a** medical staff  \n**I need** the waiting queue to be sorted primarily by urgency level (higher urgency first) and secondarily by registration timestamp (earlier first)  \n**So that** urgent cases are prioritized and, among equal urgency, patients who registered earlier are handled first  \n\n### Details and Assumptions\n* The waiting queue contains multiple patients with assigned urgency levels and registration timestamps.  \n* Higher urgency means a larger numeric value (or a defined priority scale).  \n* The sorting is applied automatically when the queue is viewed or refreshed.  \n* The system should handle ties in urgency strictly by registration time (oldest first).  \n\n### Acceptance Criteria\n\n```gherkin\nGiven a waiting queue with the following patients:\n  | Patient | Urgency | Registration Timestamp |\n  | A       | High    | 2023-10-01 09:00       |\n  | B       | Critical| 2023-10-01 08:00       |\n  | C       | High    | 2023-10-01 08:30       |\n  | D       | Low     | 2023-10-01 10:00       |\nWhen the waiting queue is displayed\nThen the order should be:\n  | Patient | Urgency | Registration Timestamp |\n  | B       | Critical| 2023-10-01 08:00       |\n  | C       | High    | 2023-10-01 08:30       |\n  | A       | High    | 2023-10-01 09:00       |\n  | D       | Low     | 2023-10-01 10:00       |\n```",
+        "column_id": 37,
+        "swimlane_id": 10,
+        "priority": 0,
+        "tags": [
+          "queue",
+          "ordering",
+          "urgency",
+          "time"
+        ],
+        "date_creation": "2026-06-15T17:37:35.25366"
+      },
+      {
+        "task_id": 62,
+        "title": "Reorder Queue on Change",
+        "user_story": "**As a** healthcare provider\n**I need** the patient queue to automatically reorder when a patient's urgency level changes or a new patient is added\n**So that** patients are always prioritized by urgency level first, then by time of arrival\n\n### Details and Assumptions\n* The queue reordering should respect urgency level as the primary sorting criterion\n* Within the same urgency level, patients should be ordered by time (earliest first)\n* The system should trigger reordering upon any urgency level change or new patient addition\n\n### Acceptance Criteria\n\n```gherkin\nGiven the patient queue contains existing patients with different urgency levels\nWhen a new patient is added to the queue\nThen the queue is automatically reordered with highest urgency patients first\n\nGiven the patient queue is ordered by urgency and time\nWhen an existing patient's urgency level changes\nThen the queue is automatically reordered to reflect the new urgency level\n```",
+        "column_id": 37,
+        "swimlane_id": 10,
+        "priority": 0,
+        "tags": [
+          "queue",
+          "reordering",
+          "dynamic",
+          "priority"
+        ],
+        "date_creation": "2026-06-15T17:38:13.500061"
+      },
+      {
+        "task_id": 63,
+        "title": "Take Next Patient from Head",
+        "user_story": "**As a** healthcare provider\n**I need** to dequeue the patient at the front of the ordered queue (highest urgency, earliest arrival) for consultation\n**So that** I can attend to the most critical patient first\n\n### Details and Assumptions\n* The queue is ordered by urgency (highest first) and then by arrival time (earliest first).\n* Dequeuing removes the patient from the queue and makes them available for consultation.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the queue contains patients ordered by urgency and arrival time\nWhen I request to dequeue the next patient\nThen the patient at the front of the queue is removed and presented for consultation\n```",
+        "column_id": 37,
+        "swimlane_id": 10,
+        "priority": 0,
+        "tags": [
+          "queue",
+          "dequeue",
+          "next",
+          "service"
+        ],
+        "date_creation": "2026-06-15T17:39:07.014995"
+      },
+      {
+        "task_id": 64,
+        "title": "Live Dashboard with Urgency and Wait Time",
+        "user_story": "**As a** healthcare staff member  \n**I need** to see a real-time dashboard displaying each patient's urgency level, position, and estimated wait time  \n**So that** I can prioritize care and manage patient flow efficiently  \n\n### Details and Assumptions\n* The dashboard updates automatically as queue changes occur  \n* Urgency levels are based on triage categories  \n* Positions reflect current order in the queue  \n* Estimated wait times are calculated from historical data and current throughput  \n\n### Acceptance Criteria\n\n```gherkin\nGiven I am logged into the queue management system  \nWhen I navigate to the real\u2011time dashboard  \nThen I see a list of patients with their urgency level, position, and estimated wait time  \n\nGiven the queue has a new highest\u2011urgency patient  \nWhen the dashboard refreshes  \nThen the new patient appears at the top of the queue with an updated estimated wait time for others  \n```",
+        "column_id": 37,
+        "swimlane_id": 10,
+        "priority": 0,
+        "tags": [
+          "dashboard",
+          "realtime",
+          "urgency",
+          "wait-time"
+        ],
+        "date_creation": "2026-06-15T17:40:27.346881"
+      }
+    ]
+  },
+  {
+    "project_id": 9,
+    "project_name": "Airport Runway Scheduling System",
+    "user_stories": [
+      {
+        "task_id": 65,
+        "title": "Flight Registration",
+        "user_story": "**As a** air traffic controller\n**I need** to register incoming and outgoing flights\n**So that** all flight operations are recorded and managed within the system\n\n### Details and Assumptions\n* The system supports flight registration with fields: flight number, airline, origin/destination, scheduled time, and type (arrival/departure)\n* Registered flights can be edited or cancelled\n* A list of all registered flights is viewable\n\n### Acceptance Criteria\n\n```gherkin\nGiven the air traffic controller is on the flight management dashboard\nWhen they register a new flight by providing flight number, airline, origin/destination, scheduled time, and type\nThen the flight is recorded in the system\nAnd they can edit or cancel the flight\nAnd they can view the list of all flights\n```",
+        "column_id": 44,
+        "swimlane_id": 11,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T19:46:32.327641"
+      },
+      {
+        "task_id": 66,
+        "title": "Slot Allocation with Gap",
+        "user_story": "**As a** air traffic controller\n**I need** the system to allocate 5-minute time slots for flights with a mandatory 3-minute gap between consecutive slots\n**So that** ensure safe separation\n\n### Details and Assumptions\n* The system automatically assigns time slots to flights based on scheduling rules.\n* Each flight receives a dedicated 5-minute slot.\n* A mandatory 3-minute gap is enforced between the end of one slot and the start of the next slot.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a flight schedule\nWhen the system allocates time slots\nThen each flight gets a 5-minute slot\nAnd there is a 3-minute gap between the end of one slot and the start of the next\nAnd slots are automatically assigned based on scheduling rules\n```",
+        "column_id": 44,
+        "swimlane_id": 11,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T19:47:48.6086"
+      },
+      {
+        "task_id": 67,
+        "title": "Arrival Priority Over Departures",
+        "user_story": "**As a** air traffic controller\n**I need** arrivals to be prioritized over departures during slot allocation\n**So that** holding patterns are reduced and landing efficiency is improved\n\n### Details and Assumptions\n* This feature applies to a slot allocation system for an airport or airspace.\n* Arriving flights are considered higher priority than departing flights when slot conflicts occur.\n* Departure slots are adjusted after arrival slots are finalized.\n\n### Acceptance Criteria\n\n```gherkin\nGiven there is a slot conflict between an arriving flight and a departing flight\nWhen the slot allocation algorithm runs\nThen the arriving flight is assigned the conflicting slot\nAnd the departing flight is assigned an alternative slot\n```\n\n```gherkin\nGiven a set of arrival and departure requests for a given time window\nWhen the slot allocation algorithm processes the requests\nThen all arrival slots are placed before any departure slots are adjusted\n```\n\n```gherkin\nGiven the slot allocation priority logic has been implemented\nWhen a new conflict scenario is encountered\nThen the prioritization rules are clearly documented and accessible\n```",
+        "column_id": 44,
+        "swimlane_id": 11,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T19:48:24.184009"
+      },
+      {
+        "task_id": 68,
+        "title": "Overlap and Gap Violation Detection",
+        "user_story": "**As a** system monitor\n**I need** the system to automatically detect overlapping assignments or violations of the 3-minute gap rule\n**So that** scheduling conflicts can be flagged\n\n### Details and Assumptions\n* The system manages flight assignments and time slots.\n* Overlapping assignments mean two flights occupy time windows that intersect.\n* The 3-minute gap rule requires at least 3 minutes between the end of one slot and the start of the next.\n\n### Acceptance Criteria\n\n```gherkin\nGiven two flights occupy overlapping time windows\nWhen the system is monitoring\nThen alerts are triggered\n\nGiven the gap between two slots is less than 3 minutes\nWhen the system is monitoring\nThen alerts are triggered\n\nGiven a scheduling violation is detected\nWhen the system is monitoring\nThen a visual/notification indicator of the violation is shown\n```",
+        "column_id": 44,
+        "swimlane_id": 11,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T19:49:11.565241"
+      },
+      {
+        "task_id": 69,
+        "title": "Runway Closure Handling",
+        "user_story": "**As a** air traffic controller\n**I need** to handle a runway closure by having the system automatically reassign affected flights to alternative runways (if available) or reschedule them\n**So that** I can manage runway closures efficiently and minimize flight disruptions\n\n### Details and Assumptions\n* The system must identify all flights currently scheduled for the closed runway.\n* If alternative runways are available, the system should suggest reassignments based on operational constraints (e.g., runway length, aircraft type).\n* If no alternative runways are available, the system should queue the affected flights and reschedule them with updated times.\n* The air traffic controller can review and approve or override the system's suggestions.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a runway is marked as closed\nWhen the system processes the closure\nThen it automatically identifies all affected flights scheduled on that runway\n\nGiven affected flights are identified\nWhen there is at least one alternative runway available\nThen the system suggests reassigning those flights to the alternative runways\n\nGiven affected flights are identified\nWhen no alternative runway is available\nThen the system queues those flights and reschedules them with new times\n```",
+        "column_id": 44,
+        "swimlane_id": 11,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T19:50:37.043653"
+      },
+      {
+        "task_id": 70,
+        "title": "Emergency Priority Slot",
+        "user_story": "**As a** air traffic controller\n**I need** to declare an emergency for a flight and have the system assign an immediate priority slot overriding normal scheduling rules\n**So that** the emergency flight can be prioritized and accommodated without delay\n\n### Details and Assumptions\n* The system currently uses normal scheduling rules for slot assignment\n* Emergency flights require immediate priority over other scheduled flights\n* Other flights' slots must be adjusted to accommodate the emergency\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am viewing a flight in the system\nWhen I select the option to mark the flight as an emergency\nThen the system assigns an immediate priority slot to that flight\n\nGiven an emergency flight has been assigned a priority slot\nWhen the system processes the slot assignment\nThen other scheduled slots are automatically adjusted to accommodate the emergency flight\n```",
+        "column_id": 44,
+        "swimlane_id": 11,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T19:51:37.624411"
+      },
+      {
+        "task_id": 71,
+        "title": "Runway Slot Timetable Display",
+        "user_story": "**As a** air traffic controller\n**I need** view a runway slot timetable that shows all allocated slots with clear indicators for delays and emergencies\n**So that** maintain situational awareness\n\n### Details and Assumptions\n* Timetable shows all allocated slots per runway\n* Delayed flights are highlighted with delay duration\n* Emergency flights are highlighted with a special marker\n* Timetable can be filtered by runway and time\n\n### Acceptance Criteria\n\n```gherkin\nGiven the air traffic controller is viewing the runway slot timetable\nWhen the timetable is loaded\nThen the timetable displays all allocated slots per runway with delayed flights highlighted by delay duration and emergency flights marked with a special marker, and the timetable can be filtered by runway and time\n```",
+        "column_id": 44,
+        "swimlane_id": 11,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T19:52:43.630689"
+      }
+    ]
+  },
+  {
+    "project_id": 10,
+    "project_name": "Airport Runway Scheduling System",
+    "user_stories": [
+      {
+        "task_id": 72,
+        "title": "Flight Registration System",
+        "user_story": "**As a** flight dispatcher\n**I need** to register flights with estimated times\n**So that** the airline can maintain accurate schedules and coordinate operations\n\n### Details and Assumptions\n* The system allows entry of flight number, origin, destination, and estimated departure/arrival times.\n* Estimated times can be updated later if needed.\n* Users have proper authorization to register flights.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am a logged-in flight dispatcher\nWhen I enter a flight number, origin, destination, and estimated departure time\nThen the flight is registered in the system with the provided estimated times\n```",
+        "column_id": 48,
+        "swimlane_id": 12,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T22:40:25.887179"
+      },
+      {
+        "task_id": 73,
+        "title": "Slot Allocation",
+        "user_story": "**As a** scheduler\n**I need** to allocate 5-minute slots with a 3-minute gap between successive slots\n**So that** there is adequate buffer time between appointments\n\n### Details and Assumptions\n* Each slot duration is exactly 5 minutes\n* A 3-minute gap is inserted after each slot before the next slot begins\n* The gap is not part of the slot time\n\n### Acceptance Criteria\n\n```gherkin\nGiven a scheduling system\nWhen I create a series of time slots\nThen each slot is 5 minutes long\nAnd there is a 3-minute gap between the end of one slot and the start of the next\n```",
+        "column_id": 48,
+        "swimlane_id": 12,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T22:40:58.907383"
+      },
+      {
+        "task_id": 74,
+        "title": "Arrival Priority",
+        "user_story": "**As a** airport slot coordinator\n**I need** to prioritize arrivals over departures when allocating slots\n**So that** landing aircraft receive preferential handling over departing ones\n\n### Details and Assumptions\n* Arrivals are considered higher priority than departures in slot allocation decisions\n* This affects how slots are assigned when there are competing requests\n* The system should enforce this priority during the allocation process\n\n### Acceptance Criteria\n\n```gherkin\nGiven multiple slot requests for the same time period\nWhen the slot allocation is being processed\nThen arrival slots are allocated before departure slots\n```",
+        "column_id": 48,
+        "swimlane_id": 12,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T22:41:12.349422"
+      },
+      {
+        "task_id": 75,
+        "title": "Conflict Detection",
+        "user_story": "**As a** scheduler\n**I need** to detect and prevent slot overlaps and gap violations\n**So that** resources are scheduled efficiently without conflicts or wasteful gaps\n\n### Details and Assumptions\n* Slots represent time intervals for resource allocation.\n* Overlaps occur when two or more slots occupy the same time period.\n* Gap violations occur when the distance between consecutive slots falls outside an acceptable range (e.g., too short or too long).\n* The system should automatically check for conflicts during slot creation or modification.\n* Prevention may include blocking the action or providing a warning with suggested alternatives.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a schedule with existing slots\nWhen a user attempts to create or modify a slot that overlaps with an existing slot\nThen the system rejects the action and displays an error message indicating the overlap\n```",
+        "column_id": 48,
+        "swimlane_id": 12,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T22:41:53.946125"
+      },
+      {
+        "task_id": 76,
+        "title": "Runway Closure Handling",
+        "user_story": "**As a** airport operations manager\n**I need** to close a runway and reassign flights, and mark flights as delayed if the delay exceeds 60 minutes\n**So that** flights are safely and efficiently rerouted and accurate delay information is recorded\n\n### Details and Assumptions\n* The system manages runway assignments and flight schedules.\n* Runway closure may be due to maintenance, weather, or emergency.\n* Reassignment must consider available alternate runways and slots.\n* Delay is calculated from original scheduled departure or arrival time.\n* Flights with delay > 60 minutes are explicitly marked as delayed in the system.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a runway is closed\nWhen flights are reassigned to other runways\nThen the system calculates the new delay for each flight\nAnd if the delay exceeds 60 minutes, the flight is marked as delayed\n```",
+        "column_id": 48,
+        "swimlane_id": 12,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T22:42:58.373441"
+      },
+      {
+        "task_id": 77,
+        "title": "Emergency Flight Handling",
+        "user_story": "**As a** air traffic controller\n**I need** to assign an immediate slot to emergency flights and re-queue other flights\n**So that** emergency flights are prioritized without disrupting overall scheduling\n\n### Details and Assumptions\n* The system must support dynamic slot reassignment.\n* Re-queuing should maintain order for non-emergency flights.\n* Emergency flights are identified by a flag or priority code.\n\n### Acceptance Criteria\n\n```gherkin\nGiven an emergency flight is detected\nWhen the system assigns an immediate slot\nThen the emergency flight is moved to the front of the queue\nAnd all other flights are re-queued in their original order\n```",
+        "column_id": 48,
+        "swimlane_id": 12,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T22:43:20.780815"
+      },
+      {
+        "task_id": 78,
+        "title": "Slot Timetable Display",
+        "user_story": "**As a** air traffic controller\n**I need** to view a slot timetable per runway that includes delays and emergency flights\n**So that** I can manage runway scheduling efficiently and prioritize emergency operations\n\n### Details and Assumptions\n* The timetable should be filterable by runway.\n* Delays are shown as updated departure/arrival times.\n* Emergency flights are clearly marked (e.g., with a flag or color).\n* The view is real-time or near real-time.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am on the runway slot timetable view\nWhen I select a specific runway\nThen I see a list of scheduled slots for that runway\nAnd each slot shows the flight ID, scheduled time, and current status (on-time, delayed, or emergency)\n```",
+        "column_id": 48,
+        "swimlane_id": 12,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-15T22:43:56.361286"
+      }
+    ]
+  },
+  {
+    "project_id": 11,
+    "project_name": "ATM Withdrawal Safety Backend",
+    "user_stories": [
+      {
+        "task_id": 79,
+        "title": "Card + PIN Authentication with Lockout",
+        "user_story": "**As a** user\n**I need** to authenticate using my card and PIN\n**So that** my account is secure\n\n### Details and Assumptions\n* Authentication is card-and-PIN based.\n* Account will be automatically locked after multiple failed attempts.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I have a valid card and PIN\nWhen I authenticate using my card and PIN\nThen I am granted access to my account\n\nGiven I have an invalid card or PIN\nWhen I attempt to authenticate multiple times\nThen my account is automatically locked after a specified number of failed attempts\n```",
+        "column_id": 52,
+        "swimlane_id": 13,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T09:52:29.718313"
+      },
+      {
+        "task_id": 80,
+        "title": "Balance and Daily Limit Enforcement",
+        "user_story": "**As a** user\n**I need** my transactions to respect the available balance and daily withdrawal limits\n**So that** overdraw or limit exceedance is prevented\n\n### Details and Assumptions\n* The system checks the current available balance before processing any transaction.\n* The system tracks daily withdrawal totals per user.\n* Transactions that exceed the balance or daily limit are denied with an appropriate message.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a user with an available balance and a daily withdrawal limit\nWhen the user initiates a transaction\nThen the system validates that the transaction amount does not exceed the available balance\nAnd the system validates that the cumulative daily withdrawals including this transaction do not exceed the daily limit\nAnd if either check fails, the transaction is denied\n```",
+        "column_id": 52,
+        "swimlane_id": 13,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T09:53:42.157176"
+      },
+      {
+        "task_id": 81,
+        "title": "Atomic Withdrawal with Rollback",
+        "user_story": "**As a** user\n**I need** withdrawal operations to be atomic\n**So that** in case of failure (e.g., network outage, system crash) the transaction is fully rolled back to maintain consistency\n\n### Details and Assumptions\n* Atomicity ensures that a withdrawal either completes entirely or has no effect.\n* Failures include network outages and system crashes.\n* The system must support rollback mechanisms for incomplete transactions.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a user initiates a withdrawal\nWhen a failure occurs during the transaction\nThen the transaction is fully rolled back\nAnd the user's account balance remains unchanged\n```",
+        "column_id": 49,
+        "swimlane_id": 13,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T09:55:03.382191"
+      },
+      {
+        "task_id": 82,
+        "title": "Atomic Withdrawal with Rollback",
+        "user_story": "**As a** user\n**I need** withdrawal operations to be atomic\n**So that** in case of failure (e.g., network outage, system crash) the transaction is fully rolled back to maintain consistency\n\n### Details and Assumptions\n* The system must support atomic transactions for withdrawal operations.\n* Atomicity ensures that if any part of the withdrawal fails, the entire operation is rolled back.\n* The user's account balance should never be left in an inconsistent state.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a user has a balance of $100\nWhen the user initiates a withdrawal of $50\nAnd a network failure occurs during the transaction\nThen the user's balance should remain $100\nAnd the withdrawal should not be recorded\n```",
+        "column_id": 52,
+        "swimlane_id": 13,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T09:56:23.567293"
+      },
+      {
+        "task_id": 83,
+        "title": "Suspicious Pattern Detection and Flagging",
+        "user_story": "**As a** system\n**I need** detect unusual withdrawal patterns (e.g., rapid consecutive withdrawals, unusual amounts) and flag the account for review\n**So that** potential fraud or errors are identified quickly\n\n### Details and Assumptions\n* The system monitors all withdrawal transactions.\n* Unusual patterns include rapid consecutive withdrawals (e.g., more than 3 within 5 minutes) or amounts significantly outside the user's historical average.\n* Flagging involves setting an internal status on the account for manual review.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the system is monitoring withdrawal transactions\nWhen a user performs rapid consecutive withdrawals (e.g., 4 withdrawals within 5 minutes)\nThen the system flags the account for review\n\nGiven the system is monitoring withdrawal transactions\nWhen a user performs a withdrawal of an unusual amount (e.g., 10x the average)\nThen the system flags the account for review\n```",
+        "column_id": 52,
+        "swimlane_id": 13,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T09:57:53.261185"
+      },
+      {
+        "task_id": 84,
+        "title": "Admin Review of Flagged Transactions",
+        "user_story": "**As a** admin\n**I need** to review flagged suspicious transactions and decide whether to approve, reject, or escalate them\n**So that** I can maintain system integrity and prevent fraud\n\n### Details and Assumptions\n* The system contains a mechanism for flagging transactions as suspicious\n* Admin has the necessary permissions to view and act on flagged transactions\n* Actions available are approve, reject, or escalate\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am logged in as an admin\nWhen I view a list of suspicious transactions\nThen I can see each flagged transaction with its details\n\nGiven I am reviewing a suspicious transaction\nWhen I select an action (approve, reject, or escalate)\nThen the transaction status is updated accordingly\nAnd the action is logged for audit purposes\n```",
+        "column_id": 52,
+        "swimlane_id": 13,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T09:59:29.374917"
+      },
+      {
+        "task_id": 85,
+        "title": "Admin Lock/Unlock Accounts",
+        "user_story": "**As a** admin\n**I need** to lock a user's account (e.g., due to suspicious activity) and later unlock it when the issue is resolved\n**So that** I can manage user account security and access\n\n### Details and Assumptions\n* Admin has the ability to lock and unlock user accounts.\n* The system tracks the reason for locking (e.g., suspicious activity).\n* Unlocking restores full access to the user's account.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a user account with suspicious activity\nWhen the admin locks the account\nThen the account is locked and the user cannot log in\n\nGiven a locked user account\nWhen the admin resolves the issue and unlocks the account\nThen the account is unlocked and the user can log in again\n```",
+        "column_id": 52,
+        "swimlane_id": 13,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T10:00:07.703897"
+      },
+      {
+        "task_id": 86,
+        "title": "Admin View Transaction History",
+        "user_story": "**As a** admin\n**I need** view the full transaction history of any user\n**So that** aid in auditing and investigation\n\n### Details and Assumptions\n* The admin has access to a user management interface.\n* Transaction history includes all financial or activity logs for a selected user.\n* The system must support searching or selecting a specific user.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am logged in as an admin\nWhen I select a user to view their transaction history\nThen I should see a complete list of that user's transactions\n```",
+        "column_id": 52,
+        "swimlane_id": 13,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T10:00:44.428779"
+      },
+      {
+        "task_id": 87,
+        "title": "Audit Log of Auth Attempts and State Changes",
+        "user_story": "**As a** security auditor  \n**I need** the system to log all authentication attempts (success/failure) and account state changes (lock/unlock)  \n**So that** I can review and audit security events for compliance and threat detection  \n\n### Details and Assumptions\n* Logs should include timestamp, username, IP address, action type, and outcome.\n* Logs must be stored in a secure, tamper-evident format.\n* Retention period and access controls for logs are defined elsewhere.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the system is operational\nWhen a user attempts authentication (success or failure)\nThen the system records the event with details (timestamp, username, IP, outcome)\n\nGiven the system is operational\nWhen an account is locked or unlocked\nThen the system records the state change with details (timestamp, username, action)\n```",
+        "column_id": 52,
+        "swimlane_id": 13,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T10:02:15.043469"
+      }
+    ]
+  },
+  {
+    "project_id": 12,
+    "project_name": "ATM Withdrawal Safety Backend",
+    "user_stories": [
+      {
+        "task_id": 88,
+        "title": "Card and PIN Authentication",
+        "user_story": "**As a** user\n**I need** card and PIN authentication\n**So that** I can securely access the system\n\n### Details and Assumptions\n* The system will require both a physical card and a PIN for authentication.\n* This is a security feature for user access control.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a registered user with a valid card and known PIN\nWhen the user inserts the card and enters their PIN\nThen the system authenticates the user and grants access\n```",
+        "column_id": 56,
+        "swimlane_id": 14,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T21:40:59.41742"
+      },
+      {
+        "task_id": 89,
+        "title": "Account Lockout After 3 Failed Attempts",
+        "user_story": "**As a** user\n**I need** my account to be locked after three consecutive failed PIN attempts\n**So that** brute force attacks are prevented\n\n### Details and Assumptions\n* The lock applies after three failed attempts in a row.\n* The account remains locked until manually unlocked by an administrator or after a defined cooldown period (not specified here).\n\n### Acceptance Criteria\n\n```gherkin\nGiven the user has entered an incorrect PIN three times consecutively\nWhen the user attempts to enter a PIN a fourth time\nThen the account is locked and the user is notified of the lock\n```",
+        "column_id": 56,
+        "swimlane_id": 14,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T21:41:27.997221"
+      },
+      {
+        "task_id": 90,
+        "title": "Balance and Daily Limit Enforcement",
+        "user_story": "**As a** account holder\n**I need** the system to enforce balance checks and daily transaction limits\n**So that** I cannot overdraw my account or make excessive transactions\n\n### Details and Assumptions\n* The system will check the account balance before authorizing any transaction.\n* A daily transaction limit (number or total amount) is defined per account.\n* Transactions that would exceed the balance or daily limit are rejected.\n* The user is notified if a transaction is blocked.\n\n### Acceptance Criteria\n\n```gherkin\nGiven an account with a balance of $100 and a daily transaction limit of $200\nWhen a transaction of $150 is attempted\nThen the transaction is authorized\n\nGiven an account with a balance of $100 and a daily transaction limit of $200\nWhen a transaction of $120 is attempted\nThen the transaction is rejected due to insufficient funds\n\nGiven an account that has already used $180 of its $200 daily limit\nWhen a transaction of $30 is attempted\nThen the transaction is rejected due to exceeding the daily limit\n\nGiven an account that has already used $180 of its $200 daily limit\nWhen a transaction of $20 is attempted\nThen the transaction is authorized\n```",
+        "column_id": 56,
+        "swimlane_id": 14,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T21:42:15.047018"
+      },
+      {
+        "task_id": 91,
+        "title": "Atomic Transaction with Rollback",
+        "user_story": "**As a** developer  \n**I need** to implement atomic transactions that ensure all-or-nothing execution with rollback capability on failure  \n**So that** data remains consistent even if an operation fails  \n\n### Details and Assumptions\n* The feature must support grouping multiple operations into a single transaction.\n* If any operation within the transaction fails, all previous operations must be rolled back.\n* The transaction should be either fully committed or fully rolled back with no partial state changes.\n* The implementation should handle errors such as system crashes, network failures, or invalid data.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a transaction with multiple operations\nWhen all operations succeed\nThen the transaction is committed\nAnd all changes are persisted\n\nGiven a transaction with multiple operations\nWhen one or more operations fail\nThen the transaction is rolled back\nAnd no changes from the transaction are persisted\n```",
+        "column_id": 56,
+        "swimlane_id": 14,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T21:43:45.560661"
+      },
+      {
+        "task_id": 92,
+        "title": "Suspicious Pattern Detection and Flagging",
+        "user_story": "**As a** fraud analyst\n**I need** the system to detect suspicious transaction patterns such as multiple rapid withdrawals\n**So that** I can flag them for review and prevent potential fraud\n\n### Details and Assumptions\n* The system monitors transaction frequency and speed\n* Multiple rapid withdrawals are considered a suspicious pattern\n* Flagged transactions are queued for manual review\n\n### Acceptance Criteria\n\n```gherkin\nGiven a user initiates multiple rapid withdrawals\nWhen the system detects this pattern\nThen the transactions are flagged for review\n```",
+        "column_id": 56,
+        "swimlane_id": 14,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T21:44:33.269474"
+      },
+      {
+        "task_id": 93,
+        "title": "Admin Review of Flagged Transactions",
+        "user_story": "**As a** system administrator\n**I need** an interface to review and act on flagged transactions\n**So that** I can investigate suspicious activity and take appropriate actions to maintain system integrity\n\n### Details and Assumptions\n* Flagged transactions have been identified by fraud detection/system rules\n* Actions may include approving, denying, or further investigating transactions\n* The interface provides filtering and sorting capabilities\n\n### Acceptance Criteria\n\n```gherkin\nGiven an admin user is logged in and on the flagged transactions review page\nWhen the user views the list\nThen all transactions flagged by the system are displayed with relevant details\n\nGiven a flagged transaction is displayed\nWhen the admin selects an action (approve/deny/investigate)\nThen the system updates the transaction status and removes it from the pending review list\n```",
+        "column_id": 56,
+        "swimlane_id": 14,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T21:45:56.537448"
+      },
+      {
+        "task_id": 94,
+        "title": "Admin Lock/Unlock Accounts",
+        "user_story": "**As a** admin\n**I need** to manually lock or unlock user accounts\n**So that** I can control user access and security\n\n### Details and Assumptions\n* There is an existing user management interface for admins.\n* Locking an account prevents the user from logging in or performing actions.\n* Unlocking restores full access.\n* Admin has proper authentication and authorization.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am an authenticated admin on the user management page\nWhen I select a user account and choose to lock it\nThen the account status changes to \"locked\" and the user cannot log in\n\nGiven I am an authenticated admin on the user management page\nWhen I select a locked user account and choose to unlock it\nThen the account status changes to \"active\" and the user can log in again\n```",
+        "column_id": 56,
+        "swimlane_id": 14,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T21:46:45.439116"
+      },
+      {
+        "task_id": 95,
+        "title": "Audit Log with Timestamps",
+        "user_story": "**As a** security administrator\n**I need** to maintain an audit log that records all security-relevant events with precise timestamps\n**So that** I can monitor, investigate, and ensure compliance with security policies\n\n### Details and Assumptions\n* The audit log must record events such as login attempts, access to sensitive data, permission changes, and failed actions.\n* Each log entry must include the event type, timestamp (with millisecond precision), user ID, source IP, and outcome.\n* The log must be append-only and tamper-proof to guarantee integrity.\n* Logs should be searchable and exportable for analysis.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a security-relevant event occurs  \nWhen the system processes the event  \nThen the event is recorded in the audit log  \nAnd the log entry includes a precise timestamp (YYYY-MM-DDTHH:mm:ss.sssZ)  \nAnd the event type, user ID, and outcome are captured  \nAnd the log cannot be modified or deleted after creation\n```",
+        "column_id": 56,
+        "swimlane_id": 14,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-16T21:48:32.081255"
+      }
+    ]
+  },
+  {
+    "project_id": 13,
+    "project_name": "ATM Withdrawal Safety Backend",
+    "user_stories": [
+      {
+        "task_id": 96,
+        "title": "Card and PIN Authentication",
+        "user_story": "**As a** user\n**I need** to authenticate using my card and PIN, and have my account locked after 3 consecutive failed attempts\n**So that** my account is protected from unauthorized access\n\n### Details and Assumptions\n* Card and PIN are the required authentication methods.\n* Locking occurs after 3 consecutive failed attempts.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I have inserted my card\nWhen I enter an incorrect PIN three consecutive times\nThen my account is locked\n```",
+        "column_id": 60,
+        "swimlane_id": 15,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-17T09:52:44.150448"
+      },
+      {
+        "task_id": 97,
+        "title": "Withdrawal Limit Enforcement",
+        "user_story": "**As a** user\n**I need** the system to decline withdrawals that exceed my account balance or daily withdrawal limit\n**So that** I cannot withdraw more than I have available or exceed my daily limit\n\n### Details and Assumptions\n* The system must check both the current account balance and the cumulative daily withdrawal amount before approving a withdrawal.\n* The daily withdrawal limit resets at a predefined time (e.g., midnight).\n* If either the requested amount is greater than the balance or the total daily withdrawals (including the current request) would exceed the limit, the withdrawal is declined.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I have an account with a balance of $100 and a daily withdrawal limit of $200\nAnd I have already withdrawn $150 today\nWhen I attempt to withdraw $100\nThen the system should decline the withdrawal\nAnd display a message that the amount exceeds my balance or daily limit\n```",
+        "column_id": 60,
+        "swimlane_id": 15,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-17T09:54:06.473706"
+      },
+      {
+        "task_id": 98,
+        "title": "Atomic Withdrawal with Rollback",
+        "user_story": "**As a** user\n**I need** withdrawal transactions to be atomic with full rollback if any part fails\n**So that** data remains consistent and no partial changes occur\n\n### Details and Assumptions\n* Atomic transaction: either all steps (deducting balance, updating limits, logging) succeed or none do.\n* Any failure in any step triggers a complete rollback to the pre-transaction state.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the user has a sufficient balance for a withdrawal\nWhen the user initiates a withdrawal transaction\nAnd a step in the transaction (e.g., logging) fails\nThen the entire transaction is rolled back\nAnd the user's balance is unchanged\nAnd the withdrawal limits are unchanged\nAnd no transaction log is recorded\n```",
+        "column_id": 60,
+        "swimlane_id": 15,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-17T09:55:00.735025"
+      },
+      {
+        "task_id": 99,
+        "title": "Suspicious Withdrawal Detection",
+        "user_story": "**As a** system\n**I need** to detect suspicious withdrawal patterns (e.g., rapid successive withdrawals, unusual amounts)\n**So that** they can be flagged for review\n\n### Details and Assumptions\n* This is for a secure settlement engine that validates credentials, enforces spending caps, and audits anomalous patterns.\n* Detection is based on criteria like rapid successive withdrawals or unusual amounts.\n* Flagged patterns will be subject to manual or automated review.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a secure settlement engine for cash disbursements\nWhen a withdrawal pattern involves rapid successive withdrawals or unusual amounts\nThen the pattern is flagged for review\n```",
+        "column_id": 60,
+        "swimlane_id": 15,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-17T09:56:38.565112"
+      },
+      {
+        "task_id": 100,
+        "title": "Admin Transaction and Account Management",
+        "user_story": "**As a** admin\n**I need** to review flagged transactions, lock or unlock user accounts, and view transaction history for any user\n**So that** I can manage user accounts and maintain security\n\n### Details and Assumptions\n* The admin has access to a dashboard or interface for managing users and transactions\n* Flagged transactions are those identified as suspicious or requiring review\n* Locking an account prevents further transactions, while unlocking restores access\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am an authenticated admin\nWhen I access the user management interface\nThen I can view flagged transactions, lock or unlock accounts, and see transaction history for any user\n```",
+        "column_id": 60,
+        "swimlane_id": 15,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-17T09:57:12.934818"
+      },
+      {
+        "task_id": 101,
+        "title": "Audit Logging for Authentication and Transactions",
+        "user_story": "**As a** system administrator\n**I need** to record all authentication attempts (successful/failed) and all transaction state changes with timestamps\n**So that** I can audit system activity and ensure security compliance\n\n### Details and Assumptions\n* Both successful and failed login attempts must be logged\n* All transaction state changes (e.g., pending, completed, failed) must be captured\n* Each record must include a precise timestamp\n* Logs should be stored in a tamper-proof or append-only format\n\n### Acceptance Criteria\n\n```gherkin\nGiven a user attempts to authenticate\nWhen the authentication attempt completes (success or failure)\nThen the system records the attempt with a timestamp and outcome\n\nGiven a transaction changes state\nWhen the state transition occurs\nThen the system records the new state with a timestamp\n```",
+        "column_id": 60,
+        "swimlane_id": 15,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-17T09:57:53.493266"
+      },
+      {
+        "task_id": 102,
+        "title": "Atomic Withdrawal with Rollback",
+        "user_story": "**As a** bank customer  \n**I need** to withdraw money from my account with an atomic transaction that rolls back completely on failure  \n**So that** my account balance remains unchanged and no partial debits are recorded  \n\n### Details and Assumptions  \n* Withdrawal transaction must be atomic (all steps succeed or none are applied)  \n* If transaction fails (e.g., insufficient funds, system error), the system must rollback all changes  \n* No partial debits should be recorded if the transaction fails  \n* Success case: if all conditions are met, withdrawal completes and balance updates  \n* Edge cases include: insufficient funds, system error during debit, simultaneous withdrawals (concurrency), zero/negative amounts, account closure during transaction, network timeout  \n\n### Acceptance Criteria  \n\n```gherkin\nGiven a bank customer has an account with a balance of $100\nWhen the customer attempts to withdraw $200\nThen the transaction should not be completed\nAnd the account balance should remain $100\n```",
+        "column_id": 57,
+        "swimlane_id": 15,
+        "priority": 0,
+        "tags": [
+          "withdrawal",
+          "atomic",
+          "rollback",
+          "transaction"
+        ],
+        "date_creation": "2026-06-17T13:12:39.898257"
+      },
+      {
+        "task_id": 103,
+        "title": "Detection of Suspicious Withdrawal Patterns",
+        "user_story": "**As a** fraud analyst  \n**I need** the system to automatically detect suspicious withdrawal patterns (e.g., multiple rapid withdrawals, withdrawals exceeding threshold amounts, unusual times of day) and flag them for review  \n**So that** potential fraud can be investigated early\n\n### Details and Assumptions\n* Threshold for withdrawal amount is configurable by admin.\n* Rapid withdrawals: multiple withdrawals from same account within a configurable short time window.\n* Unusual times: e.g., outside normal business hours.\n* Flagged transactions stored for analyst review.\n* Alert/notification generated for flagged activity.\n* Edge cases: frequent small withdrawals summing to large total, transactions just below threshold, new accounts making large withdrawals, international/unusual location transactions, concurrent withdrawals from multiple devices, system errors causing false positives.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the system has configurable thresholds for withdrawal amount, rapid withdrawal time window, and unusual time periods\nWhen a withdrawal transaction occurs that exceeds the configured threshold amount\nThen the transaction is automatically flagged for review\nAnd an alert is generated for the fraud analyst\n```",
+        "column_id": 57,
+        "swimlane_id": 15,
+        "priority": 0,
+        "tags": [
+          "fraud detection",
+          "withdrawal patterns",
+          "suspicious activity",
+          "flagging"
+        ],
+        "date_creation": "2026-06-17T13:13:22.256162"
+      },
+      {
+        "task_id": 104,
+        "title": "Admin User Management and Transaction Review",
+        "user_story": "**As a** admin user\n**I need** to be able to manage other users (create, update, deactivate) and review all transactions (withdrawals, flagged transactions) in the system\n**So that** I can oversee the platform's operations and handle any issues that arise\n\n### Details and Assumptions\n* Admin can create users with appropriate roles and permissions\n* Admin can update user details and activate/deactivate accounts\n* Admin can view, filter, and search all transactions (withdrawals, flagged)\n* Admin can review flagged transactions and approve, reject, or escalate them\n* Edge cases: deactivating last active admin is disallowed; duplicate email/username blocked; deactivating user with pending transactions handled; superadmin controls admin deactivation; performance with large transaction volumes; access control for authorized roles only\n\n### Acceptance Criteria\n\n```gherkin\nGiven the admin is logged in with appropriate permissions\nWhen the admin attempts to deactivate the last active admin user\nThen the system prevents the action and displays an error message\n\nGiven the admin is logged in\nWhen the admin creates a new user with an existing email\nThen the system rejects the creation and shows a duplicate email error\n\nGiven the admin is logged in\nWhen the admin deactivates a user who has pending transactions\nThen the system warns the admin and optionally cancels the pending transactions\n\nGiven the admin is logged in\nWhen the admin reviews a flagged transaction\nThen the admin can approve, reject, or escalate it, and the transaction status updates accordingly\n```",
+        "column_id": 57,
+        "swimlane_id": 15,
+        "priority": 0,
+        "tags": [
+          "admin",
+          "user management",
+          "transaction review",
+          "flagging"
+        ],
+        "date_creation": "2026-06-17T13:14:50.334436"
+      }
+    ]
+  },
+  {
+    "project_id": 14,
+    "project_name": "Gamified Competency Assessment Platform",
+    "user_stories": [
+      {
+        "task_id": 105,
+        "title": "Instructor Registration, Login, and Dashboard",
+        "user_story": "**As a** instructor  \n**I need** to register and log in to a personal dashboard that shows active exams, enrollment counts, and competency coverage  \n**So that** I can manage my courses and monitor student progress efficiently  \n\n### Details and Assumptions\n* The system must support instructor account creation and authentication.\n* The dashboard is personalized per instructor.\n* Active exams refer to exams that are currently ongoing or scheduled.\n* Enrollment counts show the number of students enrolled in the instructor's courses.\n* Competency coverage indicates which skills or topics are being assessed.\n\n### Acceptance Criteria\n\n```gherkin\nGiven an instructor is not registered\nWhen they access the registration page\nThen they can create an account with required details\n\nGiven an instructor has registered\nWhen they log in with valid credentials\nThen they are redirected to their personal dashboard\n\nGiven an instructor is on their dashboard\nWhen they view the dashboard\nThen they see active exams, enrollment counts, and competency coverage\n```",
+        "column_id": 64,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:06:40.277462"
+      },
+      {
+        "task_id": 106,
+        "title": "Exam Builder with Mixed Question Types",
+        "user_story": "**As a** instructor\n**I need** an exam builder that supports multiple choice, drag-and-drop, and code snippet questions, each tagged with one or more competencies and difficulty tiers (Beginner, Intermediate, Advanced), and associated nugget reward multipliers\n**So that** I can create assessments that accurately test competencies with appropriate difficulty and reward learning\n\n### Details and Assumptions\n* The exam builder must allow creation of three question types: multiple choice, drag-and-drop, and code snippet.\n* Each question can be tagged with multiple competencies and one difficulty tier.\n* Difficulty tiers are Beginner, Intermediate, Advanced.\n* Each question can have an associated nugget reward multiplier.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am an exam creator\nWhen I create a new question of type multiple choice, drag-and-drop, or code snippet\nThen I can assign one or more competencies, a difficulty tier from Beginner, Intermediate, or Advanced, and a nugget reward multiplier to that question\n```",
+        "column_id": 64,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:09:18.64764"
+      },
+      {
+        "task_id": 107,
+        "title": "Exam Scheduling",
+        "user_story": "**As a** instructor\n**I need** to schedule exams with an open date, close date, and optional per-attempt time limit enforced server-side\n**So that** students can only access the exam within the specified time window and are limited to the allowed time per attempt\n\n### Details and Assumptions\n* The open and close dates define the period during which the exam is available to students.\n* The per-attempt time limit is optional and, if set, is enforced on the server to prevent client-side manipulation.\n* Students may have multiple attempts; the time limit applies to each attempt individually.\n* The enforcement ensures that once the time limit expires, the attempt is automatically submitted.\n\n### Acceptance Criteria\n\n```gherkin\nGiven an exam is scheduled with an open date and a close date\nWhen a student tries to access the exam outside that time window\nThen the exam is not accessible and an appropriate message is displayed\n\nGiven an exam is scheduled with a per-attempt time limit of 60 minutes\nWhen a student starts an attempt\nThen the server records the start time and begins counting down the 60-minute limit\nAnd when the time limit expires, the attempt is automatically submitted\n\nGiven an exam is scheduled with no per-attempt time limit\nWhen a student starts an attempt\nThen the student can take as much time as needed within the open/close window\n```",
+        "column_id": 64,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:12:50.499534"
+      },
+      {
+        "task_id": 108,
+        "title": "Cohort Creation and Student Enrollment",
+        "user_story": "**As a** administrator\n**I need** to create cohorts, enroll individual students, and restrict exams to one or more cohorts\n**So that** I can manage student groups and control exam access efficiently\n\n### Details and Assumptions\n* Cohorts are groups of students.\n* Individual student enrollment allows adding students to specific cohorts.\n* Exam restriction limits which cohorts can access a given exam.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am an administrator\nWhen I create a new cohort\nThen the cohort is saved and available for enrollment\n\nGiven I have a cohort\nWhen I enroll an individual student\nThen the student is added to that cohort\n\nGiven I have an exam and one or more cohorts\nWhen I restrict the exam to those cohorts\nThen only students in those cohorts can access the exam\n```",
+        "column_id": 64,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:13:52.216146"
+      },
+      {
+        "task_id": 109,
+        "title": "Manual Bonus Nuggets Grant",
+        "user_story": "**As a** teacher\n**I need** to grant manual bonus nuggets to individual students with a written justification\n**So that** the justification is logged as an audit event for record-keeping\n\n### Details and Assumptions\n* Bonus nuggets are manually awarded to individual students.\n* Each bonus grant must include a written justification.\n* The system logs each bonus grant as an audit event with the justification.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a teacher is logged into the system\nWhen the teacher grants a manual bonus nugget to a student with a written justification\nThen the bonus nugget is added to the student's account\nAnd an audit event is created containing the teacher, student, amount, and justification\n```",
+        "column_id": 64,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:14:57.70547"
+      },
+      {
+        "task_id": 110,
+        "title": "Student Registration and Profile",
+        "user_story": "**As a** Student  \n**I need** to register and have a personalized profile including an avatar, nugget balance, earned badges, and a competency radar chart  \n**So that** I can track my progress and have a customized learning experience  \n\n### Details and Assumptions\n* The registration process collects necessary user information and creates a profile.\n* The profile automatically initializes with a default avatar, zero nugget balance, no earned badges, and an empty radar chart.\n* Avatar can be customized during or after registration.\n* Nugget balance, badges, and radar chart update based on platform activities.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a new user wants to register\nWhen they complete the registration form and submit\nThen a student account is created\nAnd a personalized profile is generated with a default avatar, zero nuggets, no badges, and an empty competency radar chart\n\nGiven a registered student navigates to their profile\nWhen the profile page loads\nThen they see their avatar, current nugget balance, earned badges, and competency radar chart\n```",
+        "column_id": 64,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:20:01.323056"
+      },
+      {
+        "task_id": 111,
+        "title": "One-Question-at-a-Time Exam Delivery",
+        "user_story": "**As a** student  \n**I need** to have exams delivered one question at a time with a game-like interface, live timer, progress bar, and animated nugget counter  \n**So that** I can stay engaged, track my progress, and feel motivated throughout the exam.\n\n### Details and Assumptions\n* The exam is presented in a single-question-per-screen format.\n* The game-like interface includes visual elements and animations.\n* The live timer counts down or up as appropriate.\n* The progress bar shows completion percentage or question count.\n* Animated nugget counter rewards correct answers or milestones.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am taking an exam\nWhen I start the exam\nThen I see one question at a time with a game-like interface, a live timer, a progress bar, and an animated nugget counter\n\nGiven I am on a question\nWhen I answer and submit\nThen the next question appears automatically and the progress bar updates\n\nGiven the timer reaches zero\nWhen time expires\nThen the current answer is submitted and the exam ends\n\nGiven I earn a nugget\nWhen the counter updates\nThen the nugget counter plays an animation\n```",
+        "column_id": 64,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:28:18.334297"
+      },
+      {
+        "task_id": 112,
+        "title": "Streak System with Nugget Multiplier",
+        "user_story": "**As a** player\n**I need** a streak system where consecutive correct answers apply a nugget multiplier (1.5\u00d7, 2\u00d7, 3\u00d7) that resets on a wrong answer\n**So that** I can earn increased nuggets for maintaining a streak\n\n### Details and Assumptions\n* Nuggets are the in-game currency.\n* The multiplier starts at 1\u00d7 and increases to 1.5\u00d7, 2\u00d7, then 3\u00d7 for consecutive correct answers.\n* The multiplier resets to 1\u00d7 after any wrong answer.\n* The multiplier is applied to the base nugget reward for each correct answer.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am answering a question\nWhen I answer correctly for the first time\nThen I receive base nuggets (no multiplier)\n\nGiven I have answered correctly once\nWhen I answer correctly again\nThen I receive nuggets multiplied by 1.5\u00d7\n\nGiven I have answered correctly twice consecutively\nWhen I answer correctly a third time\nThen I receive nuggets multiplied by 2\u00d7\n\nGiven I have answered correctly three times consecutively\nWhen I answer correctly a fourth time\nThen I receive nuggets multiplied by 3\u00d7\n\nGiven I have a streak of at least one correct answer\nWhen I answer incorrectly\nThen my streak resets and the multiplier returns to 1\u00d7\n```",
+        "column_id": 64,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:30:12.515355"
+      },
+      {
+        "task_id": 113,
+        "title": "Instant Competency Breakdown",
+        "user_story": "**As a** student  \n**I need** an instant competency breakdown after exam submission  \n**So that** I can identify weak areas and get targeted study tips  \n\n### Details and Assumptions\n* The system analyzes exam results immediately after submission.\n* Weak competency flags indicate areas needing improvement.\n* Study tips are generated based on flagged weaknesses.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I have submitted an exam\nWhen the system processes my results\nThen I see a competency breakdown with weak competency flags and study tips\n```",
+        "column_id": 64,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:31:05.95449"
+      },
+      {
+        "task_id": 114,
+        "title": "Student Nugget Wallet and Reward Store",
+        "user_story": "**As a** student  \n**I need** a nugget wallet redeemable in a reward store for virtual items or instructor-configured institutional perks  \n**So that** I can spend my earned nuggets on meaningful rewards  \n\n### Details and Assumptions\n* Nuggets are earned through desired behaviors or achievements.\n* The reward store contains both virtual items (e.g., badges, avatars) and real-world perks configured by instructors (e.g., extra time on an assignment, homework pass).\n* The wallet tracks nugget balance and redemption history.\n* Redemption is only possible if the student has sufficient nuggets.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a student has earned nuggets in their wallet\nWhen the student selects a reward item in the store\nThen the nugget balance is reduced by the item's cost\nAnd the student receives the reward (virtual item unlock or perk applied)\n\nGiven a student attempts to redeem an item without enough nuggets\nWhen the student selects that item\nThen the redemption is denied\nAnd a message is shown indicating insufficient nuggets\n```",
+        "column_id": 64,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:33:26.261344"
+      },
+      {
+        "task_id": 115,
+        "title": "Cohort Leaderboard",
+        "user_story": "**As a** student\n**I need** a cohort leaderboard ranked by nuggets over a configurable window\n**So that** I can track my progress and see how I compare with peers\n\n### Details and Assumptions\n* The leaderboard aggregates nuggets earned within a configurable time window (e.g., last 7 days, last 30 days).\n* Students can opt out of appearing on the leaderboard.\n* Instructors can disable the entire leaderboard for the cohort.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the leaderboard is enabled by the instructor\nAnd I have not opted out\nWhen I view the cohort leaderboard\nThen I see myself and other students ranked by total nuggets earned in the configured time window\n```",
+        "column_id": 64,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:34:30.623951"
+      },
+      {
+        "task_id": 116,
+        "title": "Past Attempt Review",
+        "user_story": "**As a** student\n**I need** to review past attempts with my answers, correct answers, nuggets per question, and competency trend charts\n**So that** I can track my learning progress and identify areas needing improvement\n\n### Details and Assumptions\n* The feature displays a list of past attempts for the student.\n* Each attempt includes per-question details: the student's answer, the correct answer, and an associated learning nugget.\n* Competency trend charts show performance over time across different skills or topics.\n* The review is accessible from the student's dashboard or a dedicated history page.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am a student with multiple completed attempts\nWhen I navigate to the review section\nThen I see a chronological list of my past attempts\n\nGiven I select a specific past attempt\nWhen I view its details\nThen I see for each question: my answer, the correct answer, and a learning nugget\n\nGiven I have sufficient attempt history\nWhen I access the competency trend charts\nThen I see graphical trends of my performance over time for each competency\n```",
+        "column_id": 64,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:38:39.344275"
+      },
+      {
+        "task_id": 117,
+        "title": "Instructor Registration, Login, and Dashboard",
+        "user_story": "**As a** instructor\n**I need** to register and log into the system, and upon login view a personal dashboard that displays active exams, enrollment counts, and competency coverage across my courses\n**So that** I can manage my courses and monitor exam activity and student progress\n\n### Details and Assumptions\n* Instructor registration requires email, password, and profile details.\n* Login includes password recovery.\n* Dashboard shows only active exams (start date \u2264 now \u2264 end date).\n* Enrollment counts are real\u2011time or near\u2011real\u2011time and include total and per\u2011exam breakdown.\n* Competency coverage chart (radar or bar) includes all competencies tagged to any active exam.\n* Dashboard is role\u2011restricted to instructors only; students and admins cannot access it.\n* If no active exams exist, dashboard shows an empty state with guidance to create an exam.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the instructor is logged in\nWhen the instructor views the dashboard\nThen the dashboard displays a list of currently active exams\nAnd shows total student enrollments across all exams with a breakdown per exam\nAnd shows a competency coverage chart for competencies covered by the instructor's exams\nAnd the dashboard is not accessible to students or admins\n\nGiven the instructor is logged in and has no active exams\nWhen the instructor views the dashboard\nThen the dashboard shows an empty state with guidance to create an exam\n```",
+        "column_id": 61,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:46:49.376982"
+      },
+      {
+        "task_id": 118,
+        "title": "Flexible Exam Builder with Competency & Difficulty Multiplie",
+        "user_story": "**As a** instructor  \n**I need** to build an exam using a flexible builder that supports multiple question types (multiple\u2011choice, drag\u2011and\u2011drop, code snippet), with competency tagging and difficulty tiers  \n**So that** I can create a comprehensive, scored assessment that accurately measures student skills  \n\n### Details and Assumptions\n* Exam builder provides a WYSIWYG interface to create, edit, reorder, and delete questions.\n* Supported question types: MCQ (single/multiple correct), drag\u2011and\u2011drop (order items or match pairs), and code snippet (student writes/runs code; evaluation may be automated or manual).\n* Each question can have multiple competencies selected from a predefined list (admins can add competencies).\n* Each question has a difficulty tier: Beginner, Intermediate, Advanced.\n* Difficulty tiers carry nugget reward multipliers: Beginner 1x, Intermediate 1.5x, Advanced 2x.\n* System calculates base nugget value per question multiplied by difficulty multiplier.\n* Instructor can set total exam points and nugget distribution.\n* Changes are saved as draft; exam is not published until explicitly made active.\n* Questions with no competency or no difficulty tag should be warned.\n* Drag\u2011and\u2011drop answer keys may support multiple correct arrangements.\n* Code snippet questions allow instructor to provide test cases.\n* Only instructors can access the builder; admins can view but not edit.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am an authenticated instructor\nWhen I access the exam builder\nThen I see a WYSIWYG interface with options to create, edit, reorder, and delete questions\n\nGiven I am creating a new question\nWhen I select the question type (MCQ, drag\u2011and\u2011drop, or code snippet)\nThen the builder displays the appropriate input fields for that type\n\nGiven I have added a question\nWhen I tag it with one or more competencies from the predefined list\nThen those competencies are saved with the question\n\nGiven I have added a question\nWhen I assign a difficulty tier (Beginner, Intermediate, or Advanced)\nThen the system stores the tier and its associated multiplier\n\nGiven I have set the exam total points\nWhen I add a question with a difficulty tier\nThen the system calculates the base nugget value multiplied by the difficulty multiplier\n\nGiven I have made changes to the exam\nWhen I do not explicitly publish it\nThen the exam remains in draft status\n\nGiven I have a question with no competency tag\nWhen I attempt to save the exam\nThen I receive a warning about missing competency tags\n\nGiven I have a question with no difficulty tier\nWhen I attempt to save the exam\nThen I receive a warning about missing difficulty tier\n\nGiven I am an admin\nWhen I access the exam builder\nThen I can view the exam but cannot edit any questions or settings\n```",
+        "column_id": 61,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:50:28.390917"
+      },
+      {
+        "task_id": 119,
+        "title": "Exam Scheduling with Time Windows and Time Limit",
+        "user_story": "**As a** instructor\n**I need** to schedule an exam by setting an open date and a close date, and optionally a per\u2011attempt time limit (e.g., 60 minutes) that is enforced server\u2011side\n**So that** the system automatically submits the exam when time expires, ensuring fair timing for all students\n\n### Details and Assumptions\n* Instructor can set start (open) and end (close) datetime for the exam.\n* Optional per\u2011attempt time limit in minutes (default: no limit).\n* The time limit is strictly enforced server\u2011side; if a student\u2019s attempt exceeds the limit, the system auto\u2011submits whatever answers have been provided.\n* After close date, the exam is no longer accessible for new attempts.\n* Instructor can update scheduling details before the exam opens; changes are logged.\n* If no time limit is set, the student can take as long as they want within the open\u2011close window.\n* Time limit should be reasonable (min 1 minute, max 24 hours).\n* Server and client clocks should be synchronized; server time is authoritative.\n* Role\u2011based access: Only instructors and admins can set scheduling; students view the schedule.\n\n### Acceptance Criteria\n\n```gherkin\nGiven an instructor has created an exam with a close date and a per\u2011attempt time limit of 60 minutes\nWhen a student starts an attempt and exceeds 60 minutes\nThen the system automatically submits the student\u2019s answers and marks the attempt as completed\n\nGiven an instructor has created an exam with an open date and close date but no per\u2011attempt time limit\nWhen a student starts an attempt\nThen the student can continue working until the close date without automatic submission due to time limit\n```",
+        "column_id": 61,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:52:51.039179"
+      },
+      {
+        "task_id": 120,
+        "title": "Cohort Creation and Exam Restriction",
+        "user_story": "**As a** instructor\n**I need** to create and manage cohorts of students, and assign exams to specific cohorts\n**So that** only students belonging to those cohorts can take the exam\n\n### Details and Assumptions\n* Cohorts are groups of students within a course context.\n* Instructors manage cohorts for their own courses; admins have global access.\n* Bulk enrollment via CSV is a plus but not required.\n* If no cohort is assigned to an exam, the exam is open to all students (configurable).\n* Cohort assignment can be changed after the exam is scheduled, but only before the first attempt.\n* Deleting a cohort should optionally reassign students or unassign them.\n\n### Acceptance Criteria\n\n```gherkin\nGiven an instructor is managing a course\nWhen the instructor creates a cohort with a name and optional description\nThen the cohort is created and visible in the course\n\nGiven a cohort exists\nWhen the instructor adds existing students by searching/selecting them\nThen the students are enrolled in the cohort\n\nGiven a cohort exists with enrolled students\nWhen the instructor removes a student from the cohort\nThen the student is no longer in the cohort\n\nGiven an exam is being created or edited\nWhen the instructor assigns one or more cohorts to the exam\nThen only students in those cohorts can take the exam\n\nGiven an exam has no cohort assigned\nWhen a student attempts to take the exam\nThen the exam is open to all students\n\nGiven a student belongs to multiple cohorts\nWhen the student views available exams\nThen they see all exams assigned to any of their cohorts\n\nGiven an exam has cohort restrictions\nWhen a student not in those cohorts attempts to take the exam\nThen the student cannot see or take the exam\n\nGiven a cohort is deleted\nWhen the instructor chooses to reassign or unassign students\nThen the affected students are handled accordingly\n```",
+        "column_id": 61,
+        "swimlane_id": 16,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-29T14:55:58.481886"
+      }
+    ]
+  },
+  {
+    "project_id": 16,
+    "project_name": "Community Social Networking Platform",
+    "user_stories": [
+      {
+        "task_id": 157,
+        "title": "User Registration with Email Verification",
+        "user_story": "**As a** new user  \n**I need** to register an account\n**So that** I can securely access the platform  \n\n### Details and Assumptions\n* The user is new and does not have an existing account.  \n\n### Acceptance Criteria\n\n```gherkin\nGiven I am a new user on the registration page\nWhen I submit my registration details with a valid email address\nThen I create my account\n```",
+        "column_id": 72,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T11:45:49.069586"
+      },
+      {
+        "task_id": 158,
+        "title": "Profile Creation with Photo and Bio",
+        "user_story": "**As a** registered user\n**I need** create a profile with a profile photo and a short biography\n**So that** I can personalize my account and share information about myself\n\n### Details and Assumptions\n* Profile creation requires a valid photo (JPEG, PNG) up to 2 MB and a biography up to 500 characters.\n* Profile can be created from the account settings page.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am a registered user\nWhen I upload a valid photo and enter a biography under 500 characters\nThen my profile is created and displayed successfully\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T11:46:39.2946"
+      },
+      {
+        "task_id": 159,
+        "title": "Text Post Creation with Image Upload",
+        "user_story": "**As a** user\n**I need** to create a text post and optionally upload images\n**So that** I can share content with others\n\n### Details and Assumptions\n* The user can write text content for the post.\n* The user can optionally attach one or more images to the post.\n* The post will be visible to other users.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am a logged-in user\nWhen I create a new post with text and optionally upload images\nThen the post is saved and shared with others\n```",
+        "column_id": 72,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T11:47:45.318978"
+      },
+      {
+        "task_id": 160,
+        "title": "Post Like/Unlike with Count Display",
+        "user_story": "**As a** user\n**I need** to like or unlike a post and see the total number of likes displayed\n**So that** I can engage with content and view its popularity\n\n### Details and Assumptions\n* The post has a like/unlike button\n* The total like count updates immediately after interaction\n* Users can toggle between like and unlike\n\n### Acceptance Criteria\n\n```gherkin\nGiven a post with an initial like count\nWhen I click the like button\nThen the like count increases by 1\nAnd the button changes to an unliked state\n\nGiven a post I have already liked\nWhen I click the unlike button\nThen the like count decreases by 1\nAnd the button changes back to a liked state\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T11:49:02.001896"
+      },
+      {
+        "task_id": 161,
+        "title": "Flat Comment Creation and Management",
+        "user_story": "**As a** user\n**I need** add comments on posts and manage my own comments (edit/delete)\n**So that** I can engage with content and control my contributions\n\n### Details and Assumptions\n* Comments are flat (no nesting).\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am on a post detail page\nWhen I write a comment and submit\nThen the comment appears on the post\n\nGiven I have a comment on a post\nWhen I edit my comment\nThen the comment content is updated\n\nGiven I have a comment on a post\nWhen I delete my comment\nThen the comment is removed from the post\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T11:50:16.7064"
+      },
+      {
+        "task_id": 162,
+        "title": "Chronological News Feed from Friends",
+        "user_story": "**As a** user\n**I need** to see a news feed showing posts from my friends in chronological order\n**So that** I can view my friends' recent activities without missing any updates\n\n### Details and Assumptions\n* The feed displays only posts from friends of the user.\n* Chronological order means posts are sorted by creation time, with the newest appearing first.\n* Posts may include text, images, or other media as supported by the system.\n\n### Acceptance Criteria\n\n```gherkin\nGiven the user is logged in and has friends with posts\nWhen the user navigates to the news feed page\nThen the user sees a list of posts from friends sorted by time (newest first)\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T11:51:28.384408"
+      },
+      {
+        "task_id": 163,
+        "title": "Friend Request Send and Accept/Reject",
+        "user_story": "**As a** user\n**I need** to send friend requests to other users and accept or reject incoming requests\n**So that** I can connect with others and manage my network\n\n### Details and Assumptions\n* Sending a friend request notifies the recipient\n* Users can accept or reject incoming requests\n* Accepted requests create a mutual friendship\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am logged in\nWhen I send a friend request to another user\nThen the recipient gets notified of the pending request\n\nGiven I have a pending friend request\nWhen I accept it\nThen we become friends and the sender is notified\n\nGiven I have a pending friend request\nWhen I reject it\nThen the request is removed and the sender is notified\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T11:52:15.621085"
+      },
+      {
+        "task_id": 164,
+        "title": "Follow/Unfollow Users with Counts",
+        "user_story": "**As a** user\n**I need** to follow or unfollow other users and see the follower/following counts on their profiles\n**So that** I can manage my connections and understand their social influence\n\n### Details and Assumptions\n* The feature includes both following and unfollowing actions.\n* Follower and following counts are displayed on the user's profile page.\n* Counts update in real-time or after a page refresh.\n* The user must already be logged in to perform follow/unfollow actions.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am logged in and viewing another user's profile\nWhen I click the \"Follow\" button\nThen the button changes to \"Unfollow\" and the follower count on that profile increases by 1\nAnd the user I followed sees a new follower notification (if applicable)\n\nGiven I am currently following a user\nWhen I click the \"Unfollow\" button on their profile\nThen the button changes to \"Follow\" and the follower count on that profile decreases by 1\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T11:53:18.308366"
+      },
+      {
+        "task_id": 165,
+        "title": "Group Creation with Public/Private Flag",
+        "user_story": "**As a** user\n**I need** to create a group and set its visibility as public or private\n**So that** I can control who can view or join the group\n\n### Details and Assumptions\n* The group creation form includes a visibility selection (public/private).\n* Public groups are visible and joinable by anyone; private groups require approval or invitation.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a user is on the group creation page\nWhen the user fills in group details and selects a visibility (public or private)\nThen the group is created with the specified visibility\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T11:54:30.626973"
+      },
+      {
+        "task_id": 166,
+        "title": "Private Group Join Request Approval",
+        "user_story": "**As a** group owner/admin\n**I need** to review and approve/reject join requests for private groups\n**So that** only approved members can join the private group\n\n### Details and Assumptions\n* Private groups have a join request system where users can request to join.\n* Group owners/admins have the ability to see pending requests.\n* Approving a request adds the user to the group; rejecting removes or denies the request.\n* The input text is clear about the feature need.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a private group with pending join requests\nWhen the group owner/admin accesses the join requests management section\nThen they can see a list of pending requests with user details\nAnd for each request, they can choose to approve or reject\nAnd after approval, the requesting user becomes a member of the group\nAnd after rejection, the request is removed and the user is not added\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T11:55:45.943772"
+      },
+      {
+        "task_id": 167,
+        "title": "Group-Specific Feed Display",
+        "user_story": "**As a** group member\n**I need** to see a feed of posts only from the groups I belong to\n**So that** I can stay updated with content from my groups without unrelated posts\n\n### Details and Assumptions\n* The user is authenticated and a member of one or more groups.\n* Each post is associated with a specific group.\n* The feed is filtered to show only posts from groups the user belongs to.\n* Groups are distinct entities with their own posts.\n* The feed may be sorted by time or relevance.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am a group member logged into the system\nAnd I belong to multiple groups\nWhen I view the group feed\nThen I see only posts from the groups I belong to\nAnd I do not see posts from groups I am not a member of\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T11:56:45.783987"
+      },
+      {
+        "task_id": 168,
+        "title": "One-on-One Direct Messaging",
+        "user_story": "**As a** user\n**I need** to send and receive private messages directly with another user\n**So that** I can communicate one-on-one with other users\n\n### Details and Assumptions\n* Users can initiate a private conversation with any other user.\n* Messages are delivered instantly and only visible to the two participants.\n* Users can view their message history.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am a logged-in user\nWhen I navigate to a user's profile and click \"Send Message\"\nThen I can compose and send a private message to that user\n\nGiven I have received a private message from another user\nWhen I open my inbox\nThen I can read the message and reply directly to the sender\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:02:18.323228"
+      },
+      {
+        "task_id": 169,
+        "title": "Notifications for Likes and Comments",
+        "user_story": "**As a** user\n**I need** to receive notifications when someone likes or comments on my post\n**So that** I can stay updated on interactions with my post\n\n### Details and Assumptions\n* Only likes and comments trigger notifications; other interactions (e.g., shares, saves) are not included.\n* Notifications may be delivered via email, push, or in-app, but the exact channel is not specified.\n* The user has enabled notifications for post interactions (default assumption).\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am a logged-in user with a published post\nWhen another user likes my post\nThen I receive a notification that someone liked my post\n\nGiven I am a logged-in user with a published post\nWhen another user comments on my post\nThen I receive a notification that someone commented on my post\n\nGiven I am a logged-in user with a published post\nWhen I have disabled notifications for that post\nAnd another user likes or comments on my post\nThen I do not receive any notification\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:09:18.490383"
+      },
+      {
+        "task_id": 170,
+        "title": "Keyword Search Across Users and Posts",
+        "user_story": "**As a** user\n**I need** to search across all users and posts using keywords\n**So that** I can quickly find relevant users or content\n\n### Details and Assumptions\n* The search should support keywords for both user names/descriptions and post content.\n* The search returns a combined list of matching users and posts, possibly with type labels.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am logged into the system\nWhen I enter a keyword in the search bar\nThen I see a list of users and posts that match the keyword\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:09:59.314385"
+      },
+      {
+        "task_id": 171,
+        "title": "Bookmark Posts to Saved List",
+        "user_story": "**As a** user\n**I need** to bookmark posts and view them later in a saved list\n**So that** I can easily access and revisit posts I find interesting\n\n### Details and Assumptions\n* The system should provide a way to mark a post as bookmarked\n* The saved list should contain all bookmarked posts\n* The saved list should be accessible from the user's profile or a dedicated menu\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am logged in as a user\nWhen I bookmark a post\nThen the post should be added to my saved list\n\nGiven I have bookmarked posts\nWhen I navigate to my saved list\nThen I should see all my bookmarked posts\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:11:10.211171"
+      },
+      {
+        "task_id": 172,
+        "title": "Report Post with Reason Dropdown",
+        "user_story": "**As a** user\n**I need** to report a post by selecting a reason from a dropdown menu\n**So that** inappropriate content can be flagged and reviewed\n\n### Details and Assumptions\n* The user must be logged in to report a post.\n* A dropdown menu with predefined report reasons is provided.\n* The user selects a reason and confirms the report.\n\n### Acceptance Criteria\n\n```gherkin\nGiven a user is viewing a post\nWhen they click \"Report\" and select a reason from the dropdown menu\nThen the post is flagged for review and a confirmation message is shown\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:12:25.428245"
+      },
+      {
+        "task_id": 173,
+        "title": "Admin Panel for Reported Content",
+        "user_story": "**As a** admin\n**I need** a panel to review reported content and take appropriate actions (warn, hide, delete)\n**So that** I can moderate content effectively\n\n### Details and Assumptions\n* The panel should list reported content with details.\n* Actions include warn, hide, and delete.\n* Admin must be authenticated.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am logged in as an admin\nWhen I navigate to the reported content panel\nThen I see a list of reported items with options to warn, hide, or delete\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:13:29.120107"
+      },
+      {
+        "task_id": 174,
+        "title": "Profile Privacy Public/Private Toggle",
+        "user_story": "**As a** user\n**I need** to toggle my profile visibility between public and private\n**So that** I can control who sees my profile\n\n### Details and Assumptions\n* The profile visibility setting can be changed at any time.\n* There are two states: public (visible to everyone) and private (visible only to the user or authorized connections).\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am on my profile settings page\nWhen I toggle the profile visibility option\nThen my profile visibility changes between public and private accordingly\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:14:35.267154"
+      },
+      {
+        "task_id": 175,
+        "title": "Block User to Hide Content and Messages",
+        "user_story": "**As a** user\n**I need** to block another user\n**So that** their posts and messages are hidden from me\n\n### Details and Assumptions\n* Blocking is performed via a user profile or settings option.\n* Once blocked, all existing and future posts and messages from the blocked user are hidden.\n* The blocked user is not notified of the block.\n* The blocking can be undone through a \"blocked users\" management list.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am a logged-in user\nAnd I have a list of posts and messages from user \"Alice\"\nWhen I block user \"Alice\"\nThen all posts and messages from \"Alice\" are hidden from my view\nAnd I no longer receive new messages or see new posts from \"Alice\"\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:15:28.730802"
+      },
+      {
+        "task_id": 176,
+        "title": "Notification Preference Toggles per Category",
+        "user_story": "**As a** user\n**I need** to enable or disable notifications per category (e.g., likes, comments, friend requests)\n**So that** I can control which notifications I receive\n\n### Details and Assumptions\n* The system supports notification categories such as likes, comments, and friend requests.\n* Each category has a toggle (on/off).\n* Changes take effect immediately.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am logged into the application\nWhen I navigate to the notification settings\nThen I see a list of notification categories with toggles\n\nGiven I am on the notification settings page\nWhen I toggle off \"likes\" notifications\nThen I no longer receive notifications for likes\n\nGiven I am on the notification settings page\nWhen I toggle on \"comments\" notifications\nThen I receive notifications for comments\n```",
+        "column_id": 72,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:16:46.602563"
+      },
+      {
+        "task_id": 177,
+        "title": "Admin Verified Badge Grant/Revoke",
+        "user_story": "**As a** admin\n**I need** to grant or revoke verified badges on user profiles\n**So that** I can manage the verification status of users to ensure credibility\n\n### Details and Assumptions\n* The admin has access to a user management interface.\n* Verified badges are displayed on user profiles.\n* Granting a badge confirms the user's identity or status.\n* Revoking a badge removes the verification indicator.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am an authenticated admin with user management privileges\nWhen I select a user profile and choose to grant a verified badge\nThen the user's profile displays a verified badge\n\nGiven I am an authenticated admin with user management privileges\nWhen I select a user profile that currently has a verified badge and choose to revoke it\nThen the verified badge is removed from the user's profile\n```",
+        "column_id": 72,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:19:14.67805"
+      },
+      {
+        "task_id": 178,
+        "title": "User Post History and Account Settings",
+        "user_story": "**As a** user\n**I need** to view my own post history and manage account settings (change password, email, delete account)\n**So that** I can control my account and review my posts\n\n### Details and Assumptions\n* User is logged in\n* Post history shows list of previous posts with timestamps\n* Account settings include change password, change email, and delete account options\n* Deleting account may be irreversible\n\n### Acceptance Criteria\n\n```gherkin\nScenario: View post history\nGiven I am logged in as a user\nWhen I navigate to my profile page\nThen I see a list of my previous posts\n\nScenario: Manage account settings\nGiven I am logged in as a user\nWhen I access account settings\nThen I can change my password, change my email, or delete my account\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:21:08.734262"
+      },
+      {
+        "task_id": 179,
+        "title": "Pagination on Feeds and Search Results",
+        "user_story": "**As a** user\n**I need** paginated results when browsing feeds or search results\n**So that** to avoid long loading times\n\n### Details and Assumptions\n* Pagination applies to both feeds and search result pages.\n* Each page shows a reasonable number of items (e.g., 20).\n* Users can navigate between pages using next/previous links or page numbers.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I am browsing a feed or viewing search results\nWhen I scroll to the bottom of the current page\nThen I see a \"Load More\" button or page navigation controls\nAnd only the first page of results is loaded initially\n```",
+        "column_id": 72,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:22:11.244651"
+      },
+      {
+        "task_id": 180,
+        "title": "Account Soft-Deletion with Deleted Flag",
+        "user_story": "**As a** user  \n**I need** to soft-delete my account  \n**So that** my data is preserved for a grace period while my account is marked as deleted  \n\n### Details and Assumptions\n* Soft-delete means the account is not permanently removed immediately.\n* A grace period allows for potential account recovery or data restoration.\n* The system retains the account data during this period.\n\n### Acceptance Criteria\n\n```gherkin\nGiven I have an active account\nWhen I request to soft-delete my account\nThen my account is marked as deleted\nAnd my data is preserved for a grace period\n```",
+        "column_id": 72,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:23:50.21815"
+      },
+      {
+        "task_id": 181,
+        "title": "Admin Role Enforcement with Action Logging",
+        "user_story": "**As a** admin\n**I need** all admin actions (e.g., banning, warning) to be logged\n**So that** actions can be audited\n\n### Details and Assumptions\n* Admin actions include banning and warning users.\n* Logs should be stored persistently and be accessible for review.\n\n### Acceptance Criteria\n\n```gherkin\nGiven an admin performs an action (e.g., banning or warning a user)\nWhen the action is completed\nThen the action is recorded in the audit log with details (admin ID, action type, timestamp, target user)\n```",
+        "column_id": 71,
+        "swimlane_id": 18,
+        "priority": 0,
+        "tags": null,
+        "date_creation": "2026-06-30T12:24:25.898711"
+      }
+    ]
+  }
+]
