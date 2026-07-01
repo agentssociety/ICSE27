@@ -1,0 +1,154 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+
+box "Controller Layer" #LightCyan
+participant "SearchAPI" as API
+end box
+
+box "Application Layer" #LightGreen
+participant "REQ_SEARCH_01" as SearchOp
+end box
+
+box "Domain Layer" #LightYellow
+participant "Actor" as Actor
+participant "Resource" as Resource
+participant "State" as State
+end box
+
+box "Infrastructure Layer" #LightPink
+participant "UserDatabase" as UserDB
+participant "PostDatabase" as PostDB
+end box
+
+== Main Flow: Search with Results ==
+
+Actor -> API : POST /search\nkeyword: String
+note right: Case-insensitive matching required
+
+API -> API : authenticateCaller()
+note right: Channel must be authenticated
+
+alt Authentication Failed
+    API --> Actor : 401 Unauthorized
+    note right: No data exposure
+else Authentication Succeeds
+    API -> SearchOp : executeSearch(keyword: String) : List<Resource>
+    note right: initiator must have Read permission
+    
+    SearchOp -> Actor : checkPermission(permission: Permission.Read) : Boolean
+    
+    alt Permission Denied
+        SearchOp --> API : 403 Forbidden
+        API --> Actor : 403 Forbidden
+    else Permission Granted
+        SearchOp -> UserDB : searchUsers(keyword: String) : List<Resource>
+        note right: [TLS] Case-insensitive search
+        
+        SearchOp -> PostDB : searchPosts(keyword: String) : List<Resource>
+        note right: [TLS] Case-insensitive search
+        
+        alt Both Databases Return Empty
+            SearchOp --> API : emptyList
+            API --> Actor : 200 OK\n{ results: [], message: "No matches found" }
+        else Results Found
+            SearchOp -> SearchOp : combineResults(users: List<Resource>, posts: List<Resource>) : List<Resource>
+            note right: Add type labels "User"/"Post"
+            
+            SearchOp -> State : transitionTo(State.Post1)
+            note right: pre != post invariant enforced
+            
+            SearchOp --> API : results: List<Resource>
+            API --> Actor : 200 OK\n{ results: [...] }
+        end
+    end
+end
+
+== Edge Case: Empty Search Keyword ==
+
+Actor -> API : POST /search\nkeyword: ""
+note right: Empty string submitted
+
+API -> API : authenticateCaller()
+
+alt Authentication Failed
+    API --> Actor : 401 Unauthorized
+else Authentication Succeeds
+    API -> SearchOp : executeSearch(keyword: "") : List<Resource>
+    
+    SearchOp -> Actor : checkPermission(permission: Permission.Read) : Boolean
+    
+    alt Permission Denied
+        SearchOp --> API : 403 Forbidden
+        API --> Actor : 403 Forbidden
+    else Permission Granted
+        SearchOp --> API : emptyList
+        note right: No unauthorized data exposure
+        API --> Actor : 200 OK\n{ results: [], message: "No matches found" }
+    end
+end
+
+== Error Path: Database Unavailable ==
+
+Actor -> API : POST /search\nkeyword: String
+
+API -> API : authenticateCaller()
+
+alt Authentication Failed
+    API --> Actor : 401 Unauthorized
+else Authentication Succeeds
+    API -> SearchOp : executeSearch(keyword: String) : List<Resource>
+    
+    SearchOp -> Actor : checkPermission(permission: Permission.Read) : Boolean
+    
+    alt Permission Denied
+        SearchOp --> API : 403 Forbidden
+        API --> Actor : 403 Forbidden
+    else Permission Granted
+        SearchOp -> UserDB : searchUsers(keyword: String) : List<Resource>
+        
+        alt UserDB Unavailable
+            UserDB --> SearchOp : DatabaseException
+            SearchOp --> API : 503 Service Unavailable
+            API --> Actor : 503 Service Unavailable\n{ error: "Search service temporarily unavailable" }
+        else UserDB Available
+            SearchOp -> PostDB : searchPosts(keyword: String) : List<Resource>
+            
+            alt PostDB Unavailable
+                PostDB --> SearchOp : DatabaseException
+                SearchOp --> API : 503 Service Unavailable
+                API --> Actor : 503 Service Unavailable\n{ error: "Search service temporarily unavailable" }
+            else PostDB Available
+                SearchOp -> SearchOp : combineResults(users: List<Resource>, posts: List<Resource>) : List<Resource>
+                SearchOp -> State : transitionTo(State.Post1)
+                SearchOp --> API : results: List<Resource>
+                API --> Actor : 200 OK\n{ results: [...] }
+            end
+        end
+    end
+end
+
+== Error Path: Invalid Input ==
+
+Actor -> API : POST /search\nkeyword: null
+
+API -> API : authenticateCaller()
+
+alt Authentication Failed
+    API --> Actor : 401 Unauthorized
+else Authentication Succeeds
+    API -> SearchOp : executeSearch(keyword: null) : List<Resource>
+    
+    SearchOp -> Actor : checkPermission(permission: Permission.Read) : Boolean
+    
+    alt Permission Denied
+        SearchOp --> API : 403 Forbidden
+        API --> Actor : 403 Forbidden
+    else Permission Granted
+        SearchOp --> API : 400 Bad Request
+        note right: Invalid input - null keyword
+        API --> Actor : 400 Bad Request\n{ error: "Invalid search keyword" }
+    end
+end
+
+@enduml

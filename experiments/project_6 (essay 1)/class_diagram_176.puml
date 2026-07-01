@@ -1,0 +1,149 @@
+@startuml
+!define RECTANGLE class
+
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam backgroundcolor transparent
+skinparam rectangle {
+    BackgroundColor #FEFEFE
+    BorderColor #333333
+}
+skinparam package {
+    BackgroundColor #FEFEFE
+    BorderColor #444444
+}
+skinparam interface {
+    BackgroundColor #F0F0F0
+    BorderColor #444444
+}
+skinparam enum {
+    BackgroundColor #F0F0F0
+    BorderColor #444444
+}
+
+package "Domain Model" {
+    class User {
+        - userId: String
+        - isAuthenticated: Boolean
+    }
+    
+    class NotificationPreference {
+        - userId: String
+        - category: NotificationCategory
+        - enabled: Boolean
+    }
+    
+    enum NotificationCategory {
+        LIKES
+        COMMENTS
+        FRIEND_REQUESTS
+    }
+    
+    enum Permission {
+        READ_OWN_SETTINGS
+        WRITE_OWN_SETTINGS
+    }
+    
+    enum UserState {
+        LOGGED_IN
+        TOGGLING
+        POST_TOGGLE
+  + getCurrentState() : UserState
+  + transitionTo("Toggling")
+  + transitionTo("LoggedIn")
+  + transitionTo("PostToggle")
+    }
+}
+
+package "Application" {
+    class NotificationSettingsService {
+        - currentState: UserState
+        + {static} getInstance(): NotificationSettingsService
+        + viewSettings(): NotificationPreference[]
+        + toggleCategory(category: NotificationCategory, enabled: Boolean): void
+        + validateCategory(category: NotificationCategory): Boolean
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface NotificationPreferenceRepository {
+        + readPreferences(userId: String): NotificationPreference[]
+        + upsertPreference(userId: String, category: NotificationCategory, enabled: Boolean): void
+    }
+}
+
+package "Controllers" {
+    class NotificationSettingsController {
+        - authToken: String
+        + viewSettings(userId: String): NotificationPreference[]
+        + toggleCategory(userId: String, category: NotificationCategory, enabled: Boolean): void
+    }
+}
+
+package "Exceptions" {
+    class UnsupportedCategoryException <<exception>> {
+        - category: String
+        + {constructor} UnsupportedCategoryException(category: String)
+    }
+    
+    class UnauthorizedAccessException <<exception>> {
+        - userId: String
+        + {constructor} UnauthorizedAccessException(userId: String)
+    }
+    
+    class ConcurrentModificationException <<exception>> {
+        - userId: String
+        - category: NotificationCategory
+        + {constructor} ConcurrentModificationException(userId: String, category: NotificationCategory)
+    }
+}
+
+package "DTOs" {
+    class NotificationPreferenceDTO <<dto>> {
+        - userId: String
+        - category: String
+        - enabled: Boolean
+        + {constructor} NotificationPreferenceDTO(userId: String, category: String, enabled: Boolean)
+    }
+}
+
+' Relationships
+User "1" -- "0..*" NotificationPreference : has preferences
+NotificationPreference "*" -- "1" NotificationCategory : is for category
+
+NotificationSettingsController --> NotificationSettingsService : uses
+NotificationSettingsController --> User : authenticates
+NotificationSettingsController --> UnauthorizedAccessException : throws
+
+NotificationSettingsService --> NotificationPreferenceRepository : <<interface>> uses
+NotificationSettingsService --> NotificationPreference : manages
+NotificationSettingsService --> NotificationCategory : validates
+NotificationSettingsService --> UnsupportedCategoryException : throws
+NotificationSettingsService --> ConcurrentModificationException : throws
+NotificationSettingsService --> UserState : tracks
+
+NotificationPreferenceRepository ..|> NotificationPreference : <<implements>> persists
+NotificationPreferenceRepository --> NotificationPreferenceDTO : converts
+
+NotificationPreferenceDTO --> NotificationPreference : maps to
+
+note top of NotificationCategory
+  Supported values:
+  - LIKES
+  - COMMENTS
+  - FRIEND_REQUESTS
+end note
+
+note top of NotificationPreference
+  Invariants:
+  - One preference per category per user
+  - Changes take effect immediately
+end note
+
+note top of NotificationSettingsService
+  State transitions:
+  LOGGED_IN -> TOGGLING -> POST_TOGGLE
+  On unsupported category: state unchanged
+end note
+
+@enduml

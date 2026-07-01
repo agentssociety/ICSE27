@@ -1,0 +1,132 @@
+@startuml
+actor Student
+box "Controller" #LightCyan
+  participant RegistrationAPI
+end box
+box "Application" #LightGreen
+  participant RegistrationService
+end box
+box "Domain" #LightYellow
+  participant StudentAccount
+  participant StudentProfile
+  participant RegistrationData
+  participant ValidationResult
+  participant Avatar
+end box
+box "Infrastructure" #LightGray
+  participant UserDatabase
+  participant ProfileUI
+end box
+
+== Registration - Happy Path ==
+Student -> RegistrationAPI : POST /register(input: RegistrationInput)
+activate RegistrationAPI
+RegistrationAPI -> RegistrationService : authenticate(token)
+alt authentication success
+  RegistrationService -> RegistrationService : validate(input)
+  alt valid input
+    RegistrationService -> StudentAccount : create(data: RegistrationData)
+    activate StudentAccount
+    note over StudentAccount : state: PreRegistration -> ProfileCreated
+    StudentAccount -> StudentProfile : create(avatar, nuggets=0, badges=[], radarChart=[])
+    activate StudentProfile
+    StudentProfile -> Avatar : new Avatar(default)
+    Avatar --> StudentProfile : avatar
+    StudentProfile -> UserDatabase : save() [encrypted at rest]
+    activate UserDatabase
+    UserDatabase --> StudentProfile : success
+    deactivate UserDatabase
+    StudentProfile --> StudentAccount : profile
+    deactivate StudentProfile
+    StudentAccount --> RegistrationService : studentAccount
+    deactivate StudentAccount
+    RegistrationService -> StudentAccount : getProfile()
+    StudentAccount --> RegistrationService : profile
+    RegistrationService -> ProfileUI : display(profile)
+    activate ProfileUI
+    ProfileUI --> RegistrationService : ok
+    deactivate ProfileUI
+    RegistrationService --> RegistrationAPI : RegistrationState.CREATED
+    RegistrationAPI --> Student : 201 Created
+  else invalid input
+    RegistrationService --> RegistrationAPI : ValidationResult.INVALID
+    RegistrationAPI --> Student : 400 Bad Request
+    note over RegistrationService : state remains PreRegistration (no account created)
+  end
+else authentication failure
+  RegistrationService --> RegistrationAPI : Permission.DENIED
+  RegistrationAPI --> Student : 401 Unauthorized
+end
+deactivate RegistrationAPI
+
+== Registration - Database Error (Rollback) ==
+Student -> RegistrationAPI : POST /register(input: RegistrationInput)
+activate RegistrationAPI
+RegistrationAPI -> RegistrationService : authenticate(token)
+alt authentication success
+  RegistrationService -> ValidationResult : validate(input)
+  alt valid input
+    RegistrationService -> StudentAccount : create(data: RegistrationData)
+    activate StudentAccount
+    StudentAccount -> StudentProfile : create(avatar, nuggets=0, badges=[], radarChart=[])
+    activate StudentProfile
+    StudentProfile -> UserDatabase : save() [encrypted at rest]
+    activate UserDatabase
+    UserDatabase --> StudentProfile : failure (rollback)
+    deactivate UserDatabase
+    StudentProfile --> StudentAccount : (rollback)
+    deactivate StudentProfile
+    StudentAccount --> RegistrationService : error
+    deactivate StudentAccount
+    note over StudentAccount : state reverted to PreRegistration
+    RegistrationService --> RegistrationAPI : error (internal)
+    RegistrationAPI --> Student : 500 Internal Server Error
+  else invalid input
+    RegistrationService --> RegistrationAPI : ValidationResult.INVALID
+    RegistrationAPI --> Student : 400 Bad Request
+  end
+else authentication failure
+  RegistrationService --> RegistrationAPI : Permission.DENIED
+  RegistrationAPI --> Student : 401 Unauthorized
+end
+deactivate RegistrationAPI
+
+== Registration - Post-Creation Display Failure ==
+Student -> RegistrationAPI : POST /register(input: RegistrationInput)
+activate RegistrationAPI
+RegistrationAPI -> RegistrationService : authenticate(token)
+alt authentication success
+  RegistrationService -> ValidationResult : validate(input)
+  alt valid input
+    RegistrationService -> StudentAccount : create(data: RegistrationData)
+    activate StudentAccount
+    StudentAccount -> StudentProfile : create(avatar, nuggets=0, badges=[], radarChart=[])
+    activate StudentProfile
+    StudentProfile -> UserDatabase : save() [encrypted at rest]
+    activate UserDatabase
+    UserDatabase --> StudentProfile : success
+    deactivate UserDatabase
+    StudentProfile --> StudentAccount : profile
+    deactivate StudentProfile
+    StudentAccount --> RegistrationService : studentAccount
+    deactivate StudentAccount
+    RegistrationService -> StudentAccount : getProfile()
+    StudentAccount --> RegistrationService : profile
+    RegistrationService -> ProfileUI : display(profile)
+    activate ProfileUI
+    ProfileUI --> RegistrationService : failure
+    deactivate ProfileUI
+    note over RegistrationService : account persists, display logs error
+    RegistrationService --> RegistrationAPI : RegistrationState.CREATED
+    RegistrationAPI --> Student : 201 Created (profile saved, display failed)
+  else invalid input
+    RegistrationService --> RegistrationAPI : ValidationResult.INVALID
+    RegistrationAPI --> Student : 400 Bad Request
+  end
+else authentication failure
+  RegistrationService --> RegistrationAPI : Permission.DENIED
+  RegistrationAPI --> Student : 401 Unauthorized
+end
+deactivate RegistrationAPI
+
+@enduml

@@ -1,0 +1,37 @@
+{
+  "task_id": 113,
+  "confidence": 0.9866,
+  "evidence": [
+    {
+      "claim": "The user sees a competency breakdown with weak competency flags and study tips.",
+      "fact": "The competency breakdown provides a study tip for each flagged weak competency.",
+      "score": 0.9989,
+      "user_story_span": "Then I see a competency breakdown with weak competency flags and study tips",
+      "fact_span": "The competency breakdown provides a study tip for each flagged weak competency."
+    },
+    {
+      "claim": "Study tips are generated based on flagged weaknesses.",
+      "fact": "The competency breakdown provides a study tip for each flagged weak competency.",
+      "score": 0.9968,
+      "user_story_span": "Study tips are generated based on flagged weaknesses.",
+      "fact_span": "The competency breakdown provides a study tip for each flagged weak competency."
+    },
+    {
+      "claim": "The system analyzes exam results immediately after submission.",
+      "fact": "Right after the test finishes, learners receive a per-competency evaluation with weaknesses emphasized and accompanied by recommended study actions.",
+      "score": 0.9753,
+      "user_story_span": "The system analyzes exam results immediately after submission.",
+      "fact_span": "Right after the test finishes, learners receive a per-competency evaluation with weaknesses emphasized and accompanied by recommended study actions."
+    },
+    {
+      "claim": "The system provides an instant competency breakdown after exam submission.",
+      "fact": "Right after the test finishes, learners receive a per-competency evaluation with weaknesses emphasized and accompanied by recommended study actions.",
+      "score": 0.9752,
+      "user_story_span": "an instant competency breakdown after exam submission",
+      "fact_span": "Right after the test finishes, learners receive a per-competency evaluation with weaknesses emphasized and accompanied by recommended study actions."
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

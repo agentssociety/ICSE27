@@ -1,0 +1,138 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+    }
+
+    enum State {
+        Pre1
+        Post1
+        Post2
+        Post3
+    }
+
+    class GroupName {
+    }
+
+    enum Visibility {
+        Public
+        Private
+    }
+
+    class Actor {
+        mayPerform: set Permission
+    }
+
+    class Resource {
+        owner: Actor
+        accessible: set Actor
+    }
+
+    class Group {
+        groupName: GroupName
+        groupVisibility: Visibility
+        groupResource: Resource
+  + setState(Pre1 -> Post1)
+  + setState(Post1 -> Post2)
+  + setState(Post1 -> Post3)
+    }
+
+    class Interface {
+        kind: IfaceKind
+        encrypted: Bool
+        authenticated: Bool
+    }
+
+    enum IfaceKind {
+        API
+        Database
+    }
+
+    class Operation {
+    }
+
+    Group *-- Resource : "has"
+    Resource --> Actor : "owner"
+    Resource --> Actor : "accessible"
+    Operation --> Actor : "initiator"
+    Operation --> Resource : "target"
+    Operation --> Interface : "channel"
+    Operation --> Permission : "grant"
+    Operation --> State : "pre-state"
+    Operation --> State : "post-state"
+    Interface --> IfaceKind : "kind"
+}
+
+package "Infrastructure — Ports" {
+    interface GroupCreationAPI <<interface>> {
+        {abstract} createGroup(visibility: Visibility): Group
+    }
+
+    interface GroupDB <<interface>> {
+        {abstract} storeGroup(group: Group): void
+        {abstract} findGroupByName(name: GroupName): Group
+  + checkGroupNameExists(groupName)
+    }
+}
+
+package "Exceptions" {
+    class DuplicateGroupNameException <<exception>> {
+        message: String
+    }
+
+    class MissingVisibilityException <<exception>> {
+        message: String
+    }
+
+    class UnauthorizedAccessException <<exception>> {
+        message: String
+    }
+
+    class InsufficientPermissionException <<exception>> {
+        message: String
+    }
+}
+
+package "DTOs" {
+    class CreateGroupRequest <<dto>> {
+        groupName: GroupName
+        visibility: Visibility
+    }
+
+    class CreateGroupResponse <<dto>> {
+        group: Group
+        state: State
+    }
+}
+
+package "Controllers" {
+    class GroupController {
+        createGroup(request: CreateGroupRequest): CreateGroupResponse
+    }
+}
+
+package "Application" {
+    class GroupCreationService {
+        createGroup(initiator: Actor, request: CreateGroupRequest): Group
+    }
+}
+
+GroupController --> GroupCreationService : "uses"
+GroupCreationService --> GroupCreationAPI : "uses"
+GroupCreationService --> GroupDB : "uses"
+GroupCreationService --> DuplicateGroupNameException : "throws"
+GroupCreationService --> MissingVisibilityException : "throws"
+GroupCreationService --> UnauthorizedAccessException : "throws"
+GroupCreationService --> InsufficientPermissionException : "throws"
+GroupCreationService --> CreateGroupRequest : "receives"
+GroupCreationService --> CreateGroupResponse : "returns"
+
+@enduml

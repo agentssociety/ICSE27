@@ -1,0 +1,113 @@
+{
+  "id": "REQ-EXAM-SCHED-01",
+  "title": "Schedule Exams with Date Range and Optional Time Limit",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall allow an instructor to schedule exams within a specified open date and close date, with an optional per-attempt time limit enforced server-side.",
+  "rationale": "Enabling instructors to control the availability and duration of exams ensures fair assessment conditions for students.",
+  "business_value": "Improves exam integrity by preventing students from accessing exams outside designated times or attempting them without proper constraints.",
+  "source": {
+    "type": "User Story",
+    "id": 107,
+    "description": "As a instructor I need to schedule exams with an open date, close date, and optional per-attempt time limit enforced server-side so that students can only access the exam within the specified time window and are limited to the allowed time per attempt."
+  },
+  "stakeholders": [
+    "Instructors",
+    "Students"
+  ],
+  "acceptance_criteria": [
+    "Given an exam is scheduled with an open date and a close date, When a student tries to access the exam outside that time window, Then the exam is not accessible and an appropriate message is displayed",
+    "Given an exam is scheduled with a per-attempt time limit of 60 minutes, When a student starts an attempt, Then the server records the start time and begins counting down the 60-minute limit, And when the time limit expires, the attempt is automatically submitted",
+    "Given an exam is scheduled with no per-attempt time limit, When a student starts an attempt, Then the student can take as much time as needed within the open/close window"
+  ],
+  "preconditions": [
+    "The exam has been created in the system",
+    "The instructor has inputted the open and close dates for the exam",
+    "The instructor has optionally set a per-attempt time limit for the exam"
+  ],
+  "postconditions": [
+    "Students are only able to access the exam during the specified open date and close date",
+    "If a per-attempt time limit is set, students' attempts must be submitted within that time limit",
+    "If no per-attempt time limit is set, students can take as much time as needed within the open/close window"
+  ],
+  "functional_constraints": [
+    "The system must enforce the scheduled open and close dates for exam access",
+    "The system must record and enforce the start time of each student attempt if a per-attempt time limit is set",
+    "The system must automatically submit an attempt when the per-attempt time limit expires"
+  ],
+  "security_requirements": [
+    "Access to the exam should be restricted outside of the scheduled open and close dates",
+    "Student attempts should not be tampered with on the client side"
+  ],
+  "non_functional_requirements": {
+    "performance": "The system must handle a reasonable number of concurrent students without significant performance degradation",
+    "availability": "The system should be available 99.9% of the time to ensure reliable access and submission of exams",
+    "scalability": "The system should be able to scale up as the number of students increases",
+    "usability": "Error messages should clearly communicate why a student cannot access an exam or submit an attempt"
+  },
+  "edge_cases": [
+    "What happens if a student tries to access an exam on the exact open date?",
+    "How does the system handle daylight saving time changes during the exam period?",
+    "What if a student's device loses internet connection during their attempt?"
+  ],
+  "dependencies": [
+    "Exam Management System",
+    "User Authentication Service",
+    "Time Zone Database"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Exam Access API",
+      "description": "Interface for checking if a student is allowed to access an exam."
+    },
+    {
+      "type": "API",
+      "name": "Attempt Submission API",
+      "description": "Interface for submitting student attempts with time tracking."
+    },
+    {
+      "type": "Database",
+      "name": "Exam Database",
+      "description": "Stores exam details, access permissions, and attempt records."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-EXAM-ACCESS-01",
+      "description": "Student tries to access an exam on the exact open date.",
+      "expected_result": "The student is allowed to access the exam."
+    },
+    {
+      "id": "TC-EXAM-TIME-LIMIT-01",
+      "description": "Student attempts an exam with a 60-minute time limit and submits within the time limit.",
+      "expected_result": "The attempt is successfully submitted."
+    },
+    {
+      "id": "TC-EXAM-TIME-LIMIT-02",
+      "description": "Student attempts an exam with a 60-minute time limit and exceeds the time limit.",
+      "expected_result": "The attempt is automatically submitted."
+    },
+    {
+      "id": "TC-NO-TIME-LIMIT-01",
+      "description": "Student attempts an exam with no time limit set.",
+      "expected_result": "The student can take as much time as needed within the open/close window."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-29T14:12:50.499534",
+  "last_updated": "2026-06-29T15:12:27.637727",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "ExamSchedule",
+      "Exam",
+      "Attempt"
+    ],
+    "test_artifacts": []
+  }
+}

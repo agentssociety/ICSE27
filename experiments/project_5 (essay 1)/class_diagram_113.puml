@@ -1,0 +1,106 @@
+@startuml
+skinparam classBackgroundColor #FEFEFE
+skinparam classBorderColor #333333
+skinparam packageBackgroundColor #F0F0F0
+skinparam packageBorderColor #666666
+skinparam arrowColor #333333
+skinparam noteBackgroundColor #FFFFCC
+
+package "Domain Model" {
+  abstract class Actor {
+    + mayPerform : set Permission
+  }
+  note top of Actor : "mayPerform: set Permission"
+
+  class Students extends Actor {
+  }
+  note bottom of Students : "mayPerform = Read + Write"
+
+  class Academic_Advisors extends Actor {
+  }
+  note bottom of Academic_Advisors : "mayPerform = Execute"
+
+  class Instructors extends Actor {
+  }
+  note bottom of Instructors : "mayPerform = Write + Execute"
+
+  abstract class Resource {
+    + owner : one Actor
+    + accessible : set Actor
+  }
+  note top of Resource : "owner in accessible"
+
+  class StudentDashboardResource extends Resource {
+  }
+  note bottom of StudentDashboardResource : "owner = Students\naccessible = Students"
+
+  class ExamAnalysisAPIResource extends Resource {
+  }
+  note bottom of ExamAnalysisAPIResource : "owner = Instructors\naccessible = Academic_Advisors + Instructors"
+
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  enum State {
+    Pre1
+    Post1
+    Post2
+    Post3
+  + represents(examSubmitted) : Boolean
+  + setState(Post1)
+  + setState(Post2)
+  + setState(Post3)
+  }
+  note bottom of State : "Pre1: exam submitted\nPost1: competency breakdown\nPost2: weak areas flagged\nPost3: study tips provided"
+}
+
+package "Infrastructure — Ports" {
+  abstract class Interface <<interface>> {
+    + kind : one IfaceKind
+    + encrypted : one Bool
+    + authenticated : one Bool
+  }
+  note top of Interface : "encrypted = True\nauthenticated = True"
+
+  class Exam_Analysis_API extends Interface {
+  }
+  note bottom of Exam_Analysis_API : "kind = API"
+
+  class Student_Dashboard extends Interface {
+  }
+  note bottom of Student_Dashboard : "kind = UI"
+}
+
+package "Application" {
+  class REQ_EDU_01 {
+    + initiator : one Actor
+    + target : some Resource
+    + channel : some Interface
+    + grant : one Permission
+    + pre : one State
+    + post : one State
+  + validatePreCondition(state: State.Pre1) : Boolean
+  + transitionState(current: Pre1, target: Post1) : State
+  + transitionState(current: Pre1, target: Post2) : State
+  + transitionState(current: Pre1, target: Post3) : State
+  }
+  note top of REQ_EDU_01 : "some channel\nsome target\ngrant in initiator.mayPerform\ninitiator in target.accessible\npre != post\nsome c: channel | c.authenticated = True\npost in Post1 + Post2 + Post3"
+}
+
+' Associations for REQ_EDU_01
+REQ_EDU_01 "1" --> "1" Actor : initiator
+REQ_EDU_01 "1" --> "0..*" Resource : target
+REQ_EDU_01 "1" --> "0..*" Interface : channel
+REQ_EDU_01 "1" --> "1" Permission : grant
+REQ_EDU_01 "1" --> "1" State : pre
+REQ_EDU_01 "1" --> "1" State : post
+
+' Ownership and access relationships
+Resource "1" --> "1" Actor : owner
+Resource "1" --> "0..*" Actor : accessible
+
+@enduml

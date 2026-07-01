@@ -1,0 +1,135 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam interfaceBackgroundColor lightblue
+skinparam classBackgroundColor lightyellow
+skinparam enumBackgroundColor lightgreen
+skinparam exceptionBackgroundColor lightpink
+
+package "Domain Model" {
+    class Actor {
+        - mayPerform: Set<Permission>
+    }
+
+    class Resource {
+        - owner: Actor
+        - accessible: Set<Actor>
+  + isAccessible(actor: Actor) : Bool
+    }
+
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+        {method} stronger(p: Permission): Set<Permission>
+    }
+
+    interface Interface {
+        - kind: IfaceKind
+        - encrypted: Boolean
+        - authenticated: Boolean
+    }
+
+    enum IfaceKind {
+        API
+        Database
+    }
+
+    class State {
+  + setState(Post1)
+  + setState(Post2)
+  + setState(Post3)
+    }
+
+    class Message_Service_API <<interface>> {
+        + encrypted: Boolean = True
+        + authenticated: Boolean = True
+    }
+
+    class User_Database <<interface>> {
+        + encrypted: Boolean = True
+        + authenticated: Boolean = True
+  + isEncrypted() : Bool
+  + getMessages(actor: Actor) : List<Message>
+    }
+}
+
+package "Application" {
+    class REQ_PRIV_MES_01 {
+        - initiator: Actor
+        - target: Resource
+        - channel: Interface
+        - grant: Permission
+        - pre: State
+        - post: State
+    }
+
+    class SendMessageOperation {
+        - grant: Permission = Write
+        + execute(initiator: Actor, target: Resource, channel: Interface)
+  + execute(request: REQ_PRIV_MES_01)
+    }
+
+    class ReceiveMessageOperation {
+        - grant: Permission = Read
+        + execute(initiator: Actor, target: Resource, channel: Interface)
+  + execute(request: REQ_PRIV_MES_01)
+    }
+
+    class ReplyToMessageOperation {
+        - grant: Permission = Write
+        + execute(initiator: Actor, target: Resource, channel: Interface)
+  + execute(request: REQ_PRIV_MES_01)
+    }
+}
+
+package "Exceptions" {
+    class AuthorizationException <<exception>> {
+        + message: String
+    }
+
+    class AccessControlException <<exception>> {
+        + message: String
+    }
+
+    class InvalidStateException <<exception>> {
+        + message: String
+    }
+
+    class MissingChannelException <<exception>> {
+        + message: String
+    }
+}
+
+' Relationships
+Resource --> Actor : "owner"
+Resource --> Actor : "accessible"
+
+REQ_PRIV_MES_01 --> Actor : "initiator"
+REQ_PRIV_MES_01 --> Resource : "target"
+REQ_PRIV_MES_01 --> Interface : "channel"
+REQ_PRIV_MES_01 --> Permission : "grant"
+REQ_PRIV_MES_01 --> State : "pre"
+REQ_PRIV_MES_01 --> State : "post"
+
+SendMessageOperation --> REQ_PRIV_MES_01 : "implements"
+ReceiveMessageOperation --> REQ_PRIV_MES_01 : "implements"
+ReplyToMessageOperation --> REQ_PRIV_MES_01 : "implements"
+
+Interface <|.. Message_Service_API : "implements"
+Interface <|.. User_Database : "implements"
+
+SendMessageOperation ..> AuthorizationException : "throws"
+SendMessageOperation ..> AccessControlException : "throws"
+SendMessageOperation ..> InvalidStateException : "throws"
+SendMessageOperation ..> MissingChannelException : "throws"
+
+ReceiveMessageOperation ..> AuthorizationException : "throws"
+ReceiveMessageOperation ..> InvalidStateException : "throws"
+ReceiveMessageOperation ..> MissingChannelException : "throws"
+
+ReplyToMessageOperation ..> AuthorizationException : "throws"
+ReplyToMessageOperation ..> AccessControlException : "throws"
+ReplyToMessageOperation ..> InvalidStateException : "throws"
+ReplyToMessageOperation ..> MissingChannelException : "throws"
+@enduml

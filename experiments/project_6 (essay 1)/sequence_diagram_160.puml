@@ -1,0 +1,243 @@
+@startuml
+title Like/Unlike Sequence Diagrams
+
+' Domain model class names as participants (exact names)
+' Participants organized by layer
+
+box "External" #LightBlue
+  participant Frontend as FE
+end box
+
+box "Controller" #LightGreen
+  participant LikeController as C
+end box
+
+box "Application" #LightYellow
+  participant LikeService as S
+  participant AuthenticationService as Auth
+  participant AuthorizationService as Perm
+end box
+
+box "Domain" #LightCoral
+  participant User as U
+  participant Post as P
+  participant Like as L
+end box
+
+box "Infrastructure" #LightGrey
+  participant PostDatabase as DB
+end box
+
+' === Like Flow ===
+
+== Like Flow ==
+
+FE -> C : POST /like (userId, postId)
+activate C
+
+C -> S : like(userId: String, postId: String)
+activate S
+
+' Step 1: Authenticate
+S -> Auth : authenticate(userId: String) : User
+activate Auth
+Auth -> U : (fetch user)
+return user: User
+
+alt User not logged in
+  Auth --> C : return 401 Unauthorized
+  C --> FE : 401 Unauthorized
+  deactivate S
+  deactivate C
+else User authenticated
+  ' Step 2: Check post existence
+  S -> DB : findByPostId(postId: String) : Post
+  activate DB
+  return post: Post
+
+  alt Post not found
+    DB --> C : return 404 Not Found
+    C --> FE : 404 Not Found
+    deactivate S
+    deactivate C
+  else Post exists
+    ' Step 3: Authorization (Write permission)
+    S -> Perm : hasWritePermission(user: User) : Boolean
+    activate Perm
+    return isAuthorized: Boolean
+
+    alt Unauthorized - no Write permission
+      Perm --> C : return 403 Forbidden
+      C --> FE : 403 Forbidden
+      deactivate S
+      deactivate C
+    else Authorized
+      ' Step 4: Self-like denial
+      S -> P : getOwner() : User
+      alt User is owner
+        P --> C : return 400 Bad Request (self-like not allowed)
+        C --> FE : 400 Bad Request
+        deactivate S
+        deactivate C
+      else Not owner
+        ' Step 5: Check existing like (to toggle)
+        S -> L : findByUserAndPost(user: User, post: Post) : Like?
+        activate L
+        return existingLike: Like
+
+        alt Existing like found -> toggle to unlike
+          L -> L : remove()
+          S -> P : decrementLikeCount()
+          note right: State transition: Post1 (likeCount decremented)
+          P -> P : likeCount -= 1
+          S -> DB : update(post: Post) [optimistic lock]
+          activate DB
+          alt Update succeeds
+            DB --> S : success
+            S --> C : success (newLikeCount: Integer)
+            C --> FE : 200 OK { likeCount: newCount, liked: false }
+            note over FE : Update button state to "unliked"
+          else Concurrent conflict
+            DB --> S : conflict (409)
+            S -> DB : retry (max 3) or return 409
+            alt Retry succeeds
+              DB --> S : success
+              S --> C : success (newLikeCount)
+              C --> FE : 200 OK
+            else Retries exhausted
+              DB --> C : return 500 Internal Server Error
+              C --> FE : 500 Internal Server Error
+            end
+          end
+          deactivate DB
+        else No existing like -> add like
+          L -> L : create(user: User, post: Post)
+          S -> P : incrementLikeCount()
+          note right: State transition: Post1 (likeCount incremented)
+          P -> P : likeCount += 1
+          S -> DB : update(post: Post) [optimistic lock]
+          activate DB
+          alt Update succeeds
+            DB --> S : success
+            S --> C : success (newLikeCount: Integer)
+            C --> FE : 200 OK { likeCount: newCount, liked: true }
+            note over FE : Update button state to "liked"
+          else Concurrent conflict
+            DB --> S : conflict (409)
+            S -> DB : retry (max 3) or return 409
+            alt Retry succeeds
+              DB --> S : success
+              S --> C : success (newLikeCount)
+              C --> FE : 200 OK
+            else Retries exhausted
+              DB --> C : return 500 Internal Server Error
+              C --> FE : 500 Internal Server Error
+            end
+          end
+          deactivate DB
+        end
+        deactivate L
+      end
+    end
+  end
+end
+
+deactivate S
+deactivate C
+
+' === Unlike Flow ===
+
+== Unlike Flow ==
+
+FE -> C : POST /unlike (userId, postId)
+activate C
+
+C -> S : unlike(userId: String, postId: String)
+activate S
+
+' Step 1: Authenticate
+S -> Auth : authenticate(userId: String) : User
+activate Auth
+Auth -> U : (fetch user)
+return user: User
+
+alt User not logged in
+  Auth --> C : return 401 Unauthorized
+  C --> FE : 401 Unauthorized
+  deactivate S
+  deactivate C
+else User authenticated
+  ' Step 2: Check post existence
+  S -> DB : findByPostId(postId: String) : Post
+  activate DB
+  return post: Post
+
+  alt Post not found
+    DB --> C : return 404 Not Found
+    C --> FE : 404 Not Found
+    deactivate S
+    deactivate C
+  else Post exists
+    ' Step 3: Authorization
+    S -> Perm : hasWritePermission(user: User) : Boolean
+    activate Perm
+    return isAuthorized: Boolean
+
+    alt Unauthorized
+      Perm --> C : return 403 Forbidden
+      C --> FE : 403 Forbidden
+      deactivate S
+      deactivate C
+    else Authorized
+      ' Step 4: Self-like denial (remains same as like - deny self-unlike? but extraction says "if initiator is owner ... must not change state". For unlike, owner may unlike? Actually constraint: "Self-like denial" says if initiator owner, operation must not change state. So for unlike by owner, we should also deny? But extraction says "User liking their own post must not change state". It doesn't mention unlike. We'll assume same applies to unlike. So check.
+      S -> P : getOwner() : User
+      alt User is owner
+        P --> C : return 400 Bad Request (self-unlike not allowed)
+        C --> FE : 400 Bad Request
+        deactivate S
+        deactivate C
+      else Not owner
+        ' Step 5: Check existing like (to remove)
+        S -> L : findByUserAndPost(user: User, post: Post) : Like?
+        activate L
+        return existingLike: Like
+
+        alt Existing like found -> proceed to unlike
+          L -> L : remove()
+          S -> P : decrementLikeCount()
+          note right: State transition: Post1 (likeCount decremented)
+          P -> P : likeCount -= 1
+          S -> DB : update(post: Post) [optimistic lock]
+          activate DB
+          alt Update succeeds
+            DB --> S : success
+            S --> C : success (newLikeCount: Integer)
+            C --> FE : 200 OK { likeCount: newCount, liked: false }
+            note over FE : Update button state to "liked"
+          else Concurrent conflict
+            DB --> S : conflict (409)
+            S -> DB : retry (max 3) or return 409
+            alt Retry succeeds
+              DB --> S : success
+              S --> C : success (newLikeCount)
+              C --> FE : 200 OK
+            else Retries exhausted
+              DB --> C : return 500 Internal Server Error
+              C --> FE : 500 Internal Server Error
+            end
+          end
+          deactivate DB
+        else No existing like -> idempotent success (no change)
+          L --> C : return 200 OK (no change, current likeCount)
+          C --> FE : 200 OK { likeCount: currentCount, liked: false }
+        end
+        deactivate L
+      end
+    end
+  end
+end
+
+deactivate S
+deactivate C
+
+@enduml

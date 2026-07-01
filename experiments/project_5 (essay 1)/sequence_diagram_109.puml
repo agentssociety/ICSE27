@@ -1,0 +1,114 @@
+@startuml
+skinparam BoxPadding 10
+
+box "UI" #LightBlue
+  participant TeacherDashboard as TD
+end box
+
+box "Controller" #LightGreen
+  participant BonusGrantController as BGC
+end box
+
+box "Application" #LightYellow
+  participant BonusGrantService as BGS
+end box
+
+box "Domain" #LightCoral
+  participant Teacher as T
+  participant Student as S
+  participant BonusNugget as BN
+  participant Justification as J
+  participant NuggetWallet as NW
+  participant AuditEvent as AE
+end box
+
+box "Infrastructure" #LightGray
+  participant Student_Account_API as SA
+  participant Audit_Logging_API as AL
+end box
+
+actor Teacher as Teach
+
+== Bonus Grant Success ==
+
+Teach -> TD : POST /bonus-grant (studentId, amount, justification)
+TD -> BGC : submitGrant(teacherId, studentId, amount, justification)
+BGC -> BGS : grantBonus(teacherId, studentId, amount, justification)
+BGS -> T : getPermissions(teacherId) : Permission[]
+T --> BGS : [Read, Write, BonusGrant]
+
+alt Permission denied
+    BGS -> BGC : error("Unauthorized")
+    BGC -> TD : 403 Forbidden
+    TD -> Teach : "Access denied"
+else Permission OK
+    BGS -> J : createJustification(text, teacherId) : Justification
+    note right J : State -> JustifiedState
+    BGS -> SA : PUT /api/student/{studentId}/wallet (amount) [authenticated]
+    alt Wallet update success
+        SA --> BGS : 200 OK
+        BGS -> NW : updateBalance(amount) : void
+        note right NW : Post1 state (balance updated)
+        BGS -> BN : createBonusNugget(amount, justification, teacherId, studentId) : BonusNugget
+        BGS -> AL : POST /api/audit (teacherId, studentId, amount, justification) [authenticated]
+        alt Audit success
+            AL --> BGS : 201 Created
+            BGS -> AE : createAuditEvent(teacherId, studentId, amount, justification) : AuditEvent
+            note right AE : Post2 state (event created)
+            BGS -> BGC : success
+            BGC -> TD : 200 OK
+            TD -> Teach : "Bonus granted successfully"
+        else Audit failure
+            AL --> BGS : 500 error
+            BGS -> BGC : error("Audit failed")
+            BGC -> TD : 500 Internal Server Error
+            TD -> Teach : "Failed to log audit, contact support"
+        end
+    else Wallet update failure
+        SA --> BGS : 4xx/5xx error
+        BGS -> BGC : error("Wallet update failed")
+        BGC -> TD : 500 Error
+        TD -> Teach : "Failed to update student wallet"
+    end
+end
+
+== Bonus Grant No Justification ==
+
+Teach -> TD : POST /bonus-grant (studentId, amount, no justification)
+TD -> BGC : submitGrant(teacherId, studentId, amount, justification=null)
+BGC -> BGS : grantBonus(teacherId, studentId, amount, null)
+BGS -> J : createJustification(null)
+note right J : State -> ErrorState (validation fails)
+BGS -> BGC : error("Justification required")
+BGC -> TD : 422 Unprocessable Entity
+TD -> Teach : "Justification is required"
+
+== Non-Teacher Attempt ==
+
+actor "IT_Team" as ITE
+actor "Student" as STU
+
+ITE -> TD : POST /bonus-grant (studentId, amount)
+TD -> BGC : submitGrant(iteamId, studentId, amount, justification)
+BGC -> BGS : grantBonus(iteamId, studentId, amount, justification)
+BGS -> T : getPermissions(iteamId) : Permission[]
+T --> BGS : [Read]
+alt Permission denied (no BonusGrant)
+    BGS -> BGC : error("Unauthorized")
+    BGC -> TD : 403 Forbidden
+    TD -> ITE : "Access denied"
+end
+
+== Student Attempt ==
+STU -> TD : POST /bonus-grant (studentId, amount)
+TD -> BGC : submitGrant(studentId, studentId, amount, justification)
+BGC -> BGS : grantBonus(studentId, studentId, amount, justification)
+BGS -> T : getPermissions(studentId) : Permission[]
+T --> BGS : [Read]
+alt Permission denied
+    BGS -> BGC : error("Unauthorized")
+    BGC -> TD : 403 Forbidden
+    TD -> STU : "Access denied"
+end
+
+@enduml

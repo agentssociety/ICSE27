@@ -1,0 +1,23 @@
+{
+  "task_id": 157,
+  "confidence": 0.9973,
+  "evidence": [
+    {
+      "claim": "The system allows registering an account.",
+      "fact": "This online social network allows individuals to create profiles and interact with others in a shared digital space.",
+      "score": 0.9973,
+      "user_story_span": "register an account",
+      "fact_span": ""
+    },
+    {
+      "claim": "Email verification is required to activate the account.",
+      "fact": "Email verification is required before login is allowed.",
+      "score": 0.9973,
+      "user_story_span": "Email verification is required to activate the account.",
+      "fact_span": "Email verification is required before login is allowed."
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

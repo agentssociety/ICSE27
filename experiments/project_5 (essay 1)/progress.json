@@ -1,0 +1,22 @@
+{
+  "checkpoints": [
+    {
+      "task_id": 106,
+      "summary": "Implemented domain models for ExamBuilder, Question, and Competency. Wrote 10 tests covering question creation, competency tagging, nugget multiplier validation. All 10 tests passing. 6 tests skipped (placeholders for later tasks).",
+      "step_count": 45,
+      "timestamp": "2026-06-29T21:39:29.228707+00:00"
+    },
+    {
+      "task_id": 107,
+      "summary": "Implemented Schedule domain model with exam date windowing and per-attempt time limit. Created DTO, ORM, repository, infra, API router, and service layers. Wrote 12 tests across domain/service/API layers. All 12 tests passing.",
+      "step_count": 72,
+      "timestamp": "2026-06-29T21:43:02.140377+00:00"
+    },
+    {
+      "task_id": 0,
+      "summary": "Built complete frontend for Gamified Competency Assessment Platform with 11 pages, types matching backend DTOs, and API service layer. Build succeeds. Tests status below.",
+      "step_count": 85,
+      "timestamp": "2026-06-29T22:08:05.706409+00:00"
+    }
+  ]
+}

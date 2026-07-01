@@ -1,0 +1,128 @@
+@startuml
+skinparam classBackgroundColor #FEFEFE
+skinparam interfaceBackgroundColor #E8F0FE
+skinparam enumBackgroundColor #FFF3CD
+skinparam exceptionBackgroundColor #F8D7DA
+skinparam dtoBackgroundColor #D1ECF1
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+
+package "Domain Model" {
+  class Actor {
+    - mayPerform : Set<Permission>
+    note: mayPerform always includes Read and Write
+  + checkWritePermission(initiatorId: String) : boolean
+  }
+
+  class UserProfile {
+    - owner : Actor
+    - accessible : Set<Actor>
+    - followerCount : int
+    - followingCount : int
+    note: owner ∈ accessible
+    note: at least one UserProfile exists
+    note: every Actor can access at least one UserProfile
+  + isSelfFollow(initiatorId: String, targetId: String) : boolean
+  + addFollower(initiatorId: String) : void
+  + incrementFollowerCount() : void
+  + removeFollower(initiatorId: String) : void
+  + decrementFollowerCount() : void
+  }
+
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+    note: Write subsumes Read
+    note: Admin subsumes all
+  }
+
+  enum State {
+    Pre1
+    Pre2
+    Post1
+    Post2
+    note: pre and post must be different
+  + transitionTo(Post1) : void
+  + transitionTo(Post2) : void
+  }
+
+  Actor "1" -- "0..*" UserProfile : owns
+  Actor "*" -- "*" UserProfile : accessible
+  Actor --> Permission : mayPerform
+}
+
+package "Application" {
+  class FollowUnfollowService {
+    - api : FollowUnfollowAPI
+    - database : UserProfileDatabase
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface FollowUnfollowAPI {
+    note: encrypted
+    note: authenticated
+  }
+
+  interface UserProfileDatabase {
+    note: encrypted
+    note: authenticated
+  }
+}
+
+package "Controllers" {
+  class FollowUnfollowController {
+    - service : FollowUnfollowService
+  }
+}
+
+package "DTOs" {
+  class FollowRequest <<dto>> {
+    - initiatorId : String
+    - targetProfileId : String
+  }
+
+  class UnfollowRequest <<dto>> {
+    - initiatorId : String
+    - targetProfileId : String
+  }
+
+  class FollowResponse <<dto>> {
+    - success : boolean
+    - newFollowerCount : int
+    - message : String
+  }
+}
+
+package "Exceptions" {
+  class SelfFollowException <<exception>> {
+    - message : String
+  }
+
+  class ProfileNotAccessibleException <<exception>> {
+    - message : String
+  }
+
+  class OperationNotAllowedException <<exception>> {
+    - message : String
+  }
+}
+
+' Relationships
+FollowUnfollowController --> FollowUnfollowService : uses
+FollowUnfollowService --> FollowUnfollowAPI : uses
+FollowUnfollowService --> UserProfileDatabase : uses
+FollowUnfollowService --> FollowRequest : uses
+FollowUnfollowService --> UnfollowRequest : uses
+FollowUnfollowService --> FollowResponse : creates
+FollowUnfollowService --> SelfFollowException : throws
+FollowUnfollowService --> ProfileNotAccessibleException : throws
+FollowUnfollowService --> OperationNotAllowedException : throws
+FollowUnfollowService --> Actor : manipulates
+FollowUnfollowService --> UserProfile : manipulates
+FollowUnfollowService --> State : transitions
+
+@enduml

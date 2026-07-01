@@ -1,0 +1,104 @@
+{
+  "id": "REQ-STU-01",
+  "title": "Student should be able to redeem nuggets for rewards",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall allow a student to redeem nuggets from their wallet for virtual items or instructor-configured institutional perks in the reward store.",
+  "rationale": "Enabling students to redeem nuggets ensures that they can spend their earned rewards on meaningful items or benefits, enhancing engagement and motivation.",
+  "business_value": "Increasing student engagement by providing tangible incentives for desired behaviors or achievements.",
+  "source": {
+    "type": "User Story",
+    "id": 114,
+    "description": "As a student I need a nugget wallet redeemable in a reward store for virtual items or instructor-configured institutional perks So that I can spend my earned nuggets on meaningful rewards"
+  },
+  "stakeholders": [
+    "Student",
+    "Instructor",
+    "Reward Store Administrator"
+  ],
+  "acceptance_criteria": [
+    "Given a student has earned nuggets in their wallet, When the student selects a reward item in the store, Then the nugget balance is reduced by the item's cost, And the student receives the reward (virtual item unlock or perk applied)",
+    "Given a student attempts to redeem an item without enough nuggets, When the student selects that item, Then the redemption is denied, And a message is shown indicating insufficient nuggets"
+  ],
+  "preconditions": [
+    "The student has earned nuggets in their wallet",
+    "The reward store contains items available for redemption"
+  ],
+  "postconditions": [
+    "The student's nugget balance is reduced by the cost of the redeemed item",
+    "The selected reward item is provided to the student"
+  ],
+  "functional_constraints": [],
+  "security_requirements": [
+    "Authentication and authorization checks are performed before allowing a student to redeem nuggets",
+    "Redemption requests are validated against available nugget balance"
+  ],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens if a student attempts to redeem an item that is not available in the reward store?",
+    "How does the system handle negative nugget balances if a bug or error causes one?",
+    "What if the reward store administrator changes the cost of an item after a student has earned but before redemption?"
+  ],
+  "dependencies": [
+    "Nugget wallet system",
+    "Reward store inventory system",
+    "User authentication and authorization system"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Reward Store API",
+      "description": "The requirement interacts with this API to retrieve available reward items and update the student's nugget balance."
+    },
+    {
+      "type": "UI",
+      "name": "Student Dashboard",
+      "description": "The requirement is implemented through the user interface, allowing students to select and redeem reward items."
+    },
+    {
+      "type": "External System",
+      "name": "Instructor Configuration System",
+      "description": "This system provides instructor-configured institutional perks that can be redeemed with nuggets."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-REQ-STU-01",
+      "description": "A student earns nuggets and attempts to redeem a virtual item.",
+      "expected_result": "The student's nugget balance is reduced by the item's cost, and the virtual item is unlocked for the student."
+    },
+    {
+      "id": "TC-REQ-STU-02",
+      "description": "A student earns nuggets but attempts to redeem an item that costs more than their current balance.",
+      "expected_result": "The redemption is denied, and a message indicating insufficient nuggets is displayed."
+    },
+    {
+      "id": "TC-REQ-STU-03",
+      "description": "A student attempts to redeem an item from a non-existent reward store.",
+      "expected_result": "The redemption is denied, and an error message indicating the issue is displayed."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-29T14:33:26.261344",
+  "last_updated": "2026-06-29T15:12:27.637727",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "RewardStore",
+      "RewardItem",
+      "Redemption",
+      "Student",
+      "NuggetWallet"
+    ],
+    "test_artifacts": []
+  }
+}

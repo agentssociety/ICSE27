@@ -1,0 +1,16 @@
+{
+  "task_id": 158,
+  "confidence": 0.9801,
+  "evidence": [
+    {
+      "claim": "The user is a registered user.",
+      "fact": "Users can delete their own account.",
+      "score": 0.9801,
+      "user_story_span": "registered user",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 9,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

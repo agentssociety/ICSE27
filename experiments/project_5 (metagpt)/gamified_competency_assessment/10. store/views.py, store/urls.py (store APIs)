@@ -1,0 +1,184 @@
+# store/views.py
+"""
+Views for the store app: browsing reward items, redeeming items, and viewing redemption history.
+All endpoints require authentication and student role.
+"""
+import json
+import logging
+from typing import Any, Dict, List, Optional
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.db import transaction
+from django.http import HttpRequest, JsonResponse
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_http_methods
+
+from accounts.models import StudentProfile
+from audit.models import AuditLog
+from gamification.models import RewardItem as GamificationRewardItem
+from .models import Redemption
+
+logger = logging.getLogger(__name__)
+
+
+# ------------------------------------------------------------------
+# Helper: Get current student profile (raises PermissionDenied if not student)
+# ------------------------------------------------------------------
+def _get_student_profile(user: User) -> StudentProfile:
+    """Return StudentProfile for user; raises PermissionDenied if not student."""
+    try:
+        return user.student_profile
+    except StudentProfile.DoesNotExist:
+        raise PermissionDenied("User is not a student.")
+
+
+# ------------------------------------------------------------------
+# GET /api/store/items
+# Returns list of all reward items with availability and cost.
+# ------------------------------------------------------------------
+@login_required
+@require_http_methods(["GET"])
+def item_list(request: HttpRequest) -> JsonResponse:
+    """List all reward items available in the store.
+
+    Returns:
+        JSON with 'items' list, each containing id, name, description,
+        nugget_cost, item_type, stock, and is_available flag.
+    """
+    items = GamificationRewardItem.objects.all().order_by('nugget_cost')
+    data = []
+    for item in items:
+        data.append({
+            'id': item.id,
+            'name': item.name,
+            'description': item.description,
+            'nugget_cost': item.nugget_cost,
+            'item_type': item.item_type,
+            'stock': item.stock,
+            'is_available': item.is_available(),
+        })
+    return JsonResponse({'items': data})
+
+
+# ------------------------------------------------------------------
+# POST /api/store/redeem
+# Redeem a reward item for the authenticated student.
+# Expects JSON body: {"item_id": <int>}
+# ------------------------------------------------------------------
+@login_required
+@require_http_methods(["POST"])
+def redeem_item(request: HttpRequest) -> JsonResponse:
+    """Redeem a reward item for the current student.
+
+    Validates stock and nugget balance, then atomically creates a Redemption record.
+    Returns the redemption details on success, or an error message.
+
+    Request body:
+        {"item_id": <int>}
+
+    Responses:
+        201: Redemption successful, returns redemption object.
+        400: Missing or invalid item_id, or redemption failed (e.g., out of stock, insufficient nuggets).
+        403: User is not a student.
+        404: Item not found.
+    """
+    student = _get_student_profile(request.user)
+
+    try:
+        body = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON body.'}, status=400)
+
+    item_id = body.get('item_id')
+    if not item_id:
+        return JsonResponse({'error': 'item_id is required.'}, status=400)
+
+    # Fetch the reward item
+    item = get_object_or_404(GamificationRewardItem, pk=item_id)
+
+    # Attempt to create redemption (atomic operation inside model method)
+    try:
+        redemption = Redemption.create_redemption(student, item)
+    except ValueError as e:
+        # Raised by create_redemption for stock/balance issues
+        return JsonResponse({'error': str(e)}, status=400)
+    except ValidationError as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+    # Log the redemption action
+    AuditLog.log(
+        action='item_redeemed',
+        actor=request.user,
+        resource_type='reward_item',
+        resource_id=item.id,
+        details={
+            'redemption_id': redemption.id,
+            'item_name': item.name,
+            'nugget_cost': item.nugget_cost,
+            'student_id': student.id,
+        },
+    )
+
+    logger.info(
+        'Student %s redeemed item %s (cost %d nuggets). Redemption ID: %d',
+        student.user.username,
+        item.name,
+        item.nugget_cost,
+        redemption.id,
+    )
+
+    return JsonResponse({
+        'redemption_id': redemption.id,
+        'item_name': item.name,
+        'nugget_cost': item.nugget_cost,
+        'status': redemption.status,
+        'voucher_code': redemption.voucher_code if item.item_type == 'PERK' else None,
+        'redeemed_at': redemption.redeemed_at.isoformat(),
+    }, status=201)
+
+
+# ------------------------------------------------------------------
+# GET /api/store/redemptions
+# Returns redemption history for the authenticated student.
+# ------------------------------------------------------------------
+@login_required
+@require_http_methods(["GET"])
+def redemption_history(request: HttpRequest) -> JsonResponse:
+    """Return list of redemptions made by the current student.
+
+    Returns:
+        JSON with 'redemptions' list, each containing id, item name,
+        nugget_cost, status, voucher_code, redeemed_at.
+    """
+    student = _get_student_profile(request.user)
+    redemptions = Redemption.objects.filter(
+        student=student
+    ).select_related('reward_item').order_by('-redeemed_at')
+
+    data = []
+    for r in redemptions:
+        data.append({
+            'id': r.id,
+            'item_name': r.reward_item.name,
+            'nugget_cost': r.reward_item.nugget_cost,
+            'status': r.status,
+            'voucher_code': r.voucher_code if r.reward_item.item_type == 'PERK' else None,
+            'redeemed_at': r.redeemed_at.isoformat(),
+        })
+    return JsonResponse({'redemptions': data})
+
+
+# store/urls.py
+"""
+URL patterns for the store app.
+"""
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('items/', views.item_list, name='store_item_list'),
+    path('redeem/', views.redeem_item, name='store_redeem'),
+    path('redemptions/', views.redemption_history, name='store_redemption_history'),
+]

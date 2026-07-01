@@ -1,0 +1,1 @@
+All checks passed. Backend starts directly, frontend builds, Docker containers build and run healthy. API integration tests pass. Nginx, Vite proxy, Docker Compose, DB driver all configured correctly. Host port conflicts fixed by offsetting.

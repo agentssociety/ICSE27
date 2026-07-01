@@ -1,0 +1,126 @@
+
+classDiagram
+    class User {
+        -int id
+        -str email
+        -str password_hash
+        -str role  # Admin, Instructor, Student
+        -datetime created_at
+        +authenticate(email: str, password: str) -> bool
+        +has_permission(permission: str) -> bool
+    }
+    class StudentProfile {
+        -int id
+        -User user
+        -str avatar_url
+        -int nugget_balance
+        -int current_streak
+        -int max_streak
+        +add_nuggets(amount: int, reason: str) -> None
+        +deduct_nuggets(amount: int) -> bool
+        +update_streak(correct: bool) -> None
+    }
+    class InstructorProfile {
+        -int id
+        -User user
+        -str department
+        +create_exam(exam_data: dict) -> Exam
+        +view_analytics(exam_id: int) -> dict
+    }
+    class Exam {
+        -int id
+        -InstructorProfile creator
+        -str title
+        -str description
+        -datetime open_date
+        -datetime close_date
+        -int time_limit_minutes  # per attempt
+        -list[Cohort] cohorts
+        +add_question(question: Question) -> None
+        +get_competency_coverage() -> dict
+        +is_active() -> bool
+    }
+    class Question {
+        -int id
+        -Exam exam
+        -str question_type  # MCQ, DRAG_DROP, CODE
+        -JSON content  # type-specific data
+        -list[Competency] competencies
+        -str difficulty  # BEGINNER, INTERMEDIATE, ADVANCED
+        -float nugget_multiplier
+        +get_correct_answer() -> str
+        +evaluate_response(response: str) -> bool
+    }
+    class Competency {
+        -int id
+        -str name
+        -str description
+        -int mastery_threshold  # percentage
+    }
+    class Cohort {
+        -int id
+        -InstructorProfile creator
+        -str name
+        -list[StudentProfile] students
+        +enroll_student(student: StudentProfile) -> None
+        +get_leaderboard(window_days: int) -> list
+    }
+    class ExamAttempt {
+        -int id
+        -StudentProfile student
+        -Exam exam
+        -datetime start_time
+        -datetime end_time
+        -int total_nuggets_earned
+        -int streak_multiplier
+        -JSON responses  # question_id -> response
+        -JSON results  # question_id -> {correct, nuggets, time_spent}
+        +submit() -> dict  # returns competency breakdown
+        +calculate_nuggets() -> int
+    }
+    class AuditLog {
+        -int id
+        -User actor
+        -str action
+        -str resource_type
+        -int resource_id
+        -JSON details
+        -datetime timestamp
+        -str ip_address
+        +log(action: str, actor: User, details: dict) -> None
+    }
+    class RewardItem {
+        -int id
+        -str name
+        -str description
+        -int nugget_cost
+        -str item_type  # VIRTUAL, PERK
+        -int stock  # -1 for unlimited
+        +redeem(student: StudentProfile) -> bool
+    }
+    class Badge {
+        -int id
+        -str name
+        -str description
+        -str icon_url
+        -str criteria  # JSON condition
+        +check_eligibility(student: StudentProfile) -> bool
+    }
+    class StudentBadge {
+        -int id
+        -StudentProfile student
+        -Badge badge
+        -datetime earned_at
+    }
+    User <|-- StudentProfile
+    User <|-- InstructorProfile
+    Exam "1" --> "*" Question
+    Exam "*" --> "*" Cohort
+    Question "*" --> "*" Competency
+    Cohort "1" --> "*" StudentProfile
+    ExamAttempt "*" --> "1" StudentProfile
+    ExamAttempt "*" --> "1" Exam
+    AuditLog "*" --> "1" User
+    RewardItem "*" --> "*" StudentProfile  # through redemption
+    Badge "1" --> "*" StudentBadge
+    StudentProfile "1" --> "*" StudentBadge

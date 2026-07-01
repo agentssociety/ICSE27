@@ -1,0 +1,137 @@
+@startuml
+!theme plain
+skinparam packageStyle rectangle
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+box "UI Layer" #LightBlue
+  participant "User" as User
+  participant "AccountSettingsPage" as UI #LightBlue
+endbox
+
+box "Controller Layer" #LightCyan
+  participant "ProfileController" as Controller #LightCyan
+  participant "REQ_USER_01" as ReqValidator #LightCyan
+endbox
+
+box "Application Layer" #LightGreen
+  participant "ProfileService" as Service #LightGreen
+  participant "Actor" as Actor #LightGreen
+  participant "Permission" as Permission #LightGreen
+  participant "State" as State #LightGreen
+endbox
+
+box "Domain Layer" #LightYellow
+  participant "Profile" as Profile #LightYellow
+  participant "Photo" as Photo #LightYellow
+  participant "Biography" as Biography #LightYellow
+  participant "Resource" as Resource #LightYellow
+endbox
+
+box "Infrastructure Layer" #LightGray
+  participant "ProfileRepository" as Repository #LightGray
+endbox
+
+' ====== Flow 1: Create Profile Success ======
+== Create Profile Success ==
+
+User -> UI : POST /profile (photo, biography) [TLS, authenticated]
+note left: Channel encrypted, user logged in
+
+UI -> Controller : createProfile(photo, biography, token)
+Controller -> Actor : validateToken(token) : UserInfo
+Controller -> ReqValidator : checkOperation(initiator=User, target=ProfileResource, channel=UI, grant=Write, pre=PreIdle, post=Post1)
+ReqValidator --> Controller : valid
+alt Invalid token or insufficient permission
+  Controller -> UI : 401 Unauthorized / 403 Forbidden
+  UI -> User : show error "Not authorized"
+else token valid & permission granted
+  Controller -> Service : createProfile(userId, photo, biography)
+  Service -> Photo : new Photo(format, size)
+  alt Photo invalid (size > 2MB or not JPEG/PNG)
+    Service --> Controller : ValidationException
+    Controller -> UI : 422 Unprocessable Entity – invalid photo
+    UI -> User : show error "Photo must be JPEG/PNG up to 2MB"
+    note over Profile : State remains PreIdle
+  else photo valid
+    Service -> Biography : new Biography(text)
+    alt Biography length > 500 chars
+      Service --> Controller : ValidationException
+      Controller -> UI : 422 Unprocessable Entity – biography too long
+      UI -> User : show error "Biography max 500 characters"
+      note over Profile : State remains PreIdle
+    else biography valid
+      Service -> Profile : new Profile(userId)
+      note over Profile : State = PreIdle
+      Service -> Profile : setPhoto(photo)
+      Service -> Profile : setBiography(biography)
+      Service -> Profile : transition(State.PreIdle, State.Post1)
+      note over Profile : State → Post1
+      Service -> Repository : save(profile) : Profile
+      Repository --> Service : profile
+      Service --> Controller : ProfileDTO (id, photoUrl, biography)
+      Controller -> UI : 200 OK { profile: ... }
+      UI -> User : display success, optionally redirect
+    end
+  end
+end
+
+' ====== Flow 2: Create Profile - Missing Both ======
+== Create Profile - Missing Both ==
+
+User -> UI : POST /profile (no photo, no biography)
+UI -> Controller : createProfile(null, null, token)
+Controller -> Actor : validateToken(token) : UserInfo
+Controller -> ReqValidator : checkOperation(...)
+alt token invalid
+  Controller -> UI : 401
+  UI -> User : error
+else token valid
+  Controller -> Service : createProfile(userId, null, null)
+  Service --> Controller : ValidationException – both required
+  Controller -> UI : 422 Unprocessable Entity – missing both fields
+  UI -> User : show error "Please provide photo and biography"
+  note over Profile : No operation, state remains PreIdle
+end
+
+' ====== Flow 3: View Profile (after creation) ======
+== View Profile Success ==
+
+User -> UI : GET /profile [TLS, authenticated]
+UI -> Controller : getProfile(userToken)
+Controller -> Actor : validateToken(token) : UserInfo
+Controller -> ReqValidator : checkOperation(initiator=User, target=ProfileResource, channel=UI, grant=Read, pre=Post1, post=Post2)
+ReqValidator --> Controller : valid
+alt token invalid or no read permission
+  Controller -> UI : 401 / 403
+  UI -> User : error
+else
+  Controller -> Service : getProfile(userId)
+  Service -> Repository : findByOwner(userId) : Profile
+  Repository --> Service : profile
+  note over Profile : State currently Post1
+  Service -> Profile : transition(State.Post1, State.Post2)
+  note over Profile : State → Post2
+  Service --> Controller : ProfileDTO
+  Controller -> UI : 200 OK { profile: ... }
+  UI -> User : display profile page
+end
+
+' ====== Flow 4: View Profile - Not Found ======
+== View Profile - Not Found ==
+
+User -> UI : GET /profile
+UI -> Controller : getProfile(token)
+Controller -> Actor : validateToken(token)
+alt token invalid
+  Controller -> UI : 401
+else
+  Controller -> Service : getProfile(userId)
+  Service -> Repository : findByOwner(userId)
+  Repository --> Service : null
+  Service --> Controller : EntityNotFoundException
+  Controller -> UI : 404 Not Found
+  UI -> User : "Profile not found"
+end
+
+@enduml

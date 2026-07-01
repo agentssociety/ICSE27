@@ -1,0 +1,99 @@
+{
+  "id": "REQ-COHORT-LEADERBOARD-01",
+  "title": "Cohort Leaderboard Ranked by Nuggets",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall provide a cohort leaderboard that ranks students based on the total nuggets earned within a configurable time window.",
+  "rationale": "This requirement allows students to track their progress and compare it with peers, fostering a sense of competition and motivation.",
+  "business_value": "Enhances student engagement and performance by providing visibility into ranking and progress.",
+  "source": {
+    "type": "User Story",
+    "id": 115,
+    "description": "As a student, I need a cohort leaderboard ranked by nuggets over a configurable window so that I can track my progress and see how I compare with peers."
+  },
+  "stakeholders": [
+    "Students",
+    "Instructors"
+  ],
+  "acceptance_criteria": [
+    "Given the leaderboard is enabled by the instructor",
+    "And I have not opted out",
+    "When I view the cohort leaderboard",
+    "Then I see myself and other students ranked by total nuggets earned in the configured time window"
+  ],
+  "preconditions": [
+    "The leaderboard feature is enabled for the student's cohort",
+    "The student has not opted out of the leaderboard"
+  ],
+  "postconditions": [
+    "Student sees their rank based on total nuggets earned within the configured time window",
+    "Student sees ranks of other students in the cohort based on total nuggets earned within the configured time window"
+  ],
+  "functional_constraints": [
+    "Leaderboard data is aggregated over a configurable time window",
+    "Students can opt out of appearing on the leaderboard",
+    "Instructors can disable the entire leaderboard for the cohort"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "The system shall respond within 2 seconds to display the leaderboard.",
+    "availability": "The leaderboard must be available at least 99.5% of the time during regular operations.",
+    "scalability": "The system shall support up to 10,000 students on the leaderboard simultaneously without performance degradation.",
+    "usability": "Error messages should be clear and actionable; the interface should be intuitive and easy to navigate."
+  },
+  "edge_cases": [
+    "What happens when the configured time window is set to a period where no nuggets have been earned?",
+    "How does the system handle changes in the time window while students are viewing the leaderboard?"
+  ],
+  "dependencies": [
+    "Student accounts and their nugget data",
+    "Cohort management and settings",
+    "Instructor authentication and permissions"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Student Data Store",
+      "description": "The system retrieves student nugget data from this database to populate the leaderboard."
+    },
+    {
+      "type": "API",
+      "name": "Cohort Settings API",
+      "description": "This API is used to check if the leaderboard is enabled and retrieve the current time window configuration."
+    },
+    {
+      "type": "UI",
+      "name": "Leaderboard Display",
+      "description": "The user interface displays the leaderboard based on data fetched from the database and settings from the API."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-COHORT-LEADERBOARD-01",
+      "description": "Verify that the leaderboard is displayed when the feature is enabled by the instructor.",
+      "expected_result": "The leaderboard should be visible to students who have not opted out."
+    },
+    {
+      "id": "TC-COHORT-LEADERBOARD-02",
+      "description": "Check the functionality of the configurable time window on the leaderboard.",
+      "expected_result": "Students should see their rank based on nuggets earned within the configured time window."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-29T14:34:30.623951",
+  "last_updated": "2026-06-29T15:12:27.637727",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "CohortLeaderboard",
+      "Cohort",
+      "Student",
+      "NuggetWallet"
+    ],
+    "test_artifacts": []
+  }
+}

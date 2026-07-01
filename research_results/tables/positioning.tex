@@ -1,0 +1,61 @@
+\begin{table*}[t]
+\centering
+\caption{Positioning study: all measurement-framework properties applied
+to both systems on the same six projects
+($n_{\textsc{AS}}=14$ runs, $n_{\textsc{MG}}=6$ runs; P5--P6 MetaGPT: planning artefacts only for P5, runnable code for P6). The Gate column
+reports the Algorithm~\ref{alg:gates} outcome for MetaGPT.}
+\label{tab:positioning}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{@{}p{4.0cm}llrrl@{}}
+\toprule
+\textbf{Property} &
+\textbf{Standard} &
+\textbf{Gate} &
+\textbf{\as\space} &
+\textbf{MetaGPT} &
+\textbf{Instrument / note} \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{A.\ Requirements fidelity (NLI)}} \\
+NLI alignment score$^\dagger$      & NIST: Valid \& reliable          & M   & 0.950 ($n{=}119$) & 0.298 ($n=30$) & DeBERTa-v3-large-MNLI \\
+Spec extrapolation rate (\%)       & 25010: Functional completeness   & M   & 53.0           & 87.3           & Ungrounded claims / total \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{B.\ Code hygiene (maintainability prediction$^\ast$)}} \\
+Cyclomatic complexity (mean/fn)    & 25010: Maintainability$^\ast$    & D   & 1.51           & 2.94           & \texttt{radon cc} (M/F lines only) \\
+Avg.\ function length (lines)      & 25010: Maintainability$^\ast$    & D   & 3.8            & 21.8           & AST \\
+Full type-hint coverage (\%)       & 25010: Maintainability$^\ast$    & D   & 79.0           & 83.6           & AST \\
+Docstring coverage (\%)            & 25010: Maintainability$^\ast$    & D   & 8.8            & 94.5           & AST \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{C.\ Formal-specification grounding}} \\
+Alloy domain sigs (mean/project)$^\ddagger$ & 12207: Verif.\ \& validation & D & 48  & ---  & \texttt{grep sig}, boilerplate filtered \\
+Alloy : impl-class ratio$^\ddagger$          & 12207: Verif.\ \& validation & D & 0.26 & ---  & Domain sigs $\div$ impl classes \\
+SAT-verified invariants                      & 12207: Verif.\ \& validation & D & \checkmark & \ding{55} & Alloy Analyser; MG generates no Alloy \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{D.\ Test generation}} \\
+Backend test suite (pytest)        & 25010: Faultlessness             & OS  & \checkmark     & \ding{55}      & Phase 7 not in MetaGPT scope \\
+Frontend test suite (vitest)       & 25010: Faultlessness             & OS  & \checkmark     & \ding{55}      & Phase 8 not in MetaGPT scope \\
+Test pass rate                     & 25010: Faultlessness             & OS  & $99$--$100\%$  & ---            & MG generates no test suite \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{E.\ Auditability \& process quality}} \\
+Orphan routes (mean/project)$^\P$  & NIST: Valid \& reliable          & M   & 3.5            & 1.6            & FastAPI decorator + handler matching; MG P5 excl. \\
+Unused imports (per 100 files)$^\P$ & NIST: Valid \& reliable         & M   & 104            & 63             & AST; normalized for codebase-size comparability \\
+Artifact traceability              & 12207: Req.\ traceability        & OS  & Full coverage  & Not available  & Derivation paths; MG run log not persisted \\
+Decision rationale$^\S$            & NIST: Explain.\ \& interpret.    & D   & 100\% (agent logs) & Code docs only & Agent rationale records; MG has no UML artefacts \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{F.\ Deployment \& resources}} \\
+Deployment success rate            & 25010: Installability            & M   & 100\% (14/14)  & 50\% (3/6)     & Cold-start, no source edits \\
+LLM token consumption (/project)   & 25010: Resource utilization      & M   & $\approx$13.9M & 4.66M$^\#$     & API usage logs \\
+End-to-end latency                 & 25010: Time behaviour            & M   & 124--513~min   & 547--2077~s    & Wall-clock \\
+\bottomrule
+\end{tabular}
+\vspace{5pt}
+\begin{minipage}{\textwidth}
+\footnotesize
+\textbf{Gate:} \textbf{M}~=~Measured; \textbf{D}~=~Deferred; \textbf{OS}~=~Out-of-scope for this system.\\
+$\dagger$~NLI alignment: cross-project mean confidence of grounded claims (DeBERTa-v3-large-MNLI, threshold 0.6); distinct from code-level hallucination ($\P$).\\
+$\ddagger$~Alloy metrics are \as\space-only by design; deferred for MetaGPT because no formal specification files are generated.\\
+$\P$~Code-level hallucination measured with the same AST protocol for both systems (no task manifest required). \emph{Orphan routes}: FastAPI \texttt{@router.*} decorators with no matching handler name in the module --- MG P1 has 8/8 routes orphaned; P2--P4,P6 use Flask-style routing (decorator pattern not matched, so 0 recorded). \emph{Unused imports}: names imported but absent from all \texttt{ast.Name}/\texttt{ast.Attribute} uses, normalised per 100 generated \texttt{.py} files for codebase-size comparability; MG P5 excluded (no Python code generated).\\
+$\S$~\as\space decision rationale is captured in persistent agent logs (100\% coverage) and UML class diagrams are generated as artefacts. MetaGPT produces code-level docstrings only; no decision rationale records and no UML output.\\
+$\ast$~Static-analysability \emph{indicators} correlated with maintainability; maintainability itself remains deferred (G4: longitudinal design required).\\
+$\#$~Token tracking unavailable for MetaGPT P5--P6 (model not in cost registry); value covers P1--P4 only.
+\end{minipage}
+\end{table*}

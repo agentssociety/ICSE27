@@ -1,0 +1,95 @@
+{
+  "id": "REQ-MEM-01",
+  "title": "Group Post Feed Filter",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall filter the group post feed to display only posts from groups the user belongs to.",
+  "rationale": "To ensure that users see relevant content and are not exposed to unrelated posts, improving their experience and engagement within the system.",
+  "business_value": "Enhances user satisfaction by providing a more personalized and focused view of content, leading to higher retention rates and increased user interaction with the platform.",
+  "source": {
+    "type": "User Story",
+    "id": 167,
+    "description": "As a group member I need to see a feed of posts only from the groups I belong to so that I can stay updated with content from my groups without unrelated posts."
+  },
+  "stakeholders": [
+    "Product Owner",
+    "Engineering Team",
+    "UX/UI Designer"
+  ],
+  "acceptance_criteria": [
+    "I see only posts from the groups I belong to",
+    "I do not see posts from groups I am not a member of"
+  ],
+  "preconditions": [
+    "I am a group member logged into the system",
+    "I belong to multiple groups"
+  ],
+  "postconditions": [],
+  "functional_constraints": [
+    "Posts are associated with specific groups",
+    "Feed is filtered based on user's group membership"
+  ],
+  "security_requirements": [
+    "User authentication must be in place",
+    "Access control to posts based on group membership"
+  ],
+  "non_functional_requirements": {
+    "performance": "The feed should load within 2 seconds under normal conditions",
+    "availability": "99.9% uptime for the system",
+    "scalability": "The system must support up to 10,000 active users and groups",
+    "usability": "Error messages should be clear and actionable"
+  },
+  "edge_cases": [
+    "What happens if a user joins a new group after viewing the feed?",
+    "How does the system handle large groups with a high volume of posts?"
+  ],
+  "dependencies": [
+    "User authentication system",
+    "Group management system"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Group API",
+      "description": "The requirement interacts with this API to retrieve the list of groups a user belongs to."
+    },
+    {
+      "type": "Database",
+      "name": "Post Database",
+      "description": "The requirement retrieves posts from this database, filtering them based on group membership."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-MEM-01",
+      "description": "User sees only posts from groups they belong to after joining a new group.",
+      "expected_result": "The feed updates to include posts from the newly joined group."
+    },
+    {
+      "id": "TC-MEM-02",
+      "description": "System handles large groups with 1,000 posts without performance degradation.",
+      "expected_result": "The feed loads within 2 seconds."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T11:56:45.783987",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-CONTENT-PUB-01",
+      "REQ-REG-01",
+      "REQ-GROUP-01",
+      "REQ-GROUP-01"
+    ],
+    "design_components": [
+      "Group",
+      "Post",
+      "GroupMembership"
+    ],
+    "test_artifacts": []
+  }
+}

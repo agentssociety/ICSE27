@@ -1,0 +1,116 @@
+{
+  "id": "REQ-EXAM-01",
+  "title": "Single Question Per Screen Exam Interface",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall present exams one question at a time with a game-like interface, live timer, progress bar, and animated nugget counter.",
+  "rationale": "To enhance student engagement, track progress, and provide motivation throughout the exam experience.",
+  "business_value": "Improves exam completion rates by keeping students engaged and motivated.",
+  "source": {
+    "type": "User Story",
+    "id": 111,
+    "description": "As a student I need to have exams delivered one question at a time with a game-like interface, live timer, progress bar, and animated nugget counter so that I can stay engaged, track my progress, and feel motivated throughout the exam."
+  },
+  "stakeholders": [
+    "Student",
+    "Instructor",
+    "IT Team"
+  ],
+  "acceptance_criteria": [
+    "I see one question at a time with a game-like interface, a live timer, a progress bar, and an animated nugget counter",
+    "The next question appears automatically and the progress bar updates when I answer and submit",
+    "The current answer is submitted and the exam ends when the timer reaches zero",
+    "The nugget counter plays an animation when it updates"
+  ],
+  "preconditions": [
+    "I am taking an exam"
+  ],
+  "postconditions": [
+    "One question at a time with game-like interface, live timer, progress bar, and animated nugget counter is visible",
+    "Progress bar accurately reflects completion percentage or question count",
+    "Current answer is submitted automatically when I submit",
+    "Exam ends when the timer reaches zero",
+    "Nugget counter animation plays upon earning a nugget"
+  ],
+  "functional_constraints": [
+    "Questions are presented in a single-question-per-screen format",
+    "Game-like interface includes visual elements and animations",
+    "Live timer counts down or up as appropriate",
+    "Progress bar shows completion percentage or question count",
+    "Animated nugget counter rewards correct answers or milestones"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": {},
+    "availability": {},
+    "scalability": {},
+    "usability": {}
+  },
+  "edge_cases": [
+    "What happens when a student skips a question without answering?",
+    "How does the system handle network interruptions during an exam?",
+    "What if a student tries to manipulate the timer or progress bar?"
+  ],
+  "dependencies": [
+    "A reliable live timer service",
+    "Progress tracking mechanism",
+    "Nugget counter animation system"
+  ],
+  "interfaces": [
+    {
+      "type": "UI",
+      "name": "Exam Interface",
+      "description": "The user interface that displays the exam questions, game-like elements, live timer, progress bar, and nugget counter."
+    },
+    {
+      "type": "API",
+      "name": "Question Service API",
+      "description": "An API that provides the next question to be displayed during the exam."
+    },
+    {
+      "type": "Database",
+      "name": "Progress Tracking Database",
+      "description": "A database that stores the student's progress and nugget counts throughout the exam."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-EXAM-01",
+      "description": "Student starts an exam.",
+      "expected_result": "The exam begins with the first question displayed on the screen, along with a game-like interface, live timer, progress bar, and animated nugget counter."
+    },
+    {
+      "id": "TC-EXAM-02",
+      "description": "Student answers and submits a question.",
+      "expected_result": "The next question appears automatically, the progress bar updates to reflect the current progress, and no further questions appear until all are answered."
+    },
+    {
+      "id": "TC-EXAM-03",
+      "description": "Timer reaches zero during an exam.",
+      "expected_result": "The current answer is submitted, the exam ends, and the final results are displayed to the student."
+    },
+    {
+      "id": "TC-EXAM-04",
+      "description": "Student earns a nugget.",
+      "expected_result": "The nugget counter updates, and an animated celebration plays to motivate the student."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-29T14:28:18.334297",
+  "last_updated": "2026-06-29T15:12:27.637727",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "ExamSession",
+      "Exam",
+      "Question",
+      "Student",
+      "NuggetWallet"
+    ],
+    "test_artifacts": []
+  }
+}

@@ -1,0 +1,107 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #FFFFFF
+skinparam interfaceBackgroundColor #E6F0FA
+skinparam enumBackgroundColor #FFF3E0
+
+package "Domain Model" {
+  class User {
+    + loggedIn: boolean
+    + role: Role
+  + hasPermission(permission: Permission.WRITE) : bool
+  }
+  class Post {
+    + textContent: String
+    + images: List<Image> [0..*]
+    + owner: User
+    + state: PostState
+    + accessibleSet: Set<User>
+  + validateContent(textContent: String, images: List)
+  + createPost(textContent, imageMetadata, owner)
+  + updateAccessibleSet(users: List<User>)
+  }
+  class Image {
+    + fileData: byte[]
+    + fileSize: long
+    + encrypted: boolean
+  + validateFileSize(sizes: List<long>) : bool
+  }
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+  enum Role {
+    CONTENT_CREATORS
+    COMMUNITY_MANAGERS
+    USER_EXPERIENCE_TEAM
+  }
+  enum PostState {
+    PRE1
+    POST1
+    POST2
+  }
+}
+
+package "DTOs" {
+  class CreatePostRequest <<dto>> {
+    + textContent: String
+    + images: List<byte[]> [0..*]
+  }
+  class CreatePostResponse <<dto>> {
+    + success: boolean
+    + postId: String
+  }
+}
+
+package "Controllers" {
+  interface PostCreationAPI {
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface ContentDatabase {
+  + save(post: Post)
+  }
+  interface ImageStorageService {
+  }
+}
+
+package "Exceptions" {
+  class PostCreationException <<exception>> {
+    + message: String
+  }
+  class AuthenticationException <<exception>> {
+    + message: String
+  }
+  class ValidationException <<exception>> {
+    + message: String
+    + errors: List<String>
+  }
+}
+
+' Relationships
+User "1" -- "*" Post : creates/owns >
+Post "1" *-- "0..*" Image
+Post "*" -- "*" User : accessibleSet
+
+PostCreationAPI ..> CreatePostRequest : creates
+PostCreationAPI ..> CreatePostResponse : creates
+
+PostCreationAPI ..> AuthenticationException : raises
+PostCreationAPI ..> ValidationException : raises
+PostCreationAPI ..> PostCreationException : raises
+
+PostCreationAPI .u.> ContentDatabase : uses
+PostCreationAPI .u.> ImageStorageService : uses
+PostCreationAPI ..> User : authenticates
+
+' Invariants as notes
+note top of User : Must be logged in to create post
+note right of Post : At least textContent or one Image required
+note top of Image : Stored encrypted\nFile size not exceeding limit
+note bottom of PostCreationAPI : Authentication required\nWrite permission required\nAt least one interface encrypted
+
+@enduml

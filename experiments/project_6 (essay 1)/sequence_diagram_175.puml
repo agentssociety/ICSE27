@@ -1,0 +1,259 @@
+@startuml
+skinparam style strictuml
+skinparam backgroundColor white
+skinparam sequenceMessageAlign center
+
+' Layer boxes
+box "Controller" #e0f0ff
+  participant "UserProfileAPI" as API
+end box
+
+box "Application" #e0ffe0
+  participant "BlockService" as Service
+end box
+
+box "Domain" #fffae0
+  participant "User" as BlockerUser
+  participant "User" as TargetUser
+  participant "Post" as PostObj
+  participant "Message" as MessageObj
+  participant "BlockRecord" as BlockRec
+end box
+
+box "Infrastructure" #f0e0f0
+  participant "UserDatabase" as UserDB
+  participant "BlockDatabase" as BlockDB
+  participant "PostsDatabase" as PostDB
+  participant "MessagesDatabase" as MsgDB
+  participant "NotificationSystem" as Notif
+end box
+
+actor "User" as Actor
+
+' ===== BLOCK FLOWS =====
+
+== Flow: Block User (Success) ==
+
+Actor -> API : HTTP POST /v1/users/{blockerId}/block?targetId={targetId}
+activate API
+
+API -> Service : blockUser(blockerId: UserId, targetId: UserId): void
+activate Service
+
+Service -> UserDB : findById(blockerId): User
+activate UserDB
+Service <-- UserDB : blockerUser
+deactivate UserDB
+
+Service -> BlockerUser : checkPermission(Permission.Admin): boolean
+note right: Permission set on User
+
+alt permission granted
+
+  Service -> UserDB : findById(targetId): User
+  activate UserDB
+  Service <-- UserDB : targetUser
+  deactivate UserDB
+
+  alt target exists
+
+    Service -> BlockerUser : validateNotSelf(targetUser): void
+    note left: throws if same user
+
+    alt not self
+
+      Service -> BlockDB : createBlockRecord(blockerId, targetId): BlockRecord
+      activate BlockDB
+      Service <-- BlockDB : newRecord
+      deactivate BlockDB
+
+      Service -> PostDB : updateAccessible(blockerId, exclude=true): void
+      activate PostDB
+      deactivate PostDB
+
+      Service -> MsgDB : updateAccessible(blockerId, exclude=true): void
+      activate MsgDB
+      deactivate MsgDB
+
+      Service -> Notif : notifyBlock(targetUserId): void
+      activate Notif
+      deactivate Notif
+
+      note right of Service: State transition: Pre1 -> Post1
+
+      Service -> API : return success (state = Post1)
+      API -> Actor : 200 OK (state = Post1)
+
+    else self-block
+
+      Service -> API : return error (state = Post2)
+      API -> Actor : 400 Bad Request (state = Post2)
+
+    end
+
+  else target not found
+
+    Service -> API : return error (state = Post2)
+    API -> Actor : 404 Not Found (state = Post2)
+
+  end
+
+else permission denied
+
+  Service -> API : return error (state = Post2)
+  API -> Actor : 403 Forbidden (state = Post2)
+
+end
+
+deactivate Service
+deactivate API
+
+== Flow: Block User - Target Not Found (Error) ==
+
+Actor -> API : HTTP POST /v1/users/{blockerId}/block?targetId={targetId}
+activate API
+API -> Service : blockUser(blockerId, targetId)
+activate Service
+Service -> UserDB : findById(blockerId): User
+activate UserDB
+Service <-- UserDB : blockerUser
+deactivate UserDB
+
+Service -> BlockerUser : checkPermission(Permission.Admin)
+alt permission denied
+  Service -> API : error 403
+  deactivate Service
+  API -> Actor : 403 Forbidden (state = Post2)
+  deactivate API
+else permission granted
+  Service -> UserDB : findById(targetId): User
+  activate UserDB
+  Service <-- UserDB : null
+  deactivate UserDB
+  Service -> API : error 404
+  deactivate Service
+  API -> Actor : 404 Not Found (state = Post2)
+  deactivate API
+end
+
+== Flow: Block User - Self Block (Error) ==
+
+Actor -> API : HTTP POST /v1/users/{selfId}/block?targetId={selfId}
+activate API
+API -> Service : blockUser(selfId, selfId)
+activate Service
+Service -> UserDB : findById(selfId): User
+activate UserDB
+Service <-- UserDB : selfUser
+deactivate UserDB
+
+Service -> BlockerUser : checkPermission(Permission.Admin)
+alt permission denied
+  Service -> API : error 403
+  deactivate Service
+  API -> Actor : 403 Forbidden (state = Post2)
+  deactivate API
+else permission granted
+  Service -> UserDB : findById(selfId): User
+  activate UserDB
+  Service <-- UserDB : selfUser (same)
+  deactivate UserDB
+  Service -> BlockerUser : validateNotSelf(targetUser) -> throws exception
+  Service -> API : error (state = Post2)
+  deactivate Service
+  API -> Actor : 400 Bad Request (state = Post2)
+  deactivate API
+end
+
+' ===== UNBLOCK FLOWS =====
+
+== Flow: Unblock User (Success) ==
+
+Actor -> API : HTTP DELETE /v1/users/{blockerId}/block?targetId={targetId}
+activate API
+
+API -> Service : unblockUser(blockerId: UserId, targetId: UserId): void
+activate Service
+
+Service -> UserDB : findById(blockerId): User
+activate UserDB
+Service <-- UserDB : blockerUser
+deactivate UserDB
+
+Service -> BlockerUser : checkPermission(Permission.Admin)
+alt permission granted
+
+  Service -> BlockDB : findBlockRecord(blockerId, targetId): BlockRecord
+  activate BlockDB
+  Service <-- BlockDB : record
+  deactivate BlockDB
+
+  alt record exists
+
+    Service -> BlockDB : deleteBlockRecord(record): void
+    activate BlockDB
+    deactivate BlockDB
+
+    Service -> PostDB : updateAccessible(blockerId, include=true): void
+    activate PostDB
+    deactivate PostDB
+
+    Service -> MsgDB : updateAccessible(blockerId, include=true): void
+    activate MsgDB
+    deactivate MsgDB
+
+    Service -> Notif : notifyUnblock(targetUserId): void
+    activate Notif
+    deactivate Notif
+
+    note right of Service: State transition: Post1 -> Pre1
+
+    Service -> API : return success (state = Pre1)
+    API -> Actor : 200 OK (state = Pre1)
+
+  else record not found
+
+    Service -> API : return error (state = Post2)
+    API -> Actor : 404 Not Found (state = Post2)
+
+  end
+
+else permission denied
+
+  Service -> API : return error (state = Post2)
+  API -> Actor : 403 Forbidden (state = Post2)
+
+end
+
+deactivate Service
+deactivate API
+
+== Flow: Unblock User - Not Blocked / Record Missing (Error) ==
+
+Actor -> API : HTTP DELETE /v1/users/{blockerId}/block?targetId={targetId}
+activate API
+API -> Service : unblockUser(blockerId, targetId)
+activate Service
+Service -> UserDB : findById(blockerId): User
+activate UserDB
+Service <-- UserDB : blockerUser
+deactivate UserDB
+
+Service -> BlockerUser : checkPermission(Permission.Admin)
+alt permission denied
+  Service -> API : error 403
+  deactivate Service
+  API -> Actor : 403 Forbidden (state = Post2)
+  deactivate API
+else permission granted
+  Service -> BlockDB : findBlockRecord(blockerId, targetId)
+  activate BlockDB
+  Service <-- BlockDB : null
+  deactivate BlockDB
+  Service -> API : error 404
+  deactivate Service
+  API -> Actor : 404 Not Found (state = Post2)
+  deactivate API
+end
+
+@enduml

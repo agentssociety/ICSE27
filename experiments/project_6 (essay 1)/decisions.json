@@ -1,0 +1,17 @@
+{
+  "decisions": [
+    {
+      "task_id": 157,
+      "decision": "Used FastAPI dependency injection pattern with Container class for service wiring",
+      "rationale": "consistent with scaffold pattern from fill_deterministic_scaffold. Hashing passwords with SHA-256 in service layer — rationale: simple local development; production should use bcrypt.",
+      "tags": [
+        "fastapi",
+        "dependency",
+        "injection",
+        "pattern",
+        "container"
+      ],
+      "timestamp": "2026-06-30T18:14:51.385806+00:00"
+    }
+  ]
+}

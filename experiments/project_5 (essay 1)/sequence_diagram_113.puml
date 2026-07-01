@@ -1,0 +1,289 @@
+@startuml
+title Exam Analysis System - Sequence Diagrams
+
+box "Controller Layer" #LightBlue
+    participant "ExamAnalysisController" as EAC
+    participant "StudentDashboardController" as SDC
+end box
+
+box "Application Layer" #LightGreen
+    participant "ExamAnalysisService" as EAS
+    participant "StudentDashboardService" as SDS
+    participant "PermissionService" as PS
+end box
+
+box "Domain Layer" #LightYellow
+    participant "REQ_EDU_01" as REQ
+    participant "Actor" as ACTOR
+    participant "Resource" as RES
+    participant "State" as STATE
+    participant "Permission" as PERM
+end box
+
+box "Infrastructure Layer" #LightCoral
+    participant "Database" as DB
+    participant "AuthenticationService" as AUTH
+    participant "EncryptionService" as ENC
+end box
+
+box "External Systems" #LightGray
+    participant "ExamAnalysisAPI" as EAA
+    participant "StudentDashboard" as SD
+end box
+
+== Flow 1: Student Submits Exam ==
+
+SDC -> AUTH : authenticateUser(credentials) : User
+activate AUTH
+AUTH --> SDC : userIdentity
+deactivate AUTH
+
+SDC -> ENC : encryptRequest(examData) : EncryptedData
+activate ENC
+ENC --> SDC : encryptedExamData
+deactivate ENC
+
+SDC -> PS : checkPermission(user: Actor, permission: Permission.Write) : Boolean
+activate PS
+PS -> ACTOR : mayPerform.contains(permission) : Boolean
+ACTOR --> PS : true
+PS --> SDC : authorized
+deactivate PS
+
+SDC -> SDS : submitExam(student: Students, examData: EncryptedData) : SubmissionResult
+activate SDS
+
+SDS -> REQ : validatePreCondition(state: State.Pre1) : Boolean
+activate REQ
+REQ -> STATE : represents(examSubmitted) : Boolean
+STATE --> REQ : true
+REQ --> SDS : valid
+deactivate REQ
+
+SDS -> DB : saveExamSubmission(studentId, examData) [encrypted at rest]
+activate DB
+DB --> SDS : submissionId
+deactivate DB
+
+SDS -> REQ : transitionState(current: Pre1, target: Post1) : State
+activate REQ
+REQ -> STATE : setState(Post1)
+STATE --> REQ : Post1
+REQ --> SDS : stateChanged
+deactivate REQ
+
+SDS --> SDC : submissionSuccess(submissionId)
+deactivate SDS
+
+SDC -> ENC : encryptResponse(competencyBreakdown) : EncryptedData
+activate ENC
+ENC --> SDC : encryptedResponse
+deactivate ENC
+
+SDC --> SD : HTTP 201 Created [TLS]
+note right: Student can now view competency breakdown
+
+alt Error: Authentication Failed
+    SDC --> SD : HTTP 401 Unauthorized
+    note right: Clear error message: "Authentication required"
+end
+
+alt Error: Insufficient Permission
+    SDC --> SD : HTTP 403 Forbidden
+    note right: Clear error message: "Write permission required"
+end
+
+alt Error: Invalid Precondition
+    SDS --> SDC : invalidState
+    SDC --> SD : HTTP 409 Conflict
+    note right: Clear error message: "Exam must be submitted first"
+end
+
+alt Error: Database Failure
+    SDS --> SDC : databaseError
+    SDC --> SD : HTTP 500 Internal Server Error
+    note right: Clear error message: "System error, please try again"
+end
+
+== Flow 2: Instructor Processes Results and Flags Weak Competencies ==
+
+EAA -> AUTH : authenticateRequest(apiKey) : ServiceAccount
+activate AUTH
+AUTH --> EAA : authenticated
+deactivate AUTH
+
+EAA -> ENC : decryptRequest(encryptedResults) : ExamResults
+activate ENC
+ENC --> EAA : examResults
+deactivate ENC
+
+EAA -> PS : checkPermission(instructor: Instructor, permission: Permission.Execute) : Boolean
+activate PS
+PS -> ACTOR : mayPerform.contains(permission) : Boolean
+ACTOR --> PS : true
+PS --> EAA : authorized
+deactivate PS
+
+EAA -> EAS : processExamResults(examResults: ExamResults) : AnalysisResult
+activate EAS
+
+EAS -> REQ : validatePreCondition(state: State.Pre1) : Boolean
+activate REQ
+REQ -> STATE : represents(examSubmitted) : Boolean
+STATE --> REQ : true
+REQ --> EAS : valid
+deactivate REQ
+
+EAS -> DB : retrieveExamData(examId) [encrypted at rest]
+activate DB
+DB --> EAS : examData
+deactivate DB
+
+EAS -> EAS : analyzeCompetencies(examData) : CompetencyAnalysis
+note right: Analysis must complete within 1 minute
+
+alt Weak Competencies Found
+    EAS -> REQ : transitionState(current: Pre1, target: Post2) : State
+    activate REQ
+    REQ -> STATE : setState(Post2)
+    STATE --> REQ : Post2
+    REQ --> EAS : stateChanged
+    deactivate REQ
+    
+    EAS -> DB : saveWeakCompetencyFlags(examId, flags) [encrypted at rest]
+    activate DB
+    DB --> EAS : saved
+    deactivate DB
+    
+    EAS --> EAA : analysisComplete(weakFlags)
+else No Weak Competencies
+    EAS -> REQ : transitionState(current: Pre1, target: Post2) : State
+    activate REQ
+    REQ -> STATE : setState(Post2)
+    STATE --> REQ : Post2
+    REQ --> EAS : stateChanged
+    deactivate REQ
+    
+    EAS --> EAA : analysisComplete(noWeakFlags)
+    note right: Post2 reached, no study tips will be provided
+end
+
+EAA --> EAA : HTTP 200 OK [TLS]
+deactivate EAS
+
+alt Error: Authentication Failed
+    EAA --> EAA : HTTP 401 Unauthorized
+end
+
+alt Error: Insufficient Permission
+    EAA --> EAA : HTTP 403 Forbidden
+    note right: "Execute permission required"
+end
+
+alt Error: Analysis Timeout
+    EAS --> EAA : timeoutError
+    EAA --> EAA : HTTP 504 Gateway Timeout
+    note right: "Analysis exceeded 1 minute limit"
+end
+
+== Flow 3: Student Views Competency Breakdown with Study Tips ==
+
+SD -> SDC : GET /dashboard/competency [TLS]
+activate SDC
+
+SDC -> AUTH : authenticateUser(sessionToken) : User
+activate AUTH
+AUTH --> SDC : studentIdentity
+deactivate AUTH
+
+SDC -> PS : checkPermission(student: Students, permission: Permission.Read) : Boolean
+activate PS
+PS -> ACTOR : mayPerform.contains(permission) : Boolean
+ACTOR --> PS : true
+PS -> RES : accessible.contains(student) : Boolean
+RES --> PS : true
+PS --> SDC : authorized
+deactivate PS
+
+SDC -> SDS : getCompetencyBreakdown(studentId: String) : DashboardData
+activate SDS
+
+SDS -> REQ : validatePreCondition(state: State.Pre1) : Boolean
+activate REQ
+REQ -> STATE : represents(examSubmitted) : Boolean
+STATE --> REQ : true
+REQ --> SDS : valid
+deactivate REQ
+
+SDS -> DB : retrieveCompetencyData(studentId) [encrypted at rest]
+activate DB
+DB --> SDS : competencyData
+deactivate DB
+
+alt Weak Competencies Exist
+    SDS -> DB : retrieveStudyTips(weakFlags) [encrypted at rest]
+    activate DB
+    DB --> SDS : studyTips
+    deactivate DB
+    
+    SDS -> REQ : transitionState(current: Pre1, target: Post3) : State
+    activate REQ
+    REQ -> STATE : setState(Post3)
+    STATE --> REQ : Post3
+    REQ --> SDS : stateChanged
+    deactivate REQ
+    
+    SDS --> SDC : dashboardData(breakdown, weakFlags, studyTips)
+else No Weak Competencies
+    SDS --> SDC : dashboardData(breakdown, noWeakFlags)
+    note right: Post2 state maintained, no study tips
+end
+
+deactivate SDS
+
+SDC -> ENC : encryptResponse(dashboardData) : EncryptedData
+activate ENC
+ENC --> SDC : encryptedResponse
+deactivate ENC
+
+SDC --> SD : HTTP 200 OK [TLS]
+note right: Response time must not exceed 2 seconds
+
+alt Error: Authentication Failed
+    SDC --> SD : HTTP 401 Unauthorized
+end
+
+alt Error: Insufficient Permission
+    SDC --> SD : HTTP 403 Forbidden
+    note right: "Read permission required"
+end
+
+alt Error: Resource Not Found
+    SDS --> SDC : notFound
+    SDC --> SD : HTTP 404 Not Found
+    note right: "No exam data found for this student"
+end
+
+alt Error: Performance Degradation
+    SDS --> SDC : timeout
+    SDC --> SD : HTTP 503 Service Unavailable
+    note right: "System under high load, please retry"
+end
+
+== Flow 4: Concurrent Exam Submissions (Scalability) ==
+
+group 1000 concurrent submissions
+    SDC -> SDS : submitExam(studentN, examDataN)
+    activate SDS
+    
+    SDS -> DB : batchSaveExamSubmissions(submissions) [encrypted at rest]
+    activate DB
+    DB --> SDS : batchComplete
+    deactivate DB
+    
+    SDS --> SDC : submissionSuccess
+    deactivate SDS
+end
+note right: System must handle 1000 simultaneous submissions without degradation
+
+@enduml

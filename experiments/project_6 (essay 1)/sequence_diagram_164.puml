@@ -1,0 +1,169 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "FollowUnfollowController" as Controller
+end box
+
+box "Application Layer" #LightGreen
+  participant "FollowUnfollowService" as Service
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Actor" as Actor
+  participant "UserProfile" as UserProfile
+  participant "Permission" as Permission
+  participant "State" as State
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "UserProfileDatabase" as Database
+end box
+
+box "External" #LightGray
+  participant "Follow_Unfollow_API" as API
+end box
+
+== Follow Flow - Happy Path ==
+
+Actor -> Controller : POST /api/follow [TLS]
+note right: Authenticated request
+Controller -> Service : handleFollowRequest(initiatorId: String, targetId: String) : void
+
+Service -> Actor : checkWritePermission(initiatorId: String) : boolean
+alt Permission check fails
+  Service --> Controller : return 403 Forbidden
+  Controller --> Actor : HTTP 403 - Insufficient permissions
+else Permission check passes
+  Service -> UserProfile : isSelfFollow(initiatorId: String, targetId: String) : boolean
+  alt Self-follow detected
+    Service --> Controller : return 400 Bad Request
+    Controller --> Actor : HTTP 400 - Cannot follow yourself
+  else Not self-follow
+    Service -> Database : getProfile(targetId: String) : UserProfile [TLS]
+    alt Profile not found or inaccessible
+      Service --> Controller : return 404 Not Found
+      Controller --> Actor : HTTP 404 - Profile not available
+    else Profile found and accessible
+      Service -> UserProfile : addFollower(initiatorId: String) : void
+      note right: State transition: Pre1 -> Post1
+      UserProfile -> UserProfile : incrementFollowerCount() : void
+      UserProfile -> State : transitionTo(Post1) : void
+      
+      Service -> Database : saveProfile(profile: UserProfile) : void [TLS, encrypted at rest]
+      alt Database save fails
+        Service --> Controller : return 500 Internal Server Error
+        Controller --> Actor : HTTP 500 - Update failed, please retry
+      else Database save succeeds
+        Service --> Controller : return 200 OK
+        Controller --> Actor : HTTP 200 - Follow successful
+        note right: UI updates: button shows "Unfollow", count +1
+      end
+    end
+  end
+end
+
+== Follow Flow - Error Paths ==
+
+Actor -> Controller : POST /api/follow [TLS]
+note right: Target profile private/deleted
+Controller -> Service : handleFollowRequest(initiatorId: String, targetId: String) : void
+
+Service -> Actor : checkWritePermission(initiatorId: String) : boolean
+alt Permission check passes
+  Service -> UserProfile : isSelfFollow(initiatorId: String, targetId: String) : boolean
+  alt Not self-follow
+    Service -> Database : getProfile(targetId: String) : UserProfile [TLS]
+    alt Profile private/deleted - initiator not in accessible set
+      Service --> Controller : return 204 No Content
+      note right: Operation has no effect, post = pre
+      Controller --> Actor : HTTP 204 - No change
+    end
+  end
+end
+
+== Unfollow Flow - Happy Path ==
+
+Actor -> Controller : POST /api/unfollow [TLS]
+note right: Authenticated request, currently following
+Controller -> Service : handleUnfollowRequest(initiatorId: String, targetId: String) : void
+
+Service -> Actor : checkWritePermission(initiatorId: String) : boolean
+alt Permission check fails
+  Service --> Controller : return 403 Forbidden
+  Controller --> Actor : HTTP 403 - Insufficient permissions
+else Permission check passes
+  Service -> UserProfile : isSelfFollow(initiatorId: String, targetId: String) : boolean
+  alt Self-unfollow detected
+    Service --> Controller : return 400 Bad Request
+    Controller --> Actor : HTTP 400 - Cannot unfollow yourself
+  else Not self-unfollow
+    Service -> Database : getProfile(targetId: String) : UserProfile [TLS]
+    alt Profile not found or inaccessible
+      Service --> Controller : return 404 Not Found
+      Controller --> Actor : HTTP 404 - Profile not available
+    else Profile found and accessible
+      Service -> UserProfile : removeFollower(initiatorId: String) : void
+      note right: State transition: Pre2 -> Post2
+      UserProfile -> UserProfile : decrementFollowerCount() : void
+      UserProfile -> State : transitionTo(Post2) : void
+      
+      Service -> Database : saveProfile(profile: UserProfile) : void [TLS, encrypted at rest]
+      alt Database save fails
+        Service --> Controller : return 500 Internal Server Error
+        Controller --> Actor : HTTP 500 - Update failed, please retry
+      else Database save succeeds
+        Service --> Controller : return 200 OK
+        Controller --> Actor : HTTP 200 - Unfollow successful
+        note right: UI updates: button shows "Follow", count -1
+      end
+    end
+  end
+end
+
+== Unfollow Flow - Error Paths ==
+
+Actor -> Controller : POST /api/unfollow [TLS]
+note right: Target profile private/deleted
+Controller -> Service : handleUnfollowRequest(initiatorId: String, targetId: String) : void
+
+Service -> Actor : checkWritePermission(initiatorId: String) : boolean
+alt Permission check passes
+  Service -> UserProfile : isSelfFollow(initiatorId: String, targetId: String) : boolean
+  alt Not self-unfollow
+    Service -> Database : getProfile(targetId: String) : UserProfile [TLS]
+    alt Profile private/deleted - initiator not in accessible set
+      Service --> Controller : return 204 No Content
+      note right: Operation has no effect, post = pre
+      Controller --> Actor : HTTP 204 - No change
+    end
+  end
+end
+
+== Network Latency / Retry Handling ==
+
+Actor -> Controller : POST /api/follow [TLS]
+note right: Network latency scenario
+Controller -> Service : handleFollowRequest(initiatorId: String, targetId: String) : void
+
+Service -> Actor : checkWritePermission(initiatorId: String) : boolean
+alt Permission check passes
+  Service -> UserProfile : isSelfFollow(initiatorId: String, targetId: String) : boolean
+  alt Not self-follow
+    Service -> Database : getProfile(targetId: String) : UserProfile [TLS]
+    alt Profile found
+      Service -> UserProfile : addFollower(initiatorId: String) : void
+      UserProfile -> UserProfile : incrementFollowerCount() : void
+      UserProfile -> State : transitionTo(Post1) : void
+      
+      Service -> Database : saveProfile(profile: UserProfile) : void [TLS, encrypted at rest]
+      alt Database timeout
+        Service --> Controller : return 408 Request Timeout
+        Controller --> Actor : HTTP 408 - Request timed out, please retry
+        note right: Encryption ensures data integrity on retry
+      end
+    end
+  end
+end
+
+@enduml

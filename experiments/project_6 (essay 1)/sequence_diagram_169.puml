@@ -1,0 +1,217 @@
+@startuml
+title Notification Flows - Like and Comment
+
+skinparam participantPadding 10
+skinparam boxPadding 10
+
+box "Controller" #LightBlue
+  participant "likeController" as LikeController
+  participant "commentController" as CommentController
+end box
+
+box "Application" #LightGreen
+  participant "notificationService" as NotificationApp
+end box
+
+box "Domain" #LightYellow
+  participant "User" as User
+  participant "Post" as Post
+  participant "Like" as Like
+  participant "Comment" as Comment
+  participant "Notification" as Notification
+  participant "NotificationPreference" as Prefs
+end box
+
+box "Infrastructure" #LightCoral
+  participant "authenticationSystem" as AuthSys
+  participant "userPreferencesDatabase" as PrefsDB
+end box
+
+box "External" #LightGray
+  participant "notificationServiceAPI" as NotifAPI
+end box
+
+== Notify on Like ==
+
+-> LikeController : POST /likes {userId, postId} [TLS]
+activate LikeController
+
+LikeController -> AuthSys : authenticateUser(userId)
+activate AuthSys
+AuthSys --> LikeController : User (authenticated)
+deactivate AuthSys
+
+alt User A not authenticated
+  LikeController --> Client : 401 Unauthorized
+  deactivate LikeController
+  note right: Error: authentication required
+end
+
+LikeController -> NotificationApp : processLike(userId, postId)
+activate NotificationApp
+
+NotificationApp -> Post : findBy(postId)
+activate Post
+Post --> NotificationApp : post (ownerId)
+deactivate Post
+
+alt Post not published or not accessible
+  NotificationApp --> LikeController : 404 Not Found
+  deactivate NotificationApp
+  deactivate LikeController
+  note right: Error: post not available
+end
+
+NotificationApp -> User : findById(ownerId) // PostOwner
+activate User
+User --> NotificationApp : owner (email, notificationEnabled, loggedIn)
+deactivate User
+
+NotificationApp -> Like : create(userId, postId)
+activate Like
+Like --> NotificationApp : like (state=created)
+deactivate Like
+
+NotificationApp -> PrefsDB : getPreference(ownerId, postId) [encrypted at rest]
+activate PrefsDB
+PrefsDB --> NotificationApp : preference (enabled)
+deactivate PrefsDB
+
+alt preference exists and enabled == false
+  NotificationApp -> Notification : create(type=LIKE, recipient=owner, channel=null, state=DISABLED)
+  activate Notification
+  Notification --> NotificationApp : notification (state=DISABLED)
+  deactivate Notification
+  note right: No notification sent per user preference
+  NotificationApp --> LikeController : 201 Created (like recorded)
+  deactivate NotificationApp
+  deactivate LikeController
+else preference enabled or no preference (default enabled)
+  alt owner not logged in
+    NotificationApp -> Notification : create(type=LIKE, recipient=owner, channel=QUEUED, state=PENDING)
+    activate Notification
+    Notification --> NotificationApp : notification (state=PENDING, queued for later)
+    deactivate Notification
+    note right: Delivery queued
+  else owner logged in (multiple devices scenario)
+    NotificationApp -> AuthSys : getSessions(ownerId)
+    activate AuthSys
+    AuthSys --> NotificationApp : authenticated channels (e.g., email, push, in-app)
+    deactivate AuthSys
+
+    NotificationApp -> Notification : create(type=LIKE, recipient=owner, channel=ALL_ACTIVE, state=SENDING)
+    activate Notification
+    Notification --> NotificationApp : notification (state=SENDING)
+    deactivate Notification
+
+    loop for each channel (email, push, in-app)
+      NotificationApp -> NotifAPI : sendNotification(channel, notification) [TLS]
+      activate NotifAPI
+      alt API success
+        NotifAPI --> NotificationApp : OK
+      else API unavailable
+        NotifAPI --> NotificationApp : failure
+        NotificationApp -> Notification : mark(channel, FAILED)
+        note right: Retry or log failure
+      end
+      deactivate NotifAPI
+    end
+
+    NotificationApp -> Notification : setState(SENT)
+  end
+  NotificationApp --> LikeController : 201 Created (like and notification handled)
+end
+
+deactivate NotificationApp
+deactivate LikeController
+
+== Notify on Comment ==
+
+-> CommentController : POST /comments {userId, postId, content} [TLS]
+activate CommentController
+
+CommentController -> AuthSys : authenticateUser(userId)
+activate AuthSys
+AuthSys --> CommentController : User (authenticated)
+deactivate AuthSys
+
+alt User A not authenticated
+  CommentController --> Client : 401 Unauthorized
+  deactivate CommentController
+end
+
+CommentController -> NotificationApp : processComment(userId, postId, content)
+activate NotificationApp
+
+NotificationApp -> Post : findBy(postId)
+activate Post
+Post --> NotificationApp : post (ownerId)
+deactivate Post
+
+alt Post not published or not accessible
+  NotificationApp --> CommentController : 404 Not Found
+  deactivate NotificationApp
+  deactivate CommentController
+end
+
+NotificationApp -> User : findById(ownerId) // PostOwner
+activate User
+User --> NotificationApp : owner (email, notificationEnabled, loggedIn)
+deactivate User
+
+NotificationApp -> Comment : create(userId, postId, content)
+activate Comment
+Comment --> NotificationApp : comment (state=created)
+deactivate Comment
+
+NotificationApp -> PrefsDB : getPreference(ownerId, postId) [encrypted at rest]
+activate PrefsDB
+PrefsDB --> NotificationApp : preference (enabled)
+deactivate PrefsDB
+
+alt preference exists and enabled == false
+  NotificationApp -> Notification : create(type=COMMENT, recipient=owner, channel=null, state=DISABLED)
+  activate Notification
+  Notification --> NotificationApp : notification (state=DISABLED)
+  deactivate Notification
+  NotificationApp --> CommentController : 201 Created (comment recorded)
+  deactivate NotificationApp
+  deactivate CommentController
+else preference enabled or no preference
+  alt owner not logged in
+    NotificationApp -> Notification : create(type=COMMENT, recipient=owner, channel=QUEUED, state=PENDING)
+    activate Notification
+    Notification --> NotificationApp : notification (state=PENDING)
+    deactivate Notification
+  else owner logged in
+    NotificationApp -> AuthSys : getSessions(ownerId)
+    activate AuthSys
+    AuthSys --> NotificationApp : channels
+    deactivate AuthSys
+
+    NotificationApp -> Notification : create(type=COMMENT, recipient=owner, channel=ALL_ACTIVE, state=SENDING)
+    activate Notification
+    Notification --> NotificationApp : notification (state=SENDING)
+    deactivate Notification
+
+    loop for each channel
+      NotificationApp -> NotifAPI : sendNotification(channel, notification) [TLS]
+      activate NotifAPI
+      alt API success
+        NotifAPI --> NotificationApp : OK
+      else API unavailable
+        NotifAPI --> NotificationApp : failure
+        NotificationApp -> Notification : mark(channel, FAILED)
+      end
+      deactivate NotifAPI
+    end
+
+    NotificationApp -> Notification : setState(SENT)
+  end
+  NotificationApp --> CommentController : 201 Created (comment and notification handled)
+end
+
+deactivate NotificationApp
+deactivate CommentController
+
+@enduml

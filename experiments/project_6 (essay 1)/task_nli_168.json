@@ -1,0 +1,37 @@
+{
+  "task_id": 168,
+  "confidence": 0.996,
+  "evidence": [
+    {
+      "claim": "Users can view their message history.",
+      "fact": "Users can view their own post history.",
+      "score": 0.9989,
+      "user_story_span": "Users can view their message history.",
+      "fact_span": "Users can view their own post history."
+    },
+    {
+      "claim": "Users can receive private messages from another user.",
+      "fact": "Notifications include friend requests.",
+      "score": 0.9969,
+      "user_story_span": "",
+      "fact_span": "Notifications include friend requests."
+    },
+    {
+      "claim": "Users can send private messages to another user.",
+      "fact": "Users can send friend requests.",
+      "score": 0.9959,
+      "user_story_span": "",
+      "fact_span": "Users can send friend requests."
+    },
+    {
+      "claim": "Users can compose private messages.",
+      "fact": "Users can send friend requests.",
+      "score": 0.9923,
+      "user_story_span": "",
+      "fact_span": "Users can send friend requests."
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

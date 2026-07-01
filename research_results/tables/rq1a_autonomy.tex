@@ -1,0 +1,23 @@
+\begin{table*}[t]
+\centering
+\caption{RQ1a: Autonomy Metrics per Project (mean $\pm$ std, $n=3$ seeds). SR~=~Self-Fix Rate (\%), Incidents detected and resolved by the orchestrating agent without human intervention. \textbf{Best SR} highlighted \colorbox[HTML]{D6EFD6}{green}, worst \colorbox[HTML]{FDDADA}{red}.}
+\label{tab:rq1a_autonomy}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+\multirow{2}{*}{\textbf{Project}} & \multicolumn{2}{c}{\textbf{Incidents}} & \multirow{2}{*}{\textbf{Steps}} & \multirow{2}{*}{\textbf{SR (\%)}} & \multirow{2}{*}{\textbf{Escalated}} & \multirow{2}{*}{\textbf{Wall-clock (min)}} \\
+\cmidrule(lr){2-3}
+ & Total & Fixed & & & & \\
+\midrule
+\rowcolor[HTML]{E8F4FF} Hospital Triage & $11 \pm 8$ & $8 \pm 6$ & $193 \pm 57$ & $\mathbf{73.5} \pm 29.5$ & $4 \pm 4$ & $123.7 \pm 28.3$ \\
+\rowcolor[HTML]{E8F5E8} Blood-Type Alert & $21 \pm 13$ & $17 \pm 11$ & $275 \pm 105$ & $\mathbf{75.5} \pm 10.4$ & $5 \pm 2$ & $343.1 \pm 282.3$ \\
+\rowcolor[HTML]{FEF7E0} Airport Runway & $33 \pm 11$ & $23 \pm 16$ & $230 \pm 79$ & $\mathbf{65.0} \pm 36.4$ & $10 \pm 9$ & $138.2 \pm 15.6$ \\
+\rowcolor[HTML]{F8EAF2} ATM Withdrawal & $18 \pm 13$ & $13 \pm 8$ & $341 \pm 132$ & $\mathbf{77.5} \pm 11.0$ & $5 \pm 5$ & $215.9 \pm 87.0$ \\
+\rowcolor[HTML]{EAF0FF} Competency Platform & $9 \pm 0$ & $6 \pm 0$ & $216 \pm 0$ & $\mathbf{66.7} \pm 0.0$ & $3 \pm 0$ & $278.4 \pm 0.0$ \\
+\rowcolor[HTML]{FFF5E0} Social Network & $18 \pm 0$ & $15 \pm 0$ & $273 \pm 0$ & $\mathbf{83.3} \pm 0.0$ & $3 \pm 0$ & $513.1 \pm 0.0$ \\
+\midrule
+\textit{Overall mean} & & & & $\mathbf{73.6}$ & & \\
+\bottomrule
+\end{tabular}
+\footnotesize Wall-clock time measured from first to last log timestamp per run. All values report sample std (ddof=1).
+\end{table*}

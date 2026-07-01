@@ -1,0 +1,244 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+    class Student {
+        - id: UUID
+        - name: String
+        - email: String
+        - isAuthenticated: boolean
+        {method} +authenticate(): void
+        {method} +hasCompletedAttempts(): boolean
+  + validateCredentials(token: String) : boolean
+  + ownsResource(studentId: String, resourceId: String) : boolean
+  + hasRole(role: Role.INSTRUCTOR) : boolean
+    }
+
+    class Attempt {
+        - id: UUID
+        - chronologicalOrder: Date
+        - questions: List<Question>
+        - completedAt: Date
+        {method} +getQuestions(): List<Question>
+        {method} +isCompleted(): boolean
+  + sortByDate(chronologicalOrder: Date)
+  + getQuestions() : List<Question>
+    }
+
+    class Question {
+        - id: UUID
+        - studentAnswer: String
+        - correctAnswer: String
+        - learningNugget: String
+        - questionText: String
+        {method} +isCorrect(): boolean
+        {method} +getLearningNugget(): String
+  + getStudentAnswer() : String
+  + getCorrectAnswer() : String
+  + getLearningNugget() : String
+    }
+
+    class Competency {
+        - id: UUID
+        - name: String
+        - trendData: List<ChartPoint>
+        - sufficientData: boolean
+        {method} +hasSufficientData(): boolean
+        {method} +getTrendData(): List<ChartPoint>
+  + generateTrends(data: List<ChartPoint>) : TrendData
+    }
+
+    class ChartPoint {
+        - date: Date
+        - value: double
+        - label: String
+  + calculateTrendPoints()
+    }
+
+    Student "1" -- "0..*" Attempt : has >
+    Attempt "1" -- "1..*" Question : contains >
+    Student "1" -- "0..*" Competency : tracks >
+}
+
+package "Application" {
+    class PastAttemptData <<dto>> {
+        - studentId: UUID
+        - attempts: List<Attempt>
+        - totalAttempts: int
+        - lastAttemptDate: Date
+  + verifyAccess(student: Student) : boolean
+    }
+
+    class DashboardData <<dto>> {
+        - studentId: UUID
+        - recentAttempts: List<Attempt>
+        - competencies: List<Competency>
+        - overallProgress: double
+  + createFromAttempts(attempts: List<Attempt>) : DashboardData
+  + verifyAccess(actor: Actor) : boolean
+    }
+
+    class TrendData <<dto>> {
+        - studentId: UUID
+        - competencyId: UUID
+        - chartPoints: List<ChartPoint>
+        - trendDirection: String
+        - sufficientData: boolean
+    }
+
+    class ReviewService {
+        - studentDataAPI: StudentDataAPI
+        - trendAPI: TrendAPI
+        {method} +getPastAttempts(studentId: UUID): PastAttemptData
+        {method} +getDashboardData(studentId: UUID): DashboardData
+        {method} +getTrendData(studentId: UUID, competencyId: UUID): TrendData
+        {method} +validateAuthentication(studentId: UUID): boolean
+    }
+
+    class AccessControlService {
+        - permissionLattice: Map<Role, List<Permission>>
+        {method} +checkAccess(resource: String, role: Role, permission: Permission): boolean
+        {method} +getAccessibleResources(role: Role): List<String>
+    }
+
+    enum Permission <<enum>> {
+        READ
+        WRITE
+        EXECUTE
+        ADMIN
+    }
+
+    enum Role <<enum>> {
+        STUDENT
+        INSTRUCTOR
+        LMS_TEAM
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface StudentDashboardUI <<interface>> {
+        +displayReviewSection(studentId: UUID): void
+        +displayAttemptDetails(attempt: Attempt): void
+        +displayTrendChart(trendData: TrendData): void
+        +showErrorMessage(message: String): void
+        +showNoDataMessage(message: String): void
+    }
+
+    interface StudentDataAPI <<interface>> {
+        +fetchPastAttempts(studentId: UUID): List<Attempt>
+        +fetchDashboardData(studentId: UUID): DashboardData
+        +authenticateStudent(studentId: UUID): boolean
+    }
+
+    interface TrendAPI <<interface>> {
+        +fetchTrendData(studentId: UUID, competencyId: UUID): TrendData
+        +checkDataSufficiency(studentId: UUID, competencyId: UUID): boolean
+    }
+
+    interface StudentDataStore <<interface>> {
+        +saveAttempt(attempt: Attempt): void
+        +getAttemptsByStudent(studentId: UUID): List<Attempt>
+        +saveCompetencyData(competency: Competency): void
+        +getCompetencyData(studentId: UUID): List<Competency>
+    }
+}
+
+package "Controllers" {
+    class ReviewController {
+        - reviewService: ReviewService
+        - accessControlService: AccessControlService
+        {method} +handleReviewRequest(studentId: UUID): void
+        {method} +handleAttemptSelection(studentId: UUID, attemptId: UUID): void
+        {method} +handleTrendView(studentId: UUID, competencyId: UUID): void
+    }
+}
+
+package "Exceptions" {
+    class AuthenticationException <<exception>> {
+        - message: String
+        - errorCode: String
+    }
+
+    class InsufficientDataException <<exception>> {
+        - message: String
+        - resourceType: String
+    }
+
+    class NoAttemptsFoundException <<exception>> {
+        - message: String
+        - studentId: UUID
+    }
+
+    class APIException <<exception>> {
+        - message: String
+        - statusCode: int
+        - cause: Throwable
+    }
+}
+
+' Relationships between layers
+ReviewController --> ReviewService : uses >
+ReviewController --> AccessControlService : uses >
+ReviewService --> StudentDataAPI : calls >
+ReviewService --> TrendAPI : calls >
+ReviewService --> StudentDashboardUI : updates >
+StudentDataAPI --> StudentDataStore : queries >
+ReviewService ..> PastAttemptData : creates >
+ReviewService ..> DashboardData : creates >
+ReviewService ..> TrendData : creates >
+ReviewController ..> AuthenticationException : throws >
+ReviewController ..> InsufficientDataException : throws >
+ReviewController ..> NoAttemptsFoundException : throws >
+ReviewController ..> APIException : throws >
+ReviewService ..> AuthenticationException : throws >
+ReviewService ..> InsufficientDataException : throws >
+ReviewService ..> NoAttemptsFoundException : throws >
+ReviewService ..> APIException : throws >
+
+' Domain to Application relationships
+PastAttemptData --> Attempt : contains >
+DashboardData --> Attempt : contains >
+DashboardData --> Competency : contains >
+TrendData --> ChartPoint : contains >
+
+' Access control relationships
+AccessControlService --> Permission : uses >
+AccessControlService --> Role : uses >
+
+' Note for invariants
+note right of Student
+  Must be authenticated before
+  accessing review section
+  Owns PastAttemptData, DashboardData, TrendData
+end note
+
+note right of Attempt
+  Must have at least one
+  completed attempt for review
+end note
+
+note right of Competency
+  Sufficient data required
+  to generate trends
+end note
+
+note right of PastAttemptData
+  Owner is Students
+  Accessible only to Students
+end note
+
+note right of DashboardData
+  Owner is Students
+  Accessible to Students and Instructors
+end note
+
+note right of TrendData
+  Owner is Students
+  Accessible only to Students
+end note
+
+@enduml

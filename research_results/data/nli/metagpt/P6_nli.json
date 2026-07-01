@@ -1,0 +1,100 @@
+{
+  "project_id": 6,
+  "project_name": "community_social_network",
+  "spec_path": "experiments/project_6 (metagpt)/docs/requirement.txt",
+  "prd_path": "experiments/project_6 (metagpt)/docs/prd/20260701001612.json",
+  "n_facts": 25,
+  "facts": [
+    "The system let users register via email/password with email verification before login is allowed.",
+    "The system allow users to build a profile with a profile picture, cover photo, bio, and location.",
+    "The system let users create text posts with optional single or multi-image upload, and edit/delete their own posts.",
+    "The system let users like a post (toggle like/unlike) and see a simple like count.",
+    "The system let users comment on posts (flat, non-nested) and edit/delete their own comments.",
+    "The system show a basic news feed listing posts from friends/followed users sorted by most recent first (simple chronological query).",
+    "The system let users send and accept/reject friend requests, with a friends list page.",
+    "The system let users follow/unfollow other users without requiring mutual approval, with a followers/following count.",
+    "The system let users create Groups with a name, description, and public/private flag, and join/leave public groups directly.",
+    "The system let group creators approve or reject join requests for private groups.",
+    "The system show a dedicated group feed listing only posts made within that group.",
+    "The system provide a basic direct messaging feature: 1:1 text conversations stored and retrieved like a simple chat log (no real-time typing indicators or read receipts).",
+    "The system build a notifications list (likes, comments, friend requests) generated on action and marked read/unread on click.",
+    "The system implement basic keyword search across users, posts, and groups using simple text matching (LIKE/contains query, no full-text engine required).",
+    "The system let users bookmark/save posts into a single default 'Saved Posts' list (no custom collections).",
+    "The system provide a 'Report Post' button that creates a report record with a reason dropdown, viewable in an admin list.",
+    "The system build a simple admin panel where admins can view reported content and delete a post or suspend a user account (boolean active/suspended flag).",
+    "The system let users set basic privacy on their profile (public or private) controlling whether non-friends can view their posts.",
+    "The system let users block another user, which hides each other's posts and prevents messaging.",
+    "The system let users update notification preferences with on/off toggles per category (likes, comments, friend requests).",
+    "The system let admins manually grant or revoke a 'verified' badge on a user account (boolean flag toggle).",
+    "The system let users view their own post history and edit account settings (email, password, username).",
+    "The system implement basic pagination/infinite scroll on feeds, comments, and search results (limit/offset queries).",
+    "The system let users delete their own account, which soft-deletes their data (sets a deleted flag rather than hard deletion).",
+    "The system enforce two roles only — Admin and User — with simple route guards (no granular permission matrix), and log admin actions (ban/delete/verify) to a basic activity log table."
+  ],
+  "n_stories": 5,
+  "stories": [
+    {
+      "task_id": 1,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 2,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 3,
+      "confidence": 0.9791,
+      "evidence": [
+        {
+          "claim": "The system enables users to create both public and private groups, and manage membership requests for private ones.",
+          "fact": "The system let users create Groups with a name, description, and public/private flag, and join/leave public groups directly.",
+          "score": 0.9791,
+          "user_story_span": "",
+          "fact_span": ""
+        }
+      ],
+      "total_claims": 2,
+      "supported_claims": 1,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 4,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    },
+    {
+      "task_id": 5,
+      "confidence": 0.0,
+      "evidence": [],
+      "total_claims": 2,
+      "supported_claims": 0,
+      "threshold": 0.6
+    }
+  ],
+  "summary": {
+    "mean_nli_alignment_score": 0.9791,
+    "median_nli_alignment_score": 0.9791,
+    "std_nli_alignment_score": 0.0,
+    "q1": 0.9791,
+    "q3": 0.9791,
+    "iqr": 0.0,
+    "n_outliers": 0,
+    "n_zero_alignment": 0,
+    "total_claims": 10,
+    "supported_claims": 1,
+    "spec_coverage_rate": 0.1,
+    "spec_extrapolation_rate": 0.9,
+    "overall_hallucination_rate": 0.9
+  }
+}

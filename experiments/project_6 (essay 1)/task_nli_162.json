@@ -1,0 +1,44 @@
+{
+  "task_id": 162,
+  "confidence": 0.9947,
+  "evidence": [
+    {
+      "claim": "Posts may include text.",
+      "fact": "Users can create text posts.",
+      "score": 0.9991,
+      "user_story_span": "Posts may include text",
+      "fact_span": "Users can create text posts."
+    },
+    {
+      "claim": "Posts may include images.",
+      "fact": "Users can optionally upload multiple images to a post.",
+      "score": 0.999,
+      "user_story_span": "",
+      "fact_span": "Users can optionally upload multiple images to a post."
+    },
+    {
+      "claim": "The user has friends with posts.",
+      "fact": "The news feed lists posts from friends.",
+      "score": 0.9962,
+      "user_story_span": "has friends with posts",
+      "fact_span": "The news feed lists posts from friends."
+    },
+    {
+      "claim": "The user is logged in.",
+      "fact": "Logged admin actions include ban, delete, and verify.",
+      "score": 0.9905,
+      "user_story_span": "the user is logged in",
+      "fact_span": "Logged admin actions include ban, delete, and verify."
+    },
+    {
+      "claim": "Posts may include other media.",
+      "fact": "The platform facilitates sharing of text and media content among its users and provides tools for community management.",
+      "score": 0.9888,
+      "user_story_span": "",
+      "fact_span": "The platform facilitates sharing of text and media content among its users and provides tools for community management."
+    }
+  ],
+  "total_claims": 9,
+  "supported_claims": 5,
+  "threshold": 0.6
+}

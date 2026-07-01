@@ -1,0 +1,248 @@
+{
+  "run_id": "P6E1",
+  "project": 6,
+  "essay": 1,
+  "n_tasks": 25,
+  "tasks": [
+    {
+      "task_id": 157,
+      "nli_alignment_score": 0.9973,
+      "total_claims": 8,
+      "supported_claims": 2,
+      "spec_extrapolation_rate": 0.75,
+      "spec_coverage_rate": 0.25,
+      "n_evidence": 2
+    },
+    {
+      "task_id": 158,
+      "nli_alignment_score": 0.9801,
+      "total_claims": 9,
+      "supported_claims": 1,
+      "spec_extrapolation_rate": 0.8889,
+      "spec_coverage_rate": 0.1111,
+      "n_evidence": 1
+    },
+    {
+      "task_id": 159,
+      "nli_alignment_score": 0.9874,
+      "total_claims": 8,
+      "supported_claims": 7,
+      "spec_extrapolation_rate": 0.125,
+      "spec_coverage_rate": 0.875,
+      "n_evidence": 7
+    },
+    {
+      "task_id": 160,
+      "nli_alignment_score": 0.9978,
+      "total_claims": 8,
+      "supported_claims": 1,
+      "spec_extrapolation_rate": 0.875,
+      "spec_coverage_rate": 0.125,
+      "n_evidence": 1
+    },
+    {
+      "task_id": 161,
+      "nli_alignment_score": 0.9117,
+      "total_claims": 12,
+      "supported_claims": 6,
+      "spec_extrapolation_rate": 0.5,
+      "spec_coverage_rate": 0.5,
+      "n_evidence": 6
+    },
+    {
+      "task_id": 162,
+      "nli_alignment_score": 0.9947,
+      "total_claims": 9,
+      "supported_claims": 5,
+      "spec_extrapolation_rate": 0.4444,
+      "spec_coverage_rate": 0.5556,
+      "n_evidence": 5
+    },
+    {
+      "task_id": 163,
+      "nli_alignment_score": 0.8791,
+      "total_claims": 8,
+      "supported_claims": 2,
+      "spec_extrapolation_rate": 0.75,
+      "spec_coverage_rate": 0.25,
+      "n_evidence": 2
+    },
+    {
+      "task_id": 164,
+      "nli_alignment_score": 0.9887,
+      "total_claims": 11,
+      "supported_claims": 1,
+      "spec_extrapolation_rate": 0.9091,
+      "spec_coverage_rate": 0.0909,
+      "n_evidence": 1
+    },
+    {
+      "task_id": 165,
+      "nli_alignment_score": 0.6269,
+      "total_claims": 7,
+      "supported_claims": 1,
+      "spec_extrapolation_rate": 0.8571,
+      "spec_coverage_rate": 0.1429,
+      "n_evidence": 1
+    },
+    {
+      "task_id": 166,
+      "nli_alignment_score": 0.918,
+      "total_claims": 7,
+      "supported_claims": 4,
+      "spec_extrapolation_rate": 0.4286,
+      "spec_coverage_rate": 0.5714,
+      "n_evidence": 4
+    },
+    {
+      "task_id": 167,
+      "nli_alignment_score": 0.931,
+      "total_claims": 8,
+      "supported_claims": 4,
+      "spec_extrapolation_rate": 0.5,
+      "spec_coverage_rate": 0.5,
+      "n_evidence": 4
+    },
+    {
+      "task_id": 168,
+      "nli_alignment_score": 0.996,
+      "total_claims": 8,
+      "supported_claims": 4,
+      "spec_extrapolation_rate": 0.5,
+      "spec_coverage_rate": 0.5,
+      "n_evidence": 4
+    },
+    {
+      "task_id": 169,
+      "nli_alignment_score": 0.9501,
+      "total_claims": 7,
+      "supported_claims": 3,
+      "spec_extrapolation_rate": 0.5714,
+      "spec_coverage_rate": 0.4286,
+      "n_evidence": 3
+    },
+    {
+      "task_id": 170,
+      "nli_alignment_score": 0.9155,
+      "total_claims": 3,
+      "supported_claims": 1,
+      "spec_extrapolation_rate": 0.6667,
+      "spec_coverage_rate": 0.3333,
+      "n_evidence": 1
+    },
+    {
+      "task_id": 171,
+      "nli_alignment_score": 0.0,
+      "total_claims": 5,
+      "supported_claims": 0,
+      "spec_extrapolation_rate": 1.0,
+      "spec_coverage_rate": 0.0,
+      "n_evidence": 0
+    },
+    {
+      "task_id": 172,
+      "nli_alignment_score": 0.9865,
+      "total_claims": 9,
+      "supported_claims": 4,
+      "spec_extrapolation_rate": 0.5556,
+      "spec_coverage_rate": 0.4444,
+      "n_evidence": 4
+    },
+    {
+      "task_id": 173,
+      "nli_alignment_score": 0.0,
+      "total_claims": 6,
+      "supported_claims": 0,
+      "spec_extrapolation_rate": 1.0,
+      "spec_coverage_rate": 0.0,
+      "n_evidence": 0
+    },
+    {
+      "task_id": 174,
+      "nli_alignment_score": 0.9614,
+      "total_claims": 5,
+      "supported_claims": 1,
+      "spec_extrapolation_rate": 0.8,
+      "spec_coverage_rate": 0.2,
+      "n_evidence": 1
+    },
+    {
+      "task_id": 175,
+      "nli_alignment_score": 0.9902,
+      "total_claims": 8,
+      "supported_claims": 5,
+      "spec_extrapolation_rate": 0.375,
+      "spec_coverage_rate": 0.625,
+      "n_evidence": 5
+    },
+    {
+      "task_id": 176,
+      "nli_alignment_score": 0.971,
+      "total_claims": 12,
+      "supported_claims": 3,
+      "spec_extrapolation_rate": 0.75,
+      "spec_coverage_rate": 0.25,
+      "n_evidence": 3
+    },
+    {
+      "task_id": 177,
+      "nli_alignment_score": 0.0,
+      "total_claims": 12,
+      "supported_claims": 0,
+      "spec_extrapolation_rate": 1.0,
+      "spec_coverage_rate": 0.0,
+      "n_evidence": 0
+    },
+    {
+      "task_id": 178,
+      "nli_alignment_score": 0.9897,
+      "total_claims": 7,
+      "supported_claims": 2,
+      "spec_extrapolation_rate": 0.7143,
+      "spec_coverage_rate": 0.2857,
+      "n_evidence": 2
+    },
+    {
+      "task_id": 179,
+      "nli_alignment_score": 0.9552,
+      "total_claims": 6,
+      "supported_claims": 1,
+      "spec_extrapolation_rate": 0.8333,
+      "spec_coverage_rate": 0.1667,
+      "n_evidence": 1
+    },
+    {
+      "task_id": 180,
+      "nli_alignment_score": 0.9888,
+      "total_claims": 5,
+      "supported_claims": 1,
+      "spec_extrapolation_rate": 0.8,
+      "spec_coverage_rate": 0.2,
+      "n_evidence": 1
+    },
+    {
+      "task_id": 181,
+      "nli_alignment_score": 0.9526,
+      "total_claims": 4,
+      "supported_claims": 1,
+      "spec_extrapolation_rate": 0.75,
+      "spec_coverage_rate": 0.25,
+      "n_evidence": 1
+    }
+  ],
+  "summary": {
+    "mean_nli_alignment_score": 0.8348,
+    "median_nli_alignment_score": 0.9614,
+    "std_nli_alignment_score": 0.3233,
+    "q1": 0.9155,
+    "q3": 0.9888,
+    "iqr": 0.0733,
+    "n_outliers": 4,
+    "n_zero_alignment": 3,
+    "total_claims": 192,
+    "supported_claims": 60,
+    "spec_coverage_rate": 0.3125,
+    "spec_extrapolation_rate": 0.6875,
+    "overall_hallucination_rate": 0.6875
+  }
+}

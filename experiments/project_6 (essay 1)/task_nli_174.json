@@ -1,0 +1,16 @@
+{
+  "task_id": 174,
+  "confidence": 0.9614,
+  "evidence": [
+    {
+      "claim": "The system has two visibility states: public (visible to everyone) and private (visible only to the user or authorized connections).",
+      "fact": "Group creators can approve join requests for private groups.",
+      "score": 0.9614,
+      "user_story_span": "two states: public (visible to everyone) and private (visible only to the user or authorized connections)",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

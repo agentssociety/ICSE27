@@ -1,0 +1,257 @@
+@startuml
+!theme plain
+
+box "Controller" #LightCyan
+participant "PostController" as Controller
+end box
+
+box "Application" #LightGreen
+participant "PostService" as Service
+participant "UserSession" as Session
+end box
+
+box "Domain" #LightYellow
+participant "User" as User
+participant "Post" as Post
+participant "Image" as Image
+end box
+
+box "Infrastructure" #LightCoral
+participant "ContentDatabase" as DB
+participant "ImageStorageService" as Storage
+end box
+
+== Create Post - Main Flow ==
+
+activate Controller
+User -> Controller : POST /api/posts\n(textContent, images[])
+Controller -> Session : authenticate(token: String) : User
+activate Session
+
+alt Authentication Succeeds
+    Session --> Controller : user: User
+    deactivate Session
+    
+    note right of Controller : Check user role permissions
+    Controller -> User : hasPermission(permission: Permission.WRITE) : bool
+    activate User
+    
+    alt User has WRITE Permission
+        User --> Controller : true
+        deactivate User
+        
+        note right of Controller : Validate post content
+        Controller -> Post : validateContent(textContent: String, images: List)
+        activate Post
+        
+        alt Valid Content (text or images present)
+            Post --> Controller : true
+            deactivate Post
+            
+            Controller -> Image : validateFileSize(sizes: List<long>) : bool
+            activate Image
+            
+            alt All Images Within Size Limit
+                Image --> Controller : true
+                deactivate Image
+                
+                == Upload Images Flow ==
+                alt Has Images
+                    loop for each image
+                        Controller -> Storage : uploadImage(image: byte[], [TLS encrypted]) : ImageMetadata
+                        activate Storage
+                        
+                        alt Upload Successful
+                            Storage --> Controller : metadata: ImageMetadata
+                            deactivate Storage
+                            
+                        else Upload Failed
+                            Storage --> Controller : error: UploadException
+                            deactivate Storage
+                            
+                            note right of Controller #pink : Rollback any uploaded images\nReturn 500 error
+                            Controller --> User : 500 Internal Server Error
+                            deactivate Controller
+                        end
+                    end
+                end
+                
+                == Save Post Flow ==
+                Controller -> Post : createPost(textContent, imageMetadata, owner)
+                activate Post
+                note right : State: Pre1 → Post1
+                Post --> Controller : post: Post
+                deactivate Post
+                
+                Controller -> DB : save(post: Post)
+                activate DB
+                
+                alt Database Save Successful
+                    DB --> Controller : success
+                    deactivate DB
+                    
+                    note right of Controller : Update accessible set
+                    Controller -> Post : updateAccessibleSet(users: List<User>)
+                    activate Post
+                    note right : State: Post1 → Post2
+                    Post --> Controller : updated
+                    deactivate Post
+                    
+                    Controller --> User : 201 Created\n{postId, textContent, images[]}
+                    
+                else Database Save Failed
+                    DB --> Controller : error: DatabaseException
+                    deactivate DB
+                    
+                    note right of Controller #pink : Rollback image uploads\nReturn 500 error
+                    Controller --> User : 500 Internal Server Error
+                end
+                
+            else Image Exceeds Size Limit
+                Image --> Controller : false
+                deactivate Image
+                Controller --> User : 400 Bad Request\n"Image file size exceeds maximum allowed"
+            end
+            
+        else Invalid Content (no text and no images)
+            Post --> Controller : false
+            deactivate Post
+            Controller --> User : 400 Bad Request\n"Post must contain text or at least one image"
+        end
+        
+    else User does NOT have WRITE Permission
+        User --> Controller : false
+        deactivate User
+        Controller --> User : 403 Forbidden\n"Insufficient permissions to create posts"
+    end
+    
+else Authentication Fails
+    Session --> Controller : null
+    deactivate Session
+    Controller --> User : 401 Unauthorized\n"Authentication required"
+end
+
+deactivate Controller
+
+== Create Post - Error Path: Network Failure ==
+
+User -> Controller : POST /api/posts\n(textContent, images[])
+Controller -> Session : authenticate(token: String) : User
+activate Session
+Session --> Controller : user: User
+deactivate Session
+
+Controller -> User : hasPermission(permission: Permission.WRITE) : bool
+activate User
+User --> Controller : true
+deactivate User
+
+Controller -> Post : validateContent(textContent: String, images: List)
+activate Post
+Post --> Controller : true
+deactivate Post
+
+Controller -> Image : validateFileSize(sizes: List<long>) : bool
+activate Image
+Image --> Controller : true
+deactivate Image
+
+alt Network Failure During Image Upload
+    Controller -> Storage : uploadImage(image: byte[], [TLS encrypted])
+    activate Storage
+    
+    Storage --> Controller : error: NetworkException
+    deactivate Storage
+    
+    note right of Controller #pink : No images uploaded yet\nReturn 500 error
+    Controller --> User : 500 Internal Server Error\n"Image upload failed due to network error"
+    deactivate Controller
+    
+else Network Failure During Database Save
+    loop for each image
+        Controller -> Storage : uploadImage(image: byte[], [TLS encrypted])
+        activate Storage
+        Storage --> Controller : metadata: ImageMetadata
+        deactivate Storage
+    end
+    
+    Controller -> Post : createPost(textContent, imageMetadata, owner)
+    activate Post
+    Post --> Controller : post: Post
+    deactivate Post
+    
+    Controller -> DB : save(post: Post)
+    activate DB
+    
+    DB --> Controller : error: NetworkException
+    deactivate DB
+    
+    note right of Controller #pink : Rollback image uploads\nReturn 500 error
+    Controller -> Storage : rollbackUploads(imageIds: List<String>)
+    activate Storage
+    Storage --> Controller : success
+    deactivate Storage
+    
+    Controller --> User : 500 Internal Server Error\n"Database operation failed"
+    deactivate Controller
+end
+
+== Create Post - Error Path: Image Encryption Failure ==
+
+User -> Controller : POST /api/posts\n(textContent, images[])
+Controller -> Session : authenticate(token: String) : User
+activate Session
+Session --> Controller : user: User
+deactivate Session
+
+Controller -> User : hasPermission(permission: Permission.WRITE) : bool
+activate User
+User --> Controller : true
+deactivate User
+
+Controller -> Post : validateContent(textContent: String, images: List)
+activate Post
+Post --> Controller : true
+deactivate Post
+
+Controller -> Image : validateFileSize(sizes: List<long>) : bool
+activate Image
+Image --> Controller : true
+deactivate Image
+
+Controller -> Storage : uploadImage(image: byte[], [TLS encrypted])
+activate Storage
+
+alt Encryption Failure
+    Storage --> Controller : error: EncryptionException
+    deactivate Storage
+    
+    note right of Controller #pink : Image encryption failed in transit\nReturn 500 error
+    Controller --> User : 500 Internal Server Error\n"Image encryption failed"
+    
+else Storage Service Unavailable
+    Storage --> Controller : error: ServiceUnavailableException
+    deactivate Storage
+    
+    note right of Controller #pink : External storage service down\nReturn 503 error
+    Controller --> User : 503 Service Unavailable\n"Image storage service temporarily unavailable"
+end
+
+deactivate Controller
+
+== Create Post - Error Path: Concurrent User Limit ==
+
+User -> Controller : POST /api/posts\n(textContent, images[])
+activate Controller
+
+alt Rate Limit Exceeded (1000+ concurrent users)
+    Controller --> User : 429 Too Many Requests\n"Rate limit exceeded. Please try again later."
+    deactivate Controller
+    
+else Request Timeout (>2 seconds)
+    note right of Controller #pink : Response time constraint breached
+    Controller --> User : 408 Request Timeout\n"Request processing time exceeded limit"
+    deactivate Controller
+end
+
+@enduml

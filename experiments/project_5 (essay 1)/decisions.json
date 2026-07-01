@@ -1,0 +1,30 @@
+{
+  "decisions": [
+    {
+      "task_id": 106,
+      "decision": "Used frozen=True on Competency dataclass to make it hashable for set usage in Question.competencies. Updated __init__.py files to export domain classes properly.",
+      "rationale": "Used frozen=True on Competency dataclass to make it hashable for set usage in Question.competencies. Updated __init__.py files to export domain classes properly.",
+      "tags": [
+        "frozen=true",
+        "competency",
+        "dataclass",
+        "hashable",
+        "usage"
+      ],
+      "timestamp": "2026-06-29T21:39:29.229262+00:00"
+    },
+    {
+      "task_id": 107,
+      "decision": "Used `is_accessible()` method on Schedule domain model to check datetime window bounds. Converted minutes to seconds in `get_time_limit_seconds()`. Added ScheduleORM to src/orm/__init__.py and schedule_router to main.py.",
+      "rationale": "Used `is_accessible()` method on Schedule domain model to check datetime window bounds. Converted minutes to seconds in `get_time_limit_seconds()`. Added ScheduleORM to src/orm/__init__.py and schedule_router to main.py.",
+      "tags": [
+        "`is_accessible()`",
+        "method",
+        "schedule",
+        "domain",
+        "model"
+      ],
+      "timestamp": "2026-06-29T21:43:02.146829+00:00"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "run_id": "P5E1",
+  "project": 5,
+  "essay": 1,
+  "n_created": 16,
+  "n_kept": 12,
+  "n_deleted": 4,
+  "task_deletion_rate": 0.25,
+  "n_duplicate_deleted": 2,
+  "deleted_tasks": [
+    {
+      "task_id": 117,
+      "title": "Instructor Registration, Login, and Dashboard",
+      "is_duplicate": true
+    },
+    {
+      "task_id": 118,
+      "title": "Flexible Exam Builder with Competency & Difficulty Multiplie",
+      "is_duplicate": false
+    },
+    {
+      "task_id": 119,
+      "title": "Exam Scheduling with Time Windows and Time Limit",
+      "is_duplicate": true
+    },
+    {
+      "task_id": 120,
+      "title": "Cohort Creation and Exam Restriction",
+      "is_duplicate": false
+    }
+  ],
+  "kept_tasks": [
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116
+  ]
+}

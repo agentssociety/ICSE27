@@ -1,0 +1,19 @@
+[
+  "User",
+  "Post",
+  "NotificationPreference",
+  "VerifiedBadge",
+  "Group",
+  "Profile",
+  "Friendship",
+  "AuditLog",
+  "Block",
+  "Follow",
+  "Message",
+  "Like",
+  "Bookmark",
+  "Report",
+  "Comment",
+  "GroupMembership",
+  "Notification"
+]

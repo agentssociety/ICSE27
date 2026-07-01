@@ -1,0 +1,148 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam class {
+    BorderColor black
+    FontSize 14
+    AttributeFontSize 12
+}
+
+package "Domain Model" as DM {
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+    }
+    note right of Permission
+        Write subsumes Read
+        Admin subsumes all
+    end note
+
+    enum State {
+        Pre1
+        Pre2
+        Post1
+        Post2
+    }
+    note right of State
+        Pre and Post states are distinct
+    end note
+
+    interface Actor {
+        + {field} mayPerform: Set<Permission>
+    }
+
+    interface Resource {
+        + {field} owner: Actor
+        + {field} accessible: Set<Actor>
+    }
+    note right of Resource
+        Owner is always accessible
+    end note
+
+    class User {
+        + {field} id
+        + {field} isLoggedIn: boolean
+    }
+    note right of User
+        Must be logged in to like/unlike
+    end note
+
+    class Post {
+        + {field} id
+        + {field} likeCount: int
+        + {field} owner: Actor
+    }
+    note right of Post
+        likeCount must be non-negative
+    end note
+
+    class Like {
+        + {field} userId
+        + {field} postId
+        + {field} timestamp
+    }
+    note right of Like
+        Max one like per user per post
+        Like is toggleable
+    end note
+
+    User ..|> Actor
+    Post ..|> Resource
+    Actor --> Permission : has
+    Resource --> "1" Actor : owner
+    Resource --> "*" Actor : accessible
+
+    User "1" --> "*" Like : performs
+    Post "1" --> "*" Like : contains
+}
+
+package "Application" as App {
+    class LikeService {
+        + {field} postDatabase: PostDatabase
+    }
+    note right of LikeService
+        Orchestrates like/unlike use cases.
+        Enforces self-like denial.
+        Manages state transitions (Pre -> Post).
+    end note
+}
+
+package "Infrastructure — Ports" as Ports {
+    interface LikeApi {
+    }
+    note top of LikeApi
+        Communication channel for like/unlike.
+        Must be authenticated.
+    end note
+
+    interface PostDatabase {
+    }
+    note top of PostDatabase
+        Stores posts and likes.
+    end note
+}
+
+package "Controllers" as Ctrl {
+    class LikeController {
+    }
+    LikeController ..|> LikeApi
+}
+
+package "DTOs" as DTOs {
+    class LikeRequest <<dto>> {
+        + {field} userId
+        + {field} postId
+    }
+    class LikeResponse <<dto>> {
+        + {field} success: boolean
+        + {field} newLikeCount: int
+    }
+}
+
+package "Exceptions" as Ex {
+    class UnauthorizedException <<exception>> extends Exception
+    class PostNotFoundException <<exception>> extends Exception
+    class ConcurrentUpdateException <<exception>> extends Exception
+}
+
+' Dependencies & Associations
+LikeController --> LikeService : uses
+LikeService --> PostDatabase : uses
+LikeService --> LikeRequest : processes
+LikeService --> LikeResponse : creates
+LikeService --> User : validates
+LikeService --> Post : validates
+LikeService --> Like : manages
+LikeService --> State : transitions
+LikeService --> Permission : checks
+PostDatabase --> Post : persists
+PostDatabase --> Like : persists
+
+LikeApi --> LikeRequest : receives
+LikeApi --> LikeResponse : returns
+LikeApi --> UnauthorizedException : throws
+LikeApi --> PostNotFoundException : throws
+LikeApi --> ConcurrentUpdateException : throws
+
+@enduml

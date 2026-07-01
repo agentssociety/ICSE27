@@ -1,0 +1,108 @@
+{
+  "id": "REQ-GROUP-01",
+  "title": "Group Owner/Admin Join Request Management",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow group owners/admins to review and approve/reject join requests for private groups.",
+  "rationale": "To ensure that only approved members can join private groups, thereby maintaining the integrity and security of the group's content and activities.",
+  "business_value": "Improves control over group membership, enhances group management capabilities, and ensures compliance with group policies regarding who is allowed to participate.",
+  "source": {
+    "type": "User Story",
+    "id": 166,
+    "description": "As a group owner/admin I need to review and approve/reject join requests for private groups So that only approved members can join the private group"
+  },
+  "stakeholders": [
+    "Group Owners/Admins",
+    "Group Members",
+    "System Administrators"
+  ],
+  "acceptance_criteria": [
+    "A private group has pending join requests.",
+    "The group owner/admin accesses the join requests management section.",
+    "They can see a list of pending requests with user details.",
+    "For each request, they can choose to approve or reject.",
+    "After approval, the requesting user becomes a member of the group.",
+    "After rejection, the request is removed and the user is not added."
+  ],
+  "preconditions": [
+    "The system is running and accessible.",
+    "The user is authenticated as a group owner/admin."
+  ],
+  "postconditions": [
+    "Pending join requests are either approved or rejected.",
+    "Approved users are added to the private group.",
+    "Rejected requests are removed from the list."
+  ],
+  "functional_constraints": [
+    "Join request management must be available 24/7.",
+    "Response time for approving/rejecting a request should be less than 5 seconds."
+  ],
+  "security_requirements": [
+    "Access to join request management is restricted to group owners/admins.",
+    "User details in pending requests must be encrypted at rest and in transit."
+  ],
+  "non_functional_requirements": {
+    "performance": "Response time for approving/rejecting a request should be less than 5 seconds.",
+    "availability": "The system must be available 99.9% of the time.",
+    "scalability": "The system must be able to handle at least 100 concurrent join requests without performance degradation.",
+    "usability": "Error messages should be clear and actionable."
+  },
+  "edge_cases": [
+    "What happens when a user tries to approve/reject a request that has already been handled?",
+    "How does the system handle concurrent approval/rejection requests from different administrators?",
+    "What if there are no pending join requests?",
+    "What happens if the group is deleted while a request is being processed?"
+  ],
+  "dependencies": [
+    "User Authentication System",
+    "Group Management System"
+  ],
+  "interfaces": [
+    {
+      "type": "Database",
+      "name": "Join Requests Database",
+      "description": "Stores pending join requests and their status."
+    },
+    {
+      "type": "API",
+      "name": "Group API",
+      "description": "Used to add or remove users from a group."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-JR-01",
+      "description": "Verify that the system displays a list of pending join requests with user details.",
+      "expected_result": "A table is displayed showing all pending requests, including user names and request dates."
+    },
+    {
+      "id": "TC-JR-02",
+      "description": "Verify that an administrator can approve a pending join request.",
+      "expected_result": "The requesting user's status changes from 'Pending' to 'Approved', and they are added to the group."
+    },
+    {
+      "id": "TC-JR-03",
+      "description": "Verify that an administrator can reject a pending join request.",
+      "expected_result": "The requesting user's status changes from 'Pending' to 'Rejected', and their request is removed."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T11:55:45.943772",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-GROUP-01",
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "GroupMembership",
+      "Group",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

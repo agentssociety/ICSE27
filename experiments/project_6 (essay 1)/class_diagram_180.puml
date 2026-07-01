@@ -1,0 +1,135 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+  note top of Permission : lattice: stronger(Read)=Read\nstronger(Write)=Read+Write\nstronger(Execute)=Read+Execute\nstronger(Admin)=all
+
+  class Actor {
+    - mayPerform : Set<Permission>
+  + checkPermission(initiator, Write)
+  + checkPermission(initiator, Admin)
+  }
+  note bottom of Actor : only predefined actors:\nProduct_Owner\nEngineering_Team\nData_Protection_Officer
+
+  enum UserAccountStatus {
+    Active
+    GracePeriod
+    Deleted
+    Recovered
+  }
+
+  class UserAccount {
+    - status : UserAccountStatus
+    - owner : Actor
+    - accessible : Set<Actor>
+  + checkStatus()
+  + checkAccessible(initiator)
+  + setStatus(GracePeriodState)
+  + setStatus(RecoveredState)
+  + setStatus(PostDone)
+  }
+  note bottom of UserAccount : invariants:\nowner always in accessible\nat least one accessible actor
+
+  class Operation {
+    - initiator : Actor
+    - target : Set<UserAccount>
+    - channel : Set<Interface>
+    - grant : Permission
+    - pre : State
+    - post : State
+  + createOperation(initiator, targets, channels, Write, pre=Active, post=GracePeriodState)
+  + createOperation(initiator, targets, channels, Admin, pre=GracePeriodState, post=RecoveredState)
+  + createOperation(system, targets, channels, Admin, pre=GracePeriodState, post=PostDone)
+  }
+  note bottom of Operation : at least one target\nat least one channel\ninitiator must have grant permission\ninitiator must be in target.accessible\npre != post\nat least one channel requires authentication
+
+  abstract class Interface {
+    - kind : InterfaceKind
+    - encrypted : Bool
+    - authenticated : Bool
+  }
+
+  enum InterfaceKind {
+    API
+    Database
+  }
+
+  class "Account_Management_API" as API {
+    - kind : InterfaceKind = API
+    - encrypted : Bool
+    - authenticated : Bool
+  }
+
+  class "User_Data_Database" as DB {
+    - kind : InterfaceKind = Database
+    - encrypted : Bool
+    - authenticated : Bool
+  }
+
+  class State {
+    - value : StateValue
+  }
+  note bottom of State : states are disjoint
+
+  enum StateValue {
+    Pre1 // Active
+    GracePeriodState
+    DeletedState
+    RecoveredState
+    PostDone
+  }
+
+  UserAccount "1" --* "1" Actor : owned by
+  UserAccount "1" --* "*" Actor : accessible to
+  Actor "*" -- "*" Permission : mayPerform
+  Operation "*" --> "1" Actor : initiator
+  Operation "*" --> "*" UserAccount : targets
+  Operation "*" --> "*" Interface : uses
+  Operation "*" --> "1" Permission : grants
+  Operation "*" --> "1" State : pre
+  Operation "*" --> "1" State : post
+  Interface <|-- API
+  Interface <|-- DB
+  State "*" --> "1" StateValue : value
+}
+
+package "Infrastructure — Ports" {
+  interface AccountManagementService {
+  }
+
+  interface UserDataRepository {
+  }
+}
+
+package "Exceptions" {
+  class AccountNotFoundException <<exception>> {
+  }
+  class InvalidOperationException <<exception>> {
+  }
+  class UnauthorizedAccessException <<exception>> {
+  }
+  class GracePeriodExpiredException <<exception>> {
+  }
+  class RecoveryFailedException <<exception>> {
+  }
+}
+
+package "DTOs" {
+  class SoftDeleteRequest <<dto>> {
+  }
+  class RecoveryRequest <<dto>> {
+  }
+  class AccountStatusResponse <<dto>> {
+  }
+}
+
+@enduml

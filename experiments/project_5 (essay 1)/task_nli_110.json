@@ -1,0 +1,51 @@
+{
+  "task_id": 110,
+  "confidence": 0.9972,
+  "evidence": [
+    {
+      "claim": "The system allows to register and have a personalized profile including an avatar, nugget balance, earned badges, and a competency radar chart.",
+      "fact": "Students can create accounts and customize their profiles by choosing an avatar, and their dashboard displays nugget balance, earned badges, and a competency radar chart.",
+      "score": 0.999,
+      "user_story_span": "register and have a personalized profile including an avatar, nugget balance, earned badges, and a competency radar chart",
+      "fact_span": "create accounts and customize their profiles by choosing an avatar, and their dashboard displays nugget balance, earned badges, and a competency radar chart"
+    },
+    {
+      "claim": "a student account is created.",
+      "fact": "The student profile displays a nugget balance.",
+      "score": 0.999,
+      "user_story_span": "a student account is created",
+      "fact_span": ""
+    },
+    {
+      "claim": "they see their avatar, current nugget balance, earned badges, and competency radar chart.",
+      "fact": "The student's home screen shows a personalized avatar, current nugget count, all badges they have earned, and a radar chart of their competencies.",
+      "score": 0.999,
+      "user_story_span": "they see their avatar, current nugget balance, earned badges, and competency radar chart",
+      "fact_span": "shows a personalized avatar, current nugget count, all badges they have earned, and a radar chart of their competencies"
+    },
+    {
+      "claim": "The user a registered student navigates to their profile.",
+      "fact": "After registration, learners set their profile image and can view their nuggets, badges collected, and a radar graph representing their competency strengths.",
+      "score": 0.9986,
+      "user_story_span": "a registered student navigates to their profile",
+      "fact_span": "After registration, learners set their profile image and can view their nuggets, badges collected, and a radar graph representing their competency strengths"
+    },
+    {
+      "claim": "The user a new user wants to register.",
+      "fact": "New learners sign up and personalize their profile with a picture, then see their total nuggets, achievement badges, and a visual radar of their skills.",
+      "score": 0.9942,
+      "user_story_span": "a new user wants to register",
+      "fact_span": "New learners sign up and personalize their profile with a picture, then see their total nuggets, achievement badges, and a visual radar of their skills"
+    },
+    {
+      "claim": "Avatar can be customized during or after registration.",
+      "fact": "After registration, learners set their profile image and can view their nuggets, badges collected, and a radar graph representing their competency strengths.",
+      "score": 0.9935,
+      "user_story_span": "Avatar can be customized during or after registration",
+      "fact_span": "After registration, learners set their profile image and can view their nuggets, badges collected, and a radar graph representing their competency strengths"
+    }
+  ],
+  "total_claims": 12,
+  "supported_claims": 6,
+  "threshold": 0.6
+}

@@ -45,21 +45,26 @@ METAGPT_SRC: dict[int, Path] = {
     2: EXPERIMENTS / "project_2 (metagpt)" / "blood_bank_inventory_manager",
     3: EXPERIMENTS / "project_3 (metagpt)" / "airport_runway_scheduling",
     4: EXPERIMENTS / "project_4 (metagpt)" / "atm_withdrawal_safety_backend",
+    # P5 MetaGPT produced only task-description filenames, no runnable Python code
+    6: EXPERIMENTS / "project_6 (metagpt)" / "community_social_network",
 }
+
+# Essays available per project: P1-P4 have 3, P5-P6 have 1
+_AGENTS_ESSAYS = {1: (1,2,3), 2: (1,2,3), 3: (1,2,3), 4: (1,2,3), 5: (1,), 6: (1,)}
 
 AGENTS_SRC: dict[int, list[Path]] = {
     pid: [
         EXPERIMENTS / f"project_{pid} (essay {eid})" / "dev" / "src"
-        for eid in (1, 2, 3)
+        for eid in essays
     ]
-    for pid in range(1, 5)
+    for pid, essays in _AGENTS_ESSAYS.items()
 }
 
 AGENTS_ALLOY: dict[int, list[Path]] = {
     pid: sorted(
         (EXPERIMENTS / f"project_{pid} (essay 1)").glob("formal_spec_*.als")
     )
-    for pid in range(1, 5)
+    for pid in _AGENTS_ESSAYS
 }
 
 METAGPT_DESIGN: dict[int, Optional[Path]] = {}
@@ -72,7 +77,7 @@ AGENTS_DESIGN: dict[int, list[Path]] = {
     pid: sorted(
         (EXPERIMENTS / f"project_{pid} (essay 1)").glob("class_diagram_*.puml")
     )
-    for pid in range(1, 5)
+    for pid in _AGENTS_ESSAYS
 }
 
 # ── helpers ────────────────────────────────────────────────────────────────────
@@ -431,9 +436,11 @@ def run() -> None:
     mg_rows: list[dict] = []
     as_rows: list[dict] = []
 
-    for pid in range(1, 5):
+    for pid in sorted(_AGENTS_ESSAYS.keys()):
         print(f"\n--- Project {pid} ---")
-        mg_rows.append(measure_metagpt(pid))
+        mg_row = measure_metagpt(pid)
+        if "error" not in mg_row:
+            mg_rows.append(mg_row)
         as_rows.append(measure_agents(pid))
 
     def xmean(rows, k):
@@ -517,7 +524,7 @@ def run() -> None:
         return format(float(x), ".2f")
 
     caption = (
-        r"Code quality and design-rigour comparison (cross-project means, $n=4$ projects per system). "
+        r"Code quality and design-rigour comparison (cross-project means; AS: $n=6$ projects, MG: $n=5$ projects with runnable code). "
         r"Cyclomatic complexity (CC) measured with \texttt{radon~cc} on functions and methods only "
         r"(class-aggregate CC excluded); lower = simpler. "
         r"Full type-hint coverage = \% of functions with all parameters \emph{and} return annotated. "

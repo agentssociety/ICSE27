@@ -1,0 +1,254 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+
+package "Domain Model" {
+    class User {
+        - id: String
+        - email: String
+        - notificationEnabled: boolean
+        + isLoggedIn(): boolean
+        + hasNotificationsEnabled(): boolean
+    }
+    note right of User::notificationEnabled
+        Must be logged in to receive notifications
+        Account must have notifications enabled for post interactions
+    end note
+
+    class Post {
+        - id: String
+        - owner: User
+        - published: boolean
+        + isPublished(): boolean
+        + isAccessible(): boolean
+  + findBy(postId)
+    }
+    note right of Post::published
+        Must be published and accessible to other users
+    end note
+
+    class Like {
+        - user: User
+        - post: Post
+        - timestamp: DateTime
+  + create(userId, postId)
+    }
+
+    class Comment {
+        - user: User
+        - post: Post
+        - content: String
+        - timestamp: DateTime
+  + create(userId, postId, content)
+    }
+
+    class Notification {
+        - type: NotificationType
+        - recipient: User
+        - channel: ChannelType
+        - timestamp: DateTime
+  + create(type=LIKE, recipient=owner, channel=null, state=DISABLED)
+  + create(type=LIKE, recipient=owner, channel=QUEUED, state=PENDING)
+  + create(type=LIKE, recipient=owner, channel=ALL_ACTIVE, state=SENDING)
+  + mark(channel, FAILED)
+  + setState(SENT)
+  + create(type=COMMENT, recipient=owner, channel=null, state=DISABLED)
+  + create(type=COMMENT, recipient=owner, channel=QUEUED, state=PENDING)
+  + create(type=COMMENT, recipient=owner, channel=ALL_ACTIVE, state=SENDING)
+    }
+    note right of Notification
+        Must not contain sensitive user information
+    end note
+
+    class NotificationPreference {
+        - user: User
+        - post: Post
+        - enabled: boolean
+    }
+    note right of NotificationPreference::enabled
+        If disabled, no notification is sent for that post
+    end note
+
+    enum NotificationType {
+        LIKE
+        COMMENT
+    }
+
+    enum ChannelType {
+        EMAIL
+        PUSH
+        IN_APP
+    }
+
+    enum NotificationState {
+        LOGGED_IN
+        NOTIFICATION_ENABLED
+        POST_PUBLISHED
+        NOTIFICATION_SENT
+        NOTIFICATION_DISABLED
+    }
+}
+
+package "Application" {
+    interface NotificationServiceAPI <<interface>> {
+        + sendNotification(notification: Notification): void
+        + requiresAuthentication(): boolean
+    }
+    note right of NotificationServiceAPI
+        Sends notifications via email, push, or in-app
+        Requires authentication
+    end note
+
+    interface UserPreferencesDatabase <<interface>> {
+        + getPreference(user: User, post: Post): NotificationPreference
+        + savePreference(preference: NotificationPreference): void
+        + requiresAuthentication(): boolean
+    }
+    note right of UserPreferencesDatabase
+        Stores and retrieves notification preferences per user and post
+        Requires authentication
+    end note
+
+    interface AuthenticationSystem <<interface>> {
+        + login(credentials: Credentials): Session
+        + logout(session: Session): void
+        + isAuthenticated(session: Session): boolean
+    }
+    note right of AuthenticationSystem
+        Handles user login and session management
+        Required for all operations
+    end note
+
+    class NotificationService {
+        - notificationAPI: NotificationServiceAPI
+        - preferencesDB: UserPreferencesDatabase
+        - authSystem: AuthenticationSystem
+        + notifyOnLike(like: Like): void
+        + notifyOnComment(comment: Comment): void
+        + checkPreference(user: User, post: Post): boolean
+    }
+}
+
+package "Infrastructure — Ports" {
+    class EmailNotificationAdapter {
+        + send(notification: Notification): void
+    }
+
+    class PushNotificationAdapter {
+        + send(notification: Notification): void
+    }
+
+    class InAppNotificationAdapter {
+        + send(notification: Notification): void
+    }
+
+    class PreferencesDatabaseAdapter {
+        + getPreference(user: User, post: Post): NotificationPreference
+        + savePreference(preference: NotificationPreference): void
+    }
+
+    class AuthenticationAdapter {
+        + login(credentials: Credentials): Session
+        + logout(session: Session): void
+        + isAuthenticated(session: Session): boolean
+    }
+}
+
+package "Controllers" {
+    class LikeController {
+        - notificationService: NotificationService
+        + likePost(user: User, post: Post): void
+    }
+
+    class CommentController {
+        - notificationService: NotificationService
+        + commentOnPost(user: User, post: Post, content: String): void
+    }
+
+    class NotificationPreferenceController {
+        - preferencesDB: UserPreferencesDatabase
+        + updatePreference(user: User, post: Post, enabled: boolean): void
+        + getPreference(user: User, post: Post): NotificationPreference
+    }
+}
+
+package "DTOs" {
+    class LikeDTO <<dto>> {
+        + userId: String
+        + postId: String
+        + timestamp: DateTime
+    }
+
+    class CommentDTO <<dto>> {
+        + userId: String
+        + postId: String
+        + content: String
+        + timestamp: DateTime
+    }
+
+    class NotificationDTO <<dto>> {
+        + type: NotificationType
+        + recipientId: String
+        + channel: ChannelType
+        + timestamp: DateTime
+    }
+
+    class NotificationPreferenceDTO <<dto>> {
+        + userId: String
+        + postId: String
+        + enabled: boolean
+    }
+}
+
+package "Exceptions" {
+    class AuthenticationException <<exception>> {
+        + message: String
+    }
+
+    class NotificationServiceException <<exception>> {
+        + message: String
+        + retryable: boolean
+    }
+
+    class PreferencesDatabaseException <<exception>> {
+        + message: String
+    }
+}
+
+' Relationships
+User "1" -- "0..*" Post : owns
+User "1" -- "0..*" Like : creates
+User "1" -- "0..*" Comment : writes
+Notification "0..*" -- "1" User : sent to
+Notification "0..*" -- "1" Like : about
+Notification "0..*" -- "1" Comment : about
+NotificationPreference "0..*" -- "1" User : has
+NotificationPreference "0..*" -- "1" Post : for
+
+NotificationService --> NotificationServiceAPI : uses
+NotificationService --> UserPreferencesDatabase : uses
+NotificationService --> AuthenticationSystem : uses
+
+EmailNotificationAdapter ..|> NotificationServiceAPI : implements
+PushNotificationAdapter ..|> NotificationServiceAPI : implements
+InAppNotificationAdapter ..|> NotificationServiceAPI : implements
+PreferencesDatabaseAdapter ..|> UserPreferencesDatabase : implements
+AuthenticationAdapter ..|> AuthenticationSystem : implements
+
+LikeController --> NotificationService : uses
+CommentController --> NotificationService : uses
+NotificationPreferenceController --> UserPreferencesDatabase : uses
+
+LikeController --> LikeDTO : creates
+CommentController --> CommentDTO : creates
+NotificationPreferenceController --> NotificationPreferenceDTO : creates
+
+NotificationService --> NotificationDTO : creates
+
+NotificationService --> AuthenticationException : throws
+NotificationService --> NotificationServiceException : throws
+NotificationService --> PreferencesDatabaseException : throws
+
+@enduml

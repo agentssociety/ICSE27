@@ -1,0 +1,110 @@
+{
+  "id": "REQ-ADM-BADGE-01",
+  "title": "Admin can grant verified badges on user profiles",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall allow an authenticated admin with user management privileges to grant a verified badge on a selected user profile.",
+  "rationale": "To manage the verification status of users and ensure credibility within the system.",
+  "business_value": "Improves user trust by clearly indicating verified users, which can enhance engagement and functionality.",
+  "source": {
+    "type": "User Story",
+    "id": 177,
+    "description": "As an admin I need to grant or revoke verified badges on user profiles So that I can manage the verification status of users to ensure credibility"
+  },
+  "stakeholders": [
+    "Admin Team",
+    "User Management Interface Developers",
+    "Security Team"
+  ],
+  "acceptance_criteria": [
+    "Given I am an authenticated admin with user management privileges, When I select a user profile and choose to grant a verified badge, Then the user's profile displays a verified badge.",
+    "Given I am an authenticated admin with user management privileges, When I select a user profile that currently has a verified badge and choose to revoke it, Then the verified badge is removed from the user's profile."
+  ],
+  "preconditions": [
+    "The system must be operational and accessible by authenticated admins with user management privileges.",
+    "The selected user profile must exist in the system."
+  ],
+  "postconditions": [
+    "The user's profile must reflect the change in verification status (granted or revoked badge).",
+    "Any relevant logs or audit trails must record the action taken by the admin."
+  ],
+  "functional_constraints": [
+    "The badge grant and revoke functionality must be idempotent to avoid unintended side effects.",
+    "The system must handle concurrent requests from multiple admins efficiently."
+  ],
+  "security_requirements": [
+    "All actions related to granting or revoking badges must be logged for audit purposes.",
+    "Access to the user management interface must be restricted to authenticated admins with appropriate privileges."
+  ],
+  "non_functional_requirements": {
+    "performance": "The badge grant and revoke operations must complete within 200ms under normal conditions.",
+    "availability": "The system must be available 99.9% of the time, with no more than one hour downtime per month.",
+    "scalability": "The system must support up to 1000 concurrent users managing badges without performance degradation.",
+    "usability": "Error messages and feedback should be clear and concise, guiding admins through the process."
+  },
+  "edge_cases": [
+    "What happens when an admin attempts to grant a badge to a non-existent user profile?",
+    "How does the system handle concurrent requests for granting or revoking badges by multiple admins?",
+    "What if the admin tries to revoke a badge that is not currently assigned to the user?"
+  ],
+  "dependencies": [
+    "User Management Interface (UMI) must be operational and accessible.",
+    "Audit logging system must be in place to record all actions related to badge grants and revocations."
+  ],
+  "interfaces": [
+    {
+      "type": "UI",
+      "name": "Admin User Management Interface",
+      "description": "The interface through which admins can select a user profile and choose to grant or revoke verified badges."
+    },
+    {
+      "type": "Database",
+      "name": "User Database",
+      "description": "The database where user profiles are stored, including the verified badge status."
+    },
+    {
+      "type": "API",
+      "name": "Audit Logging API",
+      "description": "API used to log actions related to granting and revoking badges for audit purposes."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ADM-BADGE-01",
+      "description": "Granting a verified badge to an existing user profile.",
+      "expected_result": "The user's profile displays the verified badge, and logs are recorded indicating the action."
+    },
+    {
+      "id": "TC-ADM-BADGE-02",
+      "description": "Revoking a verified badge from a user profile that has one.",
+      "expected_result": "The verified badge is removed from the user's profile, and logs are recorded indicating the action."
+    },
+    {
+      "id": "TC-ADM-BADGE-03",
+      "description": "Attempting to grant a badge to a non-existent user profile.",
+      "expected_result": "An error message is displayed, indicating that the user profile does not exist."
+    },
+    {
+      "id": "TC-ADM-BADGE-04",
+      "description": "Concurrent requests for granting badges by multiple admins.",
+      "expected_result": "Badge grants complete successfully without conflict, and logs are recorded for each action."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T12:19:14.678050",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "VerifiedBadge",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

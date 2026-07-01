@@ -1,0 +1,170 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+    enum OnlineStatus {
+        ONLINE
+        OFFLINE
+        AWAY
+    }
+
+    enum FriendRequestStatus {
+        PENDING
+        ACCEPTED
+        REJECTED
+    }
+
+    enum NotificationType {
+        FRIEND_REQUEST_PENDING
+        FRIEND_REQUEST_ACCEPTED
+        FRIEND_REQUEST_REJECTED
+    }
+
+    class User {
+        - identity: String
+        - onlineStatus: OnlineStatus
+        + {abstract} mustBeLoggedIn(): Boolean
+        + {abstract} cannotSendRequestToSelf(recipient: User): Boolean
+    }
+
+    class FriendRequest {
+        - sender: User
+        - recipient: User
+        - status: FriendRequestStatus
+        - pending: Boolean
+        + {abstract} isDuplicate(): Boolean
+        + {abstract} validateRequest(): void
+    }
+
+    class Friendship {
+        - user1: User
+        - user2: User
+        - established: DateTime
+        + {abstract} isMutual(): Boolean
+  + create(user1, user2) : Friendship
+    }
+
+    class Notification {
+        - type: NotificationType
+        - recipient: User
+        - content: String
+        + {abstract} send(): void
+  + create(recipient, type=PENDING, content)
+    }
+}
+
+package "Application" {
+    interface "FriendshipService" {
+        + sendFriendRequest(sender: User, recipient: User): void
+        + acceptFriendRequest(request: FriendRequest): void
+        + rejectFriendRequest(request: FriendRequest): void
+    }
+
+    class "FriendshipServiceImpl" {
+        - userRepository: UserRepository
+        - friendRequestRepository: FriendRequestRepository
+        - friendshipRepository: FriendshipRepository
+        - notificationService: NotificationService
+        + sendFriendRequest(sender: User, recipient: User): void
+        + acceptFriendRequest(request: FriendRequest): void
+        + rejectFriendRequest(request: FriendRequest): void
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface "UserRepository" {
+        + findById(identity: String): User
+        + exists(identity: String): Boolean
+        + save(user: User): void
+    }
+
+    interface "FriendRequestRepository" {
+        + findPendingRequest(sender: User, recipient: User): FriendRequest
+        + save(request: FriendRequest): void
+        + delete(request: FriendRequest): void
+    }
+
+    interface "FriendshipRepository" {
+        + findByUsers(user1: User, user2: User): Friendship
+        + save(friendship: Friendship): void
+    }
+
+    interface "NotificationService" {
+        + sendNotification(recipient: User, type: NotificationType, content: String): void
+    }
+}
+
+package "Controllers" {
+    class "FriendshipController" {
+        - friendshipService: FriendshipService
+        + sendFriendRequest(senderId: String, recipientId: String): ResponseEntity
+        + acceptFriendRequest(requestId: String): ResponseEntity
+        + rejectFriendRequest(requestId: String): ResponseEntity
+    }
+}
+
+package "DTOs" {
+    class "FriendRequestDTO" <<dto>> {
+        + senderId: String
+        + recipientId: String
+        + status: String
+    }
+
+    class "FriendshipDTO" <<dto>> {
+        + userId1: String
+        + userId2: String
+        + established: DateTime
+    }
+
+    class "NotificationDTO" <<dto>> {
+        + type: String
+        + recipientId: String
+        + content: String
+    }
+}
+
+package "Exceptions" {
+    class "DuplicateFriendRequestException" <<exception>> {
+        + message: String
+    }
+
+    class "SelfFriendRequestException" <<exception>> {
+        + message: String
+    }
+
+    class "AuthenticationException" <<exception>> {
+        + message: String
+    }
+
+    class "UserNotFoundException" <<exception>> {
+        + message: String
+    }
+}
+
+' Relationships
+User "1" -- "0..*" FriendRequest : sends/receives
+User "1" -- "0..*" Friendship : connected via
+FriendRequest ..> Notification : triggers
+User "1" *-- "0..*" Notification : receives
+
+FriendshipServiceImpl ..|> FriendshipService
+FriendshipServiceImpl --> UserRepository
+FriendshipServiceImpl --> FriendRequestRepository
+FriendshipServiceImpl --> FriendshipRepository
+FriendshipServiceImpl --> NotificationService
+
+FriendshipController --> FriendshipService
+FriendshipController --> FriendRequestDTO
+FriendshipController --> FriendshipDTO
+FriendshipController --> NotificationDTO
+
+FriendshipServiceImpl ..> DuplicateFriendRequestException
+FriendshipServiceImpl ..> SelfFriendRequestException
+FriendshipServiceImpl ..> AuthenticationException
+FriendshipServiceImpl ..> UserNotFoundException
+
+@enduml

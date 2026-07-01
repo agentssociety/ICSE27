@@ -1,0 +1,416 @@
+@startuml
+title Project 16 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+note as RelationshipCorrections
+  <b>Relationship cardinalities corrected by LLM review</b>
+  Actor "*" -- "*" UserProfile → Actor "1" -- "1" UserProfile
+    Reason: An actor (user) has exactly one user profile, not many-to-many.
+  Actor "1" -- "0..*" UserProfile → Actor "1" -- "1" UserProfile
+    Reason: One actor (user) should be associated with exactly one user profile, not zero or many.
+  Dropdown *-- "*" Reason → Dropdown "1" *-- "*" Reason
+    Reason: A dropdown contains many reasons, not the other way around.
+  Group *-- Resource → Group "1" *-- "*" Resource
+    Reason: A group should own multiple resources, not many groups owning a single resource.
+  Post "*" -- "*" User → Post "*" -- "1" User
+    Reason: Each post is owned by exactly one user, not many-to-many.
+  User "0..*" -- "0..*" Resource → User "1" -- "*" Resource
+    Reason: A user can have many resources, but a resource is owned by one user, so many-to-one is reversed.
+  UserAccount "1" --* "*" Actor → UserAccount "1" -- "1" Actor
+    Reason: A user account is associated with exactly one actor (user), not a composition with many actors.
+  UserAccount "1" --* "1" Actor → UserAccount "1" -- "1" Actor
+    Reason: Same as above: one user account links to one actor, and composition cardinality is incorrect.
+end note
+
+note as ArchitectureCorrections
+  <b>Architecture mistakes corrected automatically</b>
+  [missing_relationship] Task #177 (Admin Verified Badge Grant/Revoke) owns a VerifiedBadge class, but it does not exist in the domain model. A VerifiedBadge class should be added and associated with User.
+    Fix applied: add_relation
+  [missing_relationship] Task #164 (Follow/Unfollow Users with Counts) owns a Follow class, but it is missing. A Follow class should be added, distinct from Friendship (two-way).
+    Fix applied: add_relation
+  [duplicate_concept] Both User and UserAccount exist, with similar roles. UserAccount appears to be a technical replica; all task descriptions refer to User. They should be merged into a single User class.
+    Fix applied: merge_classes
+  [wrong_class_type] BlockRecord is named inconsistently with task #175, which calls it 'Block'. The class should be renamed to Block for ubiquitous language alignment.
+    Fix applied: rename_class
+  [missing_relationship] NotificationPreference has an incorrect association with Post. Preferences are per category (likes, comments, etc.), not per post. The association with Post should be removed.
+    Fix applied: remove_relation
+  [misplaced_class] REQ_REG_01, REQ_SEARCH_01, REQ_PRIV_MES_01, REQ_MOD_01, REQ_MEM_01 are requirement artifacts, not domain entities. They clutter the model and should be removed or moved to a separate context.
+    Fix applied: remove_class
+end note
+
+package "Task #157\nUser Registration with\nEmail Verification" {
+  class User <<main>> <<level0>>
+  class Actor
+  class EmailConfirmation
+  interface EmailNotificationSystem
+  class Interface
+  enum Permission
+  class REQ_REG_01
+  class Resource
+  enum State
+  interface UserDatabase
+}
+
+package "Task #180\nAccount Soft-Deletion\nwith Deleted Flag" {
+  class Operation
+  enum StateValue
+  class User_Data_Database
+}
+
+package "Task #179\nPagination on Feeds and\nSearch Results" {
+  note as TaskSummary179
+    No new domain model classes
+    Uses: None
+  end note
+}
+
+package "Task #159\nText Post Creation with\nImage Upload" {
+  class Post <<main>> <<level1>>
+  class Image
+}
+
+package "Task #176\nNotification Preference\nToggles per Category" {
+  class NotificationPreference <<main>> <<level2>>
+  enum NotificationCategory
+}
+
+package "Task #177\nAdmin Verified Badge\nGrant/Revoke" {
+  class VerifiedBadge <<main>> <<level0>>
+  class Admin
+  class AuditEntry
+}
+
+package "Task #165\nGroup Creation with\nPublic/Private Flag" {
+  class Group <<main>> <<level1>>
+  enum IfaceKind
+}
+
+package "Task #174\nProfile Privacy\nPublic/Private Toggle" {
+  class Profile <<main>> <<level2>>
+  enum AuthenticationStatus
+  enum Role
+  class UserProfile
+  enum Visibility
+}
+
+package "Task #163\nFriend Request Send and\nAccept/Reject" {
+  class Friendship <<main>> <<level0>>
+}
+
+package "Task #181\nAdmin Role Enforcement\nwith Action Logging" {
+  class AuditLog <<main>> <<level1>>
+  interface Channel
+}
+
+package "Task #175\nBlock User to Hide\nContent and Messages" {
+  class Block <<main>> <<level2>>
+  class BlockRecord
+}
+
+package "Task #158\nProfile Creation with\nPhoto and Bio" {
+  class Biography
+  class Photo
+}
+
+package "Task #164\nFollow/Unfollow Users\nwith Counts" {
+  class Follow <<main>> <<level0>>
+}
+
+package "Task #168\nOne-on-One Direct\nMessaging" {
+  class Message <<main>> <<level1>>
+  class REQ_PRIV_MES_01
+  class ReceiveMessageOperation
+  class ReplyToMessageOperation
+  class SendMessageOperation
+  class User_Database
+}
+
+package "Task #160\nPost Like/Unlike with\nCount Display" {
+  class Like <<main>> <<level2>>
+  interface PostDatabase
+}
+
+package "Task #170\nKeyword Search Across\nUsers and Posts" {
+  note as TaskSummary170
+    No new domain model classes
+    Uses: User, Post
+  end note
+}
+
+package "Task #171\nBookmark Posts to Saved\nList" {
+  class Bookmark <<main>> <<level0>>
+  class SavedList
+}
+
+package "Task #178\nUser Post History and\nAccount Settings" {
+  note as TaskSummary178
+    No new domain model classes
+    Uses: User, Post
+  end note
+}
+
+package "Task #172\nReport Post with Reason\nDropdown" {
+  class Report <<main>> <<level1>>
+  class AuthToken
+  class ContentModerator
+  class Dropdown
+  enum Reason
+}
+
+package "Task #161\nFlat Comment Creation\nand Management" {
+  class Comment <<main>> <<level2>>
+}
+
+package "Task #166\nPrivate Group Join\nRequest Approval" {
+  class GroupMembership <<main>> <<level0>>
+}
+
+package "Task #162\nChronological News Feed\nfrom Friends" {
+  note as TaskSummary162
+    No new domain model classes
+    Uses: Post, Friendship, User
+  end note
+}
+
+package "Task #173\nAdmin Panel for Reported\nContent" {
+  note as TaskSummary173
+    No new domain model classes
+    Uses: Report, User
+  end note
+}
+
+package "Task #169\nNotifications for Likes\nand Comments" {
+  class Notification <<main>> <<level1>>
+}
+
+package "Task #167\nGroup-Specific Feed\nDisplay" {
+  note as TaskSummary167
+    No new domain model classes
+    Uses: Group, Post, GroupMembership
+  end note
+}
+
+package "Shared / Cross-Task Classes\n[not owned by a single task]" <<Rectangle>> {
+  class AccountSettings <<shared>>
+  note right of AccountSettings : "appears only in relations; not owned by any task"
+  class NewsFeed <<shared>>
+  note right of NewsFeed : "appears only in relations; not owned by any task"
+  interface Post_Database <<shared>>
+  note right of Post_Database : "appears only in relations; not owned by any task"
+  class REQ_MEM_01 <<shared>>
+  note right of REQ_MEM_01 : "appears only in relations; not owned by any task"
+  class REQ_MOD_01 <<shared>>
+  note right of REQ_MOD_01 : "appears only in relations; not owned by any task"
+  class REQ_SEARCH_01 <<shared>>
+  note right of REQ_SEARCH_01 : "appears only in relations; not owned by any task"
+}
+
+Actor "*" -- "*" Permission
+Actor "1" -- "0..*" Permission
+Actor "1" -- "1" UserProfile
+Actor --> Permission
+Actor <|-- ContentModerator
+Actor <|-- User
+Admin "1" -- "*" AuditEntry
+Admin "1" -- "*" Permission
+Admin "1" -- "0..*" AuditLog
+Admin "1" -- "0..*" User
+AuditEntry ..> Operation
+AuthToken "1" -- "1" Actor
+Bookmark "*" -- "1" Post
+ContentModerator "0..*" -- "0..*" Post
+Dropdown "1" *-- "*" Reason
+EmailConfirmation "1" --> "1" REQ_REG_01
+EmailConfirmation "1" --> "1" User
+Group "1" *-- "*" Resource
+Group "1" -- "*" GroupMembership
+Interface --> IfaceKind
+Interface ..> IfaceKind
+Interface <|-- User_Data_Database
+Interface <|.. Post_Database
+Interface <|.. User_Database
+NewsFeed "1" o-- "*" Post
+Notification "0..*" -- "1" Comment
+Notification "0..*" -- "1" Like
+Notification "0..*" -- "1" User
+NotificationPreference "*" -- "1" NotificationCategory
+NotificationPreference "0..*" -- "1" User
+Operation "*" -- "*" Channel
+Operation "*" -- "1" Admin
+Operation "*" -- "1" Resource
+Operation "*" -- "1" State
+Operation "*" --> "*" Interface
+Operation "*" --> "*" User
+Operation "*" --> "1" Actor
+Operation "*" --> "1" Permission
+Operation "*" --> "1" State
+Operation --> Actor
+Operation --> Interface
+Operation --> Permission
+Operation --> Resource
+Operation --> State
+Post "*" -- "1" User
+Post "1" *-- "*" Comment
+Post "1" *-- "0..*" Image
+Post "1" --> "*" Like
+Post ..|> Resource
+PostDatabase --> Like
+PostDatabase --> Post
+Profile "1" *-- "1" Biography
+Profile "1" *-- "1" Photo
+Profile "1" --> "0..*" AuditEntry
+Profile ..> Visibility
+REQ_MEM_01 "1" - "1..*" Interface
+REQ_MEM_01 "1" - "1..*" Resource
+REQ_MOD_01 "1" o-- "1" Permission
+REQ_MOD_01 "1" o-- "1" State
+REQ_MOD_01 "1" o-- "1..*" Interface
+REQ_MOD_01 "1" o-- "1..*" Resource
+REQ_PRIV_MES_01 --> Actor
+REQ_PRIV_MES_01 --> Interface
+REQ_PRIV_MES_01 --> Permission
+REQ_PRIV_MES_01 --> Resource
+REQ_PRIV_MES_01 --> State
+REQ_REG_01 "1" --> "1" Actor
+REQ_REG_01 "1" --> "1" Permission
+REQ_REG_01 "1" --> "1" State
+REQ_REG_01 "1" --> "1..*" Interface
+REQ_REG_01 "1" --> "1..*" Resource
+REQ_REG_01 ..> EmailNotificationSystem
+REQ_REG_01 ..> UserDatabase
+REQ_SEARCH_01 "1" -- "1" Actor
+REQ_SEARCH_01 "1" -- "1" Permission
+REQ_SEARCH_01 "1" -- "1" State
+REQ_SEARCH_01 "1" -- "1..*" Interface
+REQ_SEARCH_01 "1" -- "1..*" Resource
+ReceiveMessageOperation --> REQ_PRIV_MES_01
+ReplyToMessageOperation --> REQ_PRIV_MES_01
+Report "*" -- "1" Dropdown
+Report "*" -- "1" Post
+Resource "1" -- "0..*" Actor
+Resource "1" -- "1" Actor
+Resource "1" --> "0..*" Actor
+Resource "1" --> "1" Actor
+Resource --> Actor
+Resource --> "*" Actor
+Resource --> "1" Actor
+Resource <|-- Group
+Resource <|-- Post
+Role "1" -- "*" Permission
+SavedList "1" -- "0..*" Bookmark
+SendMessageOperation --> REQ_PRIV_MES_01
+State "*" --> "1" StateValue
+User "1" *-- "0..*" Notification
+User "1" *-- "1" AccountSettings
+User "1" -- "*" Comment
+User "1" -- "*" GroupMembership
+User "1" -- "*" Permission
+User "1" -- "*" Post
+User "1" -- "*" Report
+User "1" -- "*" Resource
+User "1" -- "0..*" BlockRecord
+User "1" -- "0..*" Bookmark
+User "1" -- "0..*" Comment
+User "1" -- "0..*" Friendship
+User "1" -- "0..*" Like
+User "1" -- "0..*" Message
+User "1" -- "0..*" NotificationPreference
+User "1" -- "0..*" Post
+User "1" -- "1" Actor
+User "1" -- "1" Profile
+User "1" -- "1" Role
+User "1" -- "1" SavedList
+User "1" --> "*" Friendship
+User "1" --> "*" Like
+User "1" --> "*" Post
+User ..> AuthToken
+User ..> AuthenticationStatus
+User ..> Role
+User ..|> Actor
+UserDatabase "1" *--> "0..*" User
+UserProfile "1" -- "*" AuditEntry
+note right of BlockRecord #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  [rename_for_clarity] Rename BlockRecord to Block\nto match ubiquitous language from Task #175.
+end note
+
+note right of User #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  [merge_classes] UserAccount appears to be a\nduplicate of User. Consider merging to avoid\nconfusion and maintain a single user entity.
+end note
+
+note right of REQ_REG_01 #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [remove_class] Requirement classes are not\ndomain entities; they should be removed from the\ndomain model to keep it focused on business\nconcepts.
+end note
+
+note right of REQ_SEARCH_01 #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [remove_class] Requirement classes are not\ndomain entities; they should be removed from the\ndomain model to keep it focused on business\nconcepts.
+end note
+
+note right of REQ_PRIV_MES_01 #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [remove_class] Requirement classes are not\ndomain entities; they should be removed from the\ndomain model to keep it focused on business\nconcepts.
+end note
+
+note right of REQ_MOD_01 #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [remove_class] Requirement classes are not\ndomain entities; they should be removed from the\ndomain model to keep it focused on business\nconcepts.
+end note
+
+note right of REQ_MEM_01 #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [remove_class] Requirement classes are not\ndomain entities; they should be removed from the\ndomain model to keep it focused on business\nconcepts.
+end note
+
+note right of Post #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [introduce_value_object] Consider introducing a\nvalue object for post content (e.g.,\nPostContent) to encapsulate text and optional\nimages, improving cohesion.
+end note
+
+note right of Operation #FDFDE0
+  <b>SUGGESTION #5 (not applied)</b>
+  [general] Operation is very generic and has many\nrelationships. It might be better removed or\nbroken into specific domain operations (e.g.,\nSendMessageOp, RegisterUserOp).
+end note
+
+@enduml

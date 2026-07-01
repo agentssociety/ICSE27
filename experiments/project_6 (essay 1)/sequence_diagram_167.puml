@@ -1,0 +1,70 @@
+@startuml
+!theme plain
+
+box "Controller" #LightCyan
+  participant REQ_MEM_01
+end box
+
+box "Infrastructure" #LightGray
+  participant Group_API
+  participant Post_Database
+end box
+
+box "Domain" #LightYellow
+  participant "initiator: Actor" as Actor
+  participant State
+  participant Group
+  participant Post
+end box
+
+== Group Post Feed Filter ==
+
+Actor -> REQ_MEM_01 : triggerFeedFilter()
+activate REQ_MEM_01
+
+alt [Channel not authenticated]
+  REQ_MEM_01 --> Actor : 401 Unauthorized\n(channel.authenticated == false)
+else [Initiator lacks Read permission]
+  REQ_MEM_01 --> Actor : 403 Forbidden\n(Read not in mayPerform)
+else [Happy path]
+  note right of REQ_MEM_01 : Authentication & authorization passed
+
+  REQ_MEM_01 -> Group_API : GET /groups?user=initiator\n[TLS, authenticated]
+  activate Group_API
+  Group_API --> REQ_MEM_01 : list of Group resources
+  deactivate Group_API
+
+  loop for each Group [at most 5 resources per scalability constraint]
+    REQ_MEM_01 -> Post_Database : SELECT * FROM posts\nWHERE group_id = group.id\n[encrypted at rest, authenticated]
+    activate Post_Database
+    Post_Database --> REQ_MEM_01 : list of Post resources
+    deactivate Post_Database
+
+    note right of REQ_MEM_01 : Filter posts: check initiator in Resource.accessible
+    REQ_MEM_01 -> Post : isAccessible(initiator) : Boolean
+    activate Post
+    alt [initiator in accessible set]
+      Post --> REQ_MEM_01 : true
+      REQ_MEM_01 -> REQ_MEM_01 : include post in feed
+    else [initiator not in accessible set]
+      Post --> REQ_MEM_01 : false
+      REQ_MEM_01 -> REQ_MEM_01 : exclude post from feed
+    end
+    deactivate Post
+  end
+
+  REQ_MEM_01 -> State : updateState(PostDone)
+  activate State
+  State --> REQ_MEM_01 : state updated
+  deactivate State
+
+  REQ_MEM_01 --> Actor : filtered feed (list of Post resources)
+else [Any unexpected error]
+  REQ_MEM_01 --> Actor : 500 Internal Server Error
+end
+
+deactivate REQ_MEM_01
+
+note right of REQ_MEM_01 : At most 2 channels used (Group_API, Post_Database)\nPerformance: <2s response expected
+
+@enduml

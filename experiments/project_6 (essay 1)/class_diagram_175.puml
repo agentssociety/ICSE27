@@ -1,0 +1,106 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+
+package "Domain Model" {
+  class User {
+    - mayPerform : Set<Permission>
+    - username : String [0..1]
+    .. invariants ..
+    {field} must be an Actor
+    {field} only Users can initiate block operation
+  + checkPermission(Permission.Admin) : boolean
+  + validateNotSelf(targetUser) : void
+  + checkPermission(Permission.Admin)
+  }
+
+  class Post {
+    - owner : User
+    - accessible : Set<User>
+    .. invariants ..
+    {field} Owner is always accessible
+    {field} Owned by a User
+  }
+
+  class Message {
+    - owner : User
+    - accessible : Set<User>
+    .. invariants ..
+    {field} Owner is always accessible
+    {field} Owned by a User
+  }
+
+  class BlockRecord {
+    - blocker : User
+    - blocked : User
+    .. invariants ..
+    {field} blocker != blocked
+  }
+
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  enum State {
+    Pre1
+    Pre2
+    Post1
+    Post2
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface UserProfileAPI {
+    .. security ..
+    {field} authenticated and encrypted required
+  }
+
+  interface PostsDatabase {
+    .. security ..
+    {field} authenticated and encrypted required
+  + updateAccessible(blockerId, exclude=true) : void
+  + updateAccessible(blockerId, include=true) : void
+  }
+
+  interface MessagesDatabase {
+    .. security ..
+    {field} authenticated and encrypted required
+  + updateAccessible(blockerId, exclude=true) : void
+  + updateAccessible(blockerId, include=true) : void
+  }
+
+  interface NotificationSystem {
+    .. security ..
+    {field} authenticated and encrypted required
+  + notifyBlock(targetUserId) : void
+  + notifyUnblock(targetUserId) : void
+  }
+}
+
+' Relationships
+User "1" -- "0..*" Post : owns
+User "1" -- "0..*" Message : owns
+User "1" -- "0..*" BlockRecord : blocker
+User "1" -- "0..*" BlockRecord : blocked
+
+' Note: BlockRecord association with User is shown twice for clarity
+
+' Additional constraints (notes)
+note right of BlockRecord
+  blocker != blocked
+end note
+
+note right of Post
+  Owner is always accessible
+end note
+
+note right of Message
+  Owner is always accessible
+end note
+
+@enduml

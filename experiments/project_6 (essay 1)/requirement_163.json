@@ -1,0 +1,111 @@
+{
+  "id": "REQ-USER-FR-01",
+  "title": "Send Friend Request",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall send a friend request to another user and notify the recipient.",
+  "rationale": "To facilitate connections between users, allowing them to initiate social interactions within the platform.",
+  "business_value": "Enhances user engagement by providing a means for users to connect with others, thereby increasing community interaction and satisfaction.",
+  "source": {
+    "type": "User Story",
+    "id": 163,
+    "description": "As a user, I need to send friend requests to other users and accept or reject incoming requests so that I can connect with others and manage my network."
+  },
+  "stakeholders": [
+    "User Interface Team",
+    "Backend Development Team",
+    "Notification System Team"
+  ],
+  "acceptance_criteria": [
+    "The recipient receives a notification about the pending friend request.",
+    "When accepted, the sender and receiver are both marked as friends, and each gets a notification of this change.",
+    "When rejected, the sender is notified that their request has been rejected."
+  ],
+  "preconditions": [
+    "The user must be logged in to the system.",
+    "There should be another user available to send a friend request to."
+  ],
+  "postconditions": [
+    "A new pending friend request is added to the recipient's list.",
+    "If accepted, a mutual friendship status is established between the sender and receiver.",
+    "If rejected, the request disappears from both users' lists of pending requests."
+  ],
+  "functional_constraints": [],
+  "security_requirements": [
+    "User identities must be verified before allowing friend requests to be sent or received.",
+    "All communications related to friend requests must be encrypted."
+  ],
+  "non_functional_requirements": {
+    "performance": "Friend request processing should occur within a reasonable time frame, typically less than 5 seconds.",
+    "availability": "The system must be available 99.9% of the time during business hours.",
+    "scalability": "The system should handle an increasing number of concurrent users and friend requests without performance degradation.",
+    "usability": "Error messages for failed requests should be clear and helpful, guiding the user on how to proceed."
+  },
+  "edge_cases": [
+    "What happens if the recipient is offline?",
+    "How does the system handle duplicate friend requests?",
+    "What should happen if a user tries to send a request to themselves?",
+    "What if there are network issues when sending or receiving notifications?"
+  ],
+  "dependencies": [
+    "User Authentication System",
+    "Notification Service",
+    "Database for storing friendship statuses and requests"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Friendship API",
+      "description": "Interface for sending, accepting, and rejecting friend requests."
+    },
+    {
+      "type": "Database",
+      "name": "User Database",
+      "description": "Stores user information and friendship statuses."
+    },
+    {
+      "type": "UI",
+      "name": "Friend Request Notification",
+      "description": "Displays notifications to users about incoming friend requests."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-FR-01",
+      "description": "User sends a friend request to another user who is online.",
+      "expected_result": "The recipient receives a notification of the pending request."
+    },
+    {
+      "id": "TC-FR-02",
+      "description": "User tries to send a friend request to themselves.",
+      "expected_result": "The system rejects the request and notifies the user with an error message."
+    },
+    {
+      "id": "TC-FR-03",
+      "description": "User accepts a pending friend request from another user.",
+      "expected_result": "Both users are marked as friends, and each receives a notification of this change."
+    },
+    {
+      "id": "TC-FR-04",
+      "description": "User rejects a pending friend request from another user.",
+      "expected_result": "The request is removed, and the sender is notified that their request has been rejected."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T11:52:15.621085",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "Friendship",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

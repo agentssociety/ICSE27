@@ -1,0 +1,65 @@
+{
+  "task_id": 116,
+  "confidence": 0.9956,
+  "evidence": [
+    {
+      "claim": "The feature displays a list of past attempts for the student.",
+      "fact": "Students have access to a history of their attempts that includes their input, the correct choices, per-question nugget gains, and trend graphs for each competency.",
+      "score": 0.9989,
+      "user_story_span": "review past attempts",
+      "fact_span": "have access to a history of their attempts"
+    },
+    {
+      "claim": "The student sees for each question: their answer, the correct answer, and a learning nugget.",
+      "fact": "Students can review every past attempt, seeing their own answers, the correct answers, nuggets earned per question, and competency trend charts over time.",
+      "score": 0.9988,
+      "user_story_span": "my answers, correct answers, nuggets per question",
+      "fact_span": "their own answers, the correct answers, nuggets earned per question"
+    },
+    {
+      "claim": "Each attempt includes per-question details: the student's answer, the correct answer, and an associated learning nugget.",
+      "fact": "Students can review every past attempt, seeing their own answers, the correct answers, nuggets earned per question, and competency trend charts over time.",
+      "score": 0.9982,
+      "user_story_span": "my answers, correct answers, nuggets per question",
+      "fact_span": "their own answers, the correct answers, nuggets earned per question"
+    },
+    {
+      "claim": "The student sees graphical trends of their performance over time for each competency.",
+      "fact": "Students have access to a history of their attempts that includes their input, the correct choices, per-question nugget gains, and trend graphs for each competency.",
+      "score": 0.9979,
+      "user_story_span": "competency trend charts",
+      "fact_span": "trend graphs for each competency"
+    },
+    {
+      "claim": "The student accesses the competency trend charts.",
+      "fact": "Learners can revisit any completed exam to compare their answers with the correct answers, view nuggets for each item, and examine charts of competency development.",
+      "score": 0.9978,
+      "user_story_span": "competency trend charts",
+      "fact_span": "examine charts of competency development"
+    },
+    {
+      "claim": "The system allows reviewing past attempts with my answers, correct answers, nuggets per question, and competency trend charts.",
+      "fact": "Learners can revisit any completed exam to compare their answers with the correct answers, view nuggets for each item, and examine charts of competency development.",
+      "score": 0.9949,
+      "user_story_span": "review past attempts with my answers, correct answers, nuggets per question, and competency trend charts",
+      "fact_span": "compare their answers with the correct answers, view nuggets for each item, and examine charts of competency development"
+    },
+    {
+      "claim": "Competency trend charts show performance over time across different skills or topics.",
+      "fact": "Students have access to a history of their attempts that includes their input, the correct choices, per-question nugget gains, and trend graphs for each competency.",
+      "score": 0.9946,
+      "user_story_span": "competency trend charts",
+      "fact_span": "trend graphs for each competency"
+    },
+    {
+      "claim": "The student views details of the selected attempt.",
+      "fact": "Students are shown an instant competency breakdown after submission.",
+      "score": 0.9838,
+      "user_story_span": "review past attempts",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 11,
+  "supported_claims": 8,
+  "threshold": 0.6
+}

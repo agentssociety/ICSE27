@@ -1,0 +1,239 @@
+{
+  "detected_cycles": [],
+  "removed_edges_to_break_cycles": [],
+  "relationship_corrections": [
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "\"*\" -- \"*\"",
+        "right": "UserProfile"
+      },
+      "corrected": {
+        "left": "Actor",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "UserProfile"
+      },
+      "reason": "An actor (user) has exactly one user profile, not many-to-many."
+    },
+    {
+      "original": {
+        "left": "Actor",
+        "arrow": "\"1\" -- \"0..*\"",
+        "right": "UserProfile"
+      },
+      "corrected": {
+        "left": "Actor",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "UserProfile"
+      },
+      "reason": "One actor (user) should be associated with exactly one user profile, not zero or many."
+    },
+    {
+      "original": {
+        "left": "Dropdown",
+        "arrow": "*-- \"*\"",
+        "right": "Reason"
+      },
+      "corrected": {
+        "left": "Dropdown",
+        "arrow": "\"1\" *-- \"*\"",
+        "right": "Reason"
+      },
+      "reason": "A dropdown contains many reasons, not the other way around."
+    },
+    {
+      "original": {
+        "left": "Group",
+        "arrow": "*--",
+        "right": "Resource"
+      },
+      "corrected": {
+        "left": "Group",
+        "arrow": "\"1\" *-- \"*\"",
+        "right": "Resource"
+      },
+      "reason": "A group should own multiple resources, not many groups owning a single resource."
+    },
+    {
+      "original": {
+        "left": "Post",
+        "arrow": "\"*\" -- \"*\"",
+        "right": "User"
+      },
+      "corrected": {
+        "left": "Post",
+        "arrow": "\"*\" -- \"1\"",
+        "right": "User"
+      },
+      "reason": "Each post is owned by exactly one user, not many-to-many."
+    },
+    {
+      "original": {
+        "left": "User",
+        "arrow": "\"0..*\" -- \"0..*\"",
+        "right": "Resource"
+      },
+      "corrected": {
+        "left": "User",
+        "arrow": "\"1\" -- \"*\"",
+        "right": "Resource"
+      },
+      "reason": "A user can have many resources, but a resource is owned by one user, so many-to-one is reversed."
+    },
+    {
+      "original": {
+        "left": "UserAccount",
+        "arrow": "\"1\" --* \"*\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "UserAccount",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "Actor"
+      },
+      "reason": "A user account is associated with exactly one actor (user), not a composition with many actors."
+    },
+    {
+      "original": {
+        "left": "UserAccount",
+        "arrow": "\"1\" --* \"1\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "UserAccount",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "Actor"
+      },
+      "reason": "Same as above: one user account links to one actor, and composition cardinality is incorrect."
+    }
+  ],
+  "architecture_corrections": [
+    {
+      "kind": "missing_relationship",
+      "description": "Task #177 (Admin Verified Badge Grant/Revoke) owns a VerifiedBadge class, but it does not exist in the domain model. A VerifiedBadge class should be added and associated with User.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "new_class": "VerifiedBadge",
+          "kind": "class",
+          "association": {
+            "left": "User",
+            "right": "VerifiedBadge",
+            "arrow": "\"1\" -- \"0..1\"",
+            "meaning": "association"
+          }
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Task #164 (Follow/Unfollow Users with Counts) owns a Follow class, but it is missing. A Follow class should be added, distinct from Friendship (two-way).",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "new_class": "Follow",
+          "kind": "class",
+          "association": {
+            "left": "User",
+            "right": "Follow",
+            "arrow": "\"1\" -- \"*\"",
+            "meaning": "association"
+          }
+        }
+      }
+    },
+    {
+      "kind": "duplicate_concept",
+      "description": "Both User and UserAccount exist, with similar roles. UserAccount appears to be a technical replica; all task descriptions refer to User. They should be merged into a single User class.",
+      "fix": {
+        "action": "merge_classes",
+        "details": {
+          "keep": "User",
+          "remove": "UserAccount",
+          "transfer_relationships": true
+        }
+      }
+    },
+    {
+      "kind": "wrong_class_type",
+      "description": "BlockRecord is named inconsistently with task #175, which calls it 'Block'. The class should be renamed to Block for ubiquitous language alignment.",
+      "fix": {
+        "action": "rename_class",
+        "details": {
+          "old_name": "BlockRecord",
+          "new_name": "Block"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "NotificationPreference has an incorrect association with Post. Preferences are per category (likes, comments, etc.), not per post. The association with Post should be removed.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "left": "NotificationPreference",
+          "right": "Post",
+          "arrow": "\"0..*\" -- \"1\""
+        }
+      }
+    },
+    {
+      "kind": "misplaced_class",
+      "description": "REQ_REG_01, REQ_SEARCH_01, REQ_PRIV_MES_01, REQ_MOD_01, REQ_MEM_01 are requirement artifacts, not domain entities. They clutter the model and should be removed or moved to a separate context.",
+      "fix": {
+        "action": "remove_class",
+        "details": {
+          "classes": [
+            "REQ_REG_01",
+            "REQ_SEARCH_01",
+            "REQ_PRIV_MES_01",
+            "REQ_MOD_01",
+            "REQ_MEM_01"
+          ]
+        }
+      }
+    }
+  ],
+  "architecture_suggestions": [
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "BlockRecord"
+      ],
+      "suggestion": "Rename BlockRecord to Block to match ubiquitous language from Task #175."
+    },
+    {
+      "kind": "merge_classes",
+      "affected_classes": [
+        "User",
+        "UserAccount"
+      ],
+      "suggestion": "UserAccount appears to be a duplicate of User. Consider merging to avoid confusion and maintain a single user entity."
+    },
+    {
+      "kind": "remove_class",
+      "affected_classes": [
+        "REQ_REG_01",
+        "REQ_SEARCH_01",
+        "REQ_PRIV_MES_01",
+        "REQ_MOD_01",
+        "REQ_MEM_01"
+      ],
+      "suggestion": "Requirement classes are not domain entities; they should be removed from the domain model to keep it focused on business concepts."
+    },
+    {
+      "kind": "introduce_value_object",
+      "affected_classes": [
+        "Post"
+      ],
+      "suggestion": "Consider introducing a value object for post content (e.g., PostContent) to encapsulate text and optional images, improving cohesion."
+    },
+    {
+      "kind": "general",
+      "affected_classes": [
+        "Operation"
+      ],
+      "suggestion": "Operation is very generic and has many relationships. It might be better removed or broken into specific domain operations (e.g., SendMessageOp, RegisterUserOp)."
+    }
+  ]
+}

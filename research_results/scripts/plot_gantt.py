@@ -1,9 +1,9 @@
 """
-Execution Trace Gantt Charts — 4 Projects × 3 Seeds
-======================================================
+Execution Trace Gantt Charts — 6 Projects (4×3 seeds + 2×1 seed)
+==================================================================
 
 Adapted from paper/orchestration_analysis/orchestration_analysis.py for
-the new 4 × 3 experiment structure. All data is re-parsed from raw logs;
+the 6-project experiment structure. All data is re-parsed from raw logs;
 no pre-computed JSON is required beyond what parse_tokens produces.
 
 Figures generated:
@@ -64,8 +64,9 @@ C_PANEL = "#F4F7FB"
 C_GRID  = "#DDDDDD"
 
 # Per-project accent colors (used only for panel labels and radar chart)
-PROJ_BASE  = ["#3A78C9", "#3A9A5C", "#D4700A", "#9B3A8A"]
-PROJ_NAMES = ["Hospital Triage", "Blood Bank", "Airport Runway", "ATM"]
+PROJ_BASE  = ["#3A78C9", "#3A9A5C", "#D4700A", "#9B3A8A", "#5B7FBF", "#8B6914"]
+PROJ_NAMES = ["Hospital Triage", "Blood Bank", "Airport Runway", "ATM",
+              "Competency Platform", "Social Network"]
 PROJ_PASTEL = ["#A8C8E8", "#A8D8A8", "#F5D8A0", "#E8B8D0"]
 PROJ_NAMES_SHORT = ["Proj.1 / Triage", "Proj.2 / Blood",
                     "Proj.3 / Runway", "Proj.4 / ATM"]
@@ -359,11 +360,11 @@ def plot_gantt_single(trace: dict, show: bool = False, out_name: str = "fig_gant
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Fig B — 4 × 3 Gantt Grid (all 12 runs)
+# Fig B — Gantt Grid (all runs)
 # ══════════════════════════════════════════════════════════════════════════════
 
 def plot_gantt_grid(traces_by_project: dict, show: bool = False) -> None:
-    """4 rows × 3 columns grid — one panel per run, hidden phases excluded."""
+    """n_projects rows × 3 columns grid — one panel per run, hidden phases excluded."""
     DISP_ORDER = [
         Phase.INIT, Phase.USER_STORIES, Phase.PLANNING,
         Phase.REQUIREMENTS, Phase.FORMAL_SPEC, Phase.DESIGN_UML, Phase.ARCHITECTURE,
@@ -373,15 +374,20 @@ def plot_gantt_grid(traces_by_project: dict, show: bool = False) -> None:
     ND    = len(DISP_ORDER)
     N_TOP = ND - 1
 
+    n_projects = len(traces_by_project)
     fig, axes = plt.subplots(
-        4, 3, figsize=(10.0, 13.0),
+        n_projects, 3, figsize=(10.0, n_projects * 2.2),
         gridspec_kw=dict(hspace=0.45, wspace=0.06,
                          left=0.13, right=0.98, top=0.93, bottom=0.05),
     )
     fig.patch.set_facecolor(C_BG)
 
-    for pi, proj_id in enumerate([1, 2, 3, 4]):
+    last_row = n_projects - 1
+    for pi, proj_id in enumerate(sorted(traces_by_project.keys())):
         proj_traces = sorted(traces_by_project.get(proj_id, []), key=lambda t: t["essay"])
+        # Hide unused essay columns (e.g. P5/P6 only have essay 1)
+        for ei_hide in range(len(proj_traces), 3):
+            axes[pi][ei_hide].set_visible(False)
         for ei, trace in enumerate(proj_traces):
             ax = axes[pi][ei]
             ax.set_facecolor(C_PANEL)
@@ -435,13 +441,13 @@ def plot_gantt_grid(traces_by_project: dict, show: bool = False) -> None:
             ax.set_xlim(-2, n_plot + 3)
             ax.grid(axis="x", linestyle=":", alpha=0.25, color=C_GRID)
             ax.tick_params(left=False, bottom=False,
-                           labelbottom=(pi == 3), labelleft=(ei == 0))
+                           labelbottom=(pi == last_row), labelleft=(ei == 0))
             if ei == 0:
                 ax.set_yticks(list(range(ND)))
                 ax.set_yticklabels([SHORT[p] for p in DISP_ORDER], fontsize=6.5)
             else:
                 ax.set_yticks([])
-            if pi == 3:
+            if pi == last_row:
                 ax.tick_params(axis="x", labelsize=7)
             for sp in ("top", "right"):
                 ax.spines[sp].set_visible(False)
@@ -475,7 +481,7 @@ def plot_gantt_grid(traces_by_project: dict, show: bool = False) -> None:
         Line2D([0],[0], marker="D", color="w", markerfacecolor="#E91E63",
                markersize=5, label="Re-delegation"),
     ]
-    fig.suptitle("Pipeline execution traces — all 12 runs (4 projects × 3 essays)",
+    fig.suptitle(f"Pipeline execution traces — {sum(len(v) for v in traces_by_project.values())} runs ({n_projects} projects)",
                  fontsize=9.5, fontweight="bold", y=0.99)
     fig.legend(handles=handles, loc="upper center", ncol=7, fontsize=7.5,
                bbox_to_anchor=(0.55, 0.965),
@@ -493,7 +499,8 @@ def plot_gantt_grid(traces_by_project: dict, show: bool = False) -> None:
 # ── main ─────────────────────────────────────────────────────────────────────
 
 def run(show: bool = False) -> None:
-    print("  Parsing execution traces for all 12 runs ...")
+    n_runs = sum(len(v) for v in RUNS_BY_PROJECT.values())
+    print(f"  Parsing execution traces for all {n_runs} runs ...")
     traces_by_project: dict = {}
     for proj_id, run_ids in sorted(RUNS_BY_PROJECT.items()):
         for run_id in sorted(run_ids, key=lambda r: r.essay):
@@ -506,7 +513,8 @@ def run(show: bool = False) -> None:
     print("  Drawing single Gantt trace (P1E3) ...")
     plot_gantt_single(p1e3, show=show)
 
-    print("  Drawing Gantt grid (4 × 3) ...")
+    n_projects = len(traces_by_project)
+    print(f"  Drawing Gantt grid ({n_projects} × 3) ...")
     plot_gantt_grid(traces_by_project, show=show)
 
 

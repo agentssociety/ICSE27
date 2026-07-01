@@ -1,0 +1,48 @@
+{
+  "User": [
+    "Post",
+    "NotificationPreference",
+    "VerifiedBadge",
+    "Group",
+    "Profile",
+    "Friendship",
+    "AuditLog",
+    "Block",
+    "Follow",
+    "Message",
+    "Like",
+    "Bookmark",
+    "Report",
+    "Comment",
+    "GroupMembership",
+    "Notification"
+  ],
+  "Post": [
+    "Like",
+    "Bookmark",
+    "Report",
+    "Comment",
+    "Notification"
+  ],
+  "NotificationPreference": [],
+  "VerifiedBadge": [],
+  "Group": [
+    "GroupMembership"
+  ],
+  "Profile": [],
+  "Friendship": [],
+  "AuditLog": [],
+  "Block": [],
+  "Follow": [],
+  "Message": [],
+  "Like": [
+    "Notification"
+  ],
+  "Bookmark": [],
+  "Report": [],
+  "Comment": [
+    "Notification"
+  ],
+  "GroupMembership": [],
+  "Notification": []
+}

@@ -1,0 +1,352 @@
+# analytics/views.py
+"""
+Views for analytics: instructor dashboard (heatmap, radar charts) and student competency breakdown.
+Provides JSON endpoints for frontend chart rendering and HTML template views for instructor dashboards.
+"""
+import json
+import logging
+from typing import Any, Dict, List, Optional
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
+from django.db.models import Avg, Count, Sum
+from django.http import HttpRequest, JsonResponse
+from django.shortcuts import get_object_or_404, render
+from django.views.decorators.http import require_http_methods
+
+from accounts.models import InstructorProfile, StudentProfile
+from exams.models import Exam, ExamAttempt, Competency
+from .utils import (
+    get_exam_analytics,
+    get_heatmap_data,
+    get_student_competency_breakdown,
+    update_competency_masteries,
+)
+from .models import CompetencyMastery
+
+logger = logging.getLogger(__name__)
+
+
+# ------------------------------------------------------------------
+# Helper: Get instructor profile (raises PermissionDenied if not instructor)
+# ------------------------------------------------------------------
+def _get_instructor_profile(user: User) -> InstructorProfile:
+    """Return InstructorProfile for user; raises PermissionDenied if not instructor."""
+    try:
+        return user.instructor_profile
+    except InstructorProfile.DoesNotExist:
+        raise PermissionDenied("User is not an instructor.")
+
+
+# ------------------------------------------------------------------
+# Helper: Get student profile (raises PermissionDenied if not student)
+# ------------------------------------------------------------------
+def _get_student_profile(user: User) -> StudentProfile:
+    """Return StudentProfile for user; raises PermissionDenied if not student."""
+    try:
+        return user.student_profile
+    except StudentProfile.DoesNotExist:
+        raise PermissionDenied("User is not a student.")
+
+
+# ------------------------------------------------------------------
+# Helper: calculate average score (percentage correct) across attempts.
+# ------------------------------------------------------------------
+def _calculate_average_score(attempts) -> float:
+    """Compute the average percentage of correct answers across completed attempts."""
+    total_correct = 0
+    total_questions = 0
+    for attempt in attempts:
+        results = attempt.results or {}
+        for result in results.values():
+            total_questions += 1
+            if result.get('correct', False):
+                total_correct += 1
+    if total_questions == 0:
+        return 0.0
+    return round((total_correct / total_questions) * 100.0, 2)
+
+
+# ------------------------------------------------------------------
+# GET /api/analytics/exam/{id}  (Instructor only)
+# Returns aggregated exam analytics including heatmap and cohort performance.
+# ------------------------------------------------------------------
+@login_required
+@require_http_methods(["GET"])
+def exam_analytics(request: HttpRequest, exam_id: int) -> JsonResponse:
+    """
+    Retrieve comprehensive analytics for a given exam.
+    Only the exam creator (instructor) can access this data.
+
+    Returns JSON with:
+        - exam_title
+        - total_attempts
+        - average_score (percentage of correct answers)
+        - competency_heatmap (list of per-student per-competency mastery)
+        - cohort_performance (list of per-student scores)
+    """
+    instructor = _get_instructor_profile(request.user)
+    exam = get_object_or_404(Exam, pk=exam_id, creator=instructor)
+
+    attempts = ExamAttempt.objects.filter(exam=exam, end_time__isnull=False)
+    total_attempts = attempts.count()
+    average_score = _calculate_average_score(attempts)
+
+    # Get heatmap and cohort performance (reusing utility functions)
+    heatmap = get_heatmap_data(exam)
+    cohort_performance = []
+    for attempt in attempts.select_related('student__user').iterator():
+        student = attempt.student
+        results = attempt.results or {}
+        correct_count = sum(1 for r in results.values() if r.get('correct', False))
+        total_q = len(results)
+        score_pct = (correct_count / total_q * 100) if total_q > 0 else 0.0
+        cohort_performance.append({
+            'student_id': student.id,
+            'username': student.user.username,
+            'score_percentage': round(score_pct, 2),
+            'nuggets_earned': attempt.total_nuggets_earned,
+            'streak_multiplier': attempt.streak_multiplier,
+        })
+
+    return JsonResponse({
+        'exam_title': exam.title,
+        'total_attempts': total_attempts,
+        'average_score': average_score,
+        'competency_heatmap': heatmap,
+        'cohort_performance': cohort_performance,
+    })
+
+
+# ------------------------------------------------------------------
+# GET /api/analytics/exam/{exam_id}/heatmap  (Instructor only)
+# Returns raw heatmap data for Plotly rendering.
+# ------------------------------------------------------------------
+@login_required
+@require_http_methods(["GET"])
+def exam_heatmap(request: HttpRequest, exam_id: int) -> JsonResponse:
+    """
+    Return heatmap data (student vs competency mastery percentages) for an exam.
+    Used by the frontend to render a Plotly heatmap.
+    """
+    instructor = _get_instructor_profile(request.user)
+    exam = get_object_or_404(Exam, pk=exam_id, creator=instructor)
+
+    heatmap_data = get_heatmap_data(exam)
+    return JsonResponse({'heatmap': heatmap_data})
+
+
+# ------------------------------------------------------------------
+# GET /api/analytics/exam/{exam_id}/radar  (Instructor only)
+# Returns per-student competency breakdown for radar chart.
+# ------------------------------------------------------------------
+@login_required
+@require_http_methods(["GET"])
+def exam_radar_data(request: HttpRequest, exam_id: int) -> JsonResponse:
+    """
+    Return data for radar charts: for each student who attempted the exam,
+    provide their mastery percentages across all competencies.
+    """
+    instructor = _get_instructor_profile(request.user)
+    exam = get_object_or_404(Exam, pk=exam_id, creator=instructor)
+
+    # Get all attempts for this exam
+    attempts = ExamAttempt.objects.filter(exam=exam).select_related('student__user')
+    competencies = list(Competency.objects.filter(question__exam=exam).distinct().values('id', 'name'))
+
+    radar_data = []
+    for attempt in attempts:
+        student = attempt.student
+        breakdown = get_student_competency_breakdown(attempt)
+        # Build a list of mastery values in the same order as competencies
+        mastery_values = [breakdown.get(comp['name'], 0.0) for comp in competencies]
+        radar_data.append({
+            'student_id': student.id,
+            'username': student.user.username,
+            'competencies': [c['name'] for c in competencies],
+            'mastery_values': mastery_values,
+        })
+
+    return JsonResponse({
+        'competencies': [c['name'] for c in competencies],
+        'students': radar_data,
+    })
+
+
+# ------------------------------------------------------------------
+# GET /api/analytics/student/{student_id}/exam/{exam_id}  (Instructor only)
+# Returns a specific student's competency breakdown for a given exam.
+# ------------------------------------------------------------------
+@login_required
+@require_http_methods(["GET"])
+def student_exam_breakdown(request: HttpRequest, student_id: int, exam_id: int) -> JsonResponse:
+    """
+    Retrieve a specific student's competency breakdown for an exam.
+    Only the exam creator (instructor) can access this.
+    """
+    instructor = _get_instructor_profile(request.user)
+    exam = get_object_or_404(Exam, pk=exam_id, creator=instructor)
+    student = get_object_or_404(StudentProfile, pk=student_id)
+
+    # Get the student's most recent completed attempt for this exam
+    attempt = ExamAttempt.objects.filter(
+        student=student,
+        exam=exam,
+        end_time__isnull=False
+    ).order_by('-end_time').first()
+
+    if not attempt:
+        return JsonResponse({'error': 'No completed attempt found for this student.'}, status=404)
+
+    breakdown = get_student_competency_breakdown(attempt)
+    return JsonResponse({
+        'student_id': student.id,
+        'username': student.user.username,
+        'exam_title': exam.title,
+        'competency_breakdown': breakdown,
+        'total_nuggets_earned': attempt.total_nuggets_earned,
+        'streak_multiplier': attempt.streak_multiplier,
+    })
+
+
+# ------------------------------------------------------------------
+# GET /api/analytics/my-competency?exam_id=...  (Student only)
+# Returns the authenticated student's own competency breakdown for a given exam.
+# ------------------------------------------------------------------
+@login_required
+@require_http_methods(["GET"])
+def my_competency_breakdown(request: HttpRequest) -> JsonResponse:
+    """
+    Return the current student's competency breakdown for a specific exam.
+    Query parameter: exam_id (required).
+    """
+    student = _get_student_profile(request.user)
+    exam_id = request.GET.get('exam_id')
+    if not exam_id:
+        return JsonResponse({'error': 'exam_id query parameter is required.'}, status=400)
+
+    exam = get_object_or_404(Exam, pk=exam_id)
+    # Ensure the student is enrolled in a cohort that has access to this exam
+    if not exam.cohorts.filter(students=student).exists():
+        return JsonResponse({'error': 'You are not enrolled in this exam.'}, status=403)
+
+    attempt = ExamAttempt.objects.filter(
+        student=student,
+        exam=exam,
+        end_time__isnull=False
+    ).order_by('-end_time').first()
+
+    if not attempt:
+        return JsonResponse({'error': 'No completed attempt found for this exam.'}, status=404)
+
+    breakdown = get_student_competency_breakdown(attempt)
+    return JsonResponse({
+        'exam_title': exam.title,
+        'competency_breakdown': breakdown,
+        'total_nuggets_earned': attempt.total_nuggets_earned,
+        'streak_multiplier': attempt.streak_multiplier,
+    })
+
+
+# ------------------------------------------------------------------
+# GET /analytics/instructor/dashboard/  (Instructor HTML view)
+# Renders the instructor analytics dashboard with Plotly charts.
+# ------------------------------------------------------------------
+@login_required
+def instructor_dashboard(request: HttpRequest):
+    """
+    Render the instructor analytics dashboard page.
+    This view returns an HTML page with exam summaries and links to detailed views.
+    """
+    instructor = _get_instructor_profile(request.user)
+    exams = Exam.objects.filter(creator=instructor).order_by('-created_at')
+
+    exam_list = []
+    for exam in exams:
+        attempts = ExamAttempt.objects.filter(exam=exam, end_time__isnull=False)
+        total_attempts = attempts.count()
+        average_score = _calculate_average_score(attempts)
+
+        exam_list.append({
+            'id': exam.id,
+            'title': exam.title,
+            'total_attempts': total_attempts,
+            'average_score': average_score,
+            'open_date': exam.open_date,
+            'close_date': exam.close_date,
+        })
+
+    context = {
+        'instructor': instructor,
+        'exams': exam_list,
+    }
+    return render(request, 'analytics/instructor_dashboard.html', context)
+
+
+# ------------------------------------------------------------------
+# GET /analytics/instructor/exam/{exam_id}/  (Instructor HTML view)
+# Renders the detailed analytics page for a specific exam.
+# ------------------------------------------------------------------
+@login_required
+def instructor_exam_detail(request: HttpRequest, exam_id: int):
+    """
+    Render the detailed analytics page for a specific exam.
+    Context includes exam info, heatmap data, radar chart data.
+    """
+    instructor = _get_instructor_profile(request.user)
+    exam = get_object_or_404(Exam, pk=exam_id, creator=instructor)
+
+    # Get basic stats
+    attempts = ExamAttempt.objects.filter(exam=exam, end_time__isnull=False)
+    total_attempts = attempts.count()
+    average_score = _calculate_average_score(attempts)
+
+    # Get heatmap data
+    heatmap_data = get_heatmap_data(exam)
+
+    # Get radar data
+    competencies = list(Competency.objects.filter(question__exam=exam).distinct().values('id', 'name'))
+    radar_data = []
+    for attempt in attempts.select_related('student__user'):
+        student = attempt.student
+        breakdown = get_student_competency_breakdown(attempt)
+        mastery_values = [breakdown.get(c['name'], 0.0) for c in competencies]
+        radar_data.append({
+            'student_id': student.id,
+            'username': student.user.username,
+            'mastery_values': mastery_values,
+        })
+
+    context = {
+        'exam': exam,
+        'total_attempts': total_attempts,
+        'average_score': average_score,
+        'competencies': [c['name'] for c in competencies],
+        'heatmap': heatmap_data,
+        'radar': radar_data,
+    }
+    return render(request, 'analytics/instructor_exam_detail.html', context)
+
+
+# analytics/urls.py
+"""
+URL patterns for the analytics app.
+"""
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    # Instructor analytics API endpoints (JSON)
+    path('exam/<int:exam_id>/', views.exam_analytics, name='exam_analytics'),
+    path('exam/<int:exam_id>/heatmap/', views.exam_heatmap, name='exam_heatmap'),
+    path('exam/<int:exam_id>/radar/', views.exam_radar_data, name='exam_radar'),
+    path('student/<int:student_id>/exam/<int:exam_id>/', views.student_exam_breakdown, name='student_exam_breakdown'),
+
+    # Student self-service endpoint
+    path('my-competency/', views.my_competency_breakdown, name='my_competency_breakdown'),
+
+    # Instructor dashboard (HTML views)
+    path('instructor/dashboard/', views.instructor_dashboard, name='instructor_dashboard'),
+    path('instructor/exam/<int:exam_id>/', views.instructor_exam_detail, name='instructor_exam_detail'),
+]

@@ -1,0 +1,90 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam sequenceArrowThickness 2
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+box "External" #LightBlue
+  actor "Instructor" as Instructor
+end box
+
+box "Controller" #LightGreen
+  participant "QuestionCreationAPI" as API
+end box
+
+box "Application" #LightYellow
+  participant "QuestionService" as Service
+end box
+
+box "Domain" #LightCoral
+  participant "Question" as Question
+  participant "Competency" as Competency
+  participant "DifficultyTag" as DifficultyTag
+end box
+
+box "Infrastructure" #LightGray
+  participant "ExamBuilderDatabase" as DB
+end box
+
+== Create Question - Success ==
+
+Instructor -> API : POST /questions\n(type: QuestionType, competencies: List<Competency>, difficultyTier: DifficultyTier, nuggetMultiplier: Float?) [TLS]
+note right: Authenticated request (Instructor has Write permission)
+
+API -> Service : createQuestion(type, competencies, difficultyTier, nuggetMultiplier)
+note right: Validate input
+
+alt Valid input
+  Service -> Service : validateCompetencies(competencies)
+  note right: At least one competency required
+  Service -> Service : validateDifficultyTier(difficultyTier)
+  note right: Exactly one tier from {Beginner, Intermediate, Advanced}
+  Service -> Service : validateType(type)
+  note right: Must be multiple_choice, drag_and_drop, or code_snippet
+
+  Service -> Question : new Question(type, difficultyTier, nuggetMultiplier)
+  activate Question
+  Question -> Question : setState(Pre1, Pre2)  ' system running, instructor logged in
+  Service -> Competency : addCompetency(competency)
+  Service -> DifficultyTag : createTag(level: difficultyTier)
+  note right: No two DifficultyTags on same resource
+
+  Service -> DB : persist(question) [encrypted at rest]
+  DB --> Service : success (questionId)
+  Service -> Question : setState(Post1)
+  deactivate Question
+
+  Service --> API : 201 Created\n{ questionId: String }
+  API --> Instructor : 201 Created\n{ questionId: String }
+else Validation fails
+  Service --> API : 400 Bad Request\n{ error: String }
+  API --> Instructor : 400 Bad Request\n{ error: String }
+end
+
+== Create Question - Missing Competencies ==
+
+Instructor -> API : POST /questions\n(type, competencies=[], difficultyTier, nuggetMultiplier) [TLS]
+API -> Service : createQuestion(type, [], difficultyTier, nuggetMultiplier)
+Service -> Service : validateCompetencies([])
+note right: Fails: at least one competency required
+Service --> API : 400 Bad Request\n{ error: "At least one competency required" }
+API --> Instructor : 400 Bad Request\n{ error: "At least one competency required" }
+note right: Database not updated, state remains Pre1/Pre2 (PostError)
+
+== Create Question - Invalid Input ==
+
+Instructor -> API : POST /questions\n(type, competencies, difficultyTier="Expert", nuggetMultiplier) [TLS]
+API -> Service : createQuestion(type, competencies, "Expert", nuggetMultiplier)
+Service -> Service : validateDifficultyTier("Expert")
+note right: Fails: invalid tier
+Service --> API : 400 Bad Request\n{ error: "Invalid difficulty tier" }
+API --> Instructor : 400 Bad Request\n{ error: "Invalid difficulty tier" }
+
+Instructor -> API : POST /questions\n(type="essay", competencies, difficultyTier, nuggetMultiplier) [TLS]
+API -> Service : createQuestion("essay", competencies, difficultyTier, nuggetMultiplier)
+Service -> Service : validateType("essay")
+note right: Fails: unsupported type
+Service --> API : 400 Bad Request\n{ error: "Invalid question type" }
+API --> Instructor : 400 Bad Request\n{ error: "Invalid question type" }
+
+@enduml

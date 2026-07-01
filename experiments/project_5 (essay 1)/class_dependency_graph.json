@@ -1,0 +1,68 @@
+{
+  "ExamBuilder": [],
+  "Question": [
+    "ExamSession",
+    "AttemptReview",
+    "CompetencyTrendChart"
+  ],
+  "Competency": [
+    "CompetencyBreakdown",
+    "StudyTip",
+    "AttemptReview",
+    "CompetencyTrendChart",
+    "Instructor",
+    "InstructorDashboard"
+  ],
+  "Schedule": [],
+  "Student": [
+    "Cohort",
+    "Enrollment",
+    "ExamSession",
+    "Streak",
+    "RewardStore",
+    "RewardItem",
+    "Redemption",
+    "AttemptReview",
+    "CompetencyTrendChart",
+    "CohortLeaderboard",
+    "BonuNuggetGrant",
+    "AuditEvent"
+  ],
+  "StudentProfile": [],
+  "NuggetWallet": [
+    "ExamSession",
+    "Streak",
+    "RewardStore",
+    "RewardItem",
+    "Redemption",
+    "CohortLeaderboard",
+    "BonuNuggetGrant",
+    "AuditEvent"
+  ],
+  "Badge": [],
+  "RadarChart": [],
+  "CompetencyBreakdown": [],
+  "StudyTip": [],
+  "Cohort": [
+    "CohortLeaderboard"
+  ],
+  "Enrollment": [
+    "Instructor",
+    "InstructorDashboard"
+  ],
+  "ExamSession": [],
+  "Streak": [],
+  "RewardStore": [],
+  "RewardItem": [],
+  "Redemption": [],
+  "AttemptReview": [],
+  "CompetencyTrendChart": [],
+  "Instructor": [
+    "BonuNuggetGrant",
+    "AuditEvent"
+  ],
+  "InstructorDashboard": [],
+  "CohortLeaderboard": [],
+  "BonuNuggetGrant": [],
+  "AuditEvent": []
+}

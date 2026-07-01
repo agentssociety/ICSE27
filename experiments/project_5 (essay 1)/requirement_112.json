@@ -1,0 +1,112 @@
+{
+  "id": "REQ-ANS-01",
+  "title": "Streak System Implementation",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall implement a streak system where consecutive correct answers apply a nugget multiplier (1.5\u00d7, 2\u00d7, 3\u00d7) that resets on a wrong answer.",
+  "rationale": "To encourage players to maintain consecutive correct answers and increase their earnings, thereby enhancing engagement and satisfaction within the game.",
+  "business_value": "Increased player retention and loyalty due to higher rewards for sustained performance, leading to potential long-term revenue growth.",
+  "source": {
+    "type": "User Story",
+    "id": 112,
+    "description": "As a player I need a streak system where consecutive correct answers apply a nugget multiplier (1.5\u00d7, 2\u00d7, 3\u00d7) that resets on a wrong answer So that I can earn increased nuggets for maintaining a streak"
+  },
+  "stakeholders": [
+    "Game Developers",
+    "UX/UI Designers",
+    "QA Engineers"
+  ],
+  "acceptance_criteria": [
+    "Given I am answering a question, When I answer correctly for the first time, Then I receive base nuggets (no multiplier)",
+    "Given I have answered correctly once, When I answer correctly again, Then I receive nuggets multiplied by 1.5\u00d7",
+    "Given I have answered correctly twice consecutively, When I answer correctly a third time, Then I receive nuggets multiplied by 2\u00d7",
+    "Given I have answered correctly three times consecutively, When I answer correctly a fourth time, Then I receive nuggets multiplied by 3\u00d7",
+    "Given I have a streak of at least one correct answer, When I answer incorrectly, Then my streak resets and the multiplier returns to 1\u00d7"
+  ],
+  "preconditions": [
+    "The player is actively answering questions within the game environment."
+  ],
+  "postconditions": [
+    "If the player answers correctly, they receive nuggets multiplied according to their current streak.",
+    "If the player answers incorrectly, their streak resets and the multiplier reverts to 1\u00d7."
+  ],
+  "functional_constraints": [
+    "The system must track consecutive correct answers accurately.",
+    "The multiplier should start at 1\u00d7 and increase by increments of 0.5\u00d7 for each additional correct answer up to a maximum of 3\u00d7.",
+    "The streak resets to 1\u00d7 on any incorrect answer."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": [
+      "Responsiveness: The system should respond within 200ms during normal operation."
+    ],
+    "availability": [
+      "Uptime: At least 99.5% uptime during peak hours."
+    ],
+    "scalability": [
+      "The system must handle a minimum of 1,000 concurrent players without performance degradation."
+    ],
+    "usability": [
+      "Error handling: Provide clear feedback to the player if their answer is incorrect.",
+      "Interface behavior: Clearly display the current streak and multiplier value."
+    ]
+  },
+  "edge_cases": [
+    "What happens if a player logs out and then logs back in? Does their streak continue?",
+    "How does the system handle extremely high streaks (e.g., more than three consecutive correct answers)?",
+    "Can the multiplier be adjusted by administrators or is it fixed as described?"
+  ],
+  "dependencies": [
+    "Question Management System: To provide questions for players to answer."
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Question API",
+      "description": "Interacts with the Question Management System to fetch and validate player answers."
+    },
+    {
+      "type": "Database",
+      "name": "Player Data Database",
+      "description": "Stores player streak information and multiplier values."
+    },
+    {
+      "type": "UI",
+      "name": "Game Interface",
+      "description": "Displays the current streak and multiplier to the player."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ANS-01",
+      "description": "Player answers a question correctly for the first time.",
+      "expected_result": "Player receives base nuggets with no multiplier applied."
+    },
+    {
+      "id": "TC-ANS-02",
+      "description": "Player answers three questions consecutively correctly.",
+      "expected_result": "Player receives nuggets multiplied by 3\u00d7 for the third correct answer."
+    },
+    {
+      "id": "TC-ANS-03",
+      "description": "Player answers a question incorrectly after a streak of three consecutive correct answers.",
+      "expected_result": "Streak resets to 1\u00d7, multiplier returns to 1\u00d7."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-29T14:30:12.515355",
+  "last_updated": "2026-06-29T15:12:27.637727",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Streak",
+      "Student",
+      "NuggetWallet"
+    ],
+    "test_artifacts": []
+  }
+}

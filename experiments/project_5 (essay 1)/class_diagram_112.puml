@@ -1,0 +1,113 @@
+@startuml
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam backgroundColor transparent
+skinparam classBorderColor #336699
+skinparam classBackgroundColor #F0F8FF
+skinparam interfaceBorderColor #336699
+skinparam interfaceBackgroundColor #E6F2FF
+skinparam enumBorderColor #336699
+skinparam enumBackgroundColor #FFF0E0
+skinparam packageBorderColor #6699CC
+skinparam packageBackgroundColor #FFFFFF
+
+package "Domain Model" {
+    class Player {
+        - id : String {unique}
+        - currentStreak : int {>=0}
+        - multiplier : decimal {in {1.0,1.5,2.0,3.0}}
+  + getStreak()
+  + getWallet()
+    }
+    note left of Player : Invariants:\ncurrentStreak >= 0\nmultiplier ∈ {1.0,1.5,2.0,3.0}
+
+    class Streak {
+        - count : int {>=0}
+        - multiplier : decimal {computed}
+  + correctAnswer()
+  + incorrectAnswer()
+    }
+    note right of Streak : Invariant:\ncount >= 0\nmultiplier = 1.0+0.5*min(count-1,4)\nwhen count>=1 else 1.0
+
+    class NuggetWallet {
+        - balance : int {>=0}
+  + addNuggets(baseNuggets × multiplier)
+    }
+    note right of NuggetWallet : Invariant:\nbalance >= 0
+
+    class Question {
+        - id : String
+        - correctAnswer : String
+    }
+
+    Player "1" *-- "1" Streak : has >
+    Player "1" *-- "1" NuggetWallet : has >
+    Player "*" -- "*" Question : answers >
+    Streak ..> NuggetWallet : uses for award calculation >
+}
+
+package "Application" {
+    class Operation {
+        - initiator : Actor
+        - target : Resource
+        - channel : Interface
+        - grant : Permission
+        - pre : State
+        - post : State
+  + submitAnswer(questionId, answer)
+    }
+    note right of Operation : Invariants:\npre != post\ngrant in initiator.mayPerform\ninitiator in target.accessible
+}
+
+package "Infrastructure — Ports" {
+    interface "QuestionApi" as QuestionApiInterface <<interface>>
+    interface "PlayerDataDatabase" as PlayerDataDatabaseInterface <<interface>>
+    interface "GameInterface" as GameInterfaceInterface <<interface>>
+
+    class Actor {
+        - id : String
+        - mayPerform : Permission[*]
+  + hasPermission(Permission.Write)
+    }
+
+    class Resource {
+        - id : String
+        - owner : Actor
+        - accessible : Actor[*]
+  + isAccessible(A)
+    }
+
+    class Interface {
+        - id : String
+        - kind : IfaceKind
+        - authenticated : boolean
+    }
+
+    enum Permission <<enum>> {
+        Read
+        Write
+        Execute
+    }
+
+    enum State <<enum>> {
+        Answering
+        CorrectFirstTime
+        IncorrectReset
+        NextCorrect1_5x
+        NextCorrect2x
+        NextCorrect3x
+    }
+
+    enum IfaceKind <<enum>> {
+        Database
+        API
+        UI
+    }
+
+    Actor "*" -- "*" Permission : mayPerform >
+    Resource "1" -- "1" Actor : owner >
+    Resource "1" -- "*" Actor : accessible >
+    Interface "1" -- "1" IfaceKind : kind >
+}
+
+@enduml

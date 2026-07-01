@@ -1,0 +1,73 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "Domain Model" {
+  class User {
+    - userId : String
+    - passwordHash : String
+    - email : String
+    - accountStatus : String
+  + checkAuthentication(sessionToken)
+  + checkPermission(Permission.READ) : boolean
+  + notifyViewHistory()
+  + validateEmailFormat(newEmail) : boolean
+  + checkPermission(Permission.ADMIN) : boolean
+  + cascadeDelete()
+  }
+  class Post {
+    - postId : String
+    - content : String
+    - timestamp : DateTime
+    - userId : String
+  }
+  class AccountSettings {
+    - userId : String
+    - password : String
+    - email : String
+    - deletionRequested : boolean
+  + validatePasswordStrength(newPassword) : ValidationResult
+  + encryptPassword(newPassword) : String
+  + setPassword(encryptedHash)
+  + setPendingEmail(newEmail)
+  + clearPendingEmail()
+  + confirmEmail()
+  + setDeletionRequested(true)
+  + cancelDeletionRequest()
+  }
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+  enum StateType {
+    Pre1
+    Pre2
+    Pre3
+    Post1
+    Post2
+    Post3
+  }
+  class State {
+    - type : StateType
+    - description : String
+  }
+}
+
+package "Controllers" {
+  interface "User Profile API" as UserProfileAPI
+}
+
+package "Infrastructure — Ports" {
+  interface "Post History Database" as PostHistoryDatabase
+}
+
+' Relationships
+User "1" -- "0..*" Post : owns
+User "1" *-- "1" AccountSettings : has
+User "1" -- "*" Permission : mayPerform
+User .> UserProfileAPI : initiates operations via
+UserProfileAPI .> PostHistoryDatabase : retrieves from
+
+@enduml

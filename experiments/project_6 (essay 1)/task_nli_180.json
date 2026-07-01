@@ -1,0 +1,16 @@
+{
+  "task_id": 180,
+  "confidence": 0.9888,
+  "evidence": [
+    {
+      "claim": "Soft-delete means the account is not permanently removed immediately.",
+      "fact": "Account deletion is a soft delete.",
+      "score": 0.9888,
+      "user_story_span": "Soft-delete means the account is not permanently removed immediately.",
+      "fact_span": "Account deletion is a soft delete."
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

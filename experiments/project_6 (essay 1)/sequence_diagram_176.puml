@@ -1,0 +1,162 @@
+@startuml
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+box "UI Layer" #LightBlue
+  participant "Notification Settings Page" as UI
+end box
+
+box "Controller Layer" #LightGreen
+  participant "NotificationController" as Controller
+end box
+
+box "Application Layer" #LightYellow
+  participant "NotificationService" as Service
+end box
+
+box "Domain Layer" #LightPink
+  participant "User" as User
+  participant "NotificationPreference" as Preference
+  participant "NotificationCategory" as Category
+  participant "UserState" as State
+end box
+
+box "Infrastructure Layer" #LightCyan
+  participant "NotificationPreferenceDB" as DB
+end box
+
+== View Settings Flow ==
+
+UI -> Controller : GET /api/notifications/preferences
+note right: Requires session token in Authorization header
+
+Controller -> Controller : validateSessionToken(token: String) : Boolean
+
+alt Invalid or missing session token
+  Controller -> UI : 401 Unauthorized
+else Valid session token
+  Controller -> Service : getPreferences(userId: String)
+  
+  Service -> User : new User(userId: String)
+  User -> State : getCurrentState() : UserState
+  
+  alt User not in LoggedIn state
+    Service -> Controller : throw IllegalStateException("User not logged in")
+    Controller -> UI : 403 Forbidden
+  else User is LoggedIn
+    Service -> DB : readPreferences(userId: String) : List<NotificationPreference>
+    note right: [Database query]
+    
+    alt Database error
+      DB -> Service : throw DatabaseException
+      Service -> Controller : throw ServiceException("Failed to load preferences")
+      Controller -> UI : 500 Internal Server Error
+    else Success
+      DB -> Service : return preferences
+      Service -> Controller : return List<NotificationPreferenceDTO>
+      Controller -> UI : 200 OK with preferences
+    end
+  end
+end
+
+== Toggle Notification Flow ==
+
+UI -> Controller : PUT /api/notifications/preferences/{category}
+note right: Body: { "enabled": true/false }
+
+Controller -> Controller : validateSessionToken(token: String) : Boolean
+
+alt Invalid or missing session token
+  Controller -> UI : 401 Unauthorized
+else Valid session token
+  Controller -> Controller : extractUserIdFromToken(token: String) : String
+  Controller -> Service : togglePreference(userId: String, category: String, enabled: Boolean)
+  
+  Service -> Category : NotificationCategory.valueOf(category: String) : NotificationCategory
+  
+  alt Unsupported category
+    Service -> Controller : throw IllegalArgumentException("Unsupported category: " + category)
+    Controller -> UI : 400 Bad Request
+    note right: State unchanged - idempotent failure
+  else Supported category
+    Service -> User : new User(userId: String)
+    User -> State : getCurrentState() : UserState
+    
+    alt User not in LoggedIn state
+      Service -> Controller : throw IllegalStateException("User not logged in")
+      Controller -> UI : 403 Forbidden
+    else User is LoggedIn
+      Service -> State : transitionTo("Toggling")
+      note right: Start database transaction
+      
+      Service -> DB : upsertPreference(userId: String, category: NotificationCategory, enabled: Boolean)
+      note right: [Database upsert with unique constraint on userId + category]
+      
+      alt Database constraint violation (duplicate)
+        DB -> Service : throw ConstraintViolationException
+        Service -> State : transitionTo("LoggedIn")
+        note right: Rollback transaction
+        Service -> Controller : throw ServiceException("Concurrent update detected")
+        Controller -> UI : 409 Conflict
+        note right: Last write wins strategy applied
+      else Database error
+        DB -> Service : throw DatabaseException
+        Service -> State : transitionTo("LoggedIn")
+        note right: Rollback transaction
+        Service -> Controller : throw ServiceException("Failed to update preference")
+        Controller -> UI : 500 Internal Server Error
+      else Success
+        DB -> Service : return updated Preference
+        
+        Service -> Preference : new NotificationPreference(userId, category, enabled)
+        note right: State transition: pre != post
+        
+        Service -> State : transitionTo("PostToggle")
+        note right: Commit transaction
+        
+        Service -> Controller : return NotificationPreferenceDTO
+        Controller -> UI : 200 OK with updated preference
+        note right: Effect takes place immediately
+      end
+    end
+  end
+end
+
+== Concurrent Toggle Flow ==
+
+UI -> Controller : PUT /api/notifications/preferences/{category} (concurrent request)
+
+Controller -> Controller : validateSessionToken(token: String) : Boolean
+
+alt Valid session token
+  Controller -> Service : togglePreference(userId: String, category: String, enabled: Boolean)
+  
+  Service -> Category : NotificationCategory.valueOf(category: String) : NotificationCategory
+  
+  alt Supported category
+    Service -> User : new User(userId: String)
+    User -> State : getCurrentState() : UserState
+    
+    alt User is LoggedIn
+      Service -> State : transitionTo("Toggling")
+      
+      Service -> DB : upsertPreference(userId: String, category: NotificationCategory, enabled: Boolean)
+      
+      alt Database optimistic lock failure
+        DB -> Service : throw OptimisticLockException
+        Service -> State : transitionTo("LoggedIn")
+        note right: Rollback transaction
+        Service -> Controller : throw ServiceException("Concurrent modification detected")
+        Controller -> UI : 409 Conflict
+        note right: Last write wins - retry with latest state
+      else Success
+        DB -> Service : return updated Preference
+        Service -> State : transitionTo("PostToggle")
+        Service -> Controller : return NotificationPreferenceDTO
+        Controller -> UI : 200 OK
+      end
+    end
+  end
+end
+
+@enduml

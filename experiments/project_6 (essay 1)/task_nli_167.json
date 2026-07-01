@@ -1,0 +1,37 @@
+{
+  "task_id": 167,
+  "confidence": 0.931,
+  "evidence": [
+    {
+      "claim": "The user cannot see posts from groups they are not a member of",
+      "fact": "Privacy controls whether non-friends can view their posts.",
+      "score": 0.964,
+      "user_story_span": "I do not see posts from groups I am not a member of",
+      "fact_span": ""
+    },
+    {
+      "claim": "Each post is associated with a specific group",
+      "fact": "The group feed lists only posts made within that group.",
+      "score": 0.9325,
+      "user_story_span": "Each post is associated with a specific group",
+      "fact_span": "The group feed lists only posts made within that group."
+    },
+    {
+      "claim": "The feed may be sorted by relevance",
+      "fact": "The report record includes a reason dropdown.",
+      "score": 0.9153,
+      "user_story_span": "The feed may be sorted by time or relevance",
+      "fact_span": ""
+    },
+    {
+      "claim": "The user is authenticated",
+      "fact": "The verified badge is a boolean flag toggle.",
+      "score": 0.9122,
+      "user_story_span": "The user is authenticated",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

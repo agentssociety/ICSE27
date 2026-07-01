@@ -1,0 +1,139 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor white
+  BorderColor black
+  FontName Helvetica
+  FontSize 12
+}
+skinparam interface {
+  BackgroundColor #F5F5F5
+  BorderColor #888888
+  FontName Helvetica
+  FontSize 12
+}
+skinparam enum {
+  BackgroundColor #F0FFF0
+  BorderColor #006400
+}
+skinparam note {
+  FontSize 10
+}
+
+package "Domain Model" {
+  enum Permission {
+    READ
+    WRITE
+    BONUS_GRANT
+  }
+
+  enum State {
+    PRE1
+    JUSTIFIED_STATE
+    POST1
+    POST2
+    ERROR_STATE
+  }
+
+  class Teacher {
+    id : String
+    name : String
+    mayPermit : Permission[]
+  }
+  note right of Teacher::mayPermit
+    must include READ, WRITE, BONUS_GRANT
+  end note
+
+  class Student {
+    id : String
+    name : String
+    nuggetWalletBalance : int
+    mayPermit : Permission[]
+  }
+  note right of Student::mayPermit
+    must include READ
+  end note
+
+  class IT_Team {
+    id : String
+    mayPermit : Permission[]
+  }
+  note right of IT_Team::mayPermit
+    must include READ
+  end note
+
+  class BonusNugget {
+    amount : int
+    justification : String
+    teacherId : String
+    studentId : String
+    timestamp : DateTime
+  }
+  note right of BonusNugget
+    owner must be a Student
+    resource accessible by granting Teacher
+  end note
+
+  class Justification {
+    text : String
+    teacherId : String
+  }
+  note right of Justification
+    must be provided before BonusGrant
+    modeled as JustifiedState
+  end note
+
+  class AuditEvent {
+    eventId : String
+    teacherId : String
+    studentId : String
+    amount : int
+    justification : String
+    timestamp : DateTime
+  }
+
+  class NuggetWallet {
+    studentId : String
+    balance : int
+  }
+}
+
+package "Application" {
+  class BonusGrantService
+}
+
+package "Controllers" {
+  interface TeacherDashboard <<interface>>
+}
+
+package "Infrastructure — Ports" {
+  interface StudentAccountApi <<interface>>
+  interface AuditLoggingApi <<interface>>
+}
+
+package "Exceptions" {
+  class AccessDeniedException <<exception>>
+  class MissingJustificationException <<exception>>
+}
+
+' Domain relationships
+Teacher "1" --> "0..*" BonusNugget : grants
+Student "1" --> "0..*" BonusNugget : owns
+BonusNugget "1" --> "1" Justification : requires
+BonusNugget "0..1" ..> "1" AuditEvent : creates
+Student "1" --> "1" NuggetWallet : has
+
+' Application layer dependencies
+BonusGrantService ..> TeacherDashboard : uses
+BonusGrantService ..> StudentAccountApi : calls
+BonusGrantService ..> AuditLoggingApi : logs
+
+' Controller dependency
+TeacherDashboard ..> BonusGrantService : delegates to
+
+' Exceptions raised by service (shown as dependency)
+BonusGrantService ..> AccessDeniedException : raises
+BonusGrantService ..> MissingJustificationException : raises
+
+@enduml

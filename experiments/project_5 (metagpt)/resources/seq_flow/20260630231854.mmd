@@ -1,0 +1,49 @@
+
+sequenceDiagram
+    participant Student as Student (Browser)
+    participant UI as Student Interface (Alpine.js)
+    participant WS as WebSocket Consumer
+    participant View as Django View
+    participant DB as PostgreSQL
+    participant Audit as Audit Middleware
+
+    Note over Student, Audit: Exam Taking Flow
+    Student->>UI: Click "Start Exam"
+    UI->>View: POST /exams/{id}/start
+    View->>DB: Create ExamAttempt record
+    View->>DB: Fetch first question
+    View-->>UI: Return question data + timer info
+    UI->>WS: Connect WebSocket for live updates
+    WS->>WS: Start server-side timer countdown
+    loop For each question
+        UI->>Student: Display question (MCQ/DragDrop/Code)
+        Student->>UI: Submit answer
+        UI->>View: POST /exams/{id}/submit-answer
+        View->>DB: Evaluate answer, update streak
+        View->>DB: Calculate nuggets with streak multiplier
+        View-->>UI: Return result (correct/incorrect, nuggets earned)
+        UI->>WS: Send streak update
+        WS-->>UI: Broadcast animated nugget counter
+        alt Answer correct
+            UI->>UI: Show green feedback, increment streak
+        else Answer wrong
+            UI->>UI: Show red feedback, reset streak to 0
+        end
+        UI->>View: GET /exams/{id}/next-question
+        View-->>UI: Return next question or completion signal
+    end
+    Note over Student, Audit: Exam Submission
+    UI->>View: POST /exams/{id}/submit
+    View->>DB: Calculate final competency breakdown
+    View->>DB: Update nugget balance, check badges
+    View->>Audit: Log exam submission event
+    View-->>UI: Return competency radar chart data + study tips
+    UI->>Student: Display results with animations
+
+    Note over Student, Audit: Instructor Analytics Flow
+    Instructor->>UI: Navigate to exam analytics
+    UI->>View: GET /analytics/exam/{id}
+    View->>DB: Aggregate cohort performance
+    View->>DB: Calculate per-competency heatmap
+    View-->>UI: Return heatmap data + mastery thresholds
+    UI->>UI: Render Plotly heatmap (red for below threshold)

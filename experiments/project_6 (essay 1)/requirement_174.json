@@ -1,0 +1,94 @@
+{
+  "id": "REQ-PROF-01",
+  "title": "Toggle Profile Visibility",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow a user to toggle their profile visibility between public and private.",
+  "rationale": "To enable users to control who sees their profile, enhancing privacy and security settings.",
+  "business_value": "Improves user trust and confidence in the platform by giving them greater control over their personal information.",
+  "source": {
+    "type": "User Story",
+    "id": 174,
+    "description": "As a user, I need to toggle my profile visibility between public and private so that I can control who sees my profile."
+  },
+  "stakeholders": [
+    "Product Management",
+    "Design Team",
+    "Quality Assurance"
+  ],
+  "acceptance_criteria": [
+    "Given I am on my profile settings page",
+    "When I toggle the profile visibility option",
+    "Then my profile visibility changes between public and private accordingly"
+  ],
+  "preconditions": [
+    "The user must be logged in to their account.",
+    "The profile settings page must be accessible."
+  ],
+  "postconditions": [
+    "The user's profile visibility is updated to the selected state.",
+    "All users affected by the change (public to private) should no longer see the profile."
+  ],
+  "functional_constraints": [
+    "The system must handle the toggle operation in less than 2 seconds."
+  ],
+  "security_requirements": [
+    "Only authenticated users can access and modify their profile settings.",
+    "Profile visibility changes are logged for security audit purposes."
+  ],
+  "non_functional_requirements": {
+    "performance": "System response time to profile visibility toggle must be under 200ms.",
+    "availability": "The system must be available 99.9% of the time during peak usage periods.",
+    "scalability": "The system must support up to 1 million active users without significant performance degradation.",
+    "usability": "Error messages should be clear and actionable, guiding the user on how to resolve issues."
+  },
+  "edge_cases": [
+    "What happens if the user toggles their profile visibility to private and then immediately logs out and back in?",
+    "How does the system handle a scenario where there are network issues during the toggle operation?"
+  ],
+  "dependencies": [
+    "User authentication service",
+    "Profile storage database"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Profile Settings API",
+      "description": "The system interacts with this API to retrieve and update profile settings."
+    },
+    {
+      "type": "Database",
+      "name": "User Profiles Database",
+      "description": "This database stores the visibility status of user profiles."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-PROF-01",
+      "description": "Verify that toggling profile visibility to public from private is successful.",
+      "expected_result": "The user's profile should be visible to everyone after the toggle operation."
+    },
+    {
+      "id": "TC-PROF-02",
+      "description": "Verify that toggling profile visibility to private from public is successful.",
+      "expected_result": "The user's profile should be visible only to the user or authorized connections after the toggle operation."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T12:14:35.267154",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "Profile",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

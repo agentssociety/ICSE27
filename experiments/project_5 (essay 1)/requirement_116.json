@@ -1,0 +1,107 @@
+{
+  "id": "REQ-REVIEW-01",
+  "title": "Review Past Attempts and Competency Trends",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall display a chronological list of past attempts for the student, including per-question details such as the student's answer, correct answer, and learning nugget.",
+  "rationale": "This requirement allows students to track their learning progress and identify areas needing improvement by reviewing past performance and competency trends over time.",
+  "business_value": "Improved understanding of learning outcomes, facilitating targeted improvements in study strategies and focus on weak areas.",
+  "source": {
+    "type": "User Story",
+    "id": 116,
+    "description": "As a student I need to review past attempts with my answers, correct answers, nuggets per question, and competency trend charts So that I can track my learning progress and identify areas needing improvement."
+  },
+  "stakeholders": [
+    "Students",
+    "Instructors",
+    "Learning Management System (LMS) Team"
+  ],
+  "acceptance_criteria": [
+    "I see a chronological list of my past attempts",
+    "I see for each question: my answer, the correct answer, and a learning nugget",
+    "I see graphical trends of my performance over time for each competency"
+  ],
+  "preconditions": [
+    "I am a student with multiple completed attempts",
+    "Competency trend charts have sufficient data to generate trends"
+  ],
+  "postconditions": [
+    "The user has reviewed past attempts and identified areas needing improvement"
+  ],
+  "functional_constraints": [
+    "Data privacy rules must be adhered to when displaying past attempts and competency trends"
+  ],
+  "security_requirements": [
+    "Authentication must be required before accessing the review section",
+    "Data should be encrypted in transit and at rest to protect student information"
+  ],
+  "non_functional_requirements": {
+    "performance": "The system should respond within 2 seconds for a typical user session",
+    "availability": "99.9% uptime is expected with minimal downtime during peak times",
+    "scalability": "The system must handle at least 10,000 students simultaneously without significant performance degradation",
+    "usability": "Error messages should be clear and concise to guide the user on how to correct their actions"
+  },
+  "edge_cases": [
+    "What happens if a student has no past attempts?",
+    "How should the system handle data privacy concerns when displaying competency trends?",
+    "What if there is an error in calculating competency trend charts?"
+  ],
+  "dependencies": [
+    "LMS System",
+    "Data Storage (for storing past attempts and competency data)",
+    "Graphing Library (for generating competency trend charts)"
+  ],
+  "interfaces": [
+    {
+      "type": "UI",
+      "name": "Student Dashboard",
+      "description": "The requirement interacts with the student's dashboard to provide access to the review section."
+    },
+    {
+      "type": "API",
+      "name": "LMS API",
+      "description": "The requirement uses the LMS API to fetch past attempts and competency data for the student."
+    },
+    {
+      "type": "Database",
+      "name": "Student Data Store",
+      "description": "The requirement reads from a database to retrieve past attempts and competency trend data."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-REVIEW-01",
+      "description": "A student with multiple completed attempts navigates to the review section.",
+      "expected_result": "The system displays a chronological list of past attempts for the student."
+    },
+    {
+      "id": "TC-REVIEW-02",
+      "description": "A student selects a specific past attempt and views its details.",
+      "expected_result": "For each question, the system shows the student's answer, correct answer, and learning nugget."
+    },
+    {
+      "id": "TC-REVIEW-03",
+      "description": "A student with insufficient attempt history accesses the competency trend charts.",
+      "expected_result": "The system displays an appropriate message indicating there is not enough data to generate trends."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-29T14:38:39.344275",
+  "last_updated": "2026-06-29T15:12:27.637727",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "AttemptReview",
+      "CompetencyTrendChart",
+      "Attempt",
+      "Question",
+      "Competency",
+      "Student"
+    ],
+    "test_artifacts": []
+  }
+}

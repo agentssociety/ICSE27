@@ -265,19 +265,127 @@
         ]
       },
       "n_tasks_per_essay": 7
+    },
+    {
+      "project_id": 5,
+      "n_essays": 1,
+      "n_essays_with_data": 1,
+      "mean_confidence": {
+        "mean": 0.989,
+        "std": 0.0,
+        "median": 0.989,
+        "values": [
+          0.989
+        ]
+      },
+      "mean_nli_alignment_score": {
+        "mean": 0.989,
+        "std": 0.0,
+        "median": 0.989,
+        "values": [
+          0.989
+        ]
+      },
+      "spec_coverage_rate": {
+        "mean": 0.5984,
+        "std": 0.0,
+        "median": 0.5984,
+        "values": [
+          0.5984
+        ]
+      },
+      "spec_extrapolation_rate": {
+        "mean": 0.4016,
+        "std": 0.0,
+        "median": 0.4016,
+        "values": [
+          0.4016
+        ]
+      },
+      "overall_hallucination_rate": {
+        "mean": 0.4016,
+        "std": 0.0,
+        "median": 0.4016,
+        "values": [
+          0.4016
+        ]
+      },
+      "n_outliers": {
+        "mean": 1.0,
+        "std": 0.0,
+        "median": 1.0,
+        "values": [
+          1.0
+        ]
+      },
+      "n_tasks_per_essay": 12
+    },
+    {
+      "project_id": 6,
+      "n_essays": 1,
+      "n_essays_with_data": 1,
+      "mean_confidence": {
+        "mean": 0.8348,
+        "std": 0.0,
+        "median": 0.8348,
+        "values": [
+          0.8348
+        ]
+      },
+      "mean_nli_alignment_score": {
+        "mean": 0.8348,
+        "std": 0.0,
+        "median": 0.8348,
+        "values": [
+          0.8348
+        ]
+      },
+      "spec_coverage_rate": {
+        "mean": 0.3125,
+        "std": 0.0,
+        "median": 0.3125,
+        "values": [
+          0.3125
+        ]
+      },
+      "spec_extrapolation_rate": {
+        "mean": 0.6875,
+        "std": 0.0,
+        "median": 0.6875,
+        "values": [
+          0.6875
+        ]
+      },
+      "overall_hallucination_rate": {
+        "mean": 0.6875,
+        "std": 0.0,
+        "median": 0.6875,
+        "values": [
+          0.6875
+        ]
+      },
+      "n_outliers": {
+        "mean": 4.0,
+        "std": 0.0,
+        "median": 4.0,
+        "values": [
+          4.0
+        ]
+      },
+      "n_tasks_per_essay": 25
     }
   ],
   "pooled_all_runs": {
-    "n_scores": 82,
-    "mean": 0.9683,
-    "median": 0.9877,
-    "std": 0.1112,
-    "q1": 0.9775,
+    "n_scores": 119,
+    "mean": 0.9424,
+    "median": 0.9873,
+    "std": 0.1814,
+    "q1": 0.9711,
     "q3": 0.9943,
-    "iqr": 0.0168,
-    "outlier_threshold_lo": 0.9523,
-    "outlier_threshold_hi": 1.0195,
-    "n_outliers": 7,
-    "n_zero_confidence": 1
+    "iqr": 0.0232,
+    "outlier_threshold_lo": 0.9363,
+    "outlier_threshold_hi": 1.0291,
+    "n_outliers": 16,
+    "n_zero_confidence": 4
   }
 }

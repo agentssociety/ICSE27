@@ -1,0 +1,193 @@
+"""
+Models for the store app, providing redemption tracking for reward items.
+Records each purchase with student, item, timestamp, and status.
+Uses atomic transactions to ensure nugget deduction and stock decrement are consistent.
+"""
+from django.db import models, transaction
+from django.utils import timezone
+from django.core.exceptions import ValidationError
+
+from gamification.models import RewardItem as GamificationRewardItem
+
+
+class Redemption(models.Model):
+    """
+    Records a single redemption of a RewardItem by a StudentProfile.
+    Status tracks the lifecycle: 'pending' (initial), 'completed' (nuggets deducted),
+    'used' (perk code claimed or item consumed).
+    """
+    class Status(models.TextChoices):
+        PENDING = 'PENDING', 'Pending'
+        COMPLETED = 'COMPLETED', 'Completed'
+        USED = 'USED', 'Used'
+        CANCELLED = 'CANCELLED', 'Cancelled'
+
+    student = models.ForeignKey(
+        'accounts.StudentProfile',
+        on_delete=models.CASCADE,
+        related_name='redemptions',
+        help_text='The student who made the purchase.'
+    )
+    reward_item = models.ForeignKey(
+        GamificationRewardItem,
+        on_delete=models.CASCADE,
+        related_name='redemptions',
+        help_text='The reward item that was purchased.'
+    )
+    redeemed_at = models.DateTimeField(
+        default=timezone.now,
+        db_index=True,
+        help_text='Timestamp when the redemption was created.'
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING,
+        help_text='Current lifecycle status of this redemption.'
+    )
+    voucher_code = models.CharField(
+        max_length=100,
+        blank=True,
+        default='',
+        help_text='Generated voucher or code for PERK-type items.'
+    )
+    notes = models.TextField(
+        blank=True,
+        default='',
+        help_text='Optional internal notes (e.g., reason for cancellation).'
+    )
+
+    class Meta:
+        app_label = 'store'
+        verbose_name = 'Redemption'
+        verbose_name_plural = 'Redemptions'
+        ordering = ['-redeemed_at']
+        indexes = [
+            models.Index(fields=['student', 'redeemed_at']),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.student.user.username} - {self.reward_item.name} ({self.get_status_display()})"
+
+    def clean(self) -> None:
+        """Validate the redemption before saving."""
+        if self.status == self.Status.CANCELLED and not self.notes:
+            raise ValidationError('Notes are required when cancelling a redemption.')
+        if self.reward_item.item_type == 'PERK' and self.status == self.Status.COMPLETED:
+            if not self.voucher_code:
+                raise ValidationError('Voucher code must be set for PERK redemptions before marking as completed.')
+
+    def save(self, *args, **kwargs) -> None:
+        """Override save to enforce validation and handle status transitions."""
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def create_redemption(cls, student_profile, reward_item) -> 'Redemption':
+        """
+        Atomically create a redemption record by deducting nuggets and reducing stock.
+        Returns the Redemption instance if successful, raises ValueError otherwise.
+
+        Args:
+            student_profile: StudentProfile instance making the purchase.
+            reward_item: RewardItem instance being purchased.
+
+        Returns:
+            Newly created Redemption instance with status=COMPLETED.
+
+        Raises:
+            ValueError: If stock is empty or insufficient nuggets.
+        """
+        with transaction.atomic():
+            # Lock the student and item rows to prevent race conditions
+            student = type(student_profile).objects.select_for_update().get(
+                pk=student_profile.pk
+            )
+            item = GamificationRewardItem.objects.select_for_update().get(
+                pk=reward_item.pk
+            )
+
+            # Validate conditions
+            if not item.is_available():
+                raise ValueError(f'Item {item.name} is out of stock.')
+            if student.nugget_balance < item.nugget_cost:
+                raise ValueError(
+                    f'Insufficient nuggets: have {student.nugget_balance}, need {item.nugget_cost}.'
+                )
+
+            # Deduct nuggets
+            student.nugget_balance -= item.nugget_cost
+            student.save(update_fields=['nugget_balance'])
+
+            # Decrement stock if not unlimited
+            if item.stock != -1:
+                item.stock -= 1
+                item.save(update_fields=['stock'])
+
+            # Create redemption record
+            redemption = cls(
+                student=student,
+                reward_item=item,
+                status=cls.Status.COMPLETED,
+                # For PERK items, generate a placeholder voucher (actual generation depends on external system)
+                voucher_code='' if item.item_type != 'PERK' else f'PERK-{student.pk}-{timezone.now().timestamp()}'
+            )
+            redemption.save()
+
+        return redemption
+
+    def mark_as_used(self) -> None:
+        """
+        Mark this redemption as used (e.g., after the student claims a perk).
+        Can only be called on completed redemptions.
+        """
+        if self.status != self.Status.COMPLETED:
+            raise ValidationError('Only completed redemptions can be marked as used.')
+        with transaction.atomic():
+            # Lock the redemption row to prevent double-use
+            redemption = type(self).objects.select_for_update().get(pk=self.pk)
+            if redemption.status != self.Status.COMPLETED:
+                raise ValidationError('Redemption status changed before processing (expected COMPLETED).')
+            redemption.status = self.Status.USED
+            redemption.save(update_fields=['status'])
+            # Synchronize local instance with database
+            self.status = redemption.status
+
+    def cancel(self, reason: str = 'Cancelled by system') -> None:
+        """
+        Cancel the redemption and refund the nuggets.
+        Only works for completed redemptions (not yet used).
+        Refunding restores stock if applicable.
+
+        Args:
+            reason: A descriptive reason for the cancellation. Must be non-empty.
+        """
+        if not reason:
+            raise ValueError('A reason must be provided for cancellation.')
+        if self.status != self.Status.COMPLETED:
+            raise ValidationError('Only completed redemptions can be cancelled.')
+
+        with transaction.atomic():
+            # Lock the redemption row to prevent double-cancel
+            redemption = type(self).objects.select_for_update().get(pk=self.pk)
+            if redemption.status != self.Status.COMPLETED:
+                raise ValidationError('Redemption status changed before processing (expected COMPLETED).')
+
+            student = type(self.student).objects.select_for_update().get(pk=self.student.pk)
+            item = GamificationRewardItem.objects.select_for_update().get(pk=self.reward_item.pk)
+
+            # Refund nuggets
+            student.nugget_balance += item.nugget_cost
+            student.save(update_fields=['nugget_balance'])
+
+            # Restore stock if not unlimited
+            if item.stock != -1:
+                item.stock += 1
+                item.save(update_fields=['stock'])
+
+            redemption.status = self.Status.CANCELLED
+            redemption.notes = reason
+            redemption.save(update_fields=['status', 'notes'])
+            # Synchronize local instance with database
+            self.status = redemption.status
+            self.notes = redemption.notes

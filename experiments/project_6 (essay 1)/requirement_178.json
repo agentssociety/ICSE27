@@ -1,0 +1,107 @@
+{
+  "id": "REQ-USER-HIST-01",
+  "title": "View Post History",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall display a list of the user's previous posts with timestamps on their profile page.",
+  "rationale": "Enabling users to view their post history allows them to track and manage their content more effectively.",
+  "business_value": "Improves user satisfaction by providing transparency into past actions, facilitating better decision-making.",
+  "source": {
+    "type": "User Story",
+    "id": 178,
+    "description": "As a user I need to view my own post history and manage account settings (change password, email, delete account) So that I can control my account and review my posts"
+  },
+  "stakeholders": [
+    "Users",
+    "Product Manager",
+    "Developer Team"
+  ],
+  "acceptance_criteria": [
+    "The list of previous posts shall be displayed on the profile page.",
+    "Each post in the list shall include a timestamp.",
+    "Users shall have access to account settings from their profile page.",
+    "The change password option shall allow users to update their password securely.",
+    "The change email option shall allow users to update their email address and verify it.",
+    "The delete account option shall allow users to irreversible delete their account with a confirmation step."
+  ],
+  "preconditions": [
+    "The user must be logged in to access the profile page.",
+    "The system must have access to the user's post history data.",
+    "The system must be able to retrieve and display data from the database."
+  ],
+  "postconditions": [
+    "Users shall see a list of their previous posts with timestamps on their profile page.",
+    "User password, email, or account deletion request shall be processed securely.",
+    "The user's account information shall be updated accordingly."
+  ],
+  "functional_constraints": [
+    "The system shall handle large volumes of post data without performance degradation.",
+    "Data retrieval and display operations shall be optimized for speed."
+  ],
+  "security_requirements": [
+    "All password changes shall be encrypted before storage.",
+    "Email verification shall be implemented to prevent unauthorized access.",
+    "Account deletion request must require a second step for confirmation."
+  ],
+  "non_functional_requirements": {
+    "performance": "The system shall respond within 2 seconds to post history and account settings requests.",
+    "availability": "The system shall be available 99.9% of the time.",
+    "scalability": "The system shall support up to 10,000 users simultaneously without performance degradation.",
+    "usability": "Error messages shall clearly explain issues and provide actionable steps for resolution."
+  },
+  "edge_cases": [
+    "What happens when a user tries to delete their account and later decides not to?",
+    "How does the system handle concurrent updates to a user's account settings?"
+  ],
+  "dependencies": [
+    "Database for storing user post history and account information",
+    "Authentication service for verifying user credentials"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "User Profile API",
+      "description": "Provides endpoints for retrieving a user's post history and accessing account settings."
+    },
+    {
+      "type": "Database",
+      "name": "Post History Database",
+      "description": "Stores the user's posts along with timestamps."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-REQ-USER-HIST-01",
+      "description": "Verify that a user can view their post history after logging in.",
+      "expected_result": "The system displays a list of the user's previous posts with timestamps on their profile page."
+    },
+    {
+      "id": "TC-REQ-USER-HIST-02",
+      "description": "Test changing the password through the account settings.",
+      "expected_result": "The user's password is updated securely, and they are prompted to verify the new password."
+    },
+    {
+      "id": "TC-REQ-USER-HIST-03",
+      "description": "Verify that deleting an account requires a second step for confirmation.",
+      "expected_result": "The system prompts the user for confirmation before deleting their account, and the account is deleted only upon successful confirmation."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T12:21:08.734262",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-CONTENT-PUB-01",
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "User",
+      "Post"
+    ],
+    "test_artifacts": []
+  }
+}

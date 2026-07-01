@@ -1,0 +1,150 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor White
+  BorderColor Black
+  FontColor Black
+}
+skinparam interface {
+  BackgroundColor LightCyan
+  BorderColor DarkCyan
+  FontColor Black
+}
+skinparam enum {
+  BackgroundColor LightYellow
+  BorderColor DarkGoldenRod
+  FontColor Black
+}
+skinparam exception {
+  BackgroundColor LightPink
+  BorderColor Red
+  FontColor Black
+}
+skinparam note {
+  BackgroundColor LightGray
+  BorderColor Gray
+  FontColor Black
+}
+
+package "Domain Model" {
+  enum LoginStatus {
+    LOGGED_IN
+    LOGGED_OUT
+  }
+
+  enum Permission {
+    READ
+    WRITE
+  }
+
+  class User {
+    id : String
+    loginStatus : LoginStatus
+    rolePermissions : List<Permission>
+    note: "Must be logged in for bookmark operations"
+  + checkLoginStatus(token) : LoginStatus
+  + hasPermission(Permission.WRITE) : boolean
+  + getSavedList() : SavedList
+  + hasPermission(Permission.READ) : boolean
+  }
+
+  class Post {
+    id : String
+    content : String
+    owner : User
+  }
+
+  class Bookmark {
+    userId : String
+    postId : String
+    timestamp : DateTime
+  }
+  note right of Bookmark : "Each user can bookmark a post at most once"
+
+  class SavedList {
+    userId : String
+    bookmarks : List<Bookmark>
+  + addBookmark(post, timestamp)
+  + getBookmarks() : List<Bookmark>
+  }
+
+  User "1" -- "0..*" Bookmark : has >
+  Bookmark "*" -- "1" Post : references >
+  User "1" -- "1" SavedList : owns >
+  SavedList "1" -- "0..*" Bookmark : contains >
+}
+
+package "Application" {
+  class BookmarkService {
+    - Note: Coordinates bookmark and saved list operations
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface IUserDatabase {
+    - Note: Persistence port for user-related data (bookmarks, login status)
+  + getPost(postId) : Post
+  + isPostAccessibleToUser(postId, userId) : boolean
+  + getPost(bookmark.postId) : Post
+  }
+}
+
+package "Controllers" {
+  interface IUserUI {
+    - Note: Boundary port for user interactions (bookmark action, view saved)
+  }
+}
+
+package "DTOs" {
+  class BookmarkRequest {
+    userId : String
+    postId : String
+  }
+
+  class BookmarkResponse {
+    success : Boolean
+    message : String
+  }
+
+  class SavedListResponse {
+    userId : String
+    bookmarks : List<Bookmark>
+  }
+}
+
+package "Exceptions" {
+  class NotLoggedInException <<exception>> {
+    - reason : String = "User must be logged in"
+  }
+
+  class InsufficientPermissionException <<exception>> {
+    - requiredPermission : Permission
+    - userPermission : Permission
+  }
+
+  class PostNotAccessibleException <<exception>> {
+    - postId : String
+  }
+}
+
+' Dependencies / Usage
+BookmarkService .left.> IUserUI
+BookmarkService .right.> IUserDatabase
+BookmarkService .down.> User
+BookmarkService .down.> Post
+BookmarkService .down.> Bookmark
+BookmarkService .down.> SavedList
+BookmarkService .down.> BookmarkRequest
+BookmarkService .down.> BookmarkResponse
+BookmarkService .down.> SavedListResponse
+BookmarkService .down.> NotLoggedInException
+BookmarkService .down.> InsufficientPermissionException
+BookmarkService .down.> PostNotAccessibleException
+IUserUI .> BookmarkRequest
+IUserUI .> BookmarkResponse
+IUserUI .> SavedListResponse
+IUserDatabase .> Bookmark
+IUserDatabase .> SavedList
+IUserDatabase .> User
+
+@enduml

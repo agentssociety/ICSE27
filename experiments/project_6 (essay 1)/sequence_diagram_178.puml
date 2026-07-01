@@ -1,0 +1,156 @@
+@startuml
+actor User
+box "Controller" #LightBlue
+  participant UserProfileController
+end box
+box "Application" #LightGreen
+  participant UserProfileService
+end box
+box "Domain" #LightYellow
+  participant User
+  participant AccountSettings
+  participant Post
+end box
+box "Infrastructure" #LightCoral
+  database "Post History Database" as PHD
+end box
+box "External" #LightGrey
+  participant EmailService
+end box
+
+== view_post_history ==
+
+User -> UserProfileController : GET /users/{userId}/posts [HTTP]
+note right : Authenticated session token required
+
+UserProfileController -> UserProfileService : getPostHistory(userId: UUID) : List<Post>
+UserProfileService -> User : checkAuthentication(sessionToken)
+User -> UserProfileService : boolean authenticated
+
+alt authentication fails
+  UserProfileService -> UserProfileController : return 401 Unauthorized
+  UserProfileController -> User : HTTP 401 {error: "Authentication failed. Please log in."}
+  note right : Actionable error message
+else authentication succeeds
+  UserProfileService -> User : checkPermission(Permission.READ) : boolean
+  alt permission denied
+    UserProfileService -> UserProfileController : return 403 Forbidden
+    UserProfileController -> User : HTTP 403 {error: "Insufficient permissions"}
+  else permission granted
+    UserProfileService -> PHD : select from posts where userId = ? [TLS]
+    PHD -> UserProfileService : List<Post> posts
+    UserProfileService -> User : notifyViewHistory()
+    note right : State update: User.state = POST1 (display list)
+    UserProfileService -> UserProfileController : return List<Post>
+    UserProfileController -> User : HTTP 200 {posts: [...]}
+  end
+end
+
+== change_password ==
+
+User -> UserProfileController : PUT /users/{userId}/password [HTTPS]
+note right : Encrypted channel, authenticated
+UserProfileController -> UserProfileService : changePassword(userId: UUID, newPassword: String) : boolean
+
+UserProfileService -> AccountSettings : validatePasswordStrength(newPassword) : ValidationResult
+
+alt password weak
+  AccountSettings -> UserProfileService : FAILURE (weak)
+  UserProfileService -> UserProfileController : return 400 Bad Request
+  UserProfileController -> User : HTTP 400 {error: "Password too weak. Must contain at least 8 characters, numbers, and symbols."}
+else password strong
+  AccountSettings -> AccountSettings : encryptPassword(newPassword) : String
+  note right : Hash with bcrypt [encrypted at rest]
+  UserProfileService -> AccountSettings : setPassword(encryptedHash)
+  AccountSettings -> AccountSettings : state = PASSWORD_CHANGED
+  note right : State update: accountSettings.deletionRequested unchanged
+  UserProfileService -> PHD : update account settings where userId = ? [TLS, encrypted at rest]
+  alt database write fails
+    PHD -> UserProfileService : ROLLBACK
+    UserProfileService -> UserProfileController : return 500 Internal Server Error
+    UserProfileController -> User : HTTP 500 {error: "Server error. Please try again."}
+  else database write succeeds
+    UserProfileService -> UserProfileController : return success
+    UserProfileController -> User : HTTP 200 {message: "Password changed successfully."}
+  end
+end
+
+== change_email ==
+
+User -> UserProfileController : PUT /users/{userId}/email [HTTPS]
+note right : Encrypted channel, authenticated
+UserProfileController -> UserProfileService : changeEmail(userId: UUID, newEmail: String) : boolean
+
+UserProfileService -> User : validateEmailFormat(newEmail) : boolean
+
+alt email invalid
+  UserProfileService -> UserProfileController : return 400 Bad Request
+  UserProfileController -> User : HTTP 400 {error: "Invalid email format."}
+else email valid
+  UserProfileService -> AccountSettings : setPendingEmail(newEmail)
+  AccountSettings -> AccountSettings : state = EMAIL_VERIFICATION_PENDING
+  UserProfileService -> EmailService : sendVerificationLink(userId, newEmail, token) [TLS]
+  EmailService -> User : Email with verification link
+  User -> UserProfileController : GET /users/{userId}/verify-email?token=... [HTTPS]
+  note right : User clicks link in email
+  UserProfileController -> UserProfileService : verifyEmail(userId, token) : boolean
+  alt verification fails or timeout
+    UserProfileService -> AccountSettings : clearPendingEmail()
+    UserProfileService -> UserProfileController : return 200 {message: "Verification link expired or invalid. Old email unchanged."}
+    UserProfileController -> User : HTTP 200 {info: "Verification failed. Please try again."}
+  else verification succeeds
+    UserProfileService -> AccountSettings : confirmEmail()
+    AccountSettings -> AccountSettings : state = EMAIL_UPDATED
+    note right : State update: email changed
+    UserProfileService -> PHD : update email where userId = ? [TLS]
+    UserProfileService -> UserProfileController : return success
+    UserProfileController -> User : HTTP 200 {message: "Email changed successfully."}
+  end
+end
+
+== delete_account ==
+
+User -> UserProfileController : POST /users/{userId}/delete [HTTPS]
+note right : Step 1: Initiate deletion request
+UserProfileController -> UserProfileService : requestAccountDeletion(userId: UUID) : String (confirmation token)
+
+UserProfileService -> User : checkPermission(Permission.ADMIN) : boolean
+
+alt permission denied
+  UserProfileService -> UserProfileController : return 403 Forbidden
+  UserProfileController -> User : HTTP 403 {error: "Admin permission required."}
+else permission granted
+  UserProfileService -> AccountSettings : setDeletionRequested(true)
+  AccountSettings -> AccountSettings : state = DELETION_REQUESTED
+  note right : State update: deletionRequested = true
+  UserProfileService -> UserProfileController : return confirmation token
+  UserProfileController -> User : HTTP 200 {confirmationDialog: true, message: "Are you sure? This action is irreversible."}
+  
+  User -> UserProfileController : DELETE /users/{userId}/delete?confirm=true&token=... [HTTPS]
+  note right : Step 2: Explicit confirmation
+  UserProfileController -> UserProfileService : confirmDeletion(userId, token) : boolean
+  
+  alt user cancels (no second request or invalid token)
+    UserProfileService -> AccountSettings : cancelDeletionRequest()
+    AccountSettings -> AccountSettings : state = ACTIVE
+    UserProfileService -> UserProfileController : return 200 {info: "Deletion cancelled."}
+    UserProfileController -> User : HTTP 200 {message: "Account deletion cancelled. Return to settings."}
+  else confirmation valid
+    UserProfileService -> User : cascadeDelete()
+    note right : Delete all Posts owned by user, AccountSettings, User record
+    UserProfileService -> PHD : delete posts where userId = ?; delete account settings where userId = ? [TLS]
+    alt deletion fails partially
+      UserProfileService -> PHD : ROLLBACK
+      UserProfileService -> UserProfileController : return 500 Internal Server Error
+      UserProfileController -> User : HTTP 500 {error: "Deletion failed due to error. Please try again later."}
+    else deletion succeeds
+      User -> User : accountStatus = DELETED
+      note right : User object removed from system
+      UserProfileService -> UserProfileController : return success
+      UserProfileController -> User : HTTP 200 {message: "Account deleted."}
+      UserProfileController -> User : Force logout + redirect
+    end
+  end
+end
+
+@enduml

@@ -1,0 +1,37 @@
+{
+  "task_id": 166,
+  "confidence": 0.918,
+  "evidence": [
+    {
+      "claim": "Private groups have a join request system where users can request to join.",
+      "fact": "Group creators can reject join requests for private groups.",
+      "score": 0.983,
+      "user_story_span": "Private groups have a join request system where users can request to join.",
+      "fact_span": "Group creators can reject join requests for private groups."
+    },
+    {
+      "claim": "Rejecting a request removes the request.",
+      "fact": "Blocking hides the blocked user's posts from the blocker.",
+      "score": 0.9686,
+      "user_story_span": "",
+      "fact_span": "Blocking hides the blocked user's posts from the blocker."
+    },
+    {
+      "claim": "Rejecting a request does not add the user.",
+      "fact": "Blocking hides the blocked user's posts from the blocker.",
+      "score": 0.9661,
+      "user_story_span": "",
+      "fact_span": "Blocking hides the blocked user's posts from the blocker."
+    },
+    {
+      "claim": "Approving a request adds the user to the group.",
+      "fact": "Admins can grant a verified badge.",
+      "score": 0.7542,
+      "user_story_span": "Approving a request adds the user to the group",
+      "fact_span": "Admins can grant a verified badge."
+    }
+  ],
+  "total_claims": 7,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

@@ -1,0 +1,140 @@
+@startuml
+skinparam ParticipantPadding 10
+skinparam BoxPadding 10
+
+box "UI Layer" #LightBlue
+  actor GroupOwnerAdmin
+  participant JoinRequestManagementUI
+end box
+
+box "Application Layer" #LightGray
+  participant JoinRequestService
+end box
+
+box "Domain Layer" #LightGreen
+  participant User
+  participant Group
+  participant GroupMembership
+  participant Permission
+  participant JoinRequestStatus
+  participant Role
+end box
+
+box "Infrastructure Layer" #LightYellow
+  participant JoinRequestsDatabase
+end box
+
+box "External Systems" #LightCoral
+  participant GroupAPI
+end box
+
+== Precondition: Authentication & Authorization ==
+GroupOwnerAdmin -> JoinRequestManagementUI : Navigate to request management section
+JoinRequestManagementUI -> JoinRequestService : getPendingRequests(adminUserId, groupId)
+JoinRequestService -> User : getRole(adminUserId, groupId) : Permission
+alt Permission != Admin
+  JoinRequestService --> JoinRequestManagementUI : error("Insufficient permissions")
+  JoinRequestManagementUI --> GroupOwnerAdmin : Show error message
+else Permission == Admin
+  JoinRequestService -> JoinRequestsDatabase : findPendingByGroup(groupId) : List<JoinRequest>
+  JoinRequestsDatabase --> JoinRequestService : pendingRequests
+  JoinRequestService --> JoinRequestManagementUI : pendingRequests
+  JoinRequestManagementUI --> GroupOwnerAdmin : Display request list
+end
+
+== Flow: Admin approves a pending request ==
+GroupOwnerAdmin -> JoinRequestManagementUI : Select 'Approve' on requestId
+JoinRequestManagementUI -> JoinRequestService : approveRequest(adminUserId, groupId, requestId)
+
+JoinRequestService -> User : getRole(adminUserId, groupId) : Permission
+alt Permission != Admin
+  JoinRequestService --> JoinRequestManagementUI : error("Unauthorized")
+else
+  JoinRequestService -> JoinRequestsDatabase : getRequestById(requestId) : JoinRequest
+  alt request == null or request.status != Pending
+    JoinRequestService --> JoinRequestManagementUI : error("Request already handled or not found")
+  else
+    JoinRequestService -> Group : findById(groupId) : Group
+    alt group == null
+      JoinRequestService --> JoinRequestManagementUI : error("Group has been deleted")
+    else
+      group -> group : lockGroupForMembershipUpdate()
+      note right: Ensure no concurrent deletion
+      
+      JoinRequestService -> JoinRequestsDatabase : updateStatus(requestId, Approved)
+      note right: Optimistic lock on request version
+      
+      JoinRequestService -> GroupAPI : addMember(groupId, userId) [TLS, auth]
+      alt API success
+        GroupAPI --> JoinRequestService : success
+        JoinRequestService -> GroupMembership : create(groupId, userId)
+        note right: Membership created only after API confirmation
+        JoinRequestService --> JoinRequestManagementUI : success("Request approved, user added")
+        JoinRequestManagementUI --> GroupOwnerAdmin : Show confirmation
+      else API failure
+        GroupAPI --> JoinRequestService : error
+        JoinRequestService -> JoinRequestsDatabase : rollbackStatus(requestId, Pending)
+        JoinRequestService --> JoinRequestManagementUI : error("Failed to add user to group")
+        JoinRequestManagementUI --> GroupOwnerAdmin : Show error
+      end
+      
+      group -> group : unlockGroupForMembershipUpdate()
+    end
+  end
+end
+
+== Flow: Admin rejects a pending request ==
+GroupOwnerAdmin -> JoinRequestManagementUI : Select 'Reject' on requestId
+JoinRequestManagementUI -> JoinRequestService : rejectRequest(adminUserId, groupId, requestId)
+
+JoinRequestService -> User : getRole(adminUserId, groupId) : Permission
+alt Permission != Admin
+  JoinRequestService --> JoinRequestManagementUI : error("Unauthorized")
+else
+  JoinRequestService -> JoinRequestsDatabase : getRequestById(requestId) : JoinRequest
+  alt request == null or request.status != Pending
+    JoinRequestService --> JoinRequestManagementUI : error("Request already handled or not found")
+  else
+    JoinRequestService -> Group : findById(groupId) : Group
+    alt group == null
+      JoinRequestService --> JoinRequestManagementUI : error("Group has been deleted")
+    else
+      group -> group : lockGroupForMembershipUpdate()
+      
+      JoinRequestService -> JoinRequestsDatabase : updateStatus(requestId, Rejected)
+      ' Alternatively delete request
+      ' JoinRequestService -> JoinRequestsDatabase : deleteRequest(requestId)
+      note right: Status set to Rejected; request remains for audit
+      
+      JoinRequestService --> JoinRequestManagementUI : success("Request rejected")
+      JoinRequestManagementUI --> GroupOwnerAdmin : Show confirmation
+      
+      group -> group : unlockGroupForMembershipUpdate()
+    end
+  end
+end
+
+== Error: Concurrent admin actions (first-come-first-serve) ==
+' This flow illustrates the optimistic lock check
+GroupOwnerAdminX -> JoinRequestManagementUI : Approve requestId (Concurrent)
+GroupOwnerAdminY -> JoinRequestManagementUI : Approve same requestId (Concurrent)
+
+JoinRequestManagementUI -> JoinRequestService : approveRequest(adminX, groupId, requestId)
+JoinRequestManagementUI -> JoinRequestService : approveRequest(adminY, groupId, requestId)
+
+JoinRequestService -> JoinRequestsDatabase : getRequestById(requestId) : JoinRequest
+JoinRequestService -> JoinRequestsDatabase : getRequestById(requestId) : JoinRequest
+
+alt First request (adminX) succeeds
+  JoinRequestService -> JoinRequestsDatabase : updateStatus(requestId, Approved) with version=1
+  note right: Optimistic lock acquired
+  JoinRequestService -> GroupAPI : addMember(groupId, userId) [TLS]
+  ' ...
+  JoinRequestService --> JoinRequestManagementUI : success
+else Second request (adminY) fails
+  JoinRequestService -> JoinRequestsDatabase : updateStatus(requestId, Approved) with version=1
+  note right: Version mismatch – request already updated
+  JoinRequestService --> JoinRequestManagementUI : error("Request already handled by another admin")
+end
+
+@enduml

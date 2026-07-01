@@ -1,0 +1,88 @@
+@startuml
+actor NewUser as "NewUser"
+
+box "Controller" #LightBlue
+  participant RegistrationPage
+  participant REQ_REG_01
+end box
+
+box "Domain" #LightGreen
+  participant UserAccount
+  participant EmailConfirmation
+end box
+
+box "Infrastructure" #LightYellow
+  participant EmailValidator
+  participant UserDatabase
+  participant EmailNotificationSystem
+end box
+
+== Registration - Main Flow ==
+
+NewUser -> RegistrationPage : submitRegistration(email, password)
+activate RegistrationPage
+
+RegistrationPage -> REQ_REG_01 : handleRegistration(email, password) [TLS]
+activate REQ_REG_01
+
+REQ_REG_01 -> EmailValidator : validateFormat(email) [authenticated, TLS]
+activate EmailValidator
+return valid
+deactivate EmailValidator
+
+alt invalid email format
+  REQ_REG_01 -> RegistrationPage : returnError("Invalid email format")
+  RegistrationPage -> NewUser : show error message
+  note over REQ_REG_01 : State remains PreIdle, no account created
+else valid format
+  REQ_REG_01 -> UserDatabase : findByEmail(email) [TLS, encrypted at rest]
+  activate UserDatabase
+  UserDatabase -> REQ_REG_01 : result (null or account)
+  deactivate UserDatabase
+
+  alt email already exists
+    REQ_REG_01 -> RegistrationPage : returnError("Email already in use")
+    RegistrationPage -> NewUser : show error message
+    note over REQ_REG_01 : No state change (State remains PreIdle)
+  else email is unique
+    note over REQ_REG_01 : Permission check: NewUser has Write permission (implicit)
+    REQ_REG_01 -> UserAccount : create(email, hashedPassword, AccountStatus.Pending)
+    activate UserAccount
+    note right of UserAccount : State: PreIdle → Post1_AccountCreated
+    UserAccount -> UserDatabase : insertUser(userAccount) [TLS, SQL injection protection]
+    activate UserDatabase
+    UserDatabase -> UserAccount : ok
+    deactivate UserDatabase
+    deactivate UserAccount
+
+    note over REQ_REG_01 : Account created, now send confirmation email
+    REQ_REG_01 -> EmailConfirmation : create(userAccount, triggeredBy = REQ_REG_01)
+    activate EmailConfirmation
+    note right of EmailConfirmation : State: Post1 → Post2_EmailSent
+
+    EmailConfirmation -> EmailNotificationSystem : sendConfirmationEmail(email) [TLS, authenticated]
+    activate EmailNotificationSystem
+
+    alt network failure (email not sent)
+      EmailNotificationSystem -> EmailConfirmation : failure
+      deactivate EmailNotificationSystem
+      note over REQ_REG_01 : Registration completes with warning (edge case)
+      REQ_REG_01 -> RegistrationPage : redirectToLogin("Account created. Warning: Confirmation email may be delayed.")
+      RegistrationPage -> NewUser : show success with warning
+      note over REQ_REG_01 : State: Post3_Redirected (email not sent)
+    else email sent successfully
+      EmailNotificationSystem -> EmailConfirmation : success
+      deactivate EmailNotificationSystem
+      note over EmailConfirmation : sent = true
+      REQ_REG_01 -> RegistrationPage : redirectToLogin("Account created. Please check email to confirm.")
+      RegistrationPage -> NewUser : show success message
+      note over REQ_REG_01 : State: Post3_Redirected (email sent)
+    end
+    deactivate EmailConfirmation
+  end
+end
+
+deactivate REQ_REG_01
+deactivate RegistrationPage
+
+@enduml

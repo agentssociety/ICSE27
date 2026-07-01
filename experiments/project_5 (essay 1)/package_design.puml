@@ -1,0 +1,713 @@
+@startuml PackageArchitecture
+!pragma layout smetana
+scale 0.75
+
+title Package Architecture — Project 14
+
+skinparam {
+  BackgroundColor transparent
+  ComponentBorderColor #AAAAAA
+  ComponentFontSize 11
+  PackageFontSize 12
+  PackageFontStyle bold
+  ArrowColor #666666
+  ArrowThickness 1
+  Shadowing false
+}
+
+skinparam package<<Domain>> {
+  BackgroundColor #E1F5E1
+}
+skinparam package<<DTO>> {
+  BackgroundColor #E3F2FD
+}
+skinparam package<<Repository>> {
+  BackgroundColor #FCE4EC
+}
+skinparam package<<ORM>> {
+  BackgroundColor #FFF3E0
+}
+skinparam package<<Infra>> {
+  BackgroundColor #F3E5F5
+}
+skinparam package<<Service>> {
+  BackgroundColor #E0F2F1
+}
+skinparam package<<API>> {
+  BackgroundColor #FFF9C4
+}
+skinparam package<<UI>> {
+  BackgroundColor #F1F8E9
+}
+skinparam package<<Tests>> {
+  BackgroundColor #EEEEEE
+}
+skinparam package<<Config>> {
+  BackgroundColor #C8E6C9
+}
+skinparam package<<Docs>> {
+  BackgroundColor #BBDEFB
+}
+skinparam package<<Shared>> {
+  BackgroundColor #F5F5F5
+}
+
+package "Domain layer" <<Domain>> {
+  [domain.attempt_review] as domain_attempt_review
+  [domain.audit_event] as domain_audit_event
+  [domain.badge] as domain_badge
+  [domain.bonu_nugget_grant] as domain_bonu_nugget_grant
+  [domain.cohort] as domain_cohort
+  [domain.cohort_leaderboard] as domain_cohort_leaderboard
+  [domain.competency] as domain_competency
+  [domain.competency_breakdown] as domain_competency_breakdown
+  [domain.competency_trend_chart] as domain_competency_trend_chart
+  [domain.enrollment] as domain_enrollment
+  [domain.exam_builder] as domain_exam_builder
+  [domain.exam_session] as domain_exam_session
+  [domain.instructor] as domain_instructor
+  [domain.instructor_dashboard] as domain_instructor_dashboard
+  [domain.nugget_wallet] as domain_nugget_wallet
+  [domain.question] as domain_question
+  [domain.radar_chart] as domain_radar_chart
+  [domain.redemption] as domain_redemption
+  [domain.reward_item] as domain_reward_item
+  [domain.reward_store] as domain_reward_store
+  [domain.schedule] as domain_schedule
+  [domain.streak] as domain_streak
+  [domain.student] as domain_student
+  [domain.student_profile] as domain_student_profile
+  [domain.study_tip] as domain_study_tip
+}
+
+package "DTO layer" <<DTO>> {
+  [dto.attempt_review] as dto_attempt_review
+  [dto.audit_event] as dto_audit_event
+  [dto.badge] as dto_badge
+  [dto.bonu_nugget_grant] as dto_bonu_nugget_grant
+  [dto.cohort] as dto_cohort
+  [dto.cohort_leaderboard] as dto_cohort_leaderboard
+  [dto.competency] as dto_competency
+  [dto.competency_breakdown] as dto_competency_breakdown
+  [dto.competency_trend_chart] as dto_competency_trend_chart
+  [dto.enrollment] as dto_enrollment
+  [dto.exam_builder] as dto_exam_builder
+  [dto.exam_session] as dto_exam_session
+  [dto.instructor] as dto_instructor
+  [dto.instructor_dashboard] as dto_instructor_dashboard
+  [dto.nugget_wallet] as dto_nugget_wallet
+  [dto.question] as dto_question
+  [dto.radar_chart] as dto_radar_chart
+  [dto.redemption] as dto_redemption
+  [dto.reward_item] as dto_reward_item
+  [dto.reward_store] as dto_reward_store
+  [dto.schedule] as dto_schedule
+  [dto.streak] as dto_streak
+  [dto.student] as dto_student
+  [dto.student_profile] as dto_student_profile
+  [dto.study_tip] as dto_study_tip
+}
+
+package "Repository layer" <<Repository>> {
+  [repository.attempt_review] as repository_attempt_review
+  [repository.audit_event] as repository_audit_event
+  [repository.badge] as repository_badge
+  [repository.bonu_nugget_grant] as repository_bonu_nugget_grant
+  [repository.cohort] as repository_cohort
+  [repository.cohort_leaderboard] as repository_cohort_leaderboard
+  [repository.competency] as repository_competency
+  [repository.competency_breakdown] as repository_competency_breakdown
+  [repository.competency_trend_chart] as repository_competency_trend_chart
+  [repository.enrollment] as repository_enrollment
+  [repository.exam_builder] as repository_exam_builder
+  [repository.exam_session] as repository_exam_session
+  [repository.instructor] as repository_instructor
+  [repository.instructor_dashboard] as repository_instructor_dashboard
+  [repository.nugget_wallet] as repository_nugget_wallet
+  [repository.question] as repository_question
+  [repository.radar_chart] as repository_radar_chart
+  [repository.redemption] as repository_redemption
+  [repository.reward_item] as repository_reward_item
+  [repository.reward_store] as repository_reward_store
+  [repository.schedule] as repository_schedule
+  [repository.streak] as repository_streak
+  [repository.student] as repository_student
+  [repository.student_profile] as repository_student_profile
+  [repository.study_tip] as repository_study_tip
+}
+
+package "ORM layer" <<ORM>> {
+  [orm.attempt_review] as orm_attempt_review
+  [orm.audit_event] as orm_audit_event
+  [orm.badge] as orm_badge
+  [orm.bonu_nugget_grant] as orm_bonu_nugget_grant
+  [orm.cohort] as orm_cohort
+  [orm.cohort_leaderboard] as orm_cohort_leaderboard
+  [orm.competency] as orm_competency
+  [orm.competency_breakdown] as orm_competency_breakdown
+  [orm.competency_trend_chart] as orm_competency_trend_chart
+  [orm.enrollment] as orm_enrollment
+  [orm.exam_builder] as orm_exam_builder
+  [orm.exam_session] as orm_exam_session
+  [orm.instructor] as orm_instructor
+  [orm.instructor_dashboard] as orm_instructor_dashboard
+  [orm.nugget_wallet] as orm_nugget_wallet
+  [orm.question] as orm_question
+  [orm.radar_chart] as orm_radar_chart
+  [orm.redemption] as orm_redemption
+  [orm.reward_item] as orm_reward_item
+  [orm.reward_store] as orm_reward_store
+  [orm.schedule] as orm_schedule
+  [orm.streak] as orm_streak
+  [orm.student] as orm_student
+  [orm.student_profile] as orm_student_profile
+  [orm.study_tip] as orm_study_tip
+}
+
+package "Infra layer" <<Infra>> {
+  [infra.attempt_review] as infra_attempt_review
+  [infra.audit_event] as infra_audit_event
+  [infra.badge] as infra_badge
+  [infra.bonu_nugget_grant] as infra_bonu_nugget_grant
+  [infra.cohort] as infra_cohort
+  [infra.cohort_leaderboard] as infra_cohort_leaderboard
+  [infra.competency] as infra_competency
+  [infra.competency_breakdown] as infra_competency_breakdown
+  [infra.competency_trend_chart] as infra_competency_trend_chart
+  [infra.enrollment] as infra_enrollment
+  [infra.exam_builder] as infra_exam_builder
+  [infra.exam_session] as infra_exam_session
+  [infra.instructor] as infra_instructor
+  [infra.instructor_dashboard] as infra_instructor_dashboard
+  [infra.nugget_wallet] as infra_nugget_wallet
+  [infra.question] as infra_question
+  [infra.radar_chart] as infra_radar_chart
+  [infra.redemption] as infra_redemption
+  [infra.reward_item] as infra_reward_item
+  [infra.reward_store] as infra_reward_store
+  [infra.schedule] as infra_schedule
+  [infra.streak] as infra_streak
+  [infra.student] as infra_student
+  [infra.student_profile] as infra_student_profile
+  [infra.study_tip] as infra_study_tip
+}
+
+package "Service layer" <<Service>> {
+  [service.attempt_review] as service_attempt_review
+  [service.audit_event] as service_audit_event
+  [service.badge] as service_badge
+  [service.bonu_nugget_grant] as service_bonu_nugget_grant
+  [service.cohort] as service_cohort
+  [service.cohort_leaderboard] as service_cohort_leaderboard
+  [service.competency] as service_competency
+  [service.competency_breakdown] as service_competency_breakdown
+  [service.competency_trend_chart] as service_competency_trend_chart
+  [service.enrollment] as service_enrollment
+  [service.exam_builder] as service_exam_builder
+  [service.exam_session] as service_exam_session
+  [service.instructor] as service_instructor
+  [service.instructor_dashboard] as service_instructor_dashboard
+  [service.nugget_wallet] as service_nugget_wallet
+  [service.question] as service_question
+  [service.radar_chart] as service_radar_chart
+  [service.redemption] as service_redemption
+  [service.reward_item] as service_reward_item
+  [service.reward_store] as service_reward_store
+  [service.schedule] as service_schedule
+  [service.streak] as service_streak
+  [service.student] as service_student
+  [service.student_profile] as service_student_profile
+  [service.study_tip] as service_study_tip
+}
+
+package "API layer" <<API>> {
+  [api.attempt_review] as api_attempt_review
+  [api.audit_event] as api_audit_event
+  [api.badge] as api_badge
+  [api.bonu_nugget_grant] as api_bonu_nugget_grant
+  [api.cohort] as api_cohort
+  [api.cohort_leaderboard] as api_cohort_leaderboard
+  [api.competency] as api_competency
+  [api.competency_breakdown] as api_competency_breakdown
+  [api.competency_trend_chart] as api_competency_trend_chart
+  [api.enrollment] as api_enrollment
+  [api.exam_builder] as api_exam_builder
+  [api.exam_session] as api_exam_session
+  [api.instructor] as api_instructor
+  [api.instructor_dashboard] as api_instructor_dashboard
+  [api.nugget_wallet] as api_nugget_wallet
+  [api.question] as api_question
+  [api.radar_chart] as api_radar_chart
+  [api.redemption] as api_redemption
+  [api.reward_item] as api_reward_item
+  [api.reward_store] as api_reward_store
+  [api.schedule] as api_schedule
+  [api.streak] as api_streak
+  [api.student] as api_student
+  [api.student_profile] as api_student_profile
+  [api.study_tip] as api_study_tip
+}
+
+package "Config layer" <<Config>> {
+  [config.settings] as config_settings
+}
+
+package "Docs layer" <<Docs>> {
+  [docs.api_and_deployment] as docs_api_and_deployment
+}
+
+package "Tests layer" <<Tests>> {
+  [tests.integration] as tests_integration
+  [tests.unit.attempt_review] as tests_unit_attempt_review
+  [tests.unit.audit_event] as tests_unit_audit_event
+  [tests.unit.badge] as tests_unit_badge
+  [tests.unit.bonu_nugget_grant] as tests_unit_bonu_nugget_grant
+  [tests.unit.cohort] as tests_unit_cohort
+  [tests.unit.cohort_leaderboard] as tests_unit_cohort_leaderboard
+  [tests.unit.competency] as tests_unit_competency
+  [tests.unit.competency_breakdown] as tests_unit_competency_breakdown
+  [tests.unit.competency_trend_chart] as tests_unit_competency_trend_chart
+  [tests.unit.enrollment] as tests_unit_enrollment
+  [tests.unit.exam_builder] as tests_unit_exam_builder
+  [tests.unit.exam_session] as tests_unit_exam_session
+  [tests.unit.instructor] as tests_unit_instructor
+  [tests.unit.instructor_dashboard] as tests_unit_instructor_dashboard
+  [tests.unit.nugget_wallet] as tests_unit_nugget_wallet
+  [tests.unit.question] as tests_unit_question
+  [tests.unit.radar_chart] as tests_unit_radar_chart
+  [tests.unit.redemption] as tests_unit_redemption
+  [tests.unit.reward_item] as tests_unit_reward_item
+  [tests.unit.reward_store] as tests_unit_reward_store
+  [tests.unit.schedule] as tests_unit_schedule
+  [tests.unit.streak] as tests_unit_streak
+  [tests.unit.student] as tests_unit_student
+  [tests.unit.student_profile] as tests_unit_student_profile
+  [tests.unit.study_tip] as tests_unit_study_tip
+}
+
+' ── Dependencies ──
+dto_exam_builder --> domain_exam_builder
+repository_exam_builder --> domain_exam_builder
+orm_exam_builder --> domain_exam_builder
+infra_exam_builder --> domain_exam_builder
+infra_exam_builder --> repository_exam_builder
+infra_exam_builder --> orm_exam_builder
+service_exam_builder --> domain_exam_builder
+service_exam_builder --> repository_exam_builder
+service_exam_builder --> dto_exam_builder
+api_exam_builder --> service_exam_builder
+api_exam_builder --> dto_exam_builder
+dto_question --> domain_question
+repository_question --> domain_question
+orm_question --> domain_question
+infra_question --> domain_question
+infra_question --> repository_question
+infra_question --> orm_question
+service_question --> domain_question
+service_question --> repository_question
+service_question --> dto_question
+api_question --> service_question
+api_question --> dto_question
+dto_competency --> domain_competency
+repository_competency --> domain_competency
+orm_competency --> domain_competency
+infra_competency --> domain_competency
+infra_competency --> repository_competency
+infra_competency --> orm_competency
+service_competency --> domain_competency
+service_competency --> repository_competency
+service_competency --> dto_competency
+api_competency --> service_competency
+api_competency --> dto_competency
+dto_schedule --> domain_schedule
+repository_schedule --> domain_schedule
+orm_schedule --> domain_schedule
+infra_schedule --> domain_schedule
+infra_schedule --> repository_schedule
+infra_schedule --> orm_schedule
+service_schedule --> domain_schedule
+service_schedule --> repository_schedule
+service_schedule --> dto_schedule
+api_schedule --> service_schedule
+api_schedule --> dto_schedule
+dto_student --> domain_student
+repository_student --> domain_student
+orm_student --> domain_student
+infra_student --> domain_student
+infra_student --> repository_student
+infra_student --> orm_student
+service_student --> domain_student
+service_student --> repository_student
+service_student --> dto_student
+api_student --> service_student
+api_student --> dto_student
+dto_student_profile --> domain_student_profile
+repository_student_profile --> domain_student_profile
+orm_student_profile --> domain_student_profile
+infra_student_profile --> domain_student_profile
+infra_student_profile --> repository_student_profile
+infra_student_profile --> orm_student_profile
+service_student_profile --> domain_student_profile
+service_student_profile --> repository_student_profile
+service_student_profile --> dto_student_profile
+api_student_profile --> service_student_profile
+api_student_profile --> dto_student_profile
+dto_nugget_wallet --> domain_nugget_wallet
+repository_nugget_wallet --> domain_nugget_wallet
+orm_nugget_wallet --> domain_nugget_wallet
+infra_nugget_wallet --> domain_nugget_wallet
+infra_nugget_wallet --> repository_nugget_wallet
+infra_nugget_wallet --> orm_nugget_wallet
+service_nugget_wallet --> domain_nugget_wallet
+service_nugget_wallet --> repository_nugget_wallet
+service_nugget_wallet --> dto_nugget_wallet
+api_nugget_wallet --> service_nugget_wallet
+api_nugget_wallet --> dto_nugget_wallet
+dto_badge --> domain_badge
+repository_badge --> domain_badge
+orm_badge --> domain_badge
+infra_badge --> domain_badge
+infra_badge --> repository_badge
+infra_badge --> orm_badge
+service_badge --> domain_badge
+service_badge --> repository_badge
+service_badge --> dto_badge
+api_badge --> service_badge
+api_badge --> dto_badge
+dto_radar_chart --> domain_radar_chart
+repository_radar_chart --> domain_radar_chart
+orm_radar_chart --> domain_radar_chart
+infra_radar_chart --> domain_radar_chart
+infra_radar_chart --> repository_radar_chart
+infra_radar_chart --> orm_radar_chart
+service_radar_chart --> domain_radar_chart
+service_radar_chart --> repository_radar_chart
+service_radar_chart --> dto_radar_chart
+api_radar_chart --> service_radar_chart
+api_radar_chart --> dto_radar_chart
+dto_competency_breakdown --> domain_competency_breakdown
+repository_competency_breakdown --> domain_competency_breakdown
+orm_competency_breakdown --> domain_competency_breakdown
+infra_competency_breakdown --> domain_competency_breakdown
+infra_competency_breakdown --> repository_competency_breakdown
+infra_competency_breakdown --> orm_competency_breakdown
+service_competency_breakdown --> domain_competency_breakdown
+service_competency_breakdown --> repository_competency_breakdown
+service_competency_breakdown --> dto_competency_breakdown
+service_competency_breakdown --> service_competency
+api_competency_breakdown --> service_competency_breakdown
+api_competency_breakdown --> dto_competency_breakdown
+dto_study_tip --> domain_study_tip
+repository_study_tip --> domain_study_tip
+orm_study_tip --> domain_study_tip
+infra_study_tip --> domain_study_tip
+infra_study_tip --> repository_study_tip
+infra_study_tip --> orm_study_tip
+service_study_tip --> domain_study_tip
+service_study_tip --> repository_study_tip
+service_study_tip --> dto_study_tip
+service_study_tip --> service_competency
+api_study_tip --> service_study_tip
+api_study_tip --> dto_study_tip
+dto_cohort --> domain_cohort
+repository_cohort --> domain_cohort
+orm_cohort --> domain_cohort
+infra_cohort --> domain_cohort
+infra_cohort --> repository_cohort
+infra_cohort --> orm_cohort
+service_cohort --> domain_cohort
+service_cohort --> repository_cohort
+service_cohort --> dto_cohort
+service_cohort --> service_student
+api_cohort --> service_cohort
+api_cohort --> dto_cohort
+dto_enrollment --> domain_enrollment
+repository_enrollment --> domain_enrollment
+orm_enrollment --> domain_enrollment
+infra_enrollment --> domain_enrollment
+infra_enrollment --> repository_enrollment
+infra_enrollment --> orm_enrollment
+service_enrollment --> domain_enrollment
+service_enrollment --> repository_enrollment
+service_enrollment --> dto_enrollment
+service_enrollment --> service_student
+api_enrollment --> service_enrollment
+api_enrollment --> dto_enrollment
+dto_attempt_review --> domain_attempt_review
+repository_attempt_review --> domain_attempt_review
+orm_attempt_review --> domain_attempt_review
+infra_attempt_review --> domain_attempt_review
+infra_attempt_review --> repository_attempt_review
+infra_attempt_review --> orm_attempt_review
+service_attempt_review --> domain_attempt_review
+service_attempt_review --> repository_attempt_review
+service_attempt_review --> dto_attempt_review
+service_attempt_review --> service_question
+service_attempt_review --> service_competency
+service_attempt_review --> service_student
+api_attempt_review --> service_attempt_review
+api_attempt_review --> dto_attempt_review
+dto_competency_trend_chart --> domain_competency_trend_chart
+repository_competency_trend_chart --> domain_competency_trend_chart
+orm_competency_trend_chart --> domain_competency_trend_chart
+infra_competency_trend_chart --> domain_competency_trend_chart
+infra_competency_trend_chart --> repository_competency_trend_chart
+infra_competency_trend_chart --> orm_competency_trend_chart
+service_competency_trend_chart --> domain_competency_trend_chart
+service_competency_trend_chart --> repository_competency_trend_chart
+service_competency_trend_chart --> dto_competency_trend_chart
+service_competency_trend_chart --> service_question
+service_competency_trend_chart --> service_competency
+service_competency_trend_chart --> service_student
+api_competency_trend_chart --> service_competency_trend_chart
+api_competency_trend_chart --> dto_competency_trend_chart
+dto_exam_session --> domain_exam_session
+repository_exam_session --> domain_exam_session
+orm_exam_session --> domain_exam_session
+infra_exam_session --> domain_exam_session
+infra_exam_session --> repository_exam_session
+infra_exam_session --> orm_exam_session
+service_exam_session --> domain_exam_session
+service_exam_session --> repository_exam_session
+service_exam_session --> dto_exam_session
+service_exam_session --> service_question
+service_exam_session --> service_student
+service_exam_session --> service_nugget_wallet
+api_exam_session --> service_exam_session
+api_exam_session --> dto_exam_session
+dto_streak --> domain_streak
+repository_streak --> domain_streak
+orm_streak --> domain_streak
+infra_streak --> domain_streak
+infra_streak --> repository_streak
+infra_streak --> orm_streak
+service_streak --> domain_streak
+service_streak --> repository_streak
+service_streak --> dto_streak
+service_streak --> service_student
+service_streak --> service_nugget_wallet
+api_streak --> service_streak
+api_streak --> dto_streak
+dto_reward_store --> domain_reward_store
+repository_reward_store --> domain_reward_store
+orm_reward_store --> domain_reward_store
+infra_reward_store --> domain_reward_store
+infra_reward_store --> repository_reward_store
+infra_reward_store --> orm_reward_store
+service_reward_store --> domain_reward_store
+service_reward_store --> repository_reward_store
+service_reward_store --> dto_reward_store
+service_reward_store --> service_student
+service_reward_store --> service_nugget_wallet
+api_reward_store --> service_reward_store
+api_reward_store --> dto_reward_store
+dto_reward_item --> domain_reward_item
+repository_reward_item --> domain_reward_item
+orm_reward_item --> domain_reward_item
+infra_reward_item --> domain_reward_item
+infra_reward_item --> repository_reward_item
+infra_reward_item --> orm_reward_item
+service_reward_item --> domain_reward_item
+service_reward_item --> repository_reward_item
+service_reward_item --> dto_reward_item
+service_reward_item --> service_student
+service_reward_item --> service_nugget_wallet
+api_reward_item --> service_reward_item
+api_reward_item --> dto_reward_item
+dto_redemption --> domain_redemption
+repository_redemption --> domain_redemption
+orm_redemption --> domain_redemption
+infra_redemption --> domain_redemption
+infra_redemption --> repository_redemption
+infra_redemption --> orm_redemption
+service_redemption --> domain_redemption
+service_redemption --> repository_redemption
+service_redemption --> dto_redemption
+service_redemption --> service_student
+service_redemption --> service_nugget_wallet
+api_redemption --> service_redemption
+api_redemption --> dto_redemption
+dto_cohort_leaderboard --> domain_cohort_leaderboard
+repository_cohort_leaderboard --> domain_cohort_leaderboard
+orm_cohort_leaderboard --> domain_cohort_leaderboard
+infra_cohort_leaderboard --> domain_cohort_leaderboard
+infra_cohort_leaderboard --> repository_cohort_leaderboard
+infra_cohort_leaderboard --> orm_cohort_leaderboard
+service_cohort_leaderboard --> domain_cohort_leaderboard
+service_cohort_leaderboard --> repository_cohort_leaderboard
+service_cohort_leaderboard --> dto_cohort_leaderboard
+service_cohort_leaderboard --> service_student
+service_cohort_leaderboard --> service_nugget_wallet
+service_cohort_leaderboard --> service_cohort
+api_cohort_leaderboard --> service_cohort_leaderboard
+api_cohort_leaderboard --> dto_cohort_leaderboard
+dto_instructor --> domain_instructor
+repository_instructor --> domain_instructor
+orm_instructor --> domain_instructor
+infra_instructor --> domain_instructor
+infra_instructor --> repository_instructor
+infra_instructor --> orm_instructor
+service_instructor --> domain_instructor
+service_instructor --> repository_instructor
+service_instructor --> dto_instructor
+service_instructor --> service_competency
+service_instructor --> service_enrollment
+api_instructor --> service_instructor
+api_instructor --> dto_instructor
+dto_instructor_dashboard --> domain_instructor_dashboard
+repository_instructor_dashboard --> domain_instructor_dashboard
+orm_instructor_dashboard --> domain_instructor_dashboard
+infra_instructor_dashboard --> domain_instructor_dashboard
+infra_instructor_dashboard --> repository_instructor_dashboard
+infra_instructor_dashboard --> orm_instructor_dashboard
+service_instructor_dashboard --> domain_instructor_dashboard
+service_instructor_dashboard --> repository_instructor_dashboard
+service_instructor_dashboard --> dto_instructor_dashboard
+service_instructor_dashboard --> service_competency
+service_instructor_dashboard --> service_enrollment
+api_instructor_dashboard --> service_instructor_dashboard
+api_instructor_dashboard --> dto_instructor_dashboard
+dto_bonu_nugget_grant --> domain_bonu_nugget_grant
+repository_bonu_nugget_grant --> domain_bonu_nugget_grant
+orm_bonu_nugget_grant --> domain_bonu_nugget_grant
+infra_bonu_nugget_grant --> domain_bonu_nugget_grant
+infra_bonu_nugget_grant --> repository_bonu_nugget_grant
+infra_bonu_nugget_grant --> orm_bonu_nugget_grant
+service_bonu_nugget_grant --> domain_bonu_nugget_grant
+service_bonu_nugget_grant --> repository_bonu_nugget_grant
+service_bonu_nugget_grant --> dto_bonu_nugget_grant
+service_bonu_nugget_grant --> service_student
+service_bonu_nugget_grant --> service_nugget_wallet
+service_bonu_nugget_grant --> service_instructor
+api_bonu_nugget_grant --> service_bonu_nugget_grant
+api_bonu_nugget_grant --> dto_bonu_nugget_grant
+dto_audit_event --> domain_audit_event
+repository_audit_event --> domain_audit_event
+orm_audit_event --> domain_audit_event
+infra_audit_event --> domain_audit_event
+infra_audit_event --> repository_audit_event
+infra_audit_event --> orm_audit_event
+service_audit_event --> domain_audit_event
+service_audit_event --> repository_audit_event
+service_audit_event --> dto_audit_event
+service_audit_event --> service_student
+service_audit_event --> service_nugget_wallet
+service_audit_event --> service_instructor
+api_audit_event --> service_audit_event
+api_audit_event --> dto_audit_event
+tests_unit_exam_builder --> domain_exam_builder
+tests_unit_exam_builder --> service_exam_builder
+tests_unit_exam_builder --> api_exam_builder
+tests_unit_question --> domain_question
+tests_unit_question --> service_question
+tests_unit_question --> api_question
+tests_unit_competency --> domain_competency
+tests_unit_competency --> service_competency
+tests_unit_competency --> api_competency
+tests_unit_schedule --> domain_schedule
+tests_unit_schedule --> service_schedule
+tests_unit_schedule --> api_schedule
+tests_unit_student --> domain_student
+tests_unit_student --> service_student
+tests_unit_student --> api_student
+tests_unit_student_profile --> domain_student_profile
+tests_unit_student_profile --> service_student_profile
+tests_unit_student_profile --> api_student_profile
+tests_unit_nugget_wallet --> domain_nugget_wallet
+tests_unit_nugget_wallet --> service_nugget_wallet
+tests_unit_nugget_wallet --> api_nugget_wallet
+tests_unit_badge --> domain_badge
+tests_unit_badge --> service_badge
+tests_unit_badge --> api_badge
+tests_unit_radar_chart --> domain_radar_chart
+tests_unit_radar_chart --> service_radar_chart
+tests_unit_radar_chart --> api_radar_chart
+tests_unit_competency_breakdown --> domain_competency_breakdown
+tests_unit_competency_breakdown --> service_competency_breakdown
+tests_unit_competency_breakdown --> api_competency_breakdown
+tests_unit_study_tip --> domain_study_tip
+tests_unit_study_tip --> service_study_tip
+tests_unit_study_tip --> api_study_tip
+tests_unit_cohort --> domain_cohort
+tests_unit_cohort --> service_cohort
+tests_unit_cohort --> api_cohort
+tests_unit_enrollment --> domain_enrollment
+tests_unit_enrollment --> service_enrollment
+tests_unit_enrollment --> api_enrollment
+tests_unit_attempt_review --> domain_attempt_review
+tests_unit_attempt_review --> service_attempt_review
+tests_unit_attempt_review --> api_attempt_review
+tests_unit_competency_trend_chart --> domain_competency_trend_chart
+tests_unit_competency_trend_chart --> service_competency_trend_chart
+tests_unit_competency_trend_chart --> api_competency_trend_chart
+tests_unit_exam_session --> domain_exam_session
+tests_unit_exam_session --> service_exam_session
+tests_unit_exam_session --> api_exam_session
+tests_unit_streak --> domain_streak
+tests_unit_streak --> service_streak
+tests_unit_streak --> api_streak
+tests_unit_reward_store --> domain_reward_store
+tests_unit_reward_store --> service_reward_store
+tests_unit_reward_store --> api_reward_store
+tests_unit_reward_item --> domain_reward_item
+tests_unit_reward_item --> service_reward_item
+tests_unit_reward_item --> api_reward_item
+tests_unit_redemption --> domain_redemption
+tests_unit_redemption --> service_redemption
+tests_unit_redemption --> api_redemption
+tests_unit_cohort_leaderboard --> domain_cohort_leaderboard
+tests_unit_cohort_leaderboard --> service_cohort_leaderboard
+tests_unit_cohort_leaderboard --> api_cohort_leaderboard
+tests_unit_instructor --> domain_instructor
+tests_unit_instructor --> service_instructor
+tests_unit_instructor --> api_instructor
+tests_unit_instructor_dashboard --> domain_instructor_dashboard
+tests_unit_instructor_dashboard --> service_instructor_dashboard
+tests_unit_instructor_dashboard --> api_instructor_dashboard
+tests_unit_bonu_nugget_grant --> domain_bonu_nugget_grant
+tests_unit_bonu_nugget_grant --> service_bonu_nugget_grant
+tests_unit_bonu_nugget_grant --> api_bonu_nugget_grant
+tests_unit_audit_event --> domain_audit_event
+tests_unit_audit_event --> service_audit_event
+tests_unit_audit_event --> api_audit_event
+tests_integration --> api_exam_builder
+tests_integration --> api_question
+tests_integration --> api_competency
+tests_integration --> api_schedule
+tests_integration --> api_student
+tests_integration --> api_student_profile
+tests_integration --> api_nugget_wallet
+tests_integration --> api_badge
+tests_integration --> api_radar_chart
+tests_integration --> api_competency_breakdown
+tests_integration --> api_study_tip
+tests_integration --> api_cohort
+tests_integration --> api_enrollment
+tests_integration --> api_attempt_review
+tests_integration --> api_competency_trend_chart
+tests_integration --> api_exam_session
+tests_integration --> api_streak
+tests_integration --> api_reward_store
+tests_integration --> api_reward_item
+tests_integration --> api_redemption
+tests_integration --> api_cohort_leaderboard
+tests_integration --> api_instructor
+tests_integration --> api_instructor_dashboard
+tests_integration --> api_bonu_nugget_grant
+tests_integration --> api_audit_event
+
+legend right
+  **Layers (top → bottom)**
+  Domain → DTO → Repository → ORM → Infra
+  → Service → API → UI
+  Shared: cross-cutting utilities
+  Tests: mirrors every layer
+  Config / Docs: support concerns
+  ----
+  Packages: 203
+  Tasks: 12
+  Domain classes: 25
+  Generated: 2026-06-29 17:33 UTC
+end legend
+
+@enduml

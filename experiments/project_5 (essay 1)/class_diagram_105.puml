@@ -1,0 +1,58 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Arial
+skinparam packageStyle rectangle
+
+package "Domain Model" {
+  abstract class Actor {
+    + mayPerform: set Permission
+  }
+  class Instructor extends Actor {
+  }
+  class InstructorAccount {
+    + owner: Actor
+    + accessible: set Actor
+    note right: invariant: owner_always_accessible
+  + create(owner: Instructor, permission: Permission.Write)
+  + generateSessionToken()
+  }
+  class DashboardContent {
+    + owner: Actor
+    + accessible: set Actor
+    note right: invariant: owner_always_accessible
+  + create(owner: Instructor, data: ..)
+  }
+  class Exam {
+  }
+  class Enrollment {
+  }
+  class Competency {
+  }
+  enum Permission {
+    Read
+    Write
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface Registration_API {
+  }
+  interface Login_API {
+  }
+  interface User_Database {
+  }
+  interface Dashboard_UI {
+  }
+}
+
+' Relationships
+Instructor "1" -- "1" InstructorAccount : owner
+Instructor "1" -- "*" DashboardContent : accesses
+Instructor ..> Registration_API : uses
+Instructor ..> Login_API : uses
+Instructor ..> Dashboard_UI : uses
+Registration_API ..> User_Database : uses
+Login_API ..> User_Database : uses
+Dashboard_UI ..> User_Database : uses
+
+@enduml

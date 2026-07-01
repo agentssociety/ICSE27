@@ -1,0 +1,221 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam sequenceMessageAlign center
+
+box "UI Layer" #LightBlue
+  participant "PostReportUI" as UI
+end box
+
+box "Controller Layer" #LightGreen
+  participant "ReportController" as RC
+end box
+
+box "Application Layer" #LightYellow
+  participant "ReportService" as RS
+  participant "DropdownService" as DS
+end box
+
+box "Domain Layer" #LightCoral
+  participant "User" as U
+  participant "ContentModerator" as CM
+  participant "Post" as P
+  participant "Report" as R
+  participant "Dropdown" as D
+  participant "AuthToken" as AT
+  participant "Reason" as REA
+  participant "PostStatus" as PS
+  participant "Permission" as PERM
+end box
+
+box "Infrastructure Layer" #LightGrey
+  participant "ReportRepository" as RR
+  participant "PostRepository" as PR
+  participant "DropdownRepository" as DR
+end box
+
+== Main Report Flow ==
+
+UI -> RC : POST /api/reports\n(selectedReason: String, postId: String)
+note right: Authenticated request with AuthToken header
+
+RC -> RC : validateAuthToken(token: String) : AuthToken
+note right: Extract and validate JWT
+
+alt Token invalid or expired
+  RC -> UI : HTTP 401 Unauthorized\n"Please log in"
+  note right: No state change
+else Token valid
+  RC -> RS : submitReport(authToken: AuthToken,\nselectedReason: String, postId: String) : Report
+
+  RS -> DS : getDropdown() : Dropdown
+  DS -> DR : fetchDropdown() : Dropdown
+  DR --> DS : dropdown: Dropdown
+
+  alt Dropdown empty or null
+    DS --> RS : null
+    RS --> RC : DropdownUnavailableException
+    RC -> UI : HTTP 503 Service Unavailable\n"Dropdown unavailable"
+    note right: No state change
+  else Dropdown has options
+    DS --> RS : dropdown: Dropdown
+
+    RS -> D : isValidReason(selectedReason: String) : boolean
+
+    alt Invalid reason (not in dropdown options)
+      D --> RS : false
+      RS --> RC : InvalidReasonException
+      RC -> UI : HTTP 400 Bad Request\n"Invalid reason"
+      note right: No state change
+    else Valid reason
+      D --> RS : true
+
+      RS -> U : hasPermission(Permission.WRITE) : boolean
+      U --> RS : true
+
+      RS -> P : getStatus() : PostStatus
+      P --> RS : PostStatus.NORMAL
+
+      RS -> R : create(post: Post, reporter: User,\nreason: Reason) : Report
+      note right: State transition: Report created
+
+      RS -> P : setStatus(PostStatus.FLAGGED_FOR_REVIEW)
+      note right: State transition: Post status updated
+
+      RS -> RR : save(report: Report) : Report
+      RR --> RS : savedReport: Report
+
+      RS -> PR : update(post: Post) : Post
+      PR --> RS : updatedPost: Post
+
+      RS --> RC : report: Report
+      RC -> UI : HTTP 201 Created\n"Report submitted successfully"
+      note right: Post3: Confirmation displayed
+    end
+  end
+end
+
+== Error: User Not Authenticated ==
+
+UI -> RC : POST /api/reports\n(selectedReason: String, postId: String)
+note right: No AuthToken header
+
+RC -> RC : validateAuthToken(token: String) : AuthToken
+note right: Token missing or invalid
+
+RC -> UI : HTTP 401 Unauthorized\n"Please log in"
+note right: No state change
+
+== Error: Dropdown Unavailable ==
+
+UI -> RC : POST /api/reports\n(selectedReason: String, postId: String)
+
+RC -> RC : validateAuthToken(token: String) : AuthToken
+RC -> RS : submitReport(authToken: AuthToken,\nselectedReason: String, postId: String) : Report
+
+RS -> DS : getDropdown() : Dropdown
+DS -> DR : fetchDropdown() : Dropdown
+DR --> DS : null
+
+DS --> RS : null
+RS --> RC : DropdownUnavailableException
+RC -> UI : HTTP 503 Service Unavailable\n"Dropdown unavailable"
+note right: No state change
+
+== Error: Invalid Reason ==
+
+UI -> RC : POST /api/reports\n(selectedReason: String, postId: String)
+
+RC -> RC : validateAuthToken(token: String) : AuthToken
+RC -> RS : submitReport(authToken: AuthToken,\nselectedReason: String, postId: String) : Report
+
+RS -> DS : getDropdown() : Dropdown
+DS -> DR : fetchDropdown() : Dropdown
+DR --> DS : dropdown: Dropdown
+DS --> RS : dropdown: Dropdown
+
+RS -> D : isValidReason(selectedReason: String) : boolean
+D --> RS : false
+
+RS --> RC : InvalidReasonException
+RC -> UI : HTTP 400 Bad Request\n"Invalid reason"
+note right: No state change
+
+== Error: User Missing Write Permission ==
+
+UI -> RC : POST /api/reports\n(selectedReason: String, postId: String)
+
+RC -> RC : validateAuthToken(token: String) : AuthToken
+RC -> RS : submitReport(authToken: AuthToken,\nselectedReason: String, postId: String) : Report
+
+RS -> DS : getDropdown() : Dropdown
+DS -> DR : fetchDropdown() : Dropdown
+DR --> DS : dropdown: Dropdown
+DS --> RS : dropdown: Dropdown
+
+RS -> D : isValidReason(selectedReason: String) : boolean
+D --> RS : true
+
+RS -> U : hasPermission(Permission.WRITE) : boolean
+U --> RS : false
+
+RS --> RC : InsufficientPermissionsException
+RC -> UI : HTTP 403 Forbidden\n"User does not have Write permission"
+note right: No state change
+
+== Error: Post Already Flagged ==
+
+UI -> RC : POST /api/reports\n(selectedReason: String, postId: String)
+
+RC -> RC : validateAuthToken(token: String) : AuthToken
+RC -> RS : submitReport(authToken: AuthToken,\nselectedReason: String, postId: String) : Report
+
+RS -> DS : getDropdown() : Dropdown
+DS -> DR : fetchDropdown() : Dropdown
+DR --> DS : dropdown: Dropdown
+DS --> RS : dropdown: Dropdown
+
+RS -> D : isValidReason(selectedReason: String) : boolean
+D --> RS : true
+
+RS -> U : hasPermission(Permission.WRITE) : boolean
+U --> RS : true
+
+RS -> P : getStatus() : PostStatus
+P --> RS : PostStatus.FLAGGED_FOR_REVIEW
+
+RS --> RC : PostAlreadyFlaggedException
+RC -> UI : HTTP 409 Conflict\n"Post already flagged for review"
+note right: No state change
+
+== Error: Database Failure ==
+
+UI -> RC : POST /api/reports\n(selectedReason: String, postId: String)
+
+RC -> RC : validateAuthToken(token: String) : AuthToken
+RC -> RS : submitReport(authToken: AuthToken,\nselectedReason: String, postId: String) : Report
+
+RS -> DS : getDropdown() : Dropdown
+DS -> DR : fetchDropdown() : Dropdown
+DR --> DS : dropdown: Dropdown
+DS --> RS : dropdown: Dropdown
+
+RS -> D : isValidReason(selectedReason: String) : boolean
+D --> RS : true
+
+RS -> U : hasPermission(Permission.WRITE) : boolean
+U --> RS : true
+
+RS -> P : getStatus() : PostStatus
+P --> RS : PostStatus.NORMAL
+
+RS -> R : create(post: Post, reporter: User,\nreason: Reason) : Report
+RS -> P : setStatus(PostStatus.FLAGGED_FOR_REVIEW)
+
+RS -> RR : save(report: Report) : Report
+RR --> RS : DatabaseException
+
+RS --> RC : DatabaseException
+RC -> UI : HTTP 500 Internal Server Error\n"Failed to submit report"
+note right: No state change
+
+@enduml

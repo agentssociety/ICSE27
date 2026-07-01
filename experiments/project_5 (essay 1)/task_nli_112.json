@@ -1,0 +1,44 @@
+{
+  "task_id": 112,
+  "confidence": 0.9818,
+  "evidence": [
+    {
+      "claim": "The multiplier resets to 1× after any wrong answer.",
+      "fact": "The streak system awards a nugget multiplier of 1.5x, 2x, or 3x for consecutive correct answers, and the multiplier resets to 1x upon any incorrect answer.",
+      "score": 0.9986,
+      "user_story_span": "The multiplier resets to 1× after any wrong answer.",
+      "fact_span": "the multiplier resets to 1x upon any incorrect answer."
+    },
+    {
+      "claim": "The streak of consecutive correct answers resets after a wrong answer.",
+      "fact": "The streak system awards a nugget multiplier of 1.5x, 2x, or 3x for consecutive correct answers, and the multiplier resets to 1x upon any incorrect answer.",
+      "score": 0.9952,
+      "user_story_span": "my streak resets",
+      "fact_span": ""
+    },
+    {
+      "claim": "Nuggets are the in-game currency.",
+      "fact": "A student's nugget balance functions as currency in a rewards marketplace, exchangeable for virtual products or perks arranged by the instructor.",
+      "score": 0.9865,
+      "user_story_span": "Nuggets are the in-game currency.",
+      "fact_span": "nugget balance functions as currency"
+    },
+    {
+      "claim": "The multiplier starts at 1× and increases to 1.5×, 2×, then 3× for consecutive correct answers.",
+      "fact": "The streak system awards a nugget multiplier of 1.5x, 2x, or 3x for consecutive correct answers, and the multiplier resets to 1x upon any incorrect answer.",
+      "score": 0.976,
+      "user_story_span": "The multiplier starts at 1× and increases to 1.5×, 2×, then 3× for consecutive correct answers.",
+      "fact_span": "a nugget multiplier of 1.5x, 2x, or 3x for consecutive correct answers"
+    },
+    {
+      "claim": "The multiplier is applied to the base nugget reward for each correct answer.",
+      "fact": "Correct answers in a row trigger an increasing multiplier on nugget rewards, and a wrong answer drops the multiplier back to the base value.",
+      "score": 0.9525,
+      "user_story_span": "The multiplier is applied to the base nugget reward for each correct answer.",
+      "fact_span": "an increasing multiplier on nugget rewards"
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 5,
+  "threshold": 0.6
+}

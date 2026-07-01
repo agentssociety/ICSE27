@@ -1,0 +1,95 @@
+{
+  "id": "REQ-EDU-01",
+  "title": "Provide Instant Competency Breakdown After Exam Submission",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall immediately analyze submitted exam results and display a competency breakdown with weak competency flags and study tips.",
+  "rationale": "This requirement addresses the need for students to quickly identify their weak areas after submitting an exam, allowing them to focus on targeted studying immediately.",
+  "business_value": "Enhances student learning by providing immediate feedback and tailored support, potentially improving overall academic performance.",
+  "source": {
+    "type": "User Story",
+    "id": 113,
+    "description": "As a student I need an instant competency breakdown after exam submission So that I can identify weak areas and get targeted study tips"
+  },
+  "stakeholders": [
+    "Students",
+    "Academic Advisors",
+    "Instructors"
+  ],
+  "acceptance_criteria": [
+    "Given I have submitted an exam",
+    "When the system processes my results",
+    "Then I see a competency breakdown with weak competency flags and study tips"
+  ],
+  "preconditions": [
+    "An exam has been submitted by the student."
+  ],
+  "postconditions": [
+    "The student can view a competency breakdown.",
+    "Weak competency areas are flagged.",
+    "Study tips corresponding to flagged weaknesses are provided."
+  ],
+  "functional_constraints": [
+    "The analysis must be performed within one minute of submission."
+  ],
+  "security_requirements": [
+    "Student data is protected according to institutional privacy policies."
+  ],
+  "non_functional_requirements": {
+    "performance": "Response time for competency breakdown and study tips should not exceed 2 seconds.",
+    "availability": "The system must be available 99.9% of the time during operational hours.",
+    "scalability": "The system must support up to 1,000 students submitting exams simultaneously without performance degradation.",
+    "usability": "Error messages should be clear and actionable."
+  },
+  "edge_cases": [
+    "What happens if the exam results contain incorrect or incomplete data?",
+    "How will the system handle simultaneous submissions from multiple students?",
+    "What is the behavior when there are no weak competencies identified in the results?"
+  ],
+  "dependencies": [
+    "Exam Submission System",
+    "Database for Storing Exam Results and Student Data"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Exam Analysis API",
+      "description": "Interface used to submit exam results and receive a competency breakdown."
+    },
+    {
+      "type": "UI",
+      "name": "Student Dashboard",
+      "description": "Interface where students can view their competency breakdown and study tips."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-EDU-01",
+      "description": "Student submits an exam with some weak competencies.",
+      "expected_result": "System processes the results, identifies weak competencies, and displays them with corresponding study tips on the student's dashboard."
+    },
+    {
+      "id": "TC-EDU-02",
+      "description": "Student submits an exam without any weak competencies.",
+      "expected_result": "System processes the results and indicates that all competencies are strong, with no study tips provided."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-29T14:31:05.954490",
+  "last_updated": "2026-06-29T15:12:27.637727",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "CompetencyBreakdown",
+      "StudyTip",
+      "Exam",
+      "Attempt",
+      "Competency"
+    ],
+    "test_artifacts": []
+  }
+}

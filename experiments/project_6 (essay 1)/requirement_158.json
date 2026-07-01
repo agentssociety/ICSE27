@@ -1,0 +1,96 @@
+{
+  "id": "REQ-USER-01",
+  "title": "Create a User Profile",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "Medium",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall allow registered users to create a profile with a profile photo and a short biography.",
+  "rationale": "Enabling users to create personalized profiles enhances user experience and facilitates social interaction within the platform.",
+  "business_value": "Increased user engagement and satisfaction through personalization, potentially leading to higher retention rates and more active participation in community features.",
+  "source": {
+    "type": "User Story",
+    "id": 158,
+    "description": "As a registered user I need create a profile with a profile photo and a short biography So that I can personalize my account and share information about myself"
+  },
+  "stakeholders": [
+    "Product Manager",
+    "UX/UI Designer",
+    "Backend Developer",
+    "Frontend Developer",
+    "QA Engineer",
+    "Project Manager"
+  ],
+  "acceptance_criteria": [
+    "Given I am a registered user",
+    "When I upload a valid photo and enter a biography under 500 characters",
+    "Then my profile is created and displayed successfully"
+  ],
+  "preconditions": [],
+  "postconditions": [
+    "A new profile is created with the provided photo and biography",
+    "The profile is displayed on the user's account settings page"
+  ],
+  "functional_constraints": [
+    "Profile creation requires a valid photo (JPEG, PNG) up to 2 MB",
+    "Profile can be created from the account settings page",
+    "Biography length should not exceed 500 characters"
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "User uploads a photo larger than 2 MB",
+    "User enters a biography longer than 500 characters",
+    "User attempts to create a profile without uploading a photo or entering a biography"
+  ],
+  "dependencies": [],
+  "interfaces": [
+    {
+      "type": "UI",
+      "name": "Account Settings Page",
+      "description": "The requirement interacts with the UI of the account settings page where users can upload photos and enter biographies."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-01",
+      "description": "User uploads a valid photo (JPEG, PNG) up to 2 MB and enters a biography under 500 characters.",
+      "expected_result": "The profile is created and displayed successfully."
+    },
+    {
+      "id": "TC-02",
+      "description": "User attempts to upload a photo larger than 2 MB.",
+      "expected_result": "The system displays an error message indicating the file size limit has been exceeded."
+    },
+    {
+      "id": "TC-03",
+      "description": "User enters a biography longer than 500 characters.",
+      "expected_result": "The system displays an error message indicating the biography length exceeds the limit."
+    },
+    {
+      "id": "TC-04",
+      "description": "User attempts to create a profile without uploading a photo or entering a biography.",
+      "expected_result": "The system prompts the user to upload a photo and enter a biography before allowing profile creation."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T11:46:39.294600",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "Profile",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

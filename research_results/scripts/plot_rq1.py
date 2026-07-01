@@ -6,11 +6,11 @@ Fig 1 — Error Incident Analysis (RQ1a)
   4-panel composite:
   (a) Mean incidents per project: stacked bars (fixed / escalated) + ±std
   (b) Self-fix rate (SR) per project with ±std error bars
-  (c) Phase distribution of incidents (mean counts across 3 seeds)
-  (d) SR distribution across all 12 runs (jitter strip)
+  (c) Phase distribution of incidents (mean counts across seeds)
+  (d) SR distribution across all 14 runs (jitter strip)
 
 Fig 2 — Coordination Metrics Table (RQ1b)
-  Visual table: 4 projects × 11 metrics, each cell "mean ± std".
+  Visual table: 6 projects × 11 metrics, each cell "mean ± std".
   Cells color-coded best (green) / middle (yellow) / worst (red) per row.
 
 Output (PNG + PDF):
@@ -75,9 +75,10 @@ C_BAD    = "#FFCDD2"    # light red    — worst value
 C_HDR    = "#1A3A5C"    # dark blue    — table header
 
 # 4 project accent colours (pastel)
-PROJ_COLORS = ["#A8C8E8", "#A8D8A8", "#F5D8A0", "#E8B8D0"]
-PROJ_LABELS = ["Proj. 1\n(Triage)", "Proj. 2\n(Blood)", "Proj. 3\n(Runway)", "Proj. 4\n(ATM)"]
-PROJ_SHORT  = ["P1", "P2", "P3", "P4"]
+PROJ_COLORS = ["#A8C8E8", "#A8D8A8", "#F5D8A0", "#E8B8D0", "#B8C8E8", "#E8D8A0"]
+PROJ_LABELS = ["Proj. 1\n(Triage)", "Proj. 2\n(Blood)", "Proj. 3\n(Runway)", "Proj. 4\n(ATM)",
+               "Proj. 5\n(Compet.)", "Proj. 6\n(Social)"]
+PROJ_SHORT  = ["P1", "P2", "P3", "P4", "P5", "P6"]
 
 
 def _spine_clean(ax, keep=("left", "bottom")):
@@ -149,7 +150,7 @@ def panel_a_incident_bars(ax, projects: list[dict]) -> None:
     ax.grid(axis="y", linestyle="--", alpha=0.45, zorder=0)
     _spine_clean(ax)
     ax.legend(loc="upper left", handlelength=1.0, handletextpad=0.4, borderpad=0.5)
-    ax.set_title("Error incidents per project  (mean ± std, n=3 seeds)",
+    ax.set_title("Error incidents per project  (mean ± std across seeds)",
                  fontsize=9.5, loc="left", pad=18, fontweight="bold")
 
 
@@ -281,7 +282,7 @@ def plot_rq1a(show: bool = False) -> None:
     overall_sr = all_fixed / all_total * 100 if all_total else 0
 
     fig.suptitle(
-        f"Overall SR ≈ {overall_sr:.1f}%  ·  4 projects × 3 seeds",
+        f"Overall SR ≈ {overall_sr:.1f}%  ·  6 projects (4 × 3 seeds + 2 × 1 seed)",
         fontsize=9, fontweight="bold", y=0.97, color="#222222",
     )
     _save(fig, "fig_rq1a_error_analysis", show)
@@ -419,7 +420,7 @@ def plot_rq1b_table(show: bool = False) -> None:
 
     ax.set_title(
         "RQ1b — Orchestration Quality Metrics  ·  "
-        "4 Projects × 3 Seeds  ·  Values: mean ± std\n"
+        "6 Projects (4×3 seeds + 2×1 seed)  ·  Values: mean ± std\n"
         "SR = N_fixed / N_incidents   "
         "PL = (N_steps − N_backtracks) / N_steps   "
         "DS = (N_deleg − N_redeleg) / N_deleg",

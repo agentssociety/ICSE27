@@ -1,0 +1,97 @@
+{
+  "id": "REQ-PRIV-MES-01",
+  "title": "User can send and receive private messages",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall allow a logged-in user to initiate, compose, send, and receive private messages with another user.",
+  "rationale": "Enables one-on-one communication between users, enhancing interaction and engagement within the platform.",
+  "business_value": "Improves user experience and fosters direct communication, potentially increasing user satisfaction and community engagement.",
+  "source": {
+    "type": "User Story",
+    "id": 168,
+    "description": "As a user I need to send and receive private messages directly with another user so that I can communicate one-on-one with other users."
+  },
+  "stakeholders": [
+    "Product Management",
+    "Engineering Team",
+    "UX/UI Designers",
+    "Customer Support"
+  ],
+  "acceptance_criteria": [
+    "Given I am a logged-in user, When I navigate to a user's profile and click 'Send Message', Then I can compose and send a private message to that user.",
+    "Given I have received a private message from another user, When I open my inbox, Then I can read the message and reply directly to the sender."
+  ],
+  "preconditions": [
+    "User must be logged in to access messaging functionality."
+  ],
+  "postconditions": [
+    "Private messages are sent successfully between two users.",
+    "Received messages are visible in the recipient's inbox.",
+    "Replying to a message updates the conversation history."
+  ],
+  "functional_constraints": [
+    "Messages must be delivered instantly.",
+    "Only two participants should see the conversation thread."
+  ],
+  "security_requirements": [
+    "Authentication and authorization mechanisms must ensure only authorized users can send or receive messages.",
+    "Data encryption must be used to protect message content during transmission and at rest."
+  ],
+  "non_functional_requirements": {
+    "performance": "Response time for sending and receiving messages should be less than 2 seconds.",
+    "availability": "System should be available 99.9% of the time.",
+    "scalability": "System must support thousands of concurrent users and tens of thousands of messages per day without performance degradation.",
+    "usability": "Error handling should provide clear, actionable feedback to users."
+  },
+  "edge_cases": [
+    "What happens if a user tries to send a message to an unregistered user?",
+    "How does the system handle large volumes of messages simultaneously?",
+    "What is the behavior when one of the participants leaves the conversation mid-message?"
+  ],
+  "dependencies": [
+    "User authentication and authorization system",
+    "Database for storing messages and user information",
+    "Real-time messaging service or library"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Message Service API",
+      "description": "Interface for sending, receiving, and retrieving private messages."
+    },
+    {
+      "type": "Database",
+      "name": "User Database",
+      "description": "Stores user information necessary for message delivery."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-PRIV-MES-01",
+      "description": "Sending a private message from one user to another.",
+      "expected_result": "The message is sent successfully and appears in both users' inboxes."
+    },
+    {
+      "id": "TC-PRIV-MES-02",
+      "description": "Receiving a private message and replying.",
+      "expected_result": "The received message is displayed, and the reply is sent to the sender's inbox."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T12:02:18.323228",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "Message",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

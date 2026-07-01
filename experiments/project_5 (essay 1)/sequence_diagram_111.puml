@@ -1,0 +1,475 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "ExamInterface" as UI
+end box
+
+box "Application Layer" #LightGreen
+  participant "ExamService" as Service
+end box
+
+box "Domain Layer" #LightYellow
+  participant "ExamSession" as Session
+  participant "Exam" as Exam
+  participant "Question" as Question
+  participant "NuggetWallet" as Wallet
+  participant "Student" as Student
+  participant "Instructor" as Instructor
+  participant "IT_Team" as IT
+  participant "ExamStatus" as Status
+  participant "Permission" as Perm
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "ProgressTrackingDatabase" as DB
+end box
+
+== Start Exam Flow ==
+
+Student -> UI : POST /exam/start
+activate UI
+
+UI -> Service : startExam(studentId: String, examId: String) : ExamSession
+activate Service
+
+Service -> Student : validatePermission(studentId: String, permission: Permission) : Boolean
+activate Student
+Student --> Service : return true
+deactivate Student
+
+Service -> Exam : loadExam(examId: String) : Exam
+activate Exam
+Exam --> Service : return exam
+deactivate Exam
+
+Service -> Session : create(student: Student, exam: Exam) : ExamSession
+activate Session
+Session -> Session : status = ExamStatus.IN_PROGRESS
+Session -> Session : startTime = now()
+Session --> Service : return session
+deactivate Session
+
+Service -> Question : getFirstQuestion(exam: Exam) : Question
+activate Question
+Question --> Service : return question
+deactivate Question
+
+Service -> DB : saveSession(session: ExamSession) [TLS]
+activate DB
+DB --> Service : success
+deactivate DB
+
+Service --> UI : return {session, question, timerDuration}
+deactivate Service
+
+UI -> UI : displayQuestion(question)
+UI -> UI : startTimer(timerDuration)
+UI -> UI : showProgressBar(0%)
+UI -> UI : showNuggetCounter(0)
+
+UI --> Student : Exam interface visible (Post1)
+deactivate UI
+
+== Answer Question Flow (Happy Path) ==
+
+Student -> UI : POST /exam/answer
+activate UI
+
+UI -> Service : submitAnswer(sessionId: String, questionId: String, answer: String) : AnswerResult
+activate Service
+
+Service -> Session : validateSession(sessionId: String) : Boolean
+activate Session
+Session --> Service : return true
+deactivate Session
+
+Service -> Question : validateAnswer(questionId: String, answer: String) : Boolean
+activate Question
+Question --> Service : return true
+deactivate Question
+
+Service -> Session : recordAnswer(questionId: String, answer: String)
+activate Session
+Session -> Session : addAnswer(questionId, answer)
+Session --> Service : success
+deactivate Session
+
+Service -> DB : updateProgress(sessionId: String, progress: Integer) [TLS]
+activate DB
+DB --> Service : success
+deactivate DB
+
+Service --> UI : return {correct: true, nuggetEarned: true}
+deactivate Service
+
+UI -> UI : updateProgressBar(progress)
+UI -> UI : playNuggetAnimation()
+
+alt Has Next Question
+    Service -> Question : getNextQuestion(exam: Exam, currentIndex: Integer) : Question
+    activate Question
+    Question --> Service : return nextQuestion
+    deactivate Question
+    
+    Service --> UI : return {nextQuestion, timerDuration}
+    UI -> UI : displayQuestion(nextQuestion)
+    UI -> UI : resetTimer()
+    UI --> Student : Next question displayed (Post1)
+else Last Question
+    Service -> Session : endExam(sessionId: String)
+    activate Session
+    Session -> Session : status = ExamStatus.COMPLETED
+    Session -> Session : endTime = now()
+    Session --> Service : success
+    deactivate Session
+    
+    Service -> DB : saveFinalResults(sessionId: String, results: Results) [TLS]
+    activate DB
+    DB --> Service : success
+    deactivate DB
+    
+    Service --> UI : return {examComplete: true, results}
+    UI -> UI : displayFinalResults()
+    UI -> UI : playFinalNuggetAnimation()
+    UI --> Student : Exam completed (Post4, Post5)
+end
+
+deactivate UI
+
+== Answer Question Flow (Wrong Answer) ==
+
+Student -> UI : POST /exam/answer
+activate UI
+
+UI -> Service : submitAnswer(sessionId: String, questionId: String, answer: String) : AnswerResult
+activate Service
+
+Service -> Session : validateSession(sessionId: String) : Boolean
+activate Session
+Session --> Service : return true
+deactivate Session
+
+Service -> Question : validateAnswer(questionId: String, answer: String) : Boolean
+activate Question
+Question --> Service : return false
+deactivate Question
+
+Service -> Session : recordAnswer(questionId: String, answer: String)
+activate Session
+Session -> Session : addAnswer(questionId, answer)
+Session --> Service : success
+deactivate Session
+
+Service -> DB : updateProgress(sessionId: String, progress: Integer) [TLS]
+activate DB
+DB --> Service : success
+deactivate DB
+
+Service --> UI : return {correct: false, nuggetEarned: false}
+deactivate Service
+
+UI -> UI : updateProgressBar(progress)
+UI -> UI : showIncorrectFeedback()
+
+alt Has Next Question
+    Service -> Question : getNextQuestion(exam: Exam, currentIndex: Integer) : Question
+    activate Question
+    Question --> Service : return nextQuestion
+    deactivate Question
+    
+    Service --> UI : return {nextQuestion, timerDuration}
+    UI -> UI : displayQuestion(nextQuestion)
+    UI -> UI : resetTimer()
+    UI --> Student : Next question displayed (Post1)
+else Last Question
+    Service -> Session : endExam(sessionId: String)
+    activate Session
+    Session -> Session : status = ExamStatus.COMPLETED
+    Session -> Session : endTime = now()
+    Session --> Service : success
+    deactivate Session
+    
+    Service -> DB : saveFinalResults(sessionId: String, results: Results) [TLS]
+    activate DB
+    DB --> Service : success
+    deactivate DB
+    
+    Service --> UI : return {examComplete: true, results}
+    UI -> UI : displayFinalResults()
+    UI -> UI : playFinalNuggetAnimation()
+    UI --> Student : Exam completed (Post4, Post5)
+end
+
+deactivate UI
+
+== Timer Expires Flow ==
+
+UI -> UI : timerExpired()
+activate UI
+
+UI -> Service : autoSubmitAnswer(sessionId: String) : AutoSubmitResult
+activate Service
+
+Service -> Session : getCurrentAnswer(sessionId: String) : Answer
+activate Session
+Session --> Service : return currentAnswer
+deactivate Session
+
+alt Current Answer Exists
+    Service -> Session : recordAnswer(questionId: String, answer: String)
+    activate Session
+    Session -> Session : addAnswer(questionId, answer)
+    Session --> Service : success
+    deactivate Session
+    
+    Service -> DB : updateProgress(sessionId: String, progress: Integer) [TLS]
+    activate DB
+    DB --> Service : success
+    deactivate DB
+else No Answer Submitted
+    Service -> Session : recordAnswer(questionId: String, answer: null)
+    activate Session
+    Session -> Session : addAnswer(questionId, null)
+    Session --> Service : success
+    deactivate Session
+end
+
+Service -> Session : endExam(sessionId: String)
+activate Session
+Session -> Session : status = ExamStatus.TIMED_OUT
+Session -> Session : endTime = now()
+Session --> Service : success
+deactivate Session
+
+Service -> DB : saveFinalResults(sessionId: String, results: Results) [TLS]
+activate DB
+DB --> Service : success
+deactivate DB
+
+Service --> UI : return {examComplete: true, results, timedOut: true}
+deactivate Service
+
+UI -> UI : displayFinalResults()
+UI -> UI : playFinalNuggetAnimation()
+UI --> Student : Exam timed out (Post4, Post5)
+deactivate UI
+
+== Nugget Earned Flow ==
+
+Service -> Wallet : incrementNuggetCount(studentId: String) : Integer
+activate Wallet
+Wallet -> Wallet : nuggetCount = nuggetCount + 1
+Wallet --> Service : return newCount
+deactivate Wallet
+
+Service -> DB : saveNuggetCount(studentId: String, count: Integer) [TLS]
+activate DB
+DB --> Service : success
+deactivate DB
+
+Service --> UI : return {nuggetCount: newCount, animation: true}
+UI -> UI : playNuggetAnimation()
+UI --> Student : Nugget animation played (Post5)
+
+== Error Paths ==
+
+== Error: Invalid Session ==
+
+Student -> UI : POST /exam/answer
+activate UI
+
+UI -> Service : submitAnswer(sessionId: String, questionId: String, answer: String) : AnswerResult
+activate Service
+
+Service -> Session : validateSession(sessionId: String) : Boolean
+activate Session
+Session --> Service : return false
+deactivate Session
+
+Service --> UI : return {error: "INVALID_SESSION", message: "Session not found or expired"}
+deactivate Service
+
+UI --> Student : Display error: Session expired
+deactivate UI
+
+== Error: Unauthorized Access ==
+
+Student -> UI : POST /exam/start
+activate UI
+
+UI -> Service : startExam(studentId: String, examId: String) : ExamSession
+activate Service
+
+Service -> Student : validatePermission(studentId: String, permission: Permission) : Boolean
+activate Student
+Student --> Service : return false
+deactivate Student
+
+Service --> UI : return {error: "UNAUTHORIZED", message: "Student does not have required permissions"}
+deactivate Service
+
+UI --> Student : Display error: Access denied
+deactivate UI
+
+== Error: Database Failure ==
+
+Student -> UI : POST /exam/answer
+activate UI
+
+UI -> Service : submitAnswer(sessionId: String, questionId: String, answer: String) : AnswerResult
+activate Service
+
+Service -> Session : validateSession(sessionId: String) : Boolean
+activate Session
+Session --> Service : return true
+deactivate Session
+
+Service -> Question : validateAnswer(questionId: String, answer: String) : Boolean
+activate Question
+Question --> Service : return true
+deactivate Question
+
+Service -> Session : recordAnswer(questionId: String, answer: String)
+activate Session
+Session -> Session : addAnswer(questionId, answer)
+Session --> Service : success
+deactivate Session
+
+Service -> DB : updateProgress(sessionId: String, progress: Integer) [TLS]
+activate DB
+DB --> Service : error: CONNECTION_FAILED
+deactivate DB
+
+Service --> UI : return {error: "DATABASE_ERROR", message: "Failed to save progress"}
+deactivate Service
+
+UI -> UI : showErrorNotification("Progress not saved")
+UI --> Student : Error notification displayed
+deactivate UI
+
+== Error: Invalid Answer Format ==
+
+Student -> UI : POST /exam/answer
+activate UI
+
+UI -> Service : submitAnswer(sessionId: String, questionId: String, answer: String) : AnswerResult
+activate Service
+
+Service -> Session : validateSession(sessionId: String) : Boolean
+activate Session
+Session --> Service : return true
+deactivate Session
+
+Service -> Question : validateAnswerFormat(questionId: String, answer: String) : Boolean
+activate Question
+Question --> Service : return false
+deactivate Question
+
+Service --> UI : return {error: "INVALID_ANSWER_FORMAT", message: "Answer format does not match question type"}
+deactivate Service
+
+UI --> Student : Display error: Invalid answer format
+deactivate UI
+
+== Error: Exam Already Completed ==
+
+Student -> UI : POST /exam/answer
+activate UI
+
+UI -> Service : submitAnswer(sessionId: String, questionId: String, answer: String) : AnswerResult
+activate Service
+
+Service -> Session : validateSession(sessionId: String) : Boolean
+activate Session
+Session --> Service : return true
+deactivate Session
+
+Service -> Session : checkExamStatus(sessionId: String) : ExamStatus
+activate Session
+Session --> Service : return ExamStatus.COMPLETED
+deactivate Session
+
+Service --> UI : return {error: "EXAM_ALREADY_COMPLETED", message: "This exam has already been completed"}
+deactivate Service
+
+UI --> Student : Display error: Exam already completed
+deactivate UI
+
+== Instructor Ends Exam Flow ==
+
+Instructor -> UI : POST /exam/end
+activate UI
+
+UI -> Service : endExamByInstructor(sessionId: String, instructorId: String) : EndResult
+activate Service
+
+Service -> Instructor : validatePermission(instructorId: String, permission: Permission) : Boolean
+activate Instructor
+Instructor --> Service : return true
+deactivate Instructor
+
+Service -> Session : getExamSession(sessionId: String) : ExamSession
+activate Session
+Session --> Service : return session
+deactivate Session
+
+Service -> Session : endExam(sessionId: String)
+activate Session
+Session -> Session : status = ExamStatus.COMPLETED
+Session -> Session : endTime = now()
+Session --> Service : success
+deactivate Session
+
+Service -> DB : saveFinalResults(sessionId: String, results: Results) [TLS]
+activate DB
+DB --> Service : success
+deactivate DB
+
+Service --> UI : return {examComplete: true, results, endedByInstructor: true}
+deactivate Service
+
+UI -> UI : displayFinalResults()
+UI -> UI : playFinalNuggetAnimation()
+UI --> Student : Exam ended by instructor (Post4, Post5)
+UI --> Instructor : Exam ended successfully
+deactivate UI
+
+== IT Team Admin Flow ==
+
+IT -> UI : POST /admin/exam/reset
+activate UI
+
+UI -> Service : resetExamSession(sessionId: String, adminId: String) : ResetResult
+activate Service
+
+Service -> IT : validatePermission(adminId: String, permission: Permission) : Boolean
+activate IT
+IT --> Service : return true
+deactivate IT
+
+Service -> Session : getExamSession(sessionId: String) : ExamSession
+activate Session
+Session --> Service : return session
+deactivate Session
+
+Service -> Session : resetSession(sessionId: String)
+activate Session
+Session -> Session : status = ExamStatus.IN_PROGRESS
+Session -> Session : answers = []
+Session -> Session : startTime = now()
+Session --> Service : success
+deactivate Session
+
+Service -> DB : resetProgress(sessionId: String) [TLS]
+activate DB
+DB --> Service : success
+deactivate DB
+
+Service --> UI : return {reset: true, message: "Exam session reset successfully"}
+deactivate Service
+
+UI --> IT : Display reset confirmation
+deactivate UI
+
+@enduml

@@ -1,0 +1,65 @@
+{
+  "task_id": 107,
+  "confidence": 0.9876,
+  "evidence": [
+    {
+      "claim": "Students may have multiple attempts.",
+      "fact": "Students can review every past attempt, seeing their own answers, the correct answers, nuggets earned per question, and competency trend charts over time.",
+      "score": 0.9986,
+      "user_story_span": "Students may have multiple attempts",
+      "fact_span": "every past attempt"
+    },
+    {
+      "claim": "The time limit applies to each attempt individually.",
+      "fact": "The per-attempt time limit is enforced server-side.",
+      "score": 0.9973,
+      "user_story_span": "the time limit applies to each attempt individually.",
+      "fact_span": "per-attempt time limit"
+    },
+    {
+      "claim": "The system allows scheduling exams with an open date.",
+      "fact": "Exams are scheduled by setting an opening date, a closing date, and optionally a time limit per attempt that is enforced on the server side.",
+      "score": 0.9971,
+      "user_story_span": "with an open date",
+      "fact_span": "an opening date"
+    },
+    {
+      "claim": "The system allows scheduling exams with a close date.",
+      "fact": "Exams are scheduled by setting an opening date, a closing date, and optionally a time limit per attempt that is enforced on the server side.",
+      "score": 0.9968,
+      "user_story_span": "close date",
+      "fact_span": "a closing date"
+    },
+    {
+      "claim": "A student starts an attempt.",
+      "fact": "Students are shown an instant competency breakdown after submission.",
+      "score": 0.9949,
+      "user_story_span": "a student starts an attempt",
+      "fact_span": ""
+    },
+    {
+      "claim": "An appropriate message is displayed.",
+      "fact": "A post-submission summary shows which competencies were weak, marks them clearly, and gives a specific study suggestion for each.",
+      "score": 0.9841,
+      "user_story_span": "an appropriate message is displayed",
+      "fact_span": ""
+    },
+    {
+      "claim": "The open and close dates define the period during which the exam is available to students.",
+      "fact": "Instructors define availability windows for assessments and may impose a strict duration for each student's session.",
+      "score": 0.9665,
+      "user_story_span": "The open and close dates define the period during which the exam is available to students.",
+      "fact_span": "availability windows for assessments"
+    },
+    {
+      "claim": "The per-attempt time limit is optional.",
+      "fact": "Instructors can schedule exams with an optional per-attempt time limit.",
+      "score": 0.9652,
+      "user_story_span": "The per-attempt time limit is optional",
+      "fact_span": "an optional per-attempt time limit"
+    }
+  ],
+  "total_claims": 18,
+  "supported_claims": 8,
+  "threshold": 0.6
+}

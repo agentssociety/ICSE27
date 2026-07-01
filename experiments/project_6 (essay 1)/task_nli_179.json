@@ -1,0 +1,16 @@
+{
+  "task_id": 179,
+  "confidence": 0.9552,
+  "evidence": [
+    {
+      "claim": "Users can navigate between pages using next/previous links",
+      "fact": "Users can bookmark posts.",
+      "score": 0.9552,
+      "user_story_span": "Users can navigate between pages using next/previous links or page numbers",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 6,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

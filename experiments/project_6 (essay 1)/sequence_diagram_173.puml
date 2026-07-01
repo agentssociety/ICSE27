@@ -1,0 +1,142 @@
+@startuml
+!theme plain
+
+' Participants grouped by layer
+box "Controller" #LightBlue
+  participant Admin_Reported_Content_Panel as "Admin_Reported_Content_Panel"
+end box
+
+box "Application" #LightGreen
+  participant REQ_MOD_01 as "REQ_MOD_01"
+end box
+
+box "Domain" #LightYellow
+  participant ReportedItem as "ReportedItem"
+  participant State as "State"
+  participant Permission as "Permission"
+end box
+
+box "Infrastructure" #LightPink
+  participant Content_Management_Database as "Content_Management_Database"
+end box
+
+actor Admin_Team as "Admin_Team"
+
+' =============================================
+== Flow: Admin Logs In and Views Panel (TC-MOD-01) ==
+' Main success path
+Admin_Team -> Admin_Reported_Content_Panel: login(credentials)
+Admin_Reported_Content_Panel -> REQ_MOD_01: authenticate(session)
+alt Authentication successful
+  REQ_MOD_01 --> Admin_Reported_Content_Panel: true
+  Admin_Reported_Content_Panel -> REQ_MOD_01: viewReportedItems(adminId)
+  REQ_MOD_01 -> Content_Management_Database: queryReportedItems() [SQL]
+  Content_Management_Database --> REQ_MOD_01: list of ReportedItem
+  loop for each ReportedItem
+    REQ_MOD_01 -> ReportedItem: checkAccess(admin)
+    alt Admin in accessible set
+      ReportedItem --> REQ_MOD_01: true
+    else Admin not in accessible set
+      ReportedItem --> REQ_MOD_01: false
+      note right: Authorization error – item excluded from result
+    end alt
+  end loop
+  REQ_MOD_01 -> State: transition(Pre1, PostDone)
+  State --> REQ_MOD_01: done
+  REQ_MOD_01 --> Admin_Reported_Content_Panel: list of accessible items
+  Admin_Reported_Content_Panel --> Admin_Team: display panel
+else Authentication failed
+  REQ_MOD_01 --> Admin_Reported_Content_Panel: false
+  Admin_Reported_Content_Panel --> Admin_Team: error "Authentication required"
+  note right: State remains Pre1 (no transition)
+end alt
+
+' =============================================
+== Flow: Admin Warns Item (TC-MOD-02) ==
+Admin_Team -> Admin_Reported_Content_Panel: selectItem(itemId, action="warn")
+Admin_Reported_Content_Panel -> REQ_MOD_01: performAction(admin, item, "warn")
+alt Authentication check
+  REQ_MOD_01 -> REQ_MOD_01: checkAuthentication(session)
+  alt Not authenticated
+    REQ_MOD_01 --> Admin_Reported_Content_Panel: error "Authentication required"
+    Admin_Reported_Content_Panel --> Admin_Team: show error
+    note right: State remains Pre1
+    break
+  end alt
+end alt
+alt Authorization check
+  REQ_MOD_01 -> Permission: hasPermission(admin, Write)
+  Permission --> REQ_MOD_01: true
+  REQ_MOD_01 -> ReportedItem: isAccessible(admin)
+  ReportedItem --> REQ_MOD_01: true
+else Authorization failed
+  REQ_MOD_01 --> Admin_Reported_Content_Panel: error "Not authorized"
+  Admin_Reported_Content_Panel --> Admin_Team: show error
+  note right: State remains Pre1
+  break
+end alt
+REQ_MOD_01 -> ReportedItem: warn()
+ReportedItem -> Content_Management_Database: updateStatus(itemId, "warned") [SQL]
+alt Database success
+  Content_Management_Database --> ReportedItem: ok
+  ReportedItem --> REQ_MOD_01: success
+  REQ_MOD_01 -> State: transition(Pre1, PostDone)
+  State --> REQ_MOD_01: done
+  REQ_MOD_01 --> Admin_Reported_Content_Panel: success
+  Admin_Reported_Content_Panel --> Admin_Team: confirmation
+else Database failure
+  Content_Management_Database --> ReportedItem: error
+  ReportedItem --> REQ_MOD_01: failure
+  REQ_MOD_01 --> Admin_Reported_Content_Panel: error "Database error"
+  Admin_Reported_Content_Panel --> Admin_Team: show error
+  note right: State remains Pre1
+end alt
+
+' =============================================
+== Flow: Admin Hides Item (TC-MOD-03) ==
+Admin_Team -> Admin_Reported_Content_Panel: selectItem(itemId, action="hide")
+Admin_Reported_Content_Panel -> REQ_MOD_01: performAction(admin, item, "hide")
+' Authentication and authorization checks identical to warn flow
+alt Authentication check
+  REQ_MOD_01 -> REQ_MOD_01: checkAuthentication(session)
+  alt Not authenticated
+    REQ_MOD_01 --> Admin_Reported_Content_Panel: error "Authentication required"
+    Admin_Reported_Content_Panel --> Admin_Team: show error
+    break
+  end alt
+end alt
+alt Authorization check
+  REQ_MOD_01 -> Permission: hasPermission(admin, Write)
+  Permission --> REQ_MOD_01: true
+  REQ_MOD_01 -> ReportedItem: isAccessible(admin)
+  ReportedItem --> REQ_MOD_01: true
+else Authorization failed
+  REQ_MOD_01 --> Admin_Reported_Content_Panel: error "Not authorized"
+  Admin_Reported_Content_Panel --> Admin_Team: show error
+  break
+end alt
+REQ_MOD_01 -> ReportedItem: hide()
+ReportedItem -> Content_Management_Database: updateStatus(itemId, "hidden") [SQL]
+alt Database success
+  Content_Management_Database --> ReportedItem: ok
+  ReportedItem --> REQ_MOD_01: success
+  REQ_MOD_01 -> State: transition(Pre1, PostDone)
+  State --> REQ_MOD_01: done
+  REQ_MOD_01 --> Admin_Reported_Content_Panel: success
+  Admin_Reported_Content_Panel --> Admin_Team: confirmation
+else Database failure
+  Content_Management_Database --> ReportedItem: error
+  ReportedItem --> REQ_MOD_01: failure
+  REQ_MOD_01 --> Admin_Reported_Content_Panel: error "Database error"
+  Admin_Reported_Content_Panel --> Admin_Team: show error
+end alt
+
+' =============================================
+== Flow: Authentication Failure (TC-MOD-04) ==
+Admin_Team -> Admin_Reported_Content_Panel: attemptAction(withoutLogin)
+Admin_Reported_Content_Panel -> REQ_MOD_01: authenticate(session)
+REQ_MOD_01 --> Admin_Reported_Content_Panel: false
+Admin_Reported_Content_Panel --> Admin_Team: error "Authentication required"
+note right: State remains Pre1 – no transition
+
+@enduml

@@ -1,0 +1,190 @@
+@startuml
+' !include <C4/C4_Container> ' (optional for styling)
+
+actor Administrator as Admin
+actor "IT_Team" as IT #LightBlue
+
+box "Controller Layer" #LightCyan
+  participant "Cohort API" as CohortAPI
+  participant "Exam Restriction API" as ExamRestrictionAPI
+end box
+
+box "Application Layer" #LightGreen
+  participant "CohortService" as CohortSvc
+  participant "ExamRestrictionService" as ExamRestSvc
+  participant "AuthService" as AuthSvc
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Cohort" as Cohort
+  participant "Student" as Student
+  participant "Exam" as Exam
+end box
+
+box "Infrastructure Layer" #LightPink
+  database "StudentCohortDatabase" as DB
+end box
+
+group Setup (preconditions)
+  note over Admin: Pre1: System operational\nPre2: Admin has permissions
+end group
+
+== Create Cohort ==
+
+Admin -> CohortAPI : POST /cohorts {name} [TLS]
+activate CohortAPI
+
+CohortAPI -> AuthSvc : authenticate(token)
+activate AuthSvc
+AuthSvc --> CohortAPI : Admin role (Write/Admin)
+deactivate AuthSvc
+
+alt Invalid or missing token
+  CohortAPI --> Admin : 401 Unauthorized
+else Not Admin role
+  CohortAPI --> Admin : 403 Forbidden
+else Valid Admin
+  CohortAPI -> CohortSvc : createCohort(name: String)
+  activate CohortSvc
+
+  CohortSvc -> DB : findCohortByName(name)
+  activate DB
+  DB --> CohortSvc : optional Cohort
+  deactivate DB
+
+  alt Cohort already exists
+    CohortSvc --> CohortAPI : CohortAlreadyExistsException
+    CohortAPI --> Admin : 409 Conflict "cohort already exists"
+  else Name unique
+    CohortSvc -> Cohort : new Cohort(name)
+    activate Cohort
+    note left of Cohort : State: created (Post1)
+    deactivate Cohort
+
+    CohortSvc -> DB : insert(cohort) [encrypted at rest]
+    activate DB
+    DB --> CohortSvc : success
+    deactivate DB
+
+    CohortSvc --> CohortAPI : CohortCreated
+    CohortAPI --> Admin : 201 Created {cohortId}
+  end
+  deactivate CohortSvc
+end
+deactivate CohortAPI
+
+== Enroll Student in Cohort ==
+
+Admin -> CohortAPI : PUT /cohorts/{cohortId}/students/{studentId} [TLS]
+activate CohortAPI
+
+CohortAPI -> AuthSvc : authenticate(token)
+activate AuthSvc
+AuthSvc --> CohortAPI : Admin role (Write/Admin)
+deactivate AuthSvc
+
+alt Invalid/Unauthorized
+  CohortAPI --> Admin : 401/403
+else Authorized
+  CohortAPI -> CohortSvc : enrollStudent(cohortId, studentId)
+  activate CohortSvc
+
+  CohortSvc -> DB : findCohortById(cohortId)
+  activate DB
+  DB --> CohortSvc : Cohort (or null)
+  deactivate DB
+
+  alt Cohort not found
+    CohortSvc --> CohortAPI : CohortNotFoundException
+    CohortAPI --> Admin : 404 Not Found "cohort not found"
+  else Cohort exists
+    CohortSvc -> DB : findStudentById(studentId)
+    activate DB
+    DB --> CohortSvc : Student (or null)
+    deactivate DB
+
+    alt Student not found
+      CohortSvc --> CohortAPI : StudentNotFoundException
+      CohortAPI --> Admin : 404 Not Found "student not found"
+    else Both exist
+      CohortSvc -> Cohort : addStudent(student)
+      activate Cohort
+      note right of Cohort : State: student enrolled (Post2)
+      Cohort --> CohortSvc : success
+      deactivate Cohort
+
+      CohortSvc -> DB : update(cohort) [encrypted at rest]
+      activate DB
+      DB --> CohortSvc : success
+      deactivate DB
+
+      CohortSvc --> CohortAPI : StudentEnrolled
+      CohortAPI --> Admin : 200 OK
+    end
+  end
+  deactivate CohortSvc
+end
+deactivate CohortAPI
+
+== Restrict Exam to Cohorts ==
+
+Admin -> ExamRestrictionAPI : POST /exams/{examId}/restrictions {cohortIds} [TLS]
+activate ExamRestrictionAPI
+
+ExamRestrictionAPI -> AuthSvc : authenticate(token)
+activate AuthSvc
+AuthSvc --> ExamRestrictionAPI : Admin role (Execute/Admin)
+deactivate AuthSvc
+
+alt Invalid/Unauthorized
+  ExamRestrictionAPI --> Admin : 401/403
+else Authorized
+  ExamRestrictionAPI -> ExamRestSvc : restrictExam(examId, cohortIds)
+  activate ExamRestSvc
+
+  ExamRestSvc -> DB : findExamById(examId)
+  activate DB
+  DB --> ExamRestSvc : Exam (or null)
+  deactivate DB
+
+  alt Exam not found
+    ExamRestSvc --> ExamRestrictionAPI : ExamNotFoundException
+    ExamRestrictionAPI --> Admin : 404 Not Found "exam not found"
+  else Exam found
+    loop for each cohortId
+      ExamRestSvc -> DB : findCohortById(cohortId)
+      activate DB
+      DB --> ExamRestSvc : Cohort (or null)
+      deactivate DB
+
+      alt Cohort not found
+        ExamRestSvc --> ExamRestrictionAPI : CohortNotFoundException
+        ExamRestrictionAPI --> Admin : 404 Not Found "cohort not found"
+        break
+      else Cohort found
+        ExamRestSvc -> Exam : addRestrictedCohort(cohort)
+        activate Exam
+        note right of Exam : State: restricted (Post3)
+        Exam --> ExamRestSvc : success
+        deactivate Exam
+      end
+    end
+
+    alt Optimistic lock failure (concurrent update)
+      ExamRestSvc --> ExamRestrictionAPI : ConcurrencyException
+      ExamRestrictionAPI --> Admin : 409 Conflict "exam restriction conflict"
+    else Successful
+      ExamRestSvc -> DB : update(exam) [encrypted at rest]
+      activate DB
+      DB --> ExamRestSvc : success
+      deactivate DB
+      ExamRestSvc --> ExamRestrictionAPI : ExamRestricted
+      ExamRestrictionAPI --> Admin : 200 OK
+    end
+  end
+  deactivate ExamRestSvc
+end
+deactivate ExamRestrictionAPI
+
+note over Admin : Additional constraints:\n- IT_Team has read-only access (not shown)\n- All communication encrypted via TLS\n- Concurrency on exam restriction enforced via optimistic locking
+@enduml

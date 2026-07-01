@@ -1,0 +1,131 @@
+{
+  "run_id": "P5E1",
+  "project": 5,
+  "essay": 1,
+  "n_tasks": 12,
+  "tasks": [
+    {
+      "task_id": 105,
+      "nli_alignment_score": 0.9793,
+      "total_claims": 18,
+      "supported_claims": 8,
+      "spec_extrapolation_rate": 0.5556,
+      "spec_coverage_rate": 0.4444,
+      "n_evidence": 8
+    },
+    {
+      "task_id": 106,
+      "nli_alignment_score": 0.9977,
+      "total_claims": 8,
+      "supported_claims": 5,
+      "spec_extrapolation_rate": 0.375,
+      "spec_coverage_rate": 0.625,
+      "n_evidence": 5
+    },
+    {
+      "task_id": 107,
+      "nli_alignment_score": 0.9876,
+      "total_claims": 18,
+      "supported_claims": 8,
+      "spec_extrapolation_rate": 0.5556,
+      "spec_coverage_rate": 0.4444,
+      "n_evidence": 8
+    },
+    {
+      "task_id": 108,
+      "nli_alignment_score": 0.9954,
+      "total_claims": 9,
+      "supported_claims": 8,
+      "spec_extrapolation_rate": 0.1111,
+      "spec_coverage_rate": 0.8889,
+      "n_evidence": 8
+    },
+    {
+      "task_id": 109,
+      "nli_alignment_score": 0.9913,
+      "total_claims": 8,
+      "supported_claims": 6,
+      "spec_extrapolation_rate": 0.25,
+      "spec_coverage_rate": 0.75,
+      "n_evidence": 6
+    },
+    {
+      "task_id": 110,
+      "nli_alignment_score": 0.9972,
+      "total_claims": 12,
+      "supported_claims": 6,
+      "spec_extrapolation_rate": 0.5,
+      "spec_coverage_rate": 0.5,
+      "n_evidence": 6
+    },
+    {
+      "task_id": 111,
+      "nli_alignment_score": 0.9658,
+      "total_claims": 10,
+      "supported_claims": 6,
+      "spec_extrapolation_rate": 0.4,
+      "spec_coverage_rate": 0.6,
+      "n_evidence": 6
+    },
+    {
+      "task_id": 112,
+      "nli_alignment_score": 0.9818,
+      "total_claims": 5,
+      "supported_claims": 5,
+      "spec_extrapolation_rate": 0.0,
+      "spec_coverage_rate": 1.0,
+      "n_evidence": 5
+    },
+    {
+      "task_id": 113,
+      "nli_alignment_score": 0.9866,
+      "total_claims": 6,
+      "supported_claims": 4,
+      "spec_extrapolation_rate": 0.3333,
+      "spec_coverage_rate": 0.6667,
+      "n_evidence": 4
+    },
+    {
+      "task_id": 114,
+      "nli_alignment_score": 0.9921,
+      "total_claims": 17,
+      "supported_claims": 8,
+      "spec_extrapolation_rate": 0.5294,
+      "spec_coverage_rate": 0.4706,
+      "n_evidence": 8
+    },
+    {
+      "task_id": 115,
+      "nli_alignment_score": 0.9981,
+      "total_claims": 5,
+      "supported_claims": 4,
+      "spec_extrapolation_rate": 0.2,
+      "spec_coverage_rate": 0.8,
+      "n_evidence": 4
+    },
+    {
+      "task_id": 116,
+      "nli_alignment_score": 0.9956,
+      "total_claims": 11,
+      "supported_claims": 8,
+      "spec_extrapolation_rate": 0.2727,
+      "spec_coverage_rate": 0.7273,
+      "n_evidence": 8
+    }
+  ],
+  "summary": {
+    "mean_nli_alignment_score": 0.989,
+    "median_nli_alignment_score": 0.9917,
+    "std_nli_alignment_score": 0.0096,
+    "q1": 0.9854,
+    "q3": 0.996,
+    "iqr": 0.0106,
+    "n_outliers": 1,
+    "n_zero_alignment": 0,
+    "total_claims": 127,
+    "supported_claims": 76,
+    "spec_coverage_rate": 0.5984,
+    "spec_extrapolation_rate": 0.4016,
+    "overall_hallucination_rate": 0.4016
+  }
+}

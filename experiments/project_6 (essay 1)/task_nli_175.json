@@ -1,0 +1,44 @@
+{
+  "task_id": 175,
+  "confidence": 0.9902,
+  "evidence": [
+    {
+      "claim": "Once a user is blocked, the blocking user no longer receives new messages from the blocked user.",
+      "fact": "Blocking hides the blocked user's posts from the blocker.",
+      "score": 0.9979,
+      "user_story_span": "I no longer receive new messages or see new posts from \"Alice\"",
+      "fact_span": "Blocking hides the blocked user's posts from the blocker."
+    },
+    {
+      "claim": "Once a user is blocked, the blocking user no longer sees new posts from the blocked user.",
+      "fact": "Blocking hides the blocked user's posts from the blocker.",
+      "score": 0.9979,
+      "user_story_span": "I no longer receive new messages or see new posts from \"Alice\"",
+      "fact_span": "Blocking hides the blocked user's posts from the blocker."
+    },
+    {
+      "claim": "Once a user is blocked, all existing messages from that user are hidden.",
+      "fact": "Blocking hides the blocked user's posts from the blocker.",
+      "score": 0.9935,
+      "user_story_span": "all existing and future posts and messages from the blocked user are hidden",
+      "fact_span": "Blocking hides the blocked user's posts from the blocker."
+    },
+    {
+      "claim": "The blocked user is not notified of the block.",
+      "fact": "Notifications can be marked unread.",
+      "score": 0.9842,
+      "user_story_span": "The blocked user is not notified of the block.",
+      "fact_span": ""
+    },
+    {
+      "claim": "Once a user is blocked, all existing posts from that user are hidden.",
+      "fact": "Blocking hides the blocked user's posts from the blocker.",
+      "score": 0.9773,
+      "user_story_span": "all existing and future posts and messages from the blocked user are hidden",
+      "fact_span": "Blocking hides the blocked user's posts from the blocker."
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 5,
+  "threshold": 0.6
+}

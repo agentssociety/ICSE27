@@ -1,0 +1,140 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+skinparam classBackgroundColor #FEFEFE
+skinparam classBorderColor #333333
+skinparam arrowColor #333333
+
+package "Domain Model" {
+
+  abstract class Actor {
+    +mayPerform: Set<Permission>
+  }
+
+  class Student extends Actor
+  class Instructor extends Actor
+  class Reward_Store_Administrator extends Actor
+
+  abstract class Resource {
+    +owner: Actor
+    +accessible: Set<Actor>
+  }
+  note left of Resource : "owner in accessible"
+
+  enum IfaceKind {
+    API
+    UI
+    External_System
+  }
+
+  abstract class Interface <<interface>> {
+    +kind: IfaceKind
+    +encrypted: Boolean
+    +authenticated: Boolean
+  }
+
+  class Reward_Store_API extends Interface
+  note left of Reward_Store_API : "kind = API"
+
+  class Student_Dashboard extends Interface
+  note left of Student_Dashboard : "kind = UI"
+
+  class Instructor_Configuration_System extends Interface
+  note left of Instructor_Configuration_System : "kind = External_System"
+
+  abstract class State
+
+  class Pre1 extends State
+  note top of Pre1 : "student has earned nuggets in wallet"
+
+  class Pre2 extends State
+  note top of Pre2 : "reward store contains items available for redemption"
+
+  class Post1 extends State
+  note top of Post1 : "student's nugget balance reduced by cost of redeemed item"
+
+  class Post2 extends State
+  note top of Post2 : "selected reward item provided to student"
+
+  abstract class Permission
+
+  class Read extends Permission
+  class Write extends Permission
+  class Execute extends Permission
+  class Admin extends Permission
+
+  class RedemptionItem {
+    +resource: Resource
+    +available: Boolean
+    +state: State
+  + checkAvailability(itemId: String) : Boolean
+  + provideToStudent(student: Student) : RedemptionItem
+  }
+
+  class NuggetBalance {
+    +student: Student
+    +amount: Integer
+    +state: State
+  + getBalance(studentId: String) : Int
+  + deductBalance(cost: Int) : NuggetBalance
+  }
+
+  class ItemCost {
+    +item: Resource
+    +cost: Integer
+    +state: State
+  + getCost(itemId: String) : Int
+  }
+}
+
+package "Application" {
+  class REQ_STU_01 {
+    +initiator: Actor
+    +target: Set<Resource>
+    +channel: Set<Interface>
+    +grant: Permission
+    +pre: State
+    +post: State
+  + executeRedemption(student: Student, item: RedemptionItem, grant: Permission)
+  + checkPermission(initiator: Actor, grant: Permission) : Boolean
+  + validateSufficientBalance(balance: Int, cost: Int) : Boolean
+  + executeRedemption(student, item, grant)
+  + validatePreconditions(statePre1: State, statePre2: State) : Boolean
+  }
+}
+
+' Inheritance relationships
+Student --|> Actor
+Instructor --|> Actor
+Reward_Store_Administrator --|> Actor
+
+Reward_Store_API --|> Interface
+Student_Dashboard --|> Interface
+Instructor_Configuration_System --|> Interface
+
+Pre1 --|> State
+Pre2 --|> State
+Post1 --|> State
+Post2 --|> State
+
+Read --|> Permission
+Write --|> Permission
+Execute --|> Permission
+Admin --|> Permission
+
+' Association relationships
+REQ_STU_01 "1" --> "1" Actor : initiator
+REQ_STU_01 "1" --> "0..*" Resource : target
+REQ_STU_01 "1" --> "0..*" Interface : channel
+REQ_STU_01 "1" --> "1" Permission : grant
+REQ_STU_01 "1" --> "1" State : pre
+REQ_STU_01 "1" --> "1" State : post
+
+Resource "1" --> "0..*" Actor : owner
+Resource "0..*" --> "0..*" Actor : accessible
+
+RedemptionItem "1" --> "1" Resource : resource
+NuggetBalance "1" --> "1" Student : student
+ItemCost "1" --> "1" Resource : item
+
+@enduml

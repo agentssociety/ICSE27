@@ -1,0 +1,108 @@
+{
+  "id": "REQ-POST-COMMENT-01",
+  "title": "Add, edit, and delete comments on posts",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow users to add comments to posts and manage their own comments by editing or deleting them.",
+  "rationale": "To enable user engagement with content and provide control over their contributions, allowing for interaction and feedback on platform posts.",
+  "business_value": "Improves user experience by enabling active participation in community discussions and personal contribution management.",
+  "source": {
+    "type": "User Story",
+    "id": 161,
+    "description": "As a user I need add comments on posts and manage my own comments (edit/delete) So that I can engage with content and control my contributions"
+  },
+  "stakeholders": [
+    "Content Authors",
+    "Community Managers",
+    "End Users"
+  ],
+  "acceptance_criteria": [
+    "Given I am on a post detail page When I write a comment and submit Then the comment appears on the post",
+    "Given I have a comment on a post When I edit my comment Then the comment content is updated",
+    "Given I have a comment on a post When I delete my comment Then the comment is removed from the post"
+  ],
+  "preconditions": [
+    "The user must be logged in to the platform.",
+    "A post detail page must be accessible and contain comments section."
+  ],
+  "postconditions": [
+    "A new comment must appear on the post immediately after submission.",
+    "Editing a comment must update the comment content in real-time.",
+    "Deleting a comment must remove it from the post without leaving any trace."
+  ],
+  "functional_constraints": [
+    "Comments must be flat, no nesting allowed.",
+    "The system must ensure that only the owner of a comment can edit or delete it."
+  ],
+  "security_requirements": [
+    "User authentication and authorization mechanisms must be in place to prevent unauthorized editing or deletion of comments."
+  ],
+  "non_functional_requirements": {
+    "performance": "Comment submission, editing, and deletion should complete within 2 seconds.",
+    "availability": "The system must be available 99.5% of the time during peak usage hours.",
+    "scalability": "The system must support at least 10,000 concurrent users without performance degradation.",
+    "usability": "Error messages must be clear and actionable to help users understand what went wrong."
+  },
+  "edge_cases": [
+    "What happens if a user tries to edit or delete a comment that does not belong to them?",
+    "How does the system handle extremely long comments (e.g., over 10,000 characters)?",
+    "What is the behavior when the system reaches its concurrent user limit during peak hours?"
+  ],
+  "dependencies": [
+    "User Authentication and Authorization System",
+    "Database for Storing Comments"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Comment Management API",
+      "description": "Interacts with the application's backend to manage comments, including creation, editing, and deletion."
+    },
+    {
+      "type": "UI",
+      "name": "Post Detail Page UI",
+      "description": "Provides a platform for users to view posts and interact by adding, editing, or deleting comments."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-POST-COMMENT-01",
+      "description": "User can successfully submit a comment on a post.",
+      "expected_result": "The new comment appears on the post immediately after submission."
+    },
+    {
+      "id": "TC-POST-COMMENT-02",
+      "description": "Comment owner can edit their own comment.",
+      "expected_result": "Editing the comment updates its content in real-time."
+    },
+    {
+      "id": "TC-POST-COMMENT-03",
+      "description": "Non-owner user tries to edit another user's comment.",
+      "expected_result": "The system denies access and shows an error message."
+    },
+    {
+      "id": "TC-POST-COMMENT-04",
+      "description": "User can delete their own comment.",
+      "expected_result": "Deleting the comment removes it from the post without leaving any trace."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T11:50:16.706400",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-CONTENT-PUB-01",
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "Comment",
+      "Post",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

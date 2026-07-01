@@ -1,0 +1,435 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "Admin Action API" as API
+end box
+
+box "Application Layer" #LightGreen
+  participant "Operation" as Op
+  participant "Permission" as Perm
+  participant "State" as State
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Admin" as Admin
+  participant "User" as User
+  participant "AuditLog" as Log
+  participant "Resource" as Res
+  participant "Channel" as Chan
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "Audit Log Database" as DB
+end box
+
+== Main Flow: Successful Action ==
+
+Admin -> API : POST /admin/action [TLS, authenticated]
+activate API
+
+API -> Op : execute(initiator: Admin, target: User, actionType: String) : State
+activate Op
+
+Op -> Perm : checkPermission(admin: Admin, requiredLevel: Permission) : Boolean
+activate Perm
+
+alt Permission sufficient (Admin >= Execute)
+  Perm --> Op : true
+  deactivate Perm
+
+  Op -> Admin : getPermissions() : Permission[]
+  activate Admin
+  Admin --> Op : permissions
+  deactivate Admin
+
+  Op -> Res : checkAccess(initiator: Admin, target: User) : Boolean
+  activate Res
+  
+  alt Access granted (initiator in target.accessible)
+    Res --> Op : true
+    deactivate Res
+
+    Op -> Chan : authenticate(channel: Channel) : Boolean
+    activate Chan
+    
+    alt Channel authenticated
+      Chan --> Op : true
+      deactivate Chan
+
+      Op -> User : applyAction(actionType: String) : void
+      activate User
+      User --> Op : void
+      deactivate User
+
+      Op -> Log : createEntry(adminId: String, actionType: String, timestamp: DateTime, targetUserId: String) : AuditLog
+      activate Log
+      Log --> Op : entry
+      deactivate Log
+
+      Op -> DB : persist(entry: AuditLog) [encrypted at rest]
+      activate DB
+      DB --> Op : success
+      deactivate DB
+
+      Op -> State : transitionTo(Post1) : void
+      activate State
+      State --> Op : void
+      deactivate State
+
+      Op --> API : Post1 (Action Recorded)
+      API --> Admin : 200 OK { action: recorded, logId: String }
+      
+    else Channel not authenticated
+      Chan --> Op : false
+      deactivate Chan
+      
+      Op -> Log : createErrorEntry(adminId: String, errorType: String, timestamp: DateTime) : AuditLog
+      activate Log
+      Log --> Op : errorEntry
+      deactivate Log
+      
+      Op -> DB : persist(errorEntry: AuditLog) [encrypted at rest]
+      activate DB
+      DB --> Op : success
+      deactivate DB
+      
+      Op -> State : transitionTo(Post2) : void
+      activate State
+      State --> Op : void
+      deactivate State
+      
+      Op --> API : Post2 (Error Logged)
+      API --> Admin : 403 Forbidden { error: "Channel authentication required" }
+    end if
+    
+  else Access denied
+    Res --> Op : false
+    deactivate Res
+    
+    Op -> Log : createErrorEntry(adminId: String, errorType: String, timestamp: DateTime) : AuditLog
+    activate Log
+    Log --> Op : errorEntry
+    deactivate Log
+    
+    Op -> DB : persist(errorEntry: AuditLog) [encrypted at rest]
+    activate DB
+    DB --> Op : success
+    deactivate DB
+    
+    Op -> State : transitionTo(Post2) : void
+    activate State
+    State --> Op : void
+    deactivate State
+    
+    Op --> API : Post2 (Error Logged)
+    API --> Admin : 403 Forbidden { error: "Target user not accessible" }
+  end if
+
+else Permission insufficient
+  Perm --> Op : false
+  deactivate Perm
+  
+  Op -> Log : createErrorEntry(adminId: String, errorType: String, timestamp: DateTime) : AuditLog
+  activate Log
+  Log --> Op : errorEntry
+  deactivate Log
+  
+  Op -> DB : persist(errorEntry: AuditLog) [encrypted at rest]
+  activate DB
+  DB --> Op : success
+  deactivate DB
+  
+  Op -> State : transitionTo(Post2) : void
+  activate State
+  State --> Op : void
+  deactivate State
+  
+  Op --> API : Post2 (Error Logged)
+  API --> Admin : 403 Forbidden { error: "Insufficient privileges" }
+end if
+
+deactivate Op
+deactivate API
+
+== Flow: Multiple Warnings (Separate Logging) ==
+
+Admin -> API : POST /admin/warn [TLS, authenticated]
+activate API
+
+API -> Op : execute(initiator: Admin, target: User, actionType: "warn") : State
+activate Op
+
+Op -> Perm : checkPermission(admin: Admin, requiredLevel: Permission) : Boolean
+activate Perm
+
+alt Permission sufficient
+  Perm --> Op : true
+  deactivate Perm
+
+  Op -> Res : checkAccess(initiator: Admin, target: User) : Boolean
+  activate Res
+  
+  alt Access granted
+    Res --> Op : true
+    deactivate Res
+
+    Op -> Chan : authenticate(channel: Channel) : Boolean
+    activate Chan
+    
+    alt Channel authenticated
+      Chan --> Op : true
+      deactivate Chan
+
+      Op -> User : applyWarning() : void
+      activate User
+      User --> Op : void
+      deactivate User
+
+      note right of Op: Each warning logged as separate entry
+      Op -> Log : createEntry(adminId: String, actionType: "warn", timestamp: DateTime, targetUserId: String) : AuditLog
+      activate Log
+      Log --> Op : entry
+      deactivate Log
+
+      Op -> DB : persist(entry: AuditLog) [encrypted at rest]
+      activate DB
+      DB --> Op : success
+      deactivate DB
+
+      Op -> State : transitionTo(Post1) : void
+      activate State
+      State --> Op : void
+      deactivate State
+
+      Op --> API : Post1 (Warning Recorded)
+      API --> Admin : 200 OK { action: "warn", logId: String, warningCount: Integer }
+      
+    else Channel not authenticated
+      Chan --> Op : false
+      deactivate Chan
+      
+      Op -> Log : createErrorEntry(adminId: String, errorType: String, timestamp: DateTime) : AuditLog
+      activate Log
+      Log --> Op : errorEntry
+      deactivate Log
+      
+      Op -> DB : persist(errorEntry: AuditLog) [encrypted at rest]
+      activate DB
+      DB --> Op : success
+      deactivate DB
+      
+      Op -> State : transitionTo(Post2) : void
+      activate State
+      State --> Op : void
+      deactivate State
+      
+      Op --> API : Post2 (Error Logged)
+      API --> Admin : 403 Forbidden { error: "Channel authentication required" }
+    end if
+    
+  else Access denied
+    Res --> Op : false
+    deactivate Res
+    
+    Op -> Log : createErrorEntry(adminId: String, errorType: String, timestamp: DateTime) : AuditLog
+    activate Log
+    Log --> Op : errorEntry
+    deactivate Log
+    
+    Op -> DB : persist(errorEntry: AuditLog) [encrypted at rest]
+    activate DB
+    DB --> Op : success
+    deactivate DB
+    
+    Op -> State : transitionTo(Post2) : void
+    activate State
+    State --> Op : void
+    deactivate State
+    
+    Op --> API : Post2 (Error Logged)
+    API --> Admin : 403 Forbidden { error: "Target user not accessible" }
+  end if
+
+else Permission insufficient
+  Perm --> Op : false
+  deactivate Perm
+  
+  Op -> Log : createErrorEntry(adminId: String, errorType: String, timestamp: DateTime) : AuditLog
+  activate Log
+  Log --> Op : errorEntry
+  deactivate Log
+  
+  Op -> DB : persist(errorEntry: AuditLog) [encrypted at rest]
+  activate DB
+  DB --> Op : success
+  deactivate DB
+  
+  Op -> State : transitionTo(Post2) : void
+  activate State
+  State --> Op : void
+  deactivate State
+  
+  Op --> API : Post2 (Error Logged)
+  API --> Admin : 403 Forbidden { error: "Insufficient privileges" }
+end if
+
+deactivate Op
+deactivate API
+
+== Flow: High Volume (1000 Concurrent Actions) ==
+
+Admin -> API : POST /admin/action [TLS, authenticated] (1000 concurrent)
+activate API
+
+note right of API: System must handle 1000 concurrent actions without degradation
+
+API -> Op : execute(initiator: Admin, target: User, actionType: String) : State (concurrent)
+activate Op
+
+Op -> Perm : checkPermission(admin: Admin, requiredLevel: Permission) : Boolean
+activate Perm
+
+alt Permission sufficient
+  Perm --> Op : true
+  deactivate Perm
+
+  Op -> Res : checkAccess(initiator: Admin, target: User) : Boolean
+  activate Res
+  
+  alt Access granted
+    Res --> Op : true
+    deactivate Res
+
+    Op -> Chan : authenticate(channel: Channel) : Boolean
+    activate Chan
+    
+    alt Channel authenticated
+      Chan --> Op : true
+      deactivate Chan
+
+      Op -> User : applyAction(actionType: String) : void
+      activate User
+      User --> Op : void
+      deactivate User
+
+      note right of Op: Log recording must complete within 100ms
+      Op -> Log : createEntry(adminId: String, actionType: String, timestamp: DateTime, targetUserId: String) : AuditLog
+      activate Log
+      Log --> Op : entry
+      deactivate Log
+
+      Op -> DB : persist(entry: AuditLog) [encrypted at rest]
+      activate DB
+      DB --> Op : success
+      deactivate DB
+
+      Op -> State : transitionTo(Post1) : void
+      activate State
+      State --> Op : void
+      deactivate State
+
+      Op --> API : Post1 (Action Recorded)
+      API --> Admin : 200 OK { action: recorded, logId: String }
+      
+    else Channel not authenticated
+      Chan --> Op : false
+      deactivate Chan
+      
+      Op -> Log : createErrorEntry(adminId: String, errorType: String, timestamp: DateTime) : AuditLog
+      activate Log
+      Log --> Op : errorEntry
+      deactivate Log
+      
+      Op -> DB : persist(errorEntry: AuditLog) [encrypted at rest]
+      activate DB
+      DB --> Op : success
+      deactivate DB
+      
+      Op -> State : transitionTo(Post2) : void
+      activate State
+      State --> Op : void
+      deactivate State
+      
+      Op --> API : Post2 (Error Logged)
+      API --> Admin : 403 Forbidden { error: "Channel authentication required" }
+    end if
+    
+  else Access denied
+    Res --> Op : false
+    deactivate Res
+    
+    Op -> Log : createErrorEntry(adminId: String, errorType: String, timestamp: DateTime) : AuditLog
+    activate Log
+    Log --> Op : errorEntry
+    deactivate Log
+    
+    Op -> DB : persist(errorEntry: AuditLog) [encrypted at rest]
+    activate DB
+    DB --> Op : success
+    deactivate DB
+    
+    Op -> State : transitionTo(Post2) : void
+    activate State
+    State --> Op : void
+    deactivate State
+    
+    Op --> API : Post2 (Error Logged)
+    API --> Admin : 403 Forbidden { error: "Target user not accessible" }
+  end if
+
+else Permission insufficient
+  Perm --> Op : false
+  deactivate Perm
+  
+  Op -> Log : createErrorEntry(adminId: String, errorType: String, timestamp: DateTime) : AuditLog
+  activate Log
+  Log --> Op : errorEntry
+  deactivate Log
+  
+  Op -> DB : persist(errorEntry: AuditLog) [encrypted at rest]
+  activate DB
+  DB --> Op : success
+  deactivate DB
+  
+  Op -> State : transitionTo(Post2) : void
+  activate State
+  State --> Op : void
+  deactivate State
+  
+  Op --> API : Post2 (Error Logged)
+  API --> Admin : 403 Forbidden { error: "Insufficient privileges" }
+end if
+
+deactivate Op
+deactivate API
+
+== Flow: Audit Log Review ==
+
+AuditCommittee -> API : GET /audit/logs [TLS, authenticated]
+activate API
+
+API -> Perm : checkPermission(committee: AuditCommittee, requiredLevel: Permission) : Boolean
+activate Perm
+
+alt Permission sufficient (Read)
+  Perm --> API : true
+  deactivate Perm
+
+  API -> DB : queryLogs(filters: Map) : List<AuditLog> [encrypted at rest]
+  activate DB
+  DB --> API : logs
+  deactivate DB
+
+  API --> AuditCommittee : 200 OK { logs: List<AuditLog> }
+  
+else Permission insufficient
+  Perm --> API : false
+  deactivate Perm
+  
+  API --> AuditCommittee : 403 Forbidden { error: "Insufficient privileges to view audit logs" }
+end if
+
+deactivate API
+
+@enduml

@@ -1,0 +1,126 @@
+@startuml
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FEFEFE
+skinparam packageBackgroundColor #F0F4FF
+skinparam classBackgroundColor #FAFAFA
+skinparam interfaceBackgroundColor #FFF8E7
+skinparam enumBackgroundColor #E8FFF0
+
+package "Domain Model" {
+  enum IfaceKind {
+    API
+    Database
+  }
+
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  enum State {
+    Pre1
+    Pre2
+    PostDone
+  + updateState(PostDone)
+  }
+
+  abstract class Actor {
+    - mayPerform: Set<Permission>
+  }
+
+  class Product_Owner << (C,#FFE0E0) >> {
+  }
+
+  class Engineering_Team << (C,#E0FFE0) >> {
+  }
+
+  class UX_UI_Designer << (C,#E0E0FF) >> {
+  }
+
+  abstract class Resource {
+    - owner: Actor
+    - accessible: Set<Actor>
+  }
+
+  class Group {
+  }
+
+  class Post {
+  + isAccessible(initiator) : Boolean
+  }
+
+  abstract class Interface {
+    - kind: IfaceKind
+    - encrypted: Boolean
+    - authenticated: Boolean
+  }
+
+  note top of Resource
+    Invariant: owner is always in accessible
+  end note
+}
+
+package "Application" {
+  class REQ_MEM_01 {
+    - initiator: Actor
+    - target: List<Resource>
+    - channel: List<Interface>
+    - grant: Permission
+    - pre: State
+    - post: State
+  + triggerFeedFilter()
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface Group_API << (I,#FFE8C0) >> {
+  }
+
+  interface Post_Database << (I,#FFE8C0) >> {
+  }
+}
+
+' Inheritance — Domain Model
+Actor <|-- Product_Owner
+Actor <|-- Engineering_Team
+Actor <|-- UX_UI_Designer
+
+Resource <|-- Group
+Resource <|-- Post
+
+Interface <|.. Group_API
+Interface <|.. Post_Database
+
+' Associations — REQ_MEM_01 ↔ domain concepts
+REQ_MEM_01 "1" - "1" Actor : initiator
+REQ_MEM_01 "1" - "1..*" Resource : target
+REQ_MEM_01 "1" - "1..*" Interface : channel
+REQ_MEM_01 "1" - "1" Permission : grant
+REQ_MEM_01 "1" - "1" State : pre
+REQ_MEM_01 "1" - "1" State : post
+
+' Associations — Resource ownership & access
+Resource *- "1" Actor : owner
+Resource "1" - "*" Actor : accessible
+
+' Dependencies — Application → Ports
+REQ_MEM_01 .> Group_API : uses
+REQ_MEM_01 .> Post_Database : uses
+
+' Role constraints
+note top of Product_Owner
+    mayPerform must include Read
+end note
+note top of Engineering_Team
+    mayPerform must include Read
+end note
+note top of UX_UI_Designer
+    mayPerform must include Read
+end note
+
+@enduml

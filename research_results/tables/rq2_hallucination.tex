@@ -1,0 +1,20 @@
+\begin{table*}[t]
+\centering
+\caption{RQ2: Code Structural Issues and Specification Extrapolation per Project (mean $\pm$ std, $n=3$ seeds). Orphan routes: FastAPI route decorators with no matching handler function. Unused imports: imports absent from all \texttt{ast.Name}/\texttt{ast.Attribute} uses. Schema mismatches: backend DTO fields absent from matching frontend TypeScript types (conservative static analysis; manual review deferred to future work). Spec.\ extrapolation rate $= 1 - \text{supported}/\text{total NLI claims}$ — measures how much the agent generates \emph{beyond} the source specification (implied requirements, defaults, error copy); this is \emph{not} hallucination. $\dagger$ P3: $n=2$ seeds (P3E2 NLI data missing).}
+\label{tab:rq2_hallucination}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Project} & \textbf{Orphan routes} & \textbf{Unused imports} & \textbf{Schema mismatches} & \textbf{Spec. extrapol. rate (\%)} \\
+\midrule
+\rowcolor[HTML]{E8F4FF} Hospital Triage & $2.0 \pm 1.0$ & $106.0 \pm 44.9$ & $0.0 \pm 0.0$ & $42.3\% \pm 3.2\%$ \\
+\rowcolor[HTML]{E8F5E8} Blood-Type Alert & $4.0 \pm 3.6$ & $92.7 \pm 25.5$ & $0.0 \pm 0.0$ & $53.6\% \pm 5.5\%$ \\
+\rowcolor[HTML]{FEF7E0} Airport Runway & $1.7 \pm 1.1$ & $117.0 \pm 44.2$ & $0.0 \pm 0.0$ & $57.0\% \pm 5.1\%$ \\
+\rowcolor[HTML]{F8EAF2} ATM Withdrawal & $5.3 \pm 4.9$ & $222.0 \pm 114.7$ & $0.0 \pm 0.0$ & $55.8\% \pm 3.8\%$ \\
+\rowcolor[HTML]{EAF0FF} Competency Platform & $3.0 \pm 0.0$ & $561.0 \pm 0.0$ & $0.0 \pm 0.0$ & $40.2\% \pm 0.0\%$$^\dagger$ \\
+\rowcolor[HTML]{FFF5E0} Social Network & $5.0 \pm 0.0$ & $366.0 \pm 0.0$ & $0.0 \pm 0.0$ & $68.8\% \pm 0.0\%$$^\dagger$ \\
+\midrule
+\textit{Overall mean} & & & & $\mathbf{52.9\%}$ \\
+\bottomrule
+\end{tabular}
+\end{table*}

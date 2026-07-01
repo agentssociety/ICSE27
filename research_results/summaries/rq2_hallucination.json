@@ -269,6 +269,112 @@
           0.5897
         ]
       }
+    },
+    {
+      "project_id": 5,
+      "n_essays": 1,
+      "orphan_routes": {
+        "mean": 3.0,
+        "std": 0.0,
+        "values": [
+          3.0
+        ]
+      },
+      "unused_imports": {
+        "mean": 561.0,
+        "std": 0.0,
+        "values": [
+          561.0
+        ]
+      },
+      "schema_mismatches": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "spec_extrapolation_rate": {
+        "mean": 0.4016,
+        "std": 0.0,
+        "values": [
+          0.4016
+        ]
+      },
+      "spec_coverage_rate": {
+        "mean": 0.5984,
+        "std": 0.0,
+        "values": [
+          0.5984
+        ]
+      },
+      "task_hallucination_rate": {
+        "mean": 0.4016,
+        "std": 0.0,
+        "values": [
+          0.4016
+        ]
+      },
+      "overall_hallucination_rate": {
+        "mean": 0.4016,
+        "std": 0.0,
+        "values": [
+          0.4016
+        ]
+      }
+    },
+    {
+      "project_id": 6,
+      "n_essays": 1,
+      "orphan_routes": {
+        "mean": 5.0,
+        "std": 0.0,
+        "values": [
+          5.0
+        ]
+      },
+      "unused_imports": {
+        "mean": 366.0,
+        "std": 0.0,
+        "values": [
+          366.0
+        ]
+      },
+      "schema_mismatches": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "spec_extrapolation_rate": {
+        "mean": 0.6875,
+        "std": 0.0,
+        "values": [
+          0.6875
+        ]
+      },
+      "spec_coverage_rate": {
+        "mean": 0.3125,
+        "std": 0.0,
+        "values": [
+          0.3125
+        ]
+      },
+      "task_hallucination_rate": {
+        "mean": 0.6875,
+        "std": 0.0,
+        "values": [
+          0.6875
+        ]
+      },
+      "overall_hallucination_rate": {
+        "mean": 0.6875,
+        "std": 0.0,
+        "values": [
+          0.6875
+        ]
+      }
     }
   ]
 }

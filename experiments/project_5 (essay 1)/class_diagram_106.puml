@@ -1,0 +1,137 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+hide empty methods
+skinparam defaultFontName Courier
+
+package "Domain Model" #EAECEE {
+  enum QuestionType {
+    MULTIPLE_CHOICE
+    DRAG_AND_DROP
+    CODE_SNIPPET
+  }
+
+  enum DifficultyTier {
+    BEGINNER
+    INTERMEDIATE
+    ADVANCED
+  }
+
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN
+  }
+
+  enum State {
+    PRE1
+    PRE2
+    POST1
+    POST_ERROR
+  }
+
+  class Actor
+  class Instructor
+  class LMSDeveloper
+
+  class Resource {
+    + owner : Actor
+    + accessible : Set<Actor>
+    @invariant { accessible.contains(owner) }
+    @invariant { !accessible.isEmpty() }
+  }
+
+  class Competency {
+    + id : String
+    + name : String
+  + addCompetency(competency)
+  }
+
+  class DifficultyTag {
+    + resource : Resource
+    + level : DifficultyTier
+    @invariant { unique for resource }
+  + createTag(level: difficultyTier)
+  }
+
+  class Question {
+    + type : QuestionType
+    + competencies : Set<Competency>
+    + difficultyTier : DifficultyTier
+    + nuggetRewardMultiplier : Optional<Float>
+    @invariant { !competencies.isEmpty() }
+    @invariant { type ∈ {MULTIPLE_CHOICE, DRAG_AND_DROP, CODE_SNIPPET} }
+  + setState(Post1)
+  }
+
+  Actor <|-- Instructor
+  Actor <|-- LMSDeveloper
+  Actor "*" -- "*" Permission : mayPerform
+  Resource "*" -- "1" Actor : owner
+  Resource "*" -- "*" Actor : accessible
+  Question "*" -- "*" Competency : tagged with
+  DifficultyTag "*" -- "1" Resource : targets
+}
+
+package "Application" #E8F8F5 {
+  class Operation {
+    + preState : State
+    + postState : State
+    + requiredPermissions : Set<Permission>
+    @invariant { preState != postState }
+    @invariant { at least one authenticated channel }
+  }
+
+  class KnowledgeAuthoringService
+
+  Operation "*" -- "1..*" Resource : targets
+  Operation ..> QuestionCreationAPI : uses
+  Operation "1" -- "1..2" State : transitions
+  KnowledgeAuthoringService --> Operation : executes
+}
+
+package "Infrastructure — Ports" #FEF9E7 {
+  interface QuestionCreationAPI {
+    @authenticated
+    @encrypted
+  }
+
+  interface ExamBuilderDatabase {
+  }
+
+  KnowledgeAuthoringService ..> QuestionCreationAPI : calls
+  KnowledgeAuthoringService ..> ExamBuilderDatabase : uses
+}
+
+package "Exceptions" #FDEDEC {
+  class ValidationException <<exception>> {
+    + errors : List<String>
+  }
+
+  class AuthorizationException <<exception>> {
+    + message : String
+  }
+
+  KnowledgeAuthoringService .> ValidationException : raises
+  QuestionCreationAPI .> AuthorizationException : raises
+}
+
+package "DTOs" #E8DAEF {
+  class CreateQuestionRequest <<dto>> {
+    + type : QuestionType
+    + competencyIds : List<String>
+    + difficultyTier : DifficultyTier
+    + nuggetMultiplier : Float
+  }
+
+  class CreateQuestionResponse <<dto>> {
+    + questionId : String
+    + status : String
+  }
+
+  QuestionCreationAPI ..> CreateQuestionRequest : input
+  QuestionCreationAPI ..> CreateQuestionResponse : output
+}
+
+@enduml

@@ -1,0 +1,412 @@
+# gamification/views.py
+"""
+Views for gamification features: nugget balance, leaderboard, badges, and WebSocket-triggered updates.
+Handles student-facing endpoints and badge eligibility checks.
+"""
+import logging
+from datetime import timedelta
+from typing import Any, Dict, List, Optional
+
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
+from django.db.models import Sum, Count
+from django.http import HttpRequest, JsonResponse
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.views.decorators.http import require_http_methods
+
+from accounts.models import StudentProfile
+from exams.models import Cohort, ExamAttempt
+from .models import Badge, StudentBadge, RewardItem
+
+logger = logging.getLogger(__name__)
+
+
+# ------------------------------------------------------------------
+# Helper: Get current student profile (raises PermissionDenied if not student)
+# ------------------------------------------------------------------
+def _get_student_profile(user: User) -> StudentProfile:
+    """Return StudentProfile for user; raises PermissionDenied if not student."""
+    try:
+        return user.student_profile
+    except StudentProfile.DoesNotExist:
+        raise PermissionDenied("User is not a student.")
+
+
+# ------------------------------------------------------------------
+# GET /api/gamification/nugget-balance
+# ------------------------------------------------------------------
+@login_required
+@require_http_methods(["GET"])
+def nugget_balance(request: HttpRequest) -> JsonResponse:
+    """Return current nugget balance, streak, and max streak for the authenticated student."""
+    student = _get_student_profile(request.user)
+    return JsonResponse({
+        'nugget_balance': student.nugget_balance,
+        'current_streak': student.current_streak,
+        'max_streak': student.max_streak,
+        'last_activity_date': student.last_activity_date.isoformat() if student.last_activity_date else None,
+    })
+
+
+# ------------------------------------------------------------------
+# GET /api/gamification/leaderboard?cohort_id=<int>&window_days=<int>
+# Default: last 30 days, max 365. If no cohort_id, use all cohorts the student belongs to.
+# ------------------------------------------------------------------
+@login_required
+@require_http_methods(["GET"])
+def leaderboard(request: HttpRequest) -> JsonResponse:
+    """Return top students by nuggets earned within a configurable time window.
+
+    Avoids N+1 query by prefetching all StudentProfile objects in one query.
+    """
+    student = _get_student_profile(request.user)
+
+    # Parse query parameters
+    try:
+        window_days = int(request.GET.get('window_days', 30))
+    except (ValueError, TypeError):
+        window_days = 30
+    window_days = max(1, min(window_days, 365))
+
+    cohort_id = request.GET.get('cohort_id', None)
+    if cohort_id:
+        cohort = get_object_or_404(Cohort, pk=cohort_id)
+        # Ensure student is in this cohort
+        if not cohort.students.filter(pk=student.pk).exists():
+            return JsonResponse({'error': 'You are not enrolled in this cohort.'}, status=403)
+        target_students = cohort.students.all()
+    else:
+        # Use all cohorts the student belongs to
+        cohorts = Cohort.objects.filter(students=student)
+        target_students = StudentProfile.objects.filter(
+            cohort__in=cohorts
+        ).distinct()
+
+    # Calculate total nuggets earned in the window from exam attempts
+    start_date = timezone.now() - timedelta(days=window_days)
+    attempts_qs = ExamAttempt.objects.filter(
+        student__in=target_students,
+        end_time__gte=start_date,
+        end_time__isnull=False,
+    ).values('student').annotate(
+        total_nuggets=Sum('total_nuggets_earned'),
+        total_attempts=Count('id')
+    ).order_by('-total_nuggets')
+
+    # Prefetch all relevant student profiles in one query to avoid N+1
+    student_ids = [entry['student'] for entry in attempts_qs]
+    student_map = {
+        s.id: s for s in StudentProfile.objects.filter(id__in=student_ids).select_related('user')
+    }
+
+    leaderboard_data = []
+    for entry in attempts_qs:
+        student_obj = student_map.get(entry['student'])
+        if student_obj is None:
+            continue
+        leaderboard_data.append({
+            'student_id': student_obj.id,
+            'username': student_obj.user.username,
+            'tot_nuggets': entry['total_nuggets'] or 0,
+            'attempts': entry['total_attempts'],
+        })
+
+    return JsonResponse({
+        'window_days': window_days,
+        'cohort_id': cohort_id,
+        'leaderboard': leaderboard_data,
+    })
+
+
+# ------------------------------------------------------------------
+# GET /api/gamification/badges
+# ------------------------------------------------------------------
+@login_required
+@require_http_methods(["GET"])
+def badge_list(request: HttpRequest) -> JsonResponse:
+    """Return all available badges with their criteria (public)."""
+    badges = Badge.objects.all().values('id', 'name', 'description', 'icon_url', 'criteria')
+    return JsonResponse({'badges': list(badges)})
+
+
+# ------------------------------------------------------------------
+# GET /api/gamification/student-badges
+# ------------------------------------------------------------------
+@login_required
+@require_http_methods(["GET"])
+def student_badges(request: HttpRequest) -> JsonResponse:
+    """Return badges earned by the authenticated student with earned timestamps."""
+    student = _get_student_profile(request.user)
+    earned = StudentBadge.objects.filter(student=student).select_related('badge')
+    data = [{
+        'badge_id': sb.badge.id,
+        'name': sb.badge.name,
+        'description': sb.badge.description,
+        'icon_url': sb.badge.icon_url,
+        'earned_at': sb.earned_at.isoformat(),
+    } for sb in earned]
+    return JsonResponse({'student_badges': data})
+
+
+# ------------------------------------------------------------------
+# POST /api/gamification/check-badges
+# (Called after exam submission or manually; checks all badges for current student)
+# ------------------------------------------------------------------
+@login_required
+@require_http_methods(["POST"])
+def check_badges(request: HttpRequest) -> JsonResponse:
+    """Check all badges for eligibility and award any newly earned ones."""
+    student = _get_student_profile(request.user)
+    # Get all badges that the student does NOT already have
+    earned_badge_ids = set(
+        StudentBadge.objects.filter(student=student).values_list('badge_id', flat=True)
+    )
+    potential_badges = Badge.objects.exclude(id__in=earned_badge_ids)
+
+    new_badges = []
+    for badge in potential_badges:
+        if badge.check_eligibility(student):
+            StudentBadge.objects.create(student=student, badge=badge)
+            new_badges.append({
+                'badge_id': badge.id,
+                'name': badge.name,
+                'description': badge.description,
+            })
+            logger.info(
+                'Badge awarded: student=%s, badge=%s',
+                student.user.username,
+                badge.name
+            )
+
+    return JsonResponse({
+        'new_badges': new_badges,
+        'total_earned': len(earned_badge_ids) + len(new_badges),
+    })
+
+
+# ------------------------------------------------------------------
+# Helper: Used by views/exams to send nugget update via WebSocket
+# (This should be called from exam submission view)
+# ------------------------------------------------------------------
+def notify_nugget_update(student: StudentProfile, nuggets_earned: int) -> None:
+    """
+    Send a message to the student's personal WebSocket group
+    with new nugget animation data.
+    """
+    channel_layer = get_channel_layer()
+    group_name = f"user_{student.user.id}"
+    async_to_sync(channel_layer.group_send)(
+        group_name,
+        {
+            'type': 'nugget_update',
+            'nuggets_earned': nuggets_earned,
+            'new_balance': student.nugget_balance,
+            'current_streak': student.current_streak,
+        }
+    )
+
+
+# gamification/urls.py
+"""
+URL patterns for the gamification app.
+"""
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('nugget-balance/', views.nugget_balance, name='nugget_balance'),
+    path('leaderboard/', views.leaderboard, name='leaderboard'),
+    path('badges/', views.badge_list, name='badge_list'),
+    path('student-badges/', views.student_badges, name='student_badges'),
+    path('check-badges/', views.check_badges, name='check_badges'),
+]
+
+
+# gamification/consumers.py
+"""
+WebSocket consumer for real-time gamification updates.
+Handles live timer, nugget animations, and streak updates during exam taking.
+"""
+import json
+import logging
+from datetime import timedelta
+from typing import Optional
+
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from channels.db import database_sync_to_async
+from django.urls import re_path
+from django.utils import timezone
+
+from accounts.models import StudentProfile
+from exams.models import Exam, ExamAttempt
+
+logger = logging.getLogger(__name__)
+
+
+class ExamConsumer(AsyncJsonWebsocketConsumer):
+    """
+    WebSocket consumer that manages real-time exam sessions:
+    - Server-side countdown timer
+    - Pushes nugget and streak updates
+    - Handles reconnection and session recovery
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.exam_id: Optional[int] = None
+        self.student: Optional[StudentProfile] = None
+        self.attempt: Optional[ExamAttempt] = None
+        self.timer_task = None
+
+    async def connect(self):
+        """Authenticate and join exam group. Expects exam_id in URL."""
+        user = self.scope['user']
+        if user.is_anonymous:
+            await self.close(code=4001)
+            return
+
+        self.student = await self._get_student_profile(user)
+        if self.student is None:
+            await self.close(code=4002)
+            return
+
+        # Extract exam_id from URL route
+        self.exam_id = self.scope['url_route']['kwargs'].get('exam_id')
+        if self.exam_id is None:
+            await self.close(code=4003)
+            return
+
+        # Verify student has an active attempt for this exam
+        self.attempt = await self._get_active_attempt(self.exam_id)
+        if self.attempt is None:
+            await self.close(code=4004)
+            return
+
+        # Join the exam group and a personal user group for targeted messages
+        await self.channel_layer.group_add(
+            f"exam_{self.exam_id}",
+            self.channel_name
+        )
+        await self.channel_layer.group_add(
+            f"user_{user.id}",
+            self.channel_name
+        )
+        await self.accept()
+
+        # Start the server-side timer and send initial state
+        await self._send_timer_state()
+
+    async def disconnect(self, close_code):
+        """Leave groups and clean up timer task."""
+        if self.exam_id is not None:
+            await self.channel_layer.group_discard(
+                f"exam_{self.exam_id}",
+                self.channel_name
+            )
+        if self.student is not None:
+            await self.channel_layer.group_discard(
+                f"user_{self.student.user.id}",
+                self.channel_name
+            )
+
+    async def receive_json(self, content: dict) -> None:
+        """
+        Handle incoming messages from WebSocket.
+        Currently supports: 'ping' to keep alive, 'timer_sync' to request timer update.
+        """
+        msg_type = content.get('type')
+        if msg_type == 'ping':
+            await self.send_json({'type': 'pong'})
+        elif msg_type == 'timer_sync':
+            await self._send_timer_state()
+        else:
+            logger.warning('Unknown message type: %s', msg_type)
+
+    async def _send_timer_state(self) -> None:
+        """Send current timer state (remaining seconds) to the client."""
+        if self.attempt is None or self.attempt.end_time is not None:
+            await self.send_json({
+                'type': 'timer_update',
+                'remaining_seconds': 0,
+                'status': 'over',
+            })
+            return
+
+        exam = await database_sync_to_async(lambda: self.attempt.exam)()
+        time_limit = exam.time_limit_minutes
+        elapsed = (timezone.now() - self.attempt.start_time).total_seconds()
+        remaining = max(0, (time_limit * 60) - elapsed) if time_limit else -1  # -1 means no limit
+
+        await self.send_json({
+            'type': 'timer_update',
+            'remaining_seconds': int(remaining),
+            'status': 'running' if remaining > 0 else 'over',
+        })
+
+        # If time expired, auto-submit the attempt
+        if remaining == 0 and time_limit:
+            await self._auto_submit()
+
+    async def _auto_submit(self) -> None:
+        """Auto-submit the exam when time expires."""
+        if self.attempt and self.attempt.end_time is None:
+            # Mark end_time and notify client
+            self.attempt.end_time = timezone.now()
+            await database_sync_to_async(self.attempt.save)(update_fields=['end_time'])
+            await self.send_json({
+                'type': 'exam_auto_submitted',
+                'message': 'Time limit reached. Your exam has been submitted.'
+            })
+            # Note: Actual nugget/streak calculation should be performed by the server
+            # when the exam is finalized (e.g., via a separate endpoint or async task).
+            # For now, we simply record the end_time.
+
+    # ------------------------------------------------------------------
+    # Handlers for messages sent via group_send (from server)
+    # ------------------------------------------------------------------
+    async def nugget_update(self, event: dict) -> None:
+        """Forward nugget and streak updates to the client."""
+        await self.send_json({
+            'type': 'nugget_update',
+            'nuggets_earned': event.get('nuggets_earned', 0),
+            'new_balance': event.get('new_balance', 0),
+            'current_streak': event.get('current_streak', 0),
+        })
+
+    async def timer_sync(self, event: dict) -> None:
+        """Handle forced timer sync from server."""
+        await self._send_timer_state()
+
+    # ------------------------------------------------------------------
+    # Database helpers (async)
+    # ------------------------------------------------------------------
+    @database_sync_to_async
+    def _get_student_profile(self, user) -> Optional[StudentProfile]:
+        try:
+            return user.student_profile
+        except StudentProfile.DoesNotExist:
+            return None
+
+    @database_sync_to_async
+    def _get_active_attempt(self, exam_id: int) -> Optional[ExamAttempt]:
+        """Retrieve the active (unsubmitted) attempt for this student and exam."""
+        if self.student is None:
+            return None
+        try:
+            return ExamAttempt.objects.get(
+                student=self.student,
+                exam_id=exam_id,
+                end_time__isnull=True
+            )
+        except ExamAttempt.DoesNotExist:
+            return None
+
+
+# WebSocket URL patterns for routing
+websocket_urlpatterns = [
+    re_path(r'ws/exam/(?P<exam_id>\d+)/$', ExamConsumer.as_asgi()),
+]

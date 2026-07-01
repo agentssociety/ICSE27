@@ -1,0 +1,44 @@
+{
+  "task_id": 106,
+  "confidence": 0.9977,
+  "evidence": [
+    {
+      "claim": "Each question can be tagged with one or more competencies.",
+      "fact": "Each question can be tagged with one or more competencies.",
+      "score": 0.9986,
+      "user_story_span": "each tagged with one or more competencies",
+      "fact_span": "Each question can be tagged with one or more competencies."
+    },
+    {
+      "claim": "Each question can be tagged with one difficulty tier (Beginner, Intermediate, Advanced).",
+      "fact": "Each question in the exam can be associated with multiple competencies and assigned a difficulty level of Beginner, Intermediate, or Advanced.",
+      "score": 0.9984,
+      "user_story_span": "one difficulty tier",
+      "fact_span": "assigned a difficulty level of Beginner, Intermediate, or Advanced"
+    },
+    {
+      "claim": "Each question can have an associated nugget reward multiplier.",
+      "fact": "The difficulty tier determines a nugget reward multiplier for the question.",
+      "score": 0.9979,
+      "user_story_span": "Each question can have an associated nugget reward multiplier.",
+      "fact_span": "The difficulty tier determines a nugget reward multiplier for the question."
+    },
+    {
+      "claim": "The system has a user role of exam creator.",
+      "fact": "Using the exam builder, instructors compose assessments from multiple-choice questions, drag-and-drop items, and code snippet exercises.",
+      "score": 0.997,
+      "user_story_span": "I am an exam creator",
+      "fact_span": "instructors compose assessments"
+    },
+    {
+      "claim": "Difficulty tiers are Beginner, Intermediate, Advanced.",
+      "fact": "Each question in the exam can be associated with multiple competencies and assigned a difficulty level of Beginner, Intermediate, or Advanced.",
+      "score": 0.9968,
+      "user_story_span": "Difficulty tiers are Beginner, Intermediate, Advanced.",
+      "fact_span": "assigned a difficulty level of Beginner, Intermediate, or Advanced"
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 5,
+  "threshold": 0.6
+}

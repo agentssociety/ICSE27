@@ -1,0 +1,176 @@
+{
+  "run_id": "P6E1",
+  "project": 6,
+  "essay": 1,
+  "n_tasks": 25,
+  "wall_clock_s": 30787.29,
+  "pipeline_steps": 273,
+  "total_incidents": 18,
+  "fixed_incidents": 15,
+  "escalated_incidents": 3,
+  "self_fix_rate_pct": 83.3,
+  "by_phase": {
+    "FORMAL_SPEC": {
+      "fixed": 1,
+      "escalated": 0
+    },
+    "DESIGN_UML": {
+      "fixed": 9,
+      "escalated": 0
+    },
+    "ARCHITECTURE": {
+      "fixed": 0,
+      "escalated": 1
+    },
+    "TESTING": {
+      "fixed": 5,
+      "escalated": 2
+    }
+  },
+  "incidents": [
+    {
+      "line_num": 18716,
+      "timestamp": "2026-06-30 15:04:35.232",
+      "phase": "FORMAL_SPEC",
+      "error_type": "LLM_REQUEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Error generating Alloy specifications for requirement file experiments/project_16/requirement_160.json on attempt 1/3: Response ended prematurely"
+    },
+    {
+      "line_num": 19769,
+      "timestamp": "2026-06-30 15:36:57.782",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpyueui2rr/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 19864,
+      "timestamp": "2026-06-30 15:41:16.336",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpa80qwu39/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 19874,
+      "timestamp": "2026-06-30 15:42:01.601",
+      "phase": "DESIGN_UML",
+      "error_type": "LLM_REQUEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Error generating UML diagrams for requirement 176 on attempt 1/3: Failed to generate a compilable sequence diagram after 3 attempts. Last error: PlantUML server returned HTTP 400 for /tmp/tmpakw_ewm8/"
+    },
+    {
+      "line_num": 20191,
+      "timestamp": "2026-06-30 15:56:05.908",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Class diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpjd0p1nlg/class_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/"
+    },
+    {
+      "line_num": 20248,
+      "timestamp": "2026-06-30 15:59:11.045",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmp6kzy9n6q/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 20258,
+      "timestamp": "2026-06-30 15:59:53.030",
+      "phase": "DESIGN_UML",
+      "error_type": "LLM_REQUEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Error generating UML diagrams for requirement 164 on attempt 1/3: Failed to generate a compilable sequence diagram after 3 attempts. Last error: PlantUML server returned HTTP 400 for /tmp/tmpwoiocrxz/"
+    },
+    {
+      "line_num": 20410,
+      "timestamp": "2026-06-30 16:08:22.682",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpxmko4v24/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 20548,
+      "timestamp": "2026-06-30 16:15:25.395",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmp5cqmr29v/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 20640,
+      "timestamp": "2026-06-30 16:20:30.758",
+      "phase": "DESIGN_UML",
+      "error_type": "COMPILATION",
+      "outcome": "FAIL_FIXED",
+      "message": "Sequence diagram compilation failed on attempt 1/3: PlantUML server returned HTTP 400 for /tmp/tmpcu6lo0ia/sequence_diagram.puml: <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org"
+    },
+    {
+      "line_num": 23012,
+      "timestamp": "2026-06-30 17:42:51.364",
+      "phase": "ARCHITECTURE",
+      "error_type": "SYNTAX",
+      "outcome": "FAIL_ESCALATED",
+      "message": "7 file(s) still have errors after auto-fix: ['src/domain/follow/Follow.py', 'src/domain/post/Post.py', 'src/domain/user/User.py', 'src/dto/notification_preference/notification_preference_dto.py', 'src"
+    },
+    {
+      "line_num": 26958,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/user/test_user_domain.py::TestUserAccount::test_create_user_account_with_pending_status"
+    },
+    {
+      "line_num": 26959,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/user/test_user_domain.py::TestUserAccount::test_check_status_returns_correct_status"
+    },
+    {
+      "line_num": 26960,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/user/test_user_domain.py::TestUserAccount::test_set_status_updates_status"
+    },
+    {
+      "line_num": 26964,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/user/test_user_domain.py::TestUser::test_validate_email_format_valid"
+    },
+    {
+      "line_num": 26965,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_FIXED",
+      "message": "Test FAILED: tests/unit/user/test_user_domain.py::TestUser::test_is_logged_in"
+    },
+    {
+      "line_num": 27409,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/user/test_user_domain.py::TestUser::test_validate_email_format_valid"
+    },
+    {
+      "line_num": 27410,
+      "timestamp": "",
+      "phase": "TESTING",
+      "error_type": "TEST",
+      "outcome": "FAIL_ESCALATED",
+      "message": "Test FAILED: ntests/unit/user/test_user_domain.py::TestUser::test_is_logged_in"
+    }
+  ]
+}

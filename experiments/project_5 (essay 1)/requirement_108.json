@@ -1,0 +1,115 @@
+{
+  "id": "REQ-MNG-01",
+  "title": "Cohort Creation and Management",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow an administrator to create new cohorts, ensuring that each cohort is saved and made available for student enrollment.",
+  "rationale": "Enabling administrators to organize students into cohorts is essential for efficient management and control over exam access.",
+  "business_value": "Improves the organization of students into meaningful groups, facilitating better management and control over exam access.",
+  "source": {
+    "type": "User Story",
+    "id": 108,
+    "description": "As a administrator I need to create cohorts, enroll individual students, and restrict exams to one or more cohorts so that I can manage student groups and control exam access efficiently."
+  },
+  "stakeholders": [
+    "Administrators",
+    "IT Team"
+  ],
+  "acceptance_criteria": [
+    "Given I am an administrator, When I create a new cohort, Then the cohort is saved and available for enrollment",
+    "Given I have a cohort, When I enroll an individual student, Then the student is added to that cohort",
+    "Given I have an exam and one or more cohorts, When I restrict the exam to those cohorts, Then only students in those cohorts can access the exam"
+  ],
+  "preconditions": [
+    "The system must be operational and accessible.",
+    "The administrator must have the necessary permissions."
+  ],
+  "postconditions": [
+    "A new cohort is created and saved in the system.",
+    "An individual student is successfully enrolled in a cohort.",
+    "The exam access restriction is applied correctly to specified cohorts."
+  ],
+  "functional_constraints": [
+    "Cohorts must be unique and non-duplicate entries."
+  ],
+  "security_requirements": [
+    "Access control measures should ensure that only authorized administrators can create, modify, and restrict exams."
+  ],
+  "non_functional_requirements": {
+    "performance": "The system should respond within a reasonable time frame for cohort creation, enrollment, and exam restriction processes.",
+    "availability": "The system must be available at least 99.9% of the time to ensure minimal disruptions in administration operations.",
+    "scalability": "The system should be able to support an increasing number of cohorts and students without performance degradation.",
+    "usability": "Error messages should be clear and actionable, guiding administrators through common issues during cohort creation and exam restriction."
+  },
+  "edge_cases": [
+    "What happens when a duplicate cohort is attempted to be created?",
+    "How does the system handle a scenario where an exam is restricted to a non-existent cohort?",
+    "What if a student tries to access an exam that is not restricted but still cannot due to other restrictions?",
+    "How should the system respond when there are multiple overlapping restrictions for an exam?"
+  ],
+  "dependencies": [
+    "Student Management System",
+    "Exam Administration System"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Cohort API",
+      "description": "Interface for creating, retrieving, updating, and deleting cohorts."
+    },
+    {
+      "type": "Database",
+      "name": "Student Cohort Database",
+      "description": "Database to store cohort information and student enrollments."
+    },
+    {
+      "type": "API",
+      "name": "Exam Restriction API",
+      "description": "Interface for restricting exams to specific cohorts."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-MNG-01",
+      "description": "Create a new cohort with valid input.",
+      "expected_result": "Cohort is created successfully and is available for enrollment."
+    },
+    {
+      "id": "TC-MNG-02",
+      "description": "Enroll an individual student in an existing cohort.",
+      "expected_result": "Student is added to the cohort successfully."
+    },
+    {
+      "id": "TC-MNG-03",
+      "description": "Restrict an exam to one or more valid cohorts.",
+      "expected_result": "Exam access is restricted correctly for specified cohorts."
+    },
+    {
+      "id": "TC-MNG-04",
+      "description": "Attempt to create a duplicate cohort.",
+      "expected_result": "Error message indicating that the cohort already exists."
+    },
+    {
+      "id": "TC-MNG-05",
+      "description": "Restrict an exam to non-existent cohorts.",
+      "expected_result": "Error message indicating that one or more specified cohorts do not exist."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-29T14:13:52.216146",
+  "last_updated": "2026-06-29T15:12:23.081252",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Cohort",
+      "Enrollment",
+      "Student",
+      "Exam"
+    ],
+    "test_artifacts": []
+  }
+}

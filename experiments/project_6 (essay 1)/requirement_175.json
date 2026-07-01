@@ -1,0 +1,108 @@
+{
+  "id": "REQ-USER-BLOCK-01",
+  "title": "User must be able to block another user to hide their posts and messages",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow a logged-in user to block another user, which shall hide all existing and future posts and messages from the blocked user from the viewer's view.",
+  "rationale": "Blocking other users is necessary for maintaining privacy and avoiding unwanted content in the feed or inbox.",
+  "business_value": "Improved user experience by reducing clutter and focusing on relevant content. Enhanced privacy control for users who prefer not to interact with certain individuals.",
+  "source": {
+    "type": "User Story",
+    "id": 175,
+    "description": "As a user I need to block another user So that their posts and messages are hidden from me"
+  },
+  "stakeholders": [
+    "Product Management",
+    "Engineering Team",
+    "UX/UI Designers",
+    "Security Team"
+  ],
+  "acceptance_criteria": [
+    "All posts and messages from 'Alice' are hidden from my view",
+    "I no longer receive new messages or see new posts from 'Alice'"
+  ],
+  "preconditions": [
+    "I am a logged-in user",
+    "I have a list of posts and messages from user 'Alice'"
+  ],
+  "postconditions": [
+    "All existing and future posts and messages from 'Alice' are hidden",
+    "I no longer receive new messages or see new posts from 'Alice'"
+  ],
+  "functional_constraints": [],
+  "security_requirements": [
+    "Blocking functionality should be secure against unauthorized access"
+  ],
+  "non_functional_requirements": {
+    "performance": "No significant performance degradation when blocking a user",
+    "availability": "The system must be available during the entire process of blocking and unblocking users",
+    "scalability": "The system should handle an increase in the number of blocked users without issues",
+    "usability": "Error messages should be clear and actionable"
+  },
+  "edge_cases": [
+    "Blocking a user who does not exist",
+    "Attempting to block oneself",
+    "Unblocking a user who was previously blocked"
+  ],
+  "dependencies": [
+    "User authentication system for identifying logged-in users",
+    "Data storage and retrieval for posts, messages, and user relationships",
+    "Real-time messaging system for notifications and updates"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "User Profile API",
+      "description": "Provides access to user profiles and allows updating the block status."
+    },
+    {
+      "type": "Database",
+      "name": "Posts Database",
+      "description": "Stores and retrieves posts, which need to be filtered based on the blocking status."
+    },
+    {
+      "type": "Database",
+      "name": "Messages Database",
+      "description": "Stores and retrieves messages, which need to be filtered based on the blocking status."
+    },
+    {
+      "type": "Real-time Messaging System",
+      "name": "Notification System",
+      "description": "Handles sending notifications when a user is blocked or unblocked."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-01",
+      "description": "Blocking a non-existing user.",
+      "expected_result": "The system should return an error message indicating the user does not exist."
+    },
+    {
+      "id": "TC-02",
+      "description": "Attempting to block oneself.",
+      "expected_result": "The system should prevent blocking and return an error message."
+    },
+    {
+      "id": "TC-03",
+      "description": "Unblocking a user who was previously blocked.",
+      "expected_result": "All posts and messages from the unblocked user should reappear in the view."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T12:15:28.730802",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "Block",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

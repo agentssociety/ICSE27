@@ -1,0 +1,90 @@
+{
+  "id": "REQ-ACC-01",
+  "title": "Soft Delete User Account",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow a user to request the soft deletion of their account, marking it as deleted and preserving the data for a grace period.",
+  "rationale": "To provide users with a way to preserve their data during a transition, allowing for potential recovery or data restoration before permanent deletion.",
+  "business_value": "Improves user satisfaction by giving them more control over their data while ensuring compliance with data retention policies.",
+  "source": {
+    "type": "User Story",
+    "id": 180,
+    "description": "As a user, I need to soft-delete my account so that my data is preserved for a grace period while my account is marked as deleted."
+  },
+  "stakeholders": [
+    "Product Owner",
+    "Engineering Team",
+    "Data Protection Officer"
+  ],
+  "acceptance_criteria": [
+    "Account is marked as deleted",
+    "Data is preserved for a grace period"
+  ],
+  "preconditions": [
+    "User has an active account"
+  ],
+  "postconditions": [],
+  "functional_constraints": [
+    "Soft delete operation must not permanently remove the account immediately"
+  ],
+  "security_requirements": [
+    "No access to deleted data by unauthorized users during grace period"
+  ],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "Account should remain accessible during the grace period",
+    "scalability": "",
+    "usability": "User interface should clearly indicate that account is soft-deleted and provide instructions on how to recover or permanently delete account"
+  },
+  "edge_cases": [
+    "User attempts to soft-delete their account while already in a grace period",
+    "User tries to recover data before the grace period ends without providing necessary information"
+  ],
+  "dependencies": [
+    "Data Retention Policy",
+    "Grace Period Configuration"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Account Management API",
+      "description": "The requirement interacts with this API to update account status and manage data retention."
+    },
+    {
+      "type": "Database",
+      "name": "User Data Database",
+      "description": "The requirement depends on this database to store and retrieve user data during the grace period."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-ACC-01",
+      "description": "User requests soft deletion while not in a grace period.",
+      "expected_result": "Account is marked as deleted and data is preserved for the configured grace period."
+    },
+    {
+      "id": "TC-ACC-02",
+      "description": "User tries to recover data before the grace period ends.",
+      "expected_result": "Data recovery process starts successfully, and user is prompted to provide necessary information."
+    },
+    {
+      "id": "TC-ACC-03",
+      "description": "Grace period ends without user action.",
+      "expected_result": "Account is permanently deleted, and data is removed from the system."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T12:23:50.218150",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

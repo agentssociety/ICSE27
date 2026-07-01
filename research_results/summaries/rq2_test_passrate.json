@@ -137,6 +137,62 @@
       "backend_passed_mean": 64.3,
       "backend_failed_mean": 0.0,
       "backend_skipped_mean": 19.3
+    },
+    {
+      "project_id": 5,
+      "n_essays": 1,
+      "backend_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0
+        ]
+      },
+      "frontend_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0
+        ]
+      },
+      "combined_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0
+        ]
+      },
+      "backend_passed_mean": 70.0,
+      "backend_failed_mean": 0.0,
+      "backend_skipped_mean": 24.0
+    },
+    {
+      "project_id": 6,
+      "n_essays": 1,
+      "backend_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0
+        ]
+      },
+      "frontend_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0
+        ]
+      },
+      "combined_pass_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0
+        ]
+      },
+      "backend_passed_mean": 14.0,
+      "backend_failed_mean": 0.0,
+      "backend_skipped_mean": 67.0
     }
   ]
 }

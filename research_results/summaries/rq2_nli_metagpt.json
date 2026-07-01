@@ -362,28 +362,211 @@
         "spec_extrapolation_rate": 1.0,
         "overall_hallucination_rate": 1.0
       }
+    },
+    {
+      "project_id": 5,
+      "project_name": "gamified_competency_assessment",
+      "spec_path": "experiments/project_5 (metagpt)/docs/requirement.txt",
+      "prd_path": "experiments/project_5 (metagpt)/docs/prd/20260630231854.json",
+      "n_facts": 15,
+      "facts": [
+        "The system let instructors register, log in, and manage a personal dashboard showing active exams, enrollment counts, and competency coverage.",
+        "The system let instructors build exams with mixed question types (MCQ, drag-and-drop, code snippet) and tag - each question with one or more competencies.",
+        "The system assign a difficulty tier (Beginner, Intermediate, Advanced) to each question that determines its nugget reward multiplier.",
+        "The system let instructors schedule exams with an open date, a close date, and an optional per-attempt time limit enforced server-side.",
+        "The system let instructors create cohorts, enroll students individually, and restrict each exam to one or more cohorts.",
+        "The system show instructors a per-competency heatmap after each exam, highlighting competencies below a configurable mastery threshold in red.",
+        "The system let instructors grant manual bonus nuggets to individual students with a written justification logged as an audit event.",
+        "The system let students register and personalize a profile with an avatar, and display their nugget balance, earned badges, and competency radar chart.",
+        "The system deliver exams to students one question at a time in a game-like interface with a live timer, progress bar, and animated nugget counter.",
+        "The system build a streak system where consecutive correct answers apply a nugget multiplier (1.5×, 2×, 3×) that resets on any wrong answer.",
+        "The system show students an instant competency breakdown after submission, flagging weak competencies with an study tip for each.",
+        "The system maintain a nugget wallet per student redeemable in a reward store for virtual items or instructor-configured institutional perks.",
+        "The system rank students on a cohort leaderboard by nuggets earned over a configurable window, with opt-out and instructor disable options.",
+        "The system let students review every past attempt with their answers, correct answers, nuggets earned per question, and competency trend charts over time.",
+        "The system enforce role-based access control across Admin, Instructor, and Student roles and write every sensitive action to an immutable audit log."
+      ],
+      "n_stories": 5,
+      "stories": [
+        {
+          "task_id": 1,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 2,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 3,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 4,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 5,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        }
+      ],
+      "summary": {
+        "mean_nli_alignment_score": 0.0,
+        "median_nli_alignment_score": 0.0,
+        "std_nli_alignment_score": 0.0,
+        "q1": 0,
+        "q3": 0,
+        "iqr": 0,
+        "n_outliers": 0,
+        "n_zero_alignment": 0,
+        "total_claims": 10,
+        "supported_claims": 0,
+        "spec_coverage_rate": 0.0,
+        "spec_extrapolation_rate": 1.0,
+        "overall_hallucination_rate": 1.0
+      }
+    },
+    {
+      "project_id": 6,
+      "project_name": "community_social_network",
+      "spec_path": "experiments/project_6 (metagpt)/docs/requirement.txt",
+      "prd_path": "experiments/project_6 (metagpt)/docs/prd/20260701001612.json",
+      "n_facts": 25,
+      "facts": [
+        "The system let users register via email/password with email verification before login is allowed.",
+        "The system allow users to build a profile with a profile picture, cover photo, bio, and location.",
+        "The system let users create text posts with optional single or multi-image upload, and edit/delete their own posts.",
+        "The system let users like a post (toggle like/unlike) and see a simple like count.",
+        "The system let users comment on posts (flat, non-nested) and edit/delete their own comments.",
+        "The system show a basic news feed listing posts from friends/followed users sorted by most recent first (simple chronological query).",
+        "The system let users send and accept/reject friend requests, with a friends list page.",
+        "The system let users follow/unfollow other users without requiring mutual approval, with a followers/following count.",
+        "The system let users create Groups with a name, description, and public/private flag, and join/leave public groups directly.",
+        "The system let group creators approve or reject join requests for private groups.",
+        "The system show a dedicated group feed listing only posts made within that group.",
+        "The system provide a basic direct messaging feature: 1:1 text conversations stored and retrieved like a simple chat log (no real-time typing indicators or read receipts).",
+        "The system build a notifications list (likes, comments, friend requests) generated on action and marked read/unread on click.",
+        "The system implement basic keyword search across users, posts, and groups using simple text matching (LIKE/contains query, no full-text engine required).",
+        "The system let users bookmark/save posts into a single default 'Saved Posts' list (no custom collections).",
+        "The system provide a 'Report Post' button that creates a report record with a reason dropdown, viewable in an admin list.",
+        "The system build a simple admin panel where admins can view reported content and delete a post or suspend a user account (boolean active/suspended flag).",
+        "The system let users set basic privacy on their profile (public or private) controlling whether non-friends can view their posts.",
+        "The system let users block another user, which hides each other's posts and prevents messaging.",
+        "The system let users update notification preferences with on/off toggles per category (likes, comments, friend requests).",
+        "The system let admins manually grant or revoke a 'verified' badge on a user account (boolean flag toggle).",
+        "The system let users view their own post history and edit account settings (email, password, username).",
+        "The system implement basic pagination/infinite scroll on feeds, comments, and search results (limit/offset queries).",
+        "The system let users delete their own account, which soft-deletes their data (sets a deleted flag rather than hard deletion).",
+        "The system enforce two roles only — Admin and User — with simple route guards (no granular permission matrix), and log admin actions (ban/delete/verify) to a basic activity log table."
+      ],
+      "n_stories": 5,
+      "stories": [
+        {
+          "task_id": 1,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 2,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 3,
+          "confidence": 0.9791,
+          "evidence": [
+            {
+              "claim": "The system enables users to create both public and private groups, and manage membership requests for private ones.",
+              "fact": "The system let users create Groups with a name, description, and public/private flag, and join/leave public groups directly.",
+              "score": 0.9791,
+              "user_story_span": "",
+              "fact_span": ""
+            }
+          ],
+          "total_claims": 2,
+          "supported_claims": 1,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 4,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        },
+        {
+          "task_id": 5,
+          "confidence": 0.0,
+          "evidence": [],
+          "total_claims": 2,
+          "supported_claims": 0,
+          "threshold": 0.6
+        }
+      ],
+      "summary": {
+        "mean_nli_alignment_score": 0.9791,
+        "median_nli_alignment_score": 0.9791,
+        "std_nli_alignment_score": 0.0,
+        "q1": 0.9791,
+        "q3": 0.9791,
+        "iqr": 0.0,
+        "n_outliers": 0,
+        "n_zero_alignment": 0,
+        "total_claims": 10,
+        "supported_claims": 1,
+        "spec_coverage_rate": 0.1,
+        "spec_extrapolation_rate": 0.9,
+        "overall_hallucination_rate": 0.9
+      }
     }
   ],
   "pooled_all_projects": {
-    "n_stories": 8,
-    "mean": 0.9943,
-    "median": 0.9974,
-    "std": 0.0073,
-    "q1": 0.9939,
-    "q3": 0.9989,
-    "iqr": 0.005,
-    "outlier_threshold_lo": 0.9865,
-    "outlier_threshold_hi": 1.0063,
-    "n_outliers": 1,
-    "n_zero_confidence": 0
+    "n_stories": 30,
+    "mean": 0.2978,
+    "median": 0.0,
+    "std": 0.4627,
+    "q1": 0.0,
+    "q3": 0.9793,
+    "iqr": 0.9793,
+    "outlier_threshold_lo": -1.469,
+    "outlier_threshold_hi": 2.4483,
+    "n_outliers": 0,
+    "n_zero_confidence": 21
   },
   "comparison_with_agentsociety": {
-    "pooled_mean_alignment": 0.9683,
-    "pooled_median_alignment": 0.9877,
-    "pooled_std_alignment": 0.1112,
-    "pooled_iqr_alignment": 0.0168,
-    "spec_extrapolation_rate_mean": 0.522,
-    "n_stories": 82,
+    "pooled_mean_alignment": 0.9424,
+    "pooled_median_alignment": 0.9873,
+    "pooled_std_alignment": 0.1814,
+    "pooled_iqr_alignment": 0.0232,
+    "cross_project_mean_alignment": 0.9498,
+    "spec_extrapolation_rate_mean": 0.5294,
+    "n_stories": 119,
     "source": "summaries/rq2_nli_confidence.json"
   }
 }

@@ -83,9 +83,10 @@ C_DARK   = "#3A3A4A"
 C_GRID   = "#DDDDDD"
 C_MUTED  = "#888888"
 
-PROJ_COLORS = ["#A8C8E8", "#A8D8A8", "#F5D8A0", "#E8B8D0"]
-PROJ_LABELS = ["Proj. 1\n(Triage)", "Proj. 2\n(Blood)", "Proj. 3\n(Runway)", "Proj. 4\n(ATM)"]
-PROJ_SHORT  = ["P1", "P2", "P3", "P4"]
+PROJ_COLORS = ["#A8C8E8", "#A8D8A8", "#F5D8A0", "#E8B8D0", "#B8C8E8", "#E8D8A0"]
+PROJ_LABELS = ["Proj. 1\n(Triage)", "Proj. 2\n(Blood)", "Proj. 3\n(Runway)", "Proj. 4\n(ATM)",
+               "Proj. 5\n(Compet.)", "Proj. 6\n(Social)"]
+PROJ_SHORT  = ["P1", "P2", "P3", "P4", "P5", "P6"]
 
 # Phase display names (short)
 PHASE_SHORT = {
@@ -391,11 +392,11 @@ def plot_confidence(show: bool = False) -> None:
     ax_b.grid(axis="y", linestyle="--", alpha=0.4, color=C_GRID)
     _spine_clean(ax_b)
     ax_b.set_title(
-        "(b) Per-project NLI alignment  (n=3 except P3: n=2 · ● = individual seeds)",
+        "(b) Per-project NLI alignment  (● = individual seeds)",
         fontsize=9, loc="left", pad=5, fontweight="bold")
 
     # ── (c) Alloy formal spec verification ───────────────────────────────────
-    x = np.arange(4); w = 0.52
+    x = np.arange(len(alloy)); w = 0.52
     rates_m = [p["verification_rate"]["mean"] * 100 for p in alloy]
     rates_s = [p["verification_rate"]["std"]  * 100 for p in alloy]
     ax_c.bar(x, rates_m, width=w, color=C_GREEN, edgecolor="#AAAAAA", linewidth=0.5, zorder=3)
@@ -528,7 +529,7 @@ def plot_hallucination(show: bool = False) -> None:
                    fontsize=9.5, loc="left", pad=18, fontweight="bold")
 
     # ── (b) Code structural issues ────────────────────────────────────────────
-    x_b      = np.arange(4)
+    x_b      = np.arange(len(hall))
     orphan_m = [p["orphan_routes"]["mean"]  for p in hall]
     orphan_s = [p["orphan_routes"]["std"]   for p in hall]
     unused_m = [p["unused_imports"]["mean"] for p in hall]

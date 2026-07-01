@@ -1,0 +1,128 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam defaultFontSize 12
+skinparam backgroundColor white
+skinparam classBackgroundColor lightblue
+skinparam interfaceBackgroundColor lightgreen
+skinparam noteBackgroundColor lightyellow
+
+package "Domain Model" {
+  class Actor {
+    - mayPerform : set of Permission
+  }
+
+  class Admin_Team {
+  }
+
+  class Content_Moderation_Team {
+  }
+
+  class Resource {
+    - owner : Actor
+    - accessible : set of Actor
+    note "invariant: owner always in accessible"
+  }
+
+  class ReportedItem {
+  + checkAccess(admin)
+  + isAccessible(admin)
+  + warn()
+  + hide()
+  }
+
+  class Permission {
+  + hasPermission(admin, Write)
+  }
+
+  class Read {
+  }
+
+  class Write {
+  }
+
+  class Execute {
+  }
+
+  class Admin {
+  }
+
+  class State {
+  + transition(Pre1, PostDone)
+  }
+
+  class Pre1 {
+  }
+
+  class PostDone {
+  }
+
+  class Interface {
+    - kind : IfaceKind
+    - encrypted : boolean
+    - authenticated : boolean
+  }
+
+  enum IfaceKind {
+    UI
+    Database
+  }
+
+  class REQ_MOD_01 {
+    note "invariants:\n pre != post\n some channel\n some target\n grant in initiator.mayPerform\n initiator in target.accessible\n some c: channel | c.authenticated = True"
+  + authenticate(session)
+  + viewReportedItems(adminId)
+  + performAction(admin, item, "warn")
+  + checkAuthentication(session)
+  + performAction(admin, item, "hide")
+  }
+}
+
+package "Infrastructure — Ports" {
+  class Admin_Reported_Content_Panel <<UI>> {
+    - kind = IfaceKind.UI
+    - encrypted = false
+    - authenticated = true
+  + login(credentials)
+  + selectItem(itemId, action="warn")
+  + selectItem(itemId, action="hide")
+  + attemptAction(withoutLogin)
+  }
+
+  class Content_Management_Database <<Database>> {
+    - kind = IfaceKind.Database
+    - encrypted = false
+    - authenticated = false
+  }
+}
+
+' Inheritance relationships
+Admin_Team -|> Actor
+Content_Moderation_Team -|> Actor
+ReportedItem -|> Resource
+Read -|> Permission
+Write -|> Permission
+Execute -|> Permission
+Admin -|> Permission
+Pre1 -|> State
+PostDone -|> State
+
+' Associations from REQ_MOD_01
+REQ_MOD_01 "1" o-- "1" Actor : initiator
+REQ_MOD_01 "1" o-- "1..*" Resource : target
+REQ_MOD_01 "1" o-- "1..*" Interface : channel
+REQ_MOD_01 "1" o-- "1" Permission : grant
+REQ_MOD_01 "1" o-- "1" State : pre
+REQ_MOD_01 "1" o-- "1" State : post
+
+' Associations from Resource
+Resource "1" o-- "1" Actor : owner
+Resource "1" o-- "*" Actor : accessible
+
+' Note: Interface uses IfaceKind
+Interface ..> IfaceKind : kind
+
+' Ports are examples of Interface
+Admin_Reported_Content_Panel -up-|> Interface : is a
+Content_Management_Database -up-|> Interface : is a
+
+@enduml

@@ -1,0 +1,37 @@
+{
+  "task_id": 172,
+  "confidence": 0.9865,
+  "evidence": [
+    {
+      "claim": "The user clicks the 'Report' button.",
+      "fact": "Clicking the 'Report Post' button creates a report record.",
+      "score": 0.9959,
+      "user_story_span": "When they click \"Report\"",
+      "fact_span": "Clicking the 'Report Post' button"
+    },
+    {
+      "claim": "The user is viewing a post.",
+      "fact": "Privacy controls whether non-friends can view their posts.",
+      "score": 0.995,
+      "user_story_span": "a user is viewing a post",
+      "fact_span": "view their posts"
+    },
+    {
+      "claim": "A confirmation message is shown.",
+      "fact": "Notifications can be marked read.",
+      "score": 0.9919,
+      "user_story_span": "a confirmation message is shown",
+      "fact_span": ""
+    },
+    {
+      "claim": "The user confirms the report.",
+      "fact": "Notifications can be marked read.",
+      "score": 0.963,
+      "user_story_span": "confirms the report",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 9,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

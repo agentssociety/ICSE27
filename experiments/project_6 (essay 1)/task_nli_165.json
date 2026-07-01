@@ -1,0 +1,16 @@
+{
+  "task_id": 165,
+  "confidence": 0.6269,
+  "evidence": [
+    {
+      "claim": "The group creation form includes a visibility selection (public or private)",
+      "fact": "Privacy options are public or private.",
+      "score": 0.6269,
+      "user_story_span": "",
+      "fact_span": "Privacy options are public or private."
+    }
+  ],
+  "total_claims": 7,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

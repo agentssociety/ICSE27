@@ -1,0 +1,27 @@
+# Register all ORM models for Alembic and SQLAlchemy metadata.
+from src.orm.schedule.schedule_orm import ScheduleORM  # noqa: F401
+from src.orm.actor.actor_orm import ActorORM  # noqa: F401
+from src.orm.attempt.attempt_orm import AttemptORM  # noqa: F401
+from src.orm.attempt_review.attempt_review_orm import AttemptReviewORM  # noqa: F401
+from src.orm.avatar.avatar_orm import AvatarORM  # noqa: F401
+from src.orm.badge.badge_orm import BadgeORM  # noqa: F401
+from src.orm.bonu_nugget_grant.bonu_nugget_grant_orm import BonuNuggetGrantORM  # noqa: F401
+from src.orm.bonus_nugget.bonus_nugget_orm import BonusNuggetORM  # noqa: F401
+from src.orm.chart_point.chart_point_orm import ChartPointORM  # noqa: F401
+from src.orm.cohort_leaderboard.cohort_leaderboard_orm import CohortLeaderboardORM  # noqa: F401
+from src.orm.competency.competency_orm import CompetencyORM  # noqa: F401
+from src.orm.competency_trend_chart.competency_trend_chart_orm import CompetencyTrendChartORM  # noqa: F401
+from src.orm.difficulty_tag.difficulty_tag_orm import DifficultyTagORM  # noqa: F401
+from src.orm.enrollment.enrollment_orm import EnrollmentORM  # noqa: F401
+from src.orm.exam.exam_orm import ExamORM  # noqa: F401
+from src.orm.exam_session.exam_session_orm import ExamSessionORM  # noqa: F401
+from src.orm.it_team.it_team_orm import IT_TeamORM  # noqa: F401
+from src.orm.interface.interface_orm import InterfaceORM  # noqa: F401
+from src.orm.justification.justification_orm import JustificationORM  # noqa: F401
+from src.orm.question.question_orm import QuestionORM  # noqa: F401
+from src.orm.radar_chart.radar_chart_orm import RadarChartORM  # noqa: F401
+from src.orm.registration_data.registration_data_orm import RegistrationDataORM  # noqa: F401
+from src.orm.resource.resource_orm import ResourceORM  # noqa: F401
+from src.orm.student.student_orm import StudentORM  # noqa: F401
+from src.orm.student_account.student_account_orm import StudentAccountORM  # noqa: F401
+from src.orm.teacher.teacher_orm import TeacherORM  # noqa: F401

@@ -1,0 +1,174 @@
+@startuml
+skinparam defaultFontSize 12
+skinparam packageStyle rect
+
+title Friend Request Management - Sequence Diagrams
+
+box "Boundary" #LightBlue
+participant "User" as userActor
+end box
+
+box "Controller" #LightGreen
+participant FriendshipController as fc
+end box
+
+box "Application" #LightYellow
+participant FriendRequestService as frs
+participant AuthService as auth
+participant NotificationService as ns
+end box
+
+box "Domain" #LightCoral
+participant "FriendRequest" as fr
+participant "User" as userEntity
+participant "Friendship" as friendship
+participant "Notification" as notif
+end box
+
+box "Infrastructure" #LightGray
+participant UserRepository as userRepo
+participant FriendRequestRepository as frRepo
+participant FriendshipRepository as friendRepo
+participant NotificationRepository as notifRepo
+end box
+
+box "External" #LightPink
+participant PushService as push
+end box
+
+== Send Friend Request ==
+
+userActor -> fc: POST /friend-request { recipientId } [HTTPS]
+fc -> auth: verifyToken(token) : userId
+alt token invalid
+    fc -> userActor: 401 Unauthorized
+else token valid
+    fc -> frs: sendFriendRequest(senderId, recipientId)
+    frs -> userRepo: findById(recipientId) : User
+    alt recipient not found
+        frs -> fc: RecipientNotFoundError
+        fc -> userActor: 404 Not Found
+    else recipient found
+        alt senderId == recipientId
+            frs -> fc: SelfRequestError
+            fc -> userActor: 400 Bad Request
+        else not self
+            frs -> frRepo: findBySenderAndRecipientAndStatus(senderId, recipientId, Pending) : FriendRequest
+            alt duplicate pending found
+                frs -> fc: DuplicateRequestError
+                fc -> userActor: 409 Conflict
+            else no duplicate
+                create fr
+                frs -> fr: create(sender, recipient) : FriendRequest
+                note right: Status = Pending
+                frs -> frRepo: save(fr)
+                alt network failure during save
+                    frs -> fc: DatabaseError
+                    fc -> userActor: 500 Internal Server Error (retry logic)
+                else save success
+                    frs -> ns: sendPendingNotification(recipient, senderName)
+                    ns -> push: determineOnlineStatus(recipient) : OnlineStatus
+                    alt recipient online
+                        ns -> push: pushNotification(recipient, content)
+                    else offline
+                        create notif
+                        ns -> notif: create(recipient, type=PENDING, content)
+                        ns -> notifRepo: save(notif)
+                        note right: Queued for later delivery
+                    end
+                    ns -> frs: NotificationSent
+                    frs -> fc: Success
+                    fc -> userActor: 201 Created
+                end
+            end
+        end
+    end
+end
+
+== Accept Friend Request ==
+
+userActor -> fc: PUT /friend-request/{requestId}/accept [HTTPS]
+fc -> auth: verifyToken(token) : userId
+alt token invalid
+    fc -> userActor: 401 Unauthorized
+else token valid
+    fc -> frs: acceptFriendRequest(requestId, userId)
+    frs -> frRepo: findById(requestId) : FriendRequest
+    alt request not found
+        frs -> fc: RequestNotFoundError
+        fc -> userActor: 404 Not Found
+    else request found
+        alt request.recipient != userId
+            frs -> fc: UnauthorizedError
+            fc -> userActor: 403 Forbidden
+        else request.status != Pending
+            frs -> fc: InvalidStateError
+            fc -> userActor: 409 Conflict (already accepted/rejected)
+        else valid
+            frs -> fr: setStatus(Accepted)
+            note right: State transition: Pending -> Accepted
+            frs -> frRepo: save(fr)
+            alt network failure
+                frs -> fc: DatabaseError
+                fc -> userActor: 500 Internal Server Error
+            else success
+                create friendship
+                frs -> friendship: create(user1, user2) : Friendship
+                note right: Established = now
+                frs -> friendRepo: save(friendship)
+                alt network failure on friendship save
+                    frs -> fc: DatabaseError
+                    fc -> userActor: 500 Internal Server Error (rollback)
+                else success
+                    frs -> ns: sendAcceptedNotification(sender, recipient)
+                    note right: Notify both users
+                    ns -> push: pushNotification(sender, "Request accepted")
+                    ns -> push: pushNotification(recipient, "You accepted request")
+                    ns -> frs: NotificationsSent
+                    frs -> fc: Success
+                    fc -> userActor: 200 OK
+                end
+            end
+        end
+    end
+end
+
+== Reject Friend Request ==
+
+userActor -> fc: PUT /friend-request/{requestId}/reject [HTTPS]
+fc -> auth: verifyToken(token) : userId
+alt token invalid
+    fc -> userActor: 401 Unauthorized
+else token valid
+    fc -> frs: rejectFriendRequest(requestId, userId)
+    frs -> frRepo: findById(requestId) : FriendRequest
+    alt request not found
+        frs -> fc: RequestNotFoundError
+        fc -> userActor: 404 Not Found
+    else request found
+        alt request.recipient != userId
+            frs -> fc: UnauthorizedError
+            fc -> userActor: 403 Forbidden
+        else request.status != Pending
+            frs -> fc: InvalidStateError
+            fc -> userActor: 409 Conflict
+        else valid
+            frs -> fr: setStatus(Rejected)
+            note right: State transition: Pending -> Rejected
+            frs -> frRepo: save(fr)
+            alt network failure
+                frs -> fc: DatabaseError
+                fc -> userActor: 500 Internal Server Error
+            else success
+                frs -> ns: sendRejectedNotification(sender, recipient)
+                note right: Notify sender about rejection
+                ns -> push: pushNotification(sender, "Request rejected")
+                ns -> frs: NotificationSent
+                frs -> fc: Success
+                fc -> userActor: 200 OK
+            end
+        end
+    end
+end
+
+@enduml

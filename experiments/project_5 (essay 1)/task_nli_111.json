@@ -1,0 +1,51 @@
+{
+  "task_id": 111,
+  "confidence": 0.9658,
+  "evidence": [
+    {
+      "claim": "The game-like interface includes visual elements and animations.",
+      "fact": "The testing experience shows one question per screen in a gamified layout, equipped with a real-time timer, a progress bar, and a nugget tally that updates with animation.",
+      "score": 0.9981,
+      "user_story_span": "The game-like interface includes visual elements and animations.",
+      "fact_span": "one question per screen in a gamified layout, equipped with a real-time timer, a progress bar, and a nugget tally that updates with animation."
+    },
+    {
+      "claim": "The nugget counter plays an animation.",
+      "fact": "The exam delivery interface includes an animated nugget counter.",
+      "score": 0.9981,
+      "user_story_span": "the nugget counter plays an animation",
+      "fact_span": "animated nugget counter"
+    },
+    {
+      "claim": "The exam ends.",
+      "fact": "Right after the test finishes, learners receive a per-competency evaluation with weaknesses emphasized and accompanied by recommended study actions.",
+      "score": 0.9964,
+      "user_story_span": "the exam ends",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system presents the exam one question at a time per screen.",
+      "fact": "The testing experience shows one question per screen in a gamified layout, equipped with a real-time timer, a progress bar, and a nugget tally that updates with animation.",
+      "score": 0.978,
+      "user_story_span": "one question at a time",
+      "fact_span": "one question per screen"
+    },
+    {
+      "claim": "The progress bar updates.",
+      "fact": "The student profile displays earned badges.",
+      "score": 0.9146,
+      "user_story_span": "the progress bar updates",
+      "fact_span": ""
+    },
+    {
+      "claim": "The current answer is submitted.",
+      "fact": "The written justification is logged as an audit event.",
+      "score": 0.9097,
+      "user_story_span": "the current answer is submitted",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 10,
+  "supported_claims": 6,
+  "threshold": 0.6
+}

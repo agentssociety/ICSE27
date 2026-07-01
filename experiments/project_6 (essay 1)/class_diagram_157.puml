@@ -1,0 +1,161 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam class {
+    BorderColor #2E4057
+    FontColor #2E4057
+    BackgroundColor #F8F9FA
+}
+skinparam interface {
+    BorderColor #1B6B93
+    FontColor #1B6B93
+    BackgroundColor #E3F2FD
+}
+skinparam enum {
+    BorderColor #7B1FA2
+    FontColor #4A148C
+    BackgroundColor #F3E5F5
+}
+
+package "Domain Model" {
+    class UserAccount {
+        - email : String
+        - password : String
+        - status : AccountStatus
+        .. invariants ..
+        {field} email must be unique
+        {field} email must be valid format
+        {field} only new users can register
+        {field} account created only if email not registered
+  + create(email, hashedPassword, AccountStatus.Pending)
+    }
+
+    enum AccountStatus <<enum>> {
+        Pending
+        Verified
+    }
+
+    class EmailConfirmation {
+        - sent : Boolean
+        .. invariants ..
+        {field} confirmation sent after account creation
+        {field} confirmation sent only for successful registration
+  + create(userAccount, triggeredBy = REQ_REG_01)
+    }
+
+    class Resource {
+        .. invariants ..
+        {field} owner is always accessible
+    }
+
+    class Actor {
+        .. invariants ..
+    }
+
+    enum Permission <<enum>> {
+        Read
+        Write
+        Execute
+        Admin
+        .. invariants ..
+        {field} Admin subsumes all
+        {field} Write subsumes Read
+        {field} Execute subsumes Read
+    }
+
+    enum State <<enum>> {
+        PreIdle
+        Post1_AccountCreated
+        Post2_EmailSent
+        Post3_Redirected
+    }
+
+    class Interface {
+        - kind : InterfaceKind
+        - encrypted : Boolean
+        - authenticated : Boolean
+        .. invariants ..
+        {field} authenticated channels require caller identity
+    }
+
+    enum InterfaceKind <<enum>> {
+        Database
+        Email_Service
+        EmailValidKind
+    }
+
+    class REQ_REG_01 {
+        .. invariants ..
+        {field} at least one channel must be authenticated
+        {field} all channels must be encrypted
+        {field} initiator must have required permission
+        {field} initiator must be allowed to access target resource
+  + result(null or account)
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface RegistrationPage <<interface>> {
+        + submitRegistration()
+  + submitRegistration(email, password)
+  + returnError("Invalid email format")
+  + returnError("Email already in use")
+  + redirectToLogin("Account created. Warning: Confirmation email may be delayed.")
+  + redirectToLogin("Account created. Please check email to confirm.")
+    }
+
+    interface UserDatabase <<interface>> {
+        + findByEmail()
+        + insertUser()
+        .. security ..
+        {field} encryption_at_rest : true
+        {field} sql_injection_protection : true
+    }
+
+    interface EmailNotificationSystem <<interface>> {
+        + sendConfirmationEmail()
+        .. security ..
+        {field} authenticated : true
+        {field} encryption_in_transit : true
+    }
+
+    interface EmailValidator <<interface>> {
+        + validateFormat()
+        .. security ..
+        {field} authenticated : true
+        {field} encrypted : true
+    }
+}
+
+package "Exceptions" {
+    class InvalidEmailFormatException <<exception>> {
+    }
+
+    class EmailAlreadyRegisteredException <<exception>> {
+    }
+
+    class NetworkFailureException <<exception>> {
+    }
+}
+
+' Relationships
+REQ_REG_01 "1" --> "1" Actor : initiator
+REQ_REG_01 "1" --> "1..*" Resource : target
+REQ_REG_01 "1" --> "1..*" Interface : channel
+REQ_REG_01 "1" --> "1" Permission : grant
+REQ_REG_01 "1" --> "1" State : pre
+REQ_REG_01 "1" --> "1" State : post
+
+Resource "1" --> "1" Actor : owner
+Resource "1" --> "0..*" Actor : accessible
+
+EmailConfirmation "1" --> "1" REQ_REG_01 : triggeredBy
+EmailConfirmation "1" --> "1" UserAccount : userAccount
+
+UserDatabase "1" *--> "0..*" UserAccount : contains
+
+REQ_REG_01 ..> UserDatabase : check uniqueness and insert
+REQ_REG_01 ..> EmailNotificationSystem : send confirmation email
+REQ_REG_01 ..> EmailValidator : validate email format
+
+@enduml

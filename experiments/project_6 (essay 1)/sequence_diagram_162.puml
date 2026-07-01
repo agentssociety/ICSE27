@@ -1,0 +1,155 @@
+@startuml
+title News Feed Sequence Diagram
+
+' Layer boxes
+box "Controller" #LightBlue
+  participant "NewsFeedPage" as UI
+  participant "FeedController" as Controller
+end box
+
+box "Application" #LightGreen
+  participant "FeedService" as Service
+  participant "AuthService" as Auth
+end box
+
+box "Domain" #LightYellow
+  participant "User" as UserDomain
+  participant "Post" as PostDomain
+  participant "Friendship" as FriendshipDomain
+  participant "NewsFeed" as NewsFeedDomain
+end box
+
+box "Infrastructure" #LightCoral
+  participant "PostDatabase" as DB
+end box
+
+box "External" #LightPink
+  participant "FriendshipAPI" as FriendAPI
+end box
+
+' ============================================================================
+' Main flow – View News Feed
+' ============================================================================
+== Main Flow - View News Feed ==
+
+actor "User" as UserActor
+UserActor -> UI : navigate to news feed
+UI -> Controller : GET /news-feed
+
+alt [Authentication failed]
+  Controller -> Auth : authenticate(token: String) : User
+  Auth --> Controller : throw AuthException
+  Controller --> UI : 401 Unauthorized
+  UI --> UserActor : show login error
+else [Authentication success]
+  Controller -> Auth : authenticate(token: String) : User
+  Auth --> Controller : User user
+
+  ' Permission check
+  Controller -> Service : getNewsFeed(userId: Long) : NewsFeed
+  Service -> Auth : checkPermission(user, "Read") : boolean
+
+  alt [Permission denied]
+    Auth --> Service : throw PermissionDenied
+    Service --> Controller : throw AccessDeniedException
+    Controller --> UI : 403 Forbidden
+    UI --> UserActor : show access denied
+  else [Permission granted]
+
+    ' Get friends list via Friendship API
+    Service -> FriendAPI : GET /friends?userId=userId [TLS][auth token]
+    alt [FriendshipAPI error]
+      FriendAPI --> Service : HTTP 5xx
+      Service --> Controller : throw ServiceException
+      Controller --> UI : 500 Internal Server Error
+      UI --> UserActor : show error message
+    else [FriendshipAPI success]
+      FriendAPI --> Service : List<Long> friendIds
+
+      alt [No friends]
+        Service -> NewsFeedDomain : createEmptyFeed(userId: Long) : NewsFeed
+        NewsFeedDomain --> Service : new NewsFeed(userId, [])
+        Service --> Controller : NewsFeed (no posts)
+        Controller --> UI : 200 OK { feed: [] }
+        UI --> UserActor : display empty feed message
+
+      else [Friends exist]
+        ' Query Post Database
+        Service -> DB : findPostsByAuthorIds(friendIds, sort="creationTime DESC") : List<Post>
+        alt [Database error]
+          DB --> Service : DatabaseException
+          Service --> Controller : throw ServiceException
+          Controller --> UI : 500 Internal Server Error
+          UI --> UserActor : show error message
+        else [Database success]
+          DB --> Service : List<Post> posts
+          Service -> NewsFeedDomain : createFeedWithPosts(userId: Long, posts: List<Post>) : NewsFeed
+          note right: State: NewsFeed.posts set and sorted descending
+          NewsFeedDomain --> Service : NewsFeed feed
+          Service --> Controller : NewsFeed
+          Controller --> UI : 200 OK { feed: posts sorted by time }
+          UI --> UserActor : display posts
+        end
+      end
+    end
+  end
+end
+
+' ============================================================================
+' Alternative: Friend's post deleted during viewing
+' ============================================================================
+== Flow: Post Deleted During Viewing ==
+
+' Assume feed already displayed – user refreshes or system polls
+UI -> Controller : GET /news-feed (refresh)
+
+Controller -> Auth : authenticate(token: String) : User
+Auth --> Controller : User user
+Controller -> Service : getNewsFeed(userId: Long) : NewsFeed
+Service -> Auth : checkPermission(user, "Read") : boolean
+Auth --> Service : ok
+
+Service -> FriendAPI : GET /friends?userId=userId [TLS]
+FriendAPI --> Service : List<Long> friendIds
+
+' Fetch current posts – deleted post now missing
+Service -> DB : findPostsByAuthorIds(friendIds, sort="creationTime DESC") : List<Post>
+DB --> Service : List<Post> newPosts
+
+Service -> NewsFeedDomain : updateFeed(existingFeed, newPosts) : NewsFeed
+note right: Removes deleted post, keeps order
+NewsFeedDomain --> Service : updated NewsFeed
+Service --> Controller : NewsFeed
+Controller --> UI : 200 OK { feed: updated }
+UI --> UserActor : feed refreshed, deleted post removed
+
+' ============================================================================
+' Alternative: New friend added after feed loaded
+' ============================================================================
+== Flow: New Friend Added After Feed Loaded ==
+
+' Polling or event-driven fetch
+UI -> Controller : GET /news-feed?since=lastFetchTime
+
+Controller -> Auth : authenticate(token: String) : User
+Auth --> Controller : User user
+Controller -> Service : getNewsFeed(userId: Long) : NewsFeed
+Service -> Auth : checkPermission(user, "Read") : boolean
+Auth --> Service : ok
+
+' May now include new friend
+Service -> FriendAPI : GET /friends?userId=userId [TLS]
+FriendAPI --> Service : List<Long> friendIds (possibly extended)
+
+' Only posts newer than last fetch
+Service -> DB : findPostsByAuthorIds(friendIds, since=lastFetchTime) : List<Post>
+DB --> Service : List<Post> newPosts
+
+Service -> NewsFeedDomain : appendPosts(feed, newPosts) : NewsFeed
+note right: New posts inserted preserving sort order
+NewsFeedDomain --> Service : updated NewsFeed
+Service --> Controller : NewsFeed
+Controller --> UI : 200 OK { feed: with new posts }
+UI --> UserActor : feed updated with new posts
+
+@enduml

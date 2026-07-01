@@ -1,0 +1,176 @@
+@startuml
+title Admin Badge Management - All Flows
+skinparam backgroundColor #FEFEFE
+skinparam BoxPadding 10
+
+actor "Admin" as admin #LightBlue
+
+box "Controller" #LightBlue
+  participant "AdminUserManagementInterface" as ui <<interface>>
+end box
+
+box "Application" #LightGreen
+  participant "BadgeService" as service
+end box
+
+box "Domain" #LightYellow
+  participant "Admin" as adminObj
+  participant "UserProfile" as profile
+  participant "AuditEntry" as audit
+  participant "Permission" as perm <<enum>>
+  participant "AuditAction" as action <<enum>>
+end box
+
+box "Infrastructure" #LightCoral
+  participant "UserDatabase" as db
+end box
+
+box "External" #LightGrey
+  participant "AuditLoggingAPI" as logAPI
+end box
+
+
+== Grant Badge Flow ==
+
+admin -> ui : grantBadge(targetUserId: String)
+activate ui
+ui -> service : grantBadge(adminId: String, targetUserId: String)
+activate service
+
+service -> adminObj : checkPermission(required: Permission.Admin) : boolean
+activate adminObj
+return hasPermission
+
+alt hasPermission == false
+  service -> ui : return error <color:red>"Admin does not have Admin permission"</color>
+  deactivate service
+  ui -> admin : display error "Unauthorized"
+  deactivate ui
+else hasPermission == true
+  service -> db : findUserProfileById(id: String) : UserProfile
+  activate db
+  return profile or null
+
+  alt profile == null
+    service -> ui : return error <color:red>"User not found"</color>
+    deactivate service
+    ui -> admin : display error "User not found"
+    deactivate ui
+  else profile exists
+    note right of profile : State transition: Pre1+Pre2 -> Post1
+    service -> profile : setVerifiedBadgeStatus(true)
+    activate profile
+    return
+    deactivate profile
+    note over service : Create audit entry for GRANT
+    service -> audit : new AuditEntry(action=AuditAction.GRANT, adminId, targetUserId, timestamp)
+    activate audit
+    return
+    deactivate audit
+    service -> logAPI : recordAuditEntry(audit: AuditEntry) [TLS]
+    activate logAPI
+    return
+    deactivate logAPI
+    note right of profile : State transition: Post2 reached
+    service -> ui : return success
+    deactivate service
+    ui -> admin : display success
+    deactivate ui
+  end
+end
+
+
+== Revoke Badge Flow ==
+
+admin -> ui : revokeBadge(targetUserId: String)
+activate ui
+ui -> service : revokeBadge(adminId: String, targetUserId: String)
+activate service
+
+service -> adminObj : checkPermission(required: Permission.Admin) : boolean
+activate adminObj
+return hasPermission
+
+alt hasPermission == false
+  service -> ui : return error <color:red>"Unauthorized"</color>
+  deactivate service
+  ui -> admin : display error
+  deactivate ui
+else hasPermission == true
+  service -> db : findUserProfileById(id: String) : UserProfile
+  activate db
+  return profile or null
+
+  alt profile == null
+    service -> ui : return error <color:red>"User not found"</color>
+    deactivate service
+    ui -> admin : display error
+    deactivate ui
+  else profile exists
+    note right of profile : Idempotent: set badge false regardless of current status
+    service -> profile : setVerifiedBadgeStatus(false)
+    activate profile
+    return
+    deactivate profile
+    note over service : Create audit entry for REVOKE
+    service -> audit : new AuditEntry(action=AuditAction.REVOKE, adminId, targetUserId, timestamp)
+    activate audit
+    return
+    deactivate audit
+    service -> logAPI : recordAuditEntry(audit: AuditEntry) [TLS]
+    activate logAPI
+    return
+    deactivate logAPI
+    note right of profile : State transition: Post1+Post2
+    service -> ui : return success
+    deactivate service
+    ui -> admin : display success
+    deactivate ui
+  end
+end
+
+
+== Concurrent Grant/Revoke Requests ==
+
+admin -> ui : grantBadge(userX)
+activate ui
+ui -> service : grantBadge(adminX, userX)
+activate service
+
+service -> db : findUserProfileById(userX) : UserProfile
+activate db
+return profile (version: v1)
+deactivate db
+
+service -> profile : setVerifiedBadgeStatus(true) [optimistic lock, version=v1]
+activate profile
+
+alt version check passes
+  profile --> service : success (new version v2)
+  deactivate profile
+  service -> audit : create audit entry
+  service -> logAPI : record
+  service -> ui : success
+  deactivate service
+  ui -> admin : display success
+  deactivate ui
+
+else version conflict (concurrent update detected)
+  profile --> service : failure (version mismatch)
+  deactivate profile
+  alt retry policy (as per implementation)
+    service -> ui : <color:orange>"Concurrent modification, retry"</color>
+    deactivate service
+    ui -> admin : error "Conflict, please retry"
+    deactivate ui
+  else fail without retry
+    service -> ui : <color:red>"Conflict, please try again"</color>
+    deactivate service
+    ui -> admin : error
+    deactivate ui
+  end
+end
+
+note right of admin : System ensures no data inconsistency\nvia optimistic locking on UserProfile.
+
+@enduml

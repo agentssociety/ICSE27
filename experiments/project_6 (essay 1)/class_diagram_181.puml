@@ -1,0 +1,112 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontSize 12
+skinparam backgroundcolor transparent
+skinparam class {
+    BackgroundColor white
+    BorderColor #2E86C1
+}
+skinparam interface {
+    BackgroundColor #E8F6F3
+    BorderColor #1ABC9C
+}
+skinparam enum {
+    BackgroundColor #F9E79F
+    BorderColor #F1C40F
+}
+skinparam exception {
+    BackgroundColor #F5B7B1
+    BorderColor #E74C3C
+}
+
+package "Domain Model" {
+    class Admin {
+        - adminId : String
+        - permissions : List<Permission>
+  + getPermissions() : Permission[]
+    }
+    class User {
+        - userId : String
+  + applyAction(actionType: String) : void
+  + applyWarning() : void
+    }
+    class AuditLog {
+        - adminId : String
+        - actionType : String
+        - timestamp : DateTime
+        - targetUserId : String
+  + createEntry(adminId: String, actionType: String, timestamp: DateTime, targetUserId: String) : AuditLog
+  + createErrorEntry(adminId: String, errorType: String, timestamp: DateTime) : AuditLog
+  + createEntry(adminId: String, actionType: "warn", timestamp: DateTime, targetUserId: String) : AuditLog
+    }
+    class Resource {
+        - resourceId : String
+  + checkAccess(initiator: Admin, target: User) : Boolean
+    }
+    class Operation {
+        - initiator : Admin
+        - target : Resource
+        - channel : List<Channel>
+        - grant : Permission
+        - pre : State
+        - post : State
+  + execute(initiator: Admin, target: User, actionType: String) : State
+  + execute(initiator: Admin, target: User, actionType: "warn") : State
+    }
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+  + checkPermission(admin: Admin, requiredLevel: Permission) : Boolean
+  + checkPermission(committee: AuditCommittee, requiredLevel: Permission) : Boolean
+    }
+    enum State {
+        Pre1
+        Post1
+        Post2
+  + transitionTo(Post1) : void
+  + transitionTo(Post2) : void
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface "Admin Action API" as AdminAPI {
+        - encrypted : boolean
+        - authenticated : boolean
+    }
+    interface "Audit Log Database" as AuditLogDB {
+        - persistent : boolean
+    }
+    interface Channel {
+        - authenticated : boolean
+  + authenticate(channel: Channel) : Boolean
+    }
+}
+
+package "Exceptions" {
+    class InsufficientPrivilegesException <<exception>> {
+        + message : String
+    }
+}
+
+' Relationships
+Admin "1" -- "0..*" User : "performs action on"
+Admin "1" -- "0..*" AuditLog : "creates"
+Admin "1" -- "*" Permission : "has"
+Operation "*" -- "1" Admin : "initiates"
+Operation "*" -- "1" Resource : "affects"
+Operation "*" -- "*" Channel : "uses"
+Operation "*" -- "1" State : "pre"
+Operation "*" -- "1" State : "post"
+
+' Dependencies from Operation to interfaces (already shown via association to Channel)
+' Also Admin API and AuditLogDB are used by application services, not directly connected here.
+
+' Notes for invariants (optional)
+note top of Admin : invariants: must have sufficient privileges\n to perform actions
+note top of AuditLog : invariants: each action logged separately,\n log must be stored persistently
+note top of Operation : invariants: must have at least one channel,\n must affect at least one resource,\n initiator must hold grant permission,\n pre != post
+
+@enduml

@@ -1,0 +1,51 @@
+{
+  "task_id": 109,
+  "confidence": 0.9913,
+  "evidence": [
+    {
+      "claim": "Bonus nuggets are manually awarded to individual students",
+      "fact": "Manual bonus nuggets given to individual learners require a justification note that is stored in an immutable audit log.",
+      "score": 0.9984,
+      "user_story_span": "Bonus nuggets are manually awarded to individual students.",
+      "fact_span": "Manual bonus nuggets given to individual learners"
+    },
+    {
+      "claim": "When the interaction occurs, the teacher grants a manual bonus nugget to a student with a written justification",
+      "fact": "Educators are able to award extra nuggets manually to a particular student, and they must provide a written reason that gets recorded as an audit event.",
+      "score": 0.9961,
+      "user_story_span": "grants a manual bonus nugget to a student with a written justification",
+      "fact_span": "award extra nuggets manually to a particular student, and they must provide a written reason"
+    },
+    {
+      "claim": "The system allows granting manual bonus nuggets to individual students with a written justification",
+      "fact": "Educators are able to award extra nuggets manually to a particular student, and they must provide a written reason that gets recorded as an audit event.",
+      "score": 0.996,
+      "user_story_span": "grant manual bonus nuggets to individual students with a written justification",
+      "fact_span": "award extra nuggets manually to a particular student, and they must provide a written reason"
+    },
+    {
+      "claim": "The teacher is logged into the system",
+      "fact": "A teacher registers, signs in, and views a control panel showing live tests, enrollment figures, and skill coverage.",
+      "score": 0.9918,
+      "user_story_span": "a teacher is logged into the system",
+      "fact_span": "A teacher registers, signs in"
+    },
+    {
+      "claim": "Each bonus grant must include a written justification",
+      "fact": "Educators are able to award extra nuggets manually to a particular student, and they must provide a written reason that gets recorded as an audit event.",
+      "score": 0.985,
+      "user_story_span": "Each bonus grant must include a written justification.",
+      "fact_span": "they must provide a written reason"
+    },
+    {
+      "claim": "An audit event is created containing the teacher, student, amount, and justification",
+      "fact": "Teachers can issue bonus rewards to a specific student, and every such action leaves an audit trail with the stated rationale.",
+      "score": 0.9803,
+      "user_story_span": "an audit event is created containing the teacher, student, amount, and justification",
+      "fact_span": "every such action leaves an audit trail with the stated rationale"
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 6,
+  "threshold": 0.6
+}

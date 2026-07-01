@@ -1,0 +1,7553 @@
+{
+  "directed": true,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "node_type": "task",
+      "entity_id": 157,
+      "title": "User Registration with Email Verification",
+      "summary": "New users must register an account and verify their email address to securely access the platform.",
+      "id": "task_157"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 158,
+      "title": "Profile Creation with Photo and Bio",
+      "summary": "As a registered user, I need to create a profile with a photo (JPEG/PNG, up to 2 MB) and a biography (up to 500 characters) from the account settings page to personalize my account and share information about myself.",
+      "id": "task_158"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 159,
+      "title": "Text Post Creation with Image Upload",
+      "summary": "A user must be able to create a post with text and optional images, which will then be saved and shared with other users.",
+      "id": "task_159"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 160,
+      "title": "Post Like/Unlike with Count Display",
+      "summary": "Users need a like/unlike button on posts that immediately updates the total like count and toggles between liked and unliked states to enable content engagement and display popularity.",
+      "id": "task_160"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 161,
+      "title": "Flat Comment Creation and Management",
+      "summary": "Auser can add, edit, and delete flat comments on posts to engage with content and control their contributions.",
+      "id": "task_161"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 162,
+      "title": "Chronological News Feed from Friends",
+      "summary": "A user wants to view a news feed displaying posts from their friends in chronological order (newest first) to stay updated on recent activities.",
+      "id": "task_162"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 163,
+      "title": "Friend Request Send and Accept/Reject",
+      "summary": "A user can send friend requests to others, and accept or reject incoming requests, with notifications sent, to build a network of mutual friendships.",
+      "id": "task_163"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 164,
+      "title": "Follow/Unfollow Users with Counts",
+      "summary": "The user needs a feature to follow or unfollow other users and view follower/following counts on profiles to manage connections and assess social influence.",
+      "id": "task_164"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 165,
+      "title": "Group Creation with Public/Private Flag",
+      "summary": "Users need the ability to create groups with public or private visibility settings to control who can view or join them, with public groups being open to all and private groups requiring approval or invitation.",
+      "id": "task_165"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 166,
+      "title": "Private Group Join Request Approval",
+      "summary": "Group owners or admins need the ability to review and approve or reject pending join requests for private groups to control membership.",
+      "id": "task_166"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 167,
+      "title": "Group-Specific Feed Display",
+      "summary": "A group member wants to see a feed of posts only from their own groups, ensuring they stay updated without unrelated content.",
+      "id": "task_167"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 168,
+      "title": "One-on-One Direct Messaging",
+      "summary": "The user requires a private messaging feature to send and receive direct, instant, and confidential one-on-one messages with other users, including message history access.",
+      "id": "task_168"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 169,
+      "title": "Notifications for Likes and Comments",
+      "summary": "The user needs to receive notifications when someone likes or comments on their post, but not for other interactions, and they can disable notifications for specific posts.",
+      "id": "task_169"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 170,
+      "title": "Keyword Search Across Users and Posts",
+      "summary": "The user needs a keyword search feature that returns both matching users and posts in a combined results list.",
+      "id": "task_170"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 171,
+      "title": "Bookmark Posts to Saved List",
+      "summary": "The user requires a bookmarking feature to save posts and access them later from a dedicated saved list.",
+      "id": "task_171"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 172,
+      "title": "Report Post with Reason Dropdown",
+      "summary": "A logged-in user can report a post by selecting a reason from a dropdown menu, which flags the post for review and shows a confirmation message.",
+      "id": "task_172"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 173,
+      "title": "Admin Panel for Reported Content",
+      "summary": "An admin requires a panel to review reported content and take actions such as warn, hide, or delete to effectively moderate content.",
+      "id": "task_173"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 174,
+      "title": "Profile Privacy Public/Private Toggle",
+      "summary": "The user needs a feature to toggle their profile visibility between public and private, allowing them to control who can view their profile at any time.",
+      "id": "task_174"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 175,
+      "title": "Block User to Hide Content and Messages",
+      "summary": "A user can block another user to hide their existing and future posts and messages, with no notification to the blocked user and the option to undo the block later.",
+      "id": "task_175"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 176,
+      "title": "Notification Preference Toggles per Category",
+      "summary": "Users can enable or disable notifications per category (e.g., likes, comments, friend requests) via toggles in their settings, with changes taking effect immediately.",
+      "id": "task_176"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 177,
+      "title": "Admin Verified Badge Grant/Revoke",
+      "summary": "Admins can grant or revoke verified badges on user profiles to manage user credibility and verification status.",
+      "id": "task_177"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 178,
+      "title": "User Post History and Account Settings",
+      "summary": "User needs to view their post history and manage account settings (change password, email, delete account) to control their account and review their posts.",
+      "id": "task_178"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 179,
+      "title": "Pagination on Feeds and Search Results",
+      "summary": "The user requires paginated results when browsing feeds or search results to avoid long loading times, with only the first page loaded initially and navigation controls for further pages.",
+      "id": "task_179"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 180,
+      "title": "Account Soft-Deletion with Deleted Flag",
+      "summary": "A user requests to soft-delete their account so that the account is marked as deleted but their data is preserved for a grace period, allowing potential recovery.",
+      "id": "task_180"
+    },
+    {
+      "node_type": "task",
+      "entity_id": 181,
+      "title": "Admin Role Enforcement with Action Logging",
+      "summary": "Admins require all actions like banning and warning to be logged persistently for audit review, including details like admin ID, action type, timestamp, and target user.",
+      "id": "task_181"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.user",
+      "layer": "domain",
+      "path": "src/domain/user",
+      "id": "pkg_domain.user"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserAccount",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_UserAccount"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AccountStatus",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_AccountStatus"
+    },
+    {
+      "node_type": "class_node",
+      "name": "EmailConfirmation",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_EmailConfirmation"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Resource",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_Resource"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Actor",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_Actor"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Permission",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_Permission"
+    },
+    {
+      "node_type": "class_node",
+      "name": "State",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_State"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Interface",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_Interface"
+    },
+    {
+      "node_type": "class_node",
+      "name": "InterfaceKind",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_InterfaceKind"
+    },
+    {
+      "node_type": "class_node",
+      "name": "REQ_REG_01",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_REQ_REG_01"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserAccountStatus",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_UserAccountStatus"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Operation",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_Operation"
+    },
+    {
+      "node_type": "class_node",
+      "name": "User",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_User"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserId",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_UserId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserCreatedEvent",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_UserCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserUpdatedEvent",
+      "file": "User.py",
+      "package": "domain.user",
+      "id": "class_UserUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.user",
+      "layer": "dto",
+      "path": "src/dto/user",
+      "id": "pkg_dto.user"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SoftDeleteRequest",
+      "file": "user_dto.py",
+      "package": "dto.user",
+      "id": "class_SoftDeleteRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "RecoveryRequest",
+      "file": "user_dto.py",
+      "package": "dto.user",
+      "id": "class_RecoveryRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AccountStatusResponse",
+      "file": "user_dto.py",
+      "package": "dto.user",
+      "id": "class_AccountStatusResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.user",
+      "layer": "repository",
+      "path": "src/repository/user",
+      "id": "pkg_repository.user"
+    },
+    {
+      "node_type": "class_node",
+      "name": "RegistrationPage",
+      "file": "user_repository.py",
+      "package": "repository.user",
+      "id": "class_RegistrationPage"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserDatabase",
+      "file": "user_repository.py",
+      "package": "repository.user",
+      "id": "class_UserDatabase"
+    },
+    {
+      "node_type": "class_node",
+      "name": "EmailNotificationSystem",
+      "file": "user_repository.py",
+      "package": "repository.user",
+      "id": "class_EmailNotificationSystem"
+    },
+    {
+      "node_type": "class_node",
+      "name": "EmailValidator",
+      "file": "user_repository.py",
+      "package": "repository.user",
+      "id": "class_EmailValidator"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AccountManagementService",
+      "file": "user_repository.py",
+      "package": "repository.user",
+      "id": "class_AccountManagementService"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserDataRepository",
+      "file": "user_repository.py",
+      "package": "repository.user",
+      "id": "class_UserDataRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.user",
+      "layer": "orm",
+      "path": "src/orm/user",
+      "id": "pkg_orm.user"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserORM",
+      "file": "user_orm.py",
+      "package": "orm.user",
+      "id": "class_UserORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.user",
+      "layer": "infra",
+      "path": "src/infra/user",
+      "id": "pkg_infra.user"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyUserRepository",
+      "file": "user_repo_impl.py",
+      "package": "infra.user",
+      "id": "class_SQLAlchemyUserRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.user",
+      "layer": "service",
+      "path": "src/service/user",
+      "id": "pkg_service.user"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserService",
+      "file": "user_service.py",
+      "package": "service.user",
+      "id": "class_UserService"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserServiceImpl",
+      "file": "user_service.py",
+      "package": "service.user",
+      "id": "class_UserServiceImpl"
+    },
+    {
+      "node_type": "package",
+      "name": "api.user",
+      "layer": "api",
+      "path": "src/api/user",
+      "id": "pkg_api.user"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserRouter",
+      "file": "user_router.py",
+      "package": "api.user",
+      "id": "class_UserRouter"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.post",
+      "layer": "domain",
+      "path": "src/domain/post",
+      "id": "pkg_domain.post"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Post",
+      "file": "Post.py",
+      "package": "domain.post",
+      "id": "class_Post"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Image",
+      "file": "Post.py",
+      "package": "domain.post",
+      "id": "class_Image"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Role",
+      "file": "Post.py",
+      "package": "domain.post",
+      "id": "class_Role"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PostState",
+      "file": "Post.py",
+      "package": "domain.post",
+      "id": "class_PostState"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PostId",
+      "file": "Post.py",
+      "package": "domain.post",
+      "id": "class_PostId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PostCreatedEvent",
+      "file": "Post.py",
+      "package": "domain.post",
+      "id": "class_PostCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PostUpdatedEvent",
+      "file": "Post.py",
+      "package": "domain.post",
+      "id": "class_PostUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.post",
+      "layer": "dto",
+      "path": "src/dto/post",
+      "id": "pkg_dto.post"
+    },
+    {
+      "node_type": "class_node",
+      "name": "CreatePostRequest",
+      "file": "post_dto.py",
+      "package": "dto.post",
+      "id": "class_CreatePostRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "CreatePostResponse",
+      "file": "post_dto.py",
+      "package": "dto.post",
+      "id": "class_CreatePostResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.post",
+      "layer": "repository",
+      "path": "src/repository/post",
+      "id": "pkg_repository.post"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ContentDatabase",
+      "file": "post_repository.py",
+      "package": "repository.post",
+      "id": "class_ContentDatabase"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ImageStorageService",
+      "file": "post_repository.py",
+      "package": "repository.post",
+      "id": "class_ImageStorageService"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.post",
+      "layer": "orm",
+      "path": "src/orm/post",
+      "id": "pkg_orm.post"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PostORM",
+      "file": "post_orm.py",
+      "package": "orm.post",
+      "id": "class_PostORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.post",
+      "layer": "infra",
+      "path": "src/infra/post",
+      "id": "pkg_infra.post"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyPostRepository",
+      "file": "post_repo_impl.py",
+      "package": "infra.post",
+      "id": "class_SQLAlchemyPostRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.post",
+      "layer": "service",
+      "path": "src/service/post",
+      "id": "pkg_service.post"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PostService",
+      "file": "post_service.py",
+      "package": "service.post",
+      "id": "class_PostService"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PostServiceImpl",
+      "file": "post_service.py",
+      "package": "service.post",
+      "id": "class_PostServiceImpl"
+    },
+    {
+      "node_type": "package",
+      "name": "api.post",
+      "layer": "api",
+      "path": "src/api/post",
+      "id": "pkg_api.post"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PostCreationAPI",
+      "file": "post_router.py",
+      "package": "api.post",
+      "id": "class_PostCreationAPI"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.notification_preference",
+      "layer": "domain",
+      "path": "src/domain/notification_preference",
+      "id": "pkg_domain.notification_preference"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationPreference",
+      "file": "NotificationPreference.py",
+      "package": "domain.notification_preference",
+      "id": "class_NotificationPreference"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationCategory",
+      "file": "NotificationPreference.py",
+      "package": "domain.notification_preference",
+      "id": "class_NotificationCategory"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserState",
+      "file": "NotificationPreference.py",
+      "package": "domain.notification_preference",
+      "id": "class_UserState"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationPreferenceId",
+      "file": "NotificationPreference.py",
+      "package": "domain.notification_preference",
+      "id": "class_NotificationPreferenceId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationPreferenceCreatedEvent",
+      "file": "NotificationPreference.py",
+      "package": "domain.notification_preference",
+      "id": "class_NotificationPreferenceCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationPreferenceUpdatedEvent",
+      "file": "NotificationPreference.py",
+      "package": "domain.notification_preference",
+      "id": "class_NotificationPreferenceUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.notification_preference",
+      "layer": "dto",
+      "path": "src/dto/notification_preference",
+      "id": "pkg_dto.notification_preference"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationPreferenceDTO",
+      "file": "notification_preference_dto.py",
+      "package": "dto.notification_preference",
+      "id": "class_NotificationPreferenceDTO"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.notification_preference",
+      "layer": "repository",
+      "path": "src/repository/notification_preference",
+      "id": "pkg_repository.notification_preference"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationPreferenceRepository",
+      "file": "notification_preference_repository.py",
+      "package": "repository.notification_preference",
+      "id": "class_NotificationPreferenceRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.notification_preference",
+      "layer": "orm",
+      "path": "src/orm/notification_preference",
+      "id": "pkg_orm.notification_preference"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationPreferenceORM",
+      "file": "notification_preference_orm.py",
+      "package": "orm.notification_preference",
+      "id": "class_NotificationPreferenceORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.notification_preference",
+      "layer": "infra",
+      "path": "src/infra/notification_preference",
+      "id": "pkg_infra.notification_preference"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyNotificationPreferenceRepository",
+      "file": "notification_preference_repo_impl.py",
+      "package": "infra.notification_preference",
+      "id": "class_SQLAlchemyNotificationPreferenceRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.notification_preference",
+      "layer": "service",
+      "path": "src/service/notification_preference",
+      "id": "pkg_service.notification_preference"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationSettingsService",
+      "file": "notification_preference_service.py",
+      "package": "service.notification_preference",
+      "id": "class_NotificationSettingsService"
+    },
+    {
+      "node_type": "package",
+      "name": "api.notification_preference",
+      "layer": "api",
+      "path": "src/api/notification_preference",
+      "id": "pkg_api.notification_preference"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationSettingsController",
+      "file": "notification_preference_router.py",
+      "package": "api.notification_preference",
+      "id": "class_NotificationSettingsController"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.verified_badge",
+      "layer": "domain",
+      "path": "src/domain/verified_badge",
+      "id": "pkg_domain.verified_badge"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserProfile",
+      "file": "VerifiedBadge.py",
+      "package": "domain.verified_badge",
+      "id": "class_UserProfile"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Admin",
+      "file": "VerifiedBadge.py",
+      "package": "domain.verified_badge",
+      "id": "class_Admin"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditEntry",
+      "file": "VerifiedBadge.py",
+      "package": "domain.verified_badge",
+      "id": "class_AuditEntry"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditAction",
+      "file": "VerifiedBadge.py",
+      "package": "domain.verified_badge",
+      "id": "class_AuditAction"
+    },
+    {
+      "node_type": "class_node",
+      "name": "VerifiedBadge",
+      "file": "VerifiedBadge.py",
+      "package": "domain.verified_badge",
+      "id": "class_VerifiedBadge"
+    },
+    {
+      "node_type": "class_node",
+      "name": "VerifiedBadgeId",
+      "file": "VerifiedBadge.py",
+      "package": "domain.verified_badge",
+      "id": "class_VerifiedBadgeId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "VerifiedBadgeCreatedEvent",
+      "file": "VerifiedBadge.py",
+      "package": "domain.verified_badge",
+      "id": "class_VerifiedBadgeCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "VerifiedBadgeUpdatedEvent",
+      "file": "VerifiedBadge.py",
+      "package": "domain.verified_badge",
+      "id": "class_VerifiedBadgeUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.verified_badge",
+      "layer": "dto",
+      "path": "src/dto/verified_badge",
+      "id": "pkg_dto.verified_badge"
+    },
+    {
+      "node_type": "class_node",
+      "name": "VerifiedBadgeCreateRequest",
+      "file": "verified_badge_dto.py",
+      "package": "dto.verified_badge",
+      "id": "class_VerifiedBadgeCreateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "VerifiedBadgeUpdateRequest",
+      "file": "verified_badge_dto.py",
+      "package": "dto.verified_badge",
+      "id": "class_VerifiedBadgeUpdateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "VerifiedBadgeResponse",
+      "file": "verified_badge_dto.py",
+      "package": "dto.verified_badge",
+      "id": "class_VerifiedBadgeResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.verified_badge",
+      "layer": "repository",
+      "path": "src/repository/verified_badge",
+      "id": "pkg_repository.verified_badge"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditLoggingAPI",
+      "file": "verified_badge_repository.py",
+      "package": "repository.verified_badge",
+      "id": "class_AuditLoggingAPI"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.verified_badge",
+      "layer": "orm",
+      "path": "src/orm/verified_badge",
+      "id": "pkg_orm.verified_badge"
+    },
+    {
+      "node_type": "class_node",
+      "name": "VerifiedBadgeORM",
+      "file": "verified_badge_orm.py",
+      "package": "orm.verified_badge",
+      "id": "class_VerifiedBadgeORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.verified_badge",
+      "layer": "infra",
+      "path": "src/infra/verified_badge",
+      "id": "pkg_infra.verified_badge"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyVerifiedBadgeRepository",
+      "file": "verified_badge_repo_impl.py",
+      "package": "infra.verified_badge",
+      "id": "class_SQLAlchemyVerifiedBadgeRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.verified_badge",
+      "layer": "service",
+      "path": "src/service/verified_badge",
+      "id": "pkg_service.verified_badge"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BadgeManagementService",
+      "file": "verified_badge_service.py",
+      "package": "service.verified_badge",
+      "id": "class_BadgeManagementService"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BadgeOperationRequest",
+      "file": "verified_badge_service.py",
+      "package": "service.verified_badge",
+      "id": "class_BadgeOperationRequest"
+    },
+    {
+      "node_type": "package",
+      "name": "api.verified_badge",
+      "layer": "api",
+      "path": "src/api/verified_badge",
+      "id": "pkg_api.verified_badge"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AdminUserManagementInterface",
+      "file": "verified_badge_router.py",
+      "package": "api.verified_badge",
+      "id": "class_AdminUserManagementInterface"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AdminUserManagementController",
+      "file": "verified_badge_router.py",
+      "package": "api.verified_badge",
+      "id": "class_AdminUserManagementController"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.group",
+      "layer": "domain",
+      "path": "src/domain/group",
+      "id": "pkg_domain.group"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupName",
+      "file": "Group.py",
+      "package": "domain.group",
+      "id": "class_GroupName"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Visibility",
+      "file": "Group.py",
+      "package": "domain.group",
+      "id": "class_Visibility"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Group",
+      "file": "Group.py",
+      "package": "domain.group",
+      "id": "class_Group"
+    },
+    {
+      "node_type": "class_node",
+      "name": "IfaceKind",
+      "file": "Group.py",
+      "package": "domain.group",
+      "id": "class_IfaceKind"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupId",
+      "file": "Group.py",
+      "package": "domain.group",
+      "id": "class_GroupId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupCreatedEvent",
+      "file": "Group.py",
+      "package": "domain.group",
+      "id": "class_GroupCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupUpdatedEvent",
+      "file": "Group.py",
+      "package": "domain.group",
+      "id": "class_GroupUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.group",
+      "layer": "dto",
+      "path": "src/dto/group",
+      "id": "pkg_dto.group"
+    },
+    {
+      "node_type": "class_node",
+      "name": "CreateGroupRequest",
+      "file": "group_dto.py",
+      "package": "dto.group",
+      "id": "class_CreateGroupRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "CreateGroupResponse",
+      "file": "group_dto.py",
+      "package": "dto.group",
+      "id": "class_CreateGroupResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.group",
+      "layer": "repository",
+      "path": "src/repository/group",
+      "id": "pkg_repository.group"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupCreationAPI",
+      "file": "group_repository.py",
+      "package": "repository.group",
+      "id": "class_GroupCreationAPI"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupDB",
+      "file": "group_repository.py",
+      "package": "repository.group",
+      "id": "class_GroupDB"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.group",
+      "layer": "orm",
+      "path": "src/orm/group",
+      "id": "pkg_orm.group"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupORM",
+      "file": "group_orm.py",
+      "package": "orm.group",
+      "id": "class_GroupORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.group",
+      "layer": "infra",
+      "path": "src/infra/group",
+      "id": "pkg_infra.group"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyGroupRepository",
+      "file": "group_repo_impl.py",
+      "package": "infra.group",
+      "id": "class_SQLAlchemyGroupRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.group",
+      "layer": "service",
+      "path": "src/service/group",
+      "id": "pkg_service.group"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupCreationService",
+      "file": "group_service.py",
+      "package": "service.group",
+      "id": "class_GroupCreationService"
+    },
+    {
+      "node_type": "package",
+      "name": "api.group",
+      "layer": "api",
+      "path": "src/api/group",
+      "id": "pkg_api.group"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupController",
+      "file": "group_router.py",
+      "package": "api.group",
+      "id": "class_GroupController"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.profile",
+      "layer": "domain",
+      "path": "src/domain/profile",
+      "id": "pkg_domain.profile"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Profile",
+      "file": "Profile.py",
+      "package": "domain.profile",
+      "id": "class_Profile"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Photo",
+      "file": "Profile.py",
+      "package": "domain.profile",
+      "id": "class_Photo"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Biography",
+      "file": "Profile.py",
+      "package": "domain.profile",
+      "id": "class_Biography"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ProfileResource",
+      "file": "Profile.py",
+      "package": "domain.profile",
+      "id": "class_ProfileResource"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuthenticationStatus",
+      "file": "Profile.py",
+      "package": "domain.profile",
+      "id": "class_AuthenticationStatus"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ProfileId",
+      "file": "Profile.py",
+      "package": "domain.profile",
+      "id": "class_ProfileId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ProfileCreatedEvent",
+      "file": "Profile.py",
+      "package": "domain.profile",
+      "id": "class_ProfileCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ProfileUpdatedEvent",
+      "file": "Profile.py",
+      "package": "domain.profile",
+      "id": "class_ProfileUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.profile",
+      "layer": "dto",
+      "path": "src/dto/profile",
+      "id": "pkg_dto.profile"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ProfileCreateRequest",
+      "file": "profile_dto.py",
+      "package": "dto.profile",
+      "id": "class_ProfileCreateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ProfileUpdateRequest",
+      "file": "profile_dto.py",
+      "package": "dto.profile",
+      "id": "class_ProfileUpdateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ProfileResponse",
+      "file": "profile_dto.py",
+      "package": "dto.profile",
+      "id": "class_ProfileResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.profile",
+      "layer": "repository",
+      "path": "src/repository/profile",
+      "id": "pkg_repository.profile"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserProfilesDatabase",
+      "file": "profile_repository.py",
+      "package": "repository.profile",
+      "id": "class_UserProfilesDatabase"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.profile",
+      "layer": "orm",
+      "path": "src/orm/profile",
+      "id": "pkg_orm.profile"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ProfileORM",
+      "file": "profile_orm.py",
+      "package": "orm.profile",
+      "id": "class_ProfileORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.profile",
+      "layer": "infra",
+      "path": "src/infra/profile",
+      "id": "pkg_infra.profile"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyProfileRepository",
+      "file": "profile_repo_impl.py",
+      "package": "infra.profile",
+      "id": "class_SQLAlchemyProfileRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.profile",
+      "layer": "service",
+      "path": "src/service/profile",
+      "id": "pkg_service.profile"
+    },
+    {
+      "node_type": "class_node",
+      "name": "REQ_USER_01",
+      "file": "profile_service.py",
+      "package": "service.profile",
+      "id": "class_REQ_USER_01"
+    },
+    {
+      "node_type": "package",
+      "name": "api.profile",
+      "layer": "api",
+      "path": "src/api/profile",
+      "id": "pkg_api.profile"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Account_Settings_Page",
+      "file": "profile_router.py",
+      "package": "api.profile",
+      "id": "class_Account_Settings_Page"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ProfileSettingsAPI",
+      "file": "profile_router.py",
+      "package": "api.profile",
+      "id": "class_ProfileSettingsAPI"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.friendship",
+      "layer": "domain",
+      "path": "src/domain/friendship",
+      "id": "pkg_domain.friendship"
+    },
+    {
+      "node_type": "class_node",
+      "name": "OnlineStatus",
+      "file": "Friendship.py",
+      "package": "domain.friendship",
+      "id": "class_OnlineStatus"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FriendRequestStatus",
+      "file": "Friendship.py",
+      "package": "domain.friendship",
+      "id": "class_FriendRequestStatus"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationType",
+      "file": "Friendship.py",
+      "package": "domain.friendship",
+      "id": "class_NotificationType"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FriendRequest",
+      "file": "Friendship.py",
+      "package": "domain.friendship",
+      "id": "class_FriendRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Friendship",
+      "file": "Friendship.py",
+      "package": "domain.friendship",
+      "id": "class_Friendship"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FriendshipId",
+      "file": "Friendship.py",
+      "package": "domain.friendship",
+      "id": "class_FriendshipId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FriendshipCreatedEvent",
+      "file": "Friendship.py",
+      "package": "domain.friendship",
+      "id": "class_FriendshipCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FriendshipUpdatedEvent",
+      "file": "Friendship.py",
+      "package": "domain.friendship",
+      "id": "class_FriendshipUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.friendship",
+      "layer": "dto",
+      "path": "src/dto/friendship",
+      "id": "pkg_dto.friendship"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FriendshipCreateRequest",
+      "file": "friendship_dto.py",
+      "package": "dto.friendship",
+      "id": "class_FriendshipCreateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FriendshipUpdateRequest",
+      "file": "friendship_dto.py",
+      "package": "dto.friendship",
+      "id": "class_FriendshipUpdateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FriendshipResponse",
+      "file": "friendship_dto.py",
+      "package": "dto.friendship",
+      "id": "class_FriendshipResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.friendship",
+      "layer": "repository",
+      "path": "src/repository/friendship",
+      "id": "pkg_repository.friendship"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FriendshipRepository",
+      "file": "friendship_repository.py",
+      "package": "repository.friendship",
+      "id": "class_FriendshipRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.friendship",
+      "layer": "orm",
+      "path": "src/orm/friendship",
+      "id": "pkg_orm.friendship"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FriendshipORM",
+      "file": "friendship_orm.py",
+      "package": "orm.friendship",
+      "id": "class_FriendshipORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.friendship",
+      "layer": "infra",
+      "path": "src/infra/friendship",
+      "id": "pkg_infra.friendship"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyFriendshipRepository",
+      "file": "friendship_repo_impl.py",
+      "package": "infra.friendship",
+      "id": "class_SQLAlchemyFriendshipRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.friendship",
+      "layer": "service",
+      "path": "src/service/friendship",
+      "id": "pkg_service.friendship"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FriendshipService",
+      "file": "friendship_service.py",
+      "package": "service.friendship",
+      "id": "class_FriendshipService"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FriendshipServiceImpl",
+      "file": "friendship_service.py",
+      "package": "service.friendship",
+      "id": "class_FriendshipServiceImpl"
+    },
+    {
+      "node_type": "package",
+      "name": "api.friendship",
+      "layer": "api",
+      "path": "src/api/friendship",
+      "id": "pkg_api.friendship"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FriendshipRouter",
+      "file": "friendship_router.py",
+      "package": "api.friendship",
+      "id": "class_FriendshipRouter"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.audit_log",
+      "layer": "domain",
+      "path": "src/domain/audit_log",
+      "id": "pkg_domain.audit_log"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditLog",
+      "file": "AuditLog.py",
+      "package": "domain.audit_log",
+      "id": "class_AuditLog"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditLogId",
+      "file": "AuditLog.py",
+      "package": "domain.audit_log",
+      "id": "class_AuditLogId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditLogCreatedEvent",
+      "file": "AuditLog.py",
+      "package": "domain.audit_log",
+      "id": "class_AuditLogCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditLogUpdatedEvent",
+      "file": "AuditLog.py",
+      "package": "domain.audit_log",
+      "id": "class_AuditLogUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.audit_log",
+      "layer": "dto",
+      "path": "src/dto/audit_log",
+      "id": "pkg_dto.audit_log"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditLogCreateRequest",
+      "file": "audit_log_dto.py",
+      "package": "dto.audit_log",
+      "id": "class_AuditLogCreateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditLogUpdateRequest",
+      "file": "audit_log_dto.py",
+      "package": "dto.audit_log",
+      "id": "class_AuditLogUpdateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditLogResponse",
+      "file": "audit_log_dto.py",
+      "package": "dto.audit_log",
+      "id": "class_AuditLogResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.audit_log",
+      "layer": "repository",
+      "path": "src/repository/audit_log",
+      "id": "pkg_repository.audit_log"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditLogRepository",
+      "file": "audit_log_repository.py",
+      "package": "repository.audit_log",
+      "id": "class_AuditLogRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.audit_log",
+      "layer": "orm",
+      "path": "src/orm/audit_log",
+      "id": "pkg_orm.audit_log"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditLogORM",
+      "file": "audit_log_orm.py",
+      "package": "orm.audit_log",
+      "id": "class_AuditLogORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.audit_log",
+      "layer": "infra",
+      "path": "src/infra/audit_log",
+      "id": "pkg_infra.audit_log"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyAuditLogRepository",
+      "file": "audit_log_repo_impl.py",
+      "package": "infra.audit_log",
+      "id": "class_SQLAlchemyAuditLogRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.audit_log",
+      "layer": "service",
+      "path": "src/service/audit_log",
+      "id": "pkg_service.audit_log"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditLogService",
+      "file": "audit_log_service.py",
+      "package": "service.audit_log",
+      "id": "class_AuditLogService"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditLogServiceImpl",
+      "file": "audit_log_service.py",
+      "package": "service.audit_log",
+      "id": "class_AuditLogServiceImpl"
+    },
+    {
+      "node_type": "package",
+      "name": "api.audit_log",
+      "layer": "api",
+      "path": "src/api/audit_log",
+      "id": "pkg_api.audit_log"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuditLogRouter",
+      "file": "audit_log_router.py",
+      "package": "api.audit_log",
+      "id": "class_AuditLogRouter"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.block",
+      "layer": "domain",
+      "path": "src/domain/block",
+      "id": "pkg_domain.block"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BlockRecord",
+      "file": "Block.py",
+      "package": "domain.block",
+      "id": "class_BlockRecord"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Block",
+      "file": "Block.py",
+      "package": "domain.block",
+      "id": "class_Block"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BlockId",
+      "file": "Block.py",
+      "package": "domain.block",
+      "id": "class_BlockId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BlockCreatedEvent",
+      "file": "Block.py",
+      "package": "domain.block",
+      "id": "class_BlockCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BlockUpdatedEvent",
+      "file": "Block.py",
+      "package": "domain.block",
+      "id": "class_BlockUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.block",
+      "layer": "dto",
+      "path": "src/dto/block",
+      "id": "pkg_dto.block"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BlockCreateRequest",
+      "file": "block_dto.py",
+      "package": "dto.block",
+      "id": "class_BlockCreateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BlockUpdateRequest",
+      "file": "block_dto.py",
+      "package": "dto.block",
+      "id": "class_BlockUpdateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BlockResponse",
+      "file": "block_dto.py",
+      "package": "dto.block",
+      "id": "class_BlockResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.block",
+      "layer": "repository",
+      "path": "src/repository/block",
+      "id": "pkg_repository.block"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserProfileAPI",
+      "file": "block_repository.py",
+      "package": "repository.block",
+      "id": "class_UserProfileAPI"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PostsDatabase",
+      "file": "block_repository.py",
+      "package": "repository.block",
+      "id": "class_PostsDatabase"
+    },
+    {
+      "node_type": "class_node",
+      "name": "MessagesDatabase",
+      "file": "block_repository.py",
+      "package": "repository.block",
+      "id": "class_MessagesDatabase"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationSystem",
+      "file": "block_repository.py",
+      "package": "repository.block",
+      "id": "class_NotificationSystem"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.block",
+      "layer": "orm",
+      "path": "src/orm/block",
+      "id": "pkg_orm.block"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BlockORM",
+      "file": "block_orm.py",
+      "package": "orm.block",
+      "id": "class_BlockORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.block",
+      "layer": "infra",
+      "path": "src/infra/block",
+      "id": "pkg_infra.block"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyBlockRepository",
+      "file": "block_repo_impl.py",
+      "package": "infra.block",
+      "id": "class_SQLAlchemyBlockRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.block",
+      "layer": "service",
+      "path": "src/service/block",
+      "id": "pkg_service.block"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BlockService",
+      "file": "block_service.py",
+      "package": "service.block",
+      "id": "class_BlockService"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BlockServiceImpl",
+      "file": "block_service.py",
+      "package": "service.block",
+      "id": "class_BlockServiceImpl"
+    },
+    {
+      "node_type": "package",
+      "name": "api.block",
+      "layer": "api",
+      "path": "src/api/block",
+      "id": "pkg_api.block"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BlockRouter",
+      "file": "block_router.py",
+      "package": "api.block",
+      "id": "class_BlockRouter"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.follow",
+      "layer": "domain",
+      "path": "src/domain/follow",
+      "id": "pkg_domain.follow"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Follow",
+      "file": "Follow.py",
+      "package": "domain.follow",
+      "id": "class_Follow"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FollowId",
+      "file": "Follow.py",
+      "package": "domain.follow",
+      "id": "class_FollowId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FollowCreatedEvent",
+      "file": "Follow.py",
+      "package": "domain.follow",
+      "id": "class_FollowCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FollowUpdatedEvent",
+      "file": "Follow.py",
+      "package": "domain.follow",
+      "id": "class_FollowUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.follow",
+      "layer": "dto",
+      "path": "src/dto/follow",
+      "id": "pkg_dto.follow"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FollowRequest",
+      "file": "follow_dto.py",
+      "package": "dto.follow",
+      "id": "class_FollowRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UnfollowRequest",
+      "file": "follow_dto.py",
+      "package": "dto.follow",
+      "id": "class_UnfollowRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FollowResponse",
+      "file": "follow_dto.py",
+      "package": "dto.follow",
+      "id": "class_FollowResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.follow",
+      "layer": "repository",
+      "path": "src/repository/follow",
+      "id": "pkg_repository.follow"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FollowUnfollowAPI",
+      "file": "follow_repository.py",
+      "package": "repository.follow",
+      "id": "class_FollowUnfollowAPI"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserProfileDatabase",
+      "file": "follow_repository.py",
+      "package": "repository.follow",
+      "id": "class_UserProfileDatabase"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.follow",
+      "layer": "orm",
+      "path": "src/orm/follow",
+      "id": "pkg_orm.follow"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FollowORM",
+      "file": "follow_orm.py",
+      "package": "orm.follow",
+      "id": "class_FollowORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.follow",
+      "layer": "infra",
+      "path": "src/infra/follow",
+      "id": "pkg_infra.follow"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyFollowRepository",
+      "file": "follow_repo_impl.py",
+      "package": "infra.follow",
+      "id": "class_SQLAlchemyFollowRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.follow",
+      "layer": "service",
+      "path": "src/service/follow",
+      "id": "pkg_service.follow"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FollowUnfollowService",
+      "file": "follow_service.py",
+      "package": "service.follow",
+      "id": "class_FollowUnfollowService"
+    },
+    {
+      "node_type": "package",
+      "name": "api.follow",
+      "layer": "api",
+      "path": "src/api/follow",
+      "id": "pkg_api.follow"
+    },
+    {
+      "node_type": "class_node",
+      "name": "FollowUnfollowController",
+      "file": "follow_router.py",
+      "package": "api.follow",
+      "id": "class_FollowUnfollowController"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.message",
+      "layer": "domain",
+      "path": "src/domain/message",
+      "id": "pkg_domain.message"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Message_Service_API",
+      "file": "Message.py",
+      "package": "domain.message",
+      "id": "class_Message_Service_API"
+    },
+    {
+      "node_type": "class_node",
+      "name": "User_Database",
+      "file": "Message.py",
+      "package": "domain.message",
+      "id": "class_User_Database"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Message",
+      "file": "Message.py",
+      "package": "domain.message",
+      "id": "class_Message"
+    },
+    {
+      "node_type": "class_node",
+      "name": "MessageId",
+      "file": "Message.py",
+      "package": "domain.message",
+      "id": "class_MessageId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "MessageCreatedEvent",
+      "file": "Message.py",
+      "package": "domain.message",
+      "id": "class_MessageCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "MessageUpdatedEvent",
+      "file": "Message.py",
+      "package": "domain.message",
+      "id": "class_MessageUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.message",
+      "layer": "dto",
+      "path": "src/dto/message",
+      "id": "pkg_dto.message"
+    },
+    {
+      "node_type": "class_node",
+      "name": "MessageCreateRequest",
+      "file": "message_dto.py",
+      "package": "dto.message",
+      "id": "class_MessageCreateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "MessageUpdateRequest",
+      "file": "message_dto.py",
+      "package": "dto.message",
+      "id": "class_MessageUpdateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "MessageResponse",
+      "file": "message_dto.py",
+      "package": "dto.message",
+      "id": "class_MessageResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.message",
+      "layer": "repository",
+      "path": "src/repository/message",
+      "id": "pkg_repository.message"
+    },
+    {
+      "node_type": "class_node",
+      "name": "MessageRepository",
+      "file": "message_repository.py",
+      "package": "repository.message",
+      "id": "class_MessageRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.message",
+      "layer": "orm",
+      "path": "src/orm/message",
+      "id": "pkg_orm.message"
+    },
+    {
+      "node_type": "class_node",
+      "name": "MessageORM",
+      "file": "message_orm.py",
+      "package": "orm.message",
+      "id": "class_MessageORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.message",
+      "layer": "infra",
+      "path": "src/infra/message",
+      "id": "pkg_infra.message"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyMessageRepository",
+      "file": "message_repo_impl.py",
+      "package": "infra.message",
+      "id": "class_SQLAlchemyMessageRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.message",
+      "layer": "service",
+      "path": "src/service/message",
+      "id": "pkg_service.message"
+    },
+    {
+      "node_type": "class_node",
+      "name": "REQ_PRIV_MES_01",
+      "file": "message_service.py",
+      "package": "service.message",
+      "id": "class_REQ_PRIV_MES_01"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SendMessageOperation",
+      "file": "message_service.py",
+      "package": "service.message",
+      "id": "class_SendMessageOperation"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ReceiveMessageOperation",
+      "file": "message_service.py",
+      "package": "service.message",
+      "id": "class_ReceiveMessageOperation"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ReplyToMessageOperation",
+      "file": "message_service.py",
+      "package": "service.message",
+      "id": "class_ReplyToMessageOperation"
+    },
+    {
+      "node_type": "package",
+      "name": "api.message",
+      "layer": "api",
+      "path": "src/api/message",
+      "id": "pkg_api.message"
+    },
+    {
+      "node_type": "class_node",
+      "name": "MessageRouter",
+      "file": "message_router.py",
+      "package": "api.message",
+      "id": "class_MessageRouter"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.like",
+      "layer": "domain",
+      "path": "src/domain/like",
+      "id": "pkg_domain.like"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Like",
+      "file": "Like.py",
+      "package": "domain.like",
+      "id": "class_Like"
+    },
+    {
+      "node_type": "class_node",
+      "name": "LikeId",
+      "file": "Like.py",
+      "package": "domain.like",
+      "id": "class_LikeId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "LikeCreatedEvent",
+      "file": "Like.py",
+      "package": "domain.like",
+      "id": "class_LikeCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "LikeUpdatedEvent",
+      "file": "Like.py",
+      "package": "domain.like",
+      "id": "class_LikeUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.like",
+      "layer": "dto",
+      "path": "src/dto/like",
+      "id": "pkg_dto.like"
+    },
+    {
+      "node_type": "class_node",
+      "name": "LikeRequest",
+      "file": "like_dto.py",
+      "package": "dto.like",
+      "id": "class_LikeRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "LikeResponse",
+      "file": "like_dto.py",
+      "package": "dto.like",
+      "id": "class_LikeResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.like",
+      "layer": "repository",
+      "path": "src/repository/like",
+      "id": "pkg_repository.like"
+    },
+    {
+      "node_type": "class_node",
+      "name": "LikeApi",
+      "file": "like_repository.py",
+      "package": "repository.like",
+      "id": "class_LikeApi"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PostDatabase",
+      "file": "like_repository.py",
+      "package": "repository.like",
+      "id": "class_PostDatabase"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.like",
+      "layer": "orm",
+      "path": "src/orm/like",
+      "id": "pkg_orm.like"
+    },
+    {
+      "node_type": "class_node",
+      "name": "LikeORM",
+      "file": "like_orm.py",
+      "package": "orm.like",
+      "id": "class_LikeORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.like",
+      "layer": "infra",
+      "path": "src/infra/like",
+      "id": "pkg_infra.like"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyLikeRepository",
+      "file": "like_repo_impl.py",
+      "package": "infra.like",
+      "id": "class_SQLAlchemyLikeRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.like",
+      "layer": "service",
+      "path": "src/service/like",
+      "id": "pkg_service.like"
+    },
+    {
+      "node_type": "class_node",
+      "name": "LikeService",
+      "file": "like_service.py",
+      "package": "service.like",
+      "id": "class_LikeService"
+    },
+    {
+      "node_type": "package",
+      "name": "api.like",
+      "layer": "api",
+      "path": "src/api/like",
+      "id": "pkg_api.like"
+    },
+    {
+      "node_type": "class_node",
+      "name": "LikeController",
+      "file": "like_router.py",
+      "package": "api.like",
+      "id": "class_LikeController"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.bookmark",
+      "layer": "domain",
+      "path": "src/domain/bookmark",
+      "id": "pkg_domain.bookmark"
+    },
+    {
+      "node_type": "class_node",
+      "name": "LoginStatus",
+      "file": "Bookmark.py",
+      "package": "domain.bookmark",
+      "id": "class_LoginStatus"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Bookmark",
+      "file": "Bookmark.py",
+      "package": "domain.bookmark",
+      "id": "class_Bookmark"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SavedList",
+      "file": "Bookmark.py",
+      "package": "domain.bookmark",
+      "id": "class_SavedList"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BookmarkId",
+      "file": "Bookmark.py",
+      "package": "domain.bookmark",
+      "id": "class_BookmarkId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BookmarkCreatedEvent",
+      "file": "Bookmark.py",
+      "package": "domain.bookmark",
+      "id": "class_BookmarkCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BookmarkUpdatedEvent",
+      "file": "Bookmark.py",
+      "package": "domain.bookmark",
+      "id": "class_BookmarkUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.bookmark",
+      "layer": "dto",
+      "path": "src/dto/bookmark",
+      "id": "pkg_dto.bookmark"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BookmarkRequest",
+      "file": "bookmark_dto.py",
+      "package": "dto.bookmark",
+      "id": "class_BookmarkRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BookmarkResponse",
+      "file": "bookmark_dto.py",
+      "package": "dto.bookmark",
+      "id": "class_BookmarkResponse"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SavedListResponse",
+      "file": "bookmark_dto.py",
+      "package": "dto.bookmark",
+      "id": "class_SavedListResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.bookmark",
+      "layer": "repository",
+      "path": "src/repository/bookmark",
+      "id": "pkg_repository.bookmark"
+    },
+    {
+      "node_type": "class_node",
+      "name": "IUserDatabase",
+      "file": "bookmark_repository.py",
+      "package": "repository.bookmark",
+      "id": "class_IUserDatabase"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.bookmark",
+      "layer": "orm",
+      "path": "src/orm/bookmark",
+      "id": "pkg_orm.bookmark"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BookmarkORM",
+      "file": "bookmark_orm.py",
+      "package": "orm.bookmark",
+      "id": "class_BookmarkORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.bookmark",
+      "layer": "infra",
+      "path": "src/infra/bookmark",
+      "id": "pkg_infra.bookmark"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyBookmarkRepository",
+      "file": "bookmark_repo_impl.py",
+      "package": "infra.bookmark",
+      "id": "class_SQLAlchemyBookmarkRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.bookmark",
+      "layer": "service",
+      "path": "src/service/bookmark",
+      "id": "pkg_service.bookmark"
+    },
+    {
+      "node_type": "class_node",
+      "name": "BookmarkService",
+      "file": "bookmark_service.py",
+      "package": "service.bookmark",
+      "id": "class_BookmarkService"
+    },
+    {
+      "node_type": "package",
+      "name": "api.bookmark",
+      "layer": "api",
+      "path": "src/api/bookmark",
+      "id": "pkg_api.bookmark"
+    },
+    {
+      "node_type": "class_node",
+      "name": "IUserUI",
+      "file": "bookmark_router.py",
+      "package": "api.bookmark",
+      "id": "class_IUserUI"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.report",
+      "layer": "domain",
+      "path": "src/domain/report",
+      "id": "pkg_domain.report"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Report",
+      "file": "Report.py",
+      "package": "domain.report",
+      "id": "class_Report"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ReportId",
+      "file": "Report.py",
+      "package": "domain.report",
+      "id": "class_ReportId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ReportCreatedEvent",
+      "file": "Report.py",
+      "package": "domain.report",
+      "id": "class_ReportCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ReportUpdatedEvent",
+      "file": "Report.py",
+      "package": "domain.report",
+      "id": "class_ReportUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.report",
+      "layer": "dto",
+      "path": "src/dto/report",
+      "id": "pkg_dto.report"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ReportCreateRequest",
+      "file": "report_dto.py",
+      "package": "dto.report",
+      "id": "class_ReportCreateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ReportUpdateRequest",
+      "file": "report_dto.py",
+      "package": "dto.report",
+      "id": "class_ReportUpdateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ReportResponse",
+      "file": "report_dto.py",
+      "package": "dto.report",
+      "id": "class_ReportResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.report",
+      "layer": "repository",
+      "path": "src/repository/report",
+      "id": "pkg_repository.report"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ReportRepository",
+      "file": "report_repository.py",
+      "package": "repository.report",
+      "id": "class_ReportRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.report",
+      "layer": "orm",
+      "path": "src/orm/report",
+      "id": "pkg_orm.report"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ReportORM",
+      "file": "report_orm.py",
+      "package": "orm.report",
+      "id": "class_ReportORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.report",
+      "layer": "infra",
+      "path": "src/infra/report",
+      "id": "pkg_infra.report"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyReportRepository",
+      "file": "report_repo_impl.py",
+      "package": "infra.report",
+      "id": "class_SQLAlchemyReportRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.report",
+      "layer": "service",
+      "path": "src/service/report",
+      "id": "pkg_service.report"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ReportService",
+      "file": "report_service.py",
+      "package": "service.report",
+      "id": "class_ReportService"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ReportServiceImpl",
+      "file": "report_service.py",
+      "package": "service.report",
+      "id": "class_ReportServiceImpl"
+    },
+    {
+      "node_type": "package",
+      "name": "api.report",
+      "layer": "api",
+      "path": "src/api/report",
+      "id": "pkg_api.report"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ReportRouter",
+      "file": "report_router.py",
+      "package": "api.report",
+      "id": "class_ReportRouter"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.comment",
+      "layer": "domain",
+      "path": "src/domain/comment",
+      "id": "pkg_domain.comment"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Comment",
+      "file": "Comment.py",
+      "package": "domain.comment",
+      "id": "class_Comment"
+    },
+    {
+      "node_type": "class_node",
+      "name": "CommentId",
+      "file": "Comment.py",
+      "package": "domain.comment",
+      "id": "class_CommentId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "CommentCreatedEvent",
+      "file": "Comment.py",
+      "package": "domain.comment",
+      "id": "class_CommentCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "CommentUpdatedEvent",
+      "file": "Comment.py",
+      "package": "domain.comment",
+      "id": "class_CommentUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.comment",
+      "layer": "dto",
+      "path": "src/dto/comment",
+      "id": "pkg_dto.comment"
+    },
+    {
+      "node_type": "class_node",
+      "name": "CommentDto",
+      "file": "comment_dto.py",
+      "package": "dto.comment",
+      "id": "class_CommentDto"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PostDto",
+      "file": "comment_dto.py",
+      "package": "dto.comment",
+      "id": "class_PostDto"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserDto",
+      "file": "comment_dto.py",
+      "package": "dto.comment",
+      "id": "class_UserDto"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.comment",
+      "layer": "repository",
+      "path": "src/repository/comment",
+      "id": "pkg_repository.comment"
+    },
+    {
+      "node_type": "class_node",
+      "name": "CommentManagementAPI",
+      "file": "comment_repository.py",
+      "package": "repository.comment",
+      "id": "class_CommentManagementAPI"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.comment",
+      "layer": "orm",
+      "path": "src/orm/comment",
+      "id": "pkg_orm.comment"
+    },
+    {
+      "node_type": "class_node",
+      "name": "CommentORM",
+      "file": "comment_orm.py",
+      "package": "orm.comment",
+      "id": "class_CommentORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.comment",
+      "layer": "infra",
+      "path": "src/infra/comment",
+      "id": "pkg_infra.comment"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyCommentRepository",
+      "file": "comment_repo_impl.py",
+      "package": "infra.comment",
+      "id": "class_SQLAlchemyCommentRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.comment",
+      "layer": "service",
+      "path": "src/service/comment",
+      "id": "pkg_service.comment"
+    },
+    {
+      "node_type": "class_node",
+      "name": "CommentService",
+      "file": "comment_service.py",
+      "package": "service.comment",
+      "id": "class_CommentService"
+    },
+    {
+      "node_type": "package",
+      "name": "api.comment",
+      "layer": "api",
+      "path": "src/api/comment",
+      "id": "pkg_api.comment"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PostDetailPageUI",
+      "file": "comment_router.py",
+      "package": "api.comment",
+      "id": "class_PostDetailPageUI"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.group_membership",
+      "layer": "domain",
+      "path": "src/domain/group_membership",
+      "id": "pkg_domain.group_membership"
+    },
+    {
+      "node_type": "class_node",
+      "name": "JoinRequestStatus",
+      "file": "GroupMembership.py",
+      "package": "domain.group_membership",
+      "id": "class_JoinRequestStatus"
+    },
+    {
+      "node_type": "class_node",
+      "name": "JoinRequest",
+      "file": "GroupMembership.py",
+      "package": "domain.group_membership",
+      "id": "class_JoinRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupMembership",
+      "file": "GroupMembership.py",
+      "package": "domain.group_membership",
+      "id": "class_GroupMembership"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupMembershipId",
+      "file": "GroupMembership.py",
+      "package": "domain.group_membership",
+      "id": "class_GroupMembershipId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupMembershipCreatedEvent",
+      "file": "GroupMembership.py",
+      "package": "domain.group_membership",
+      "id": "class_GroupMembershipCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupMembershipUpdatedEvent",
+      "file": "GroupMembership.py",
+      "package": "domain.group_membership",
+      "id": "class_GroupMembershipUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.group_membership",
+      "layer": "dto",
+      "path": "src/dto/group_membership",
+      "id": "pkg_dto.group_membership"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupMembershipCreateRequest",
+      "file": "group_membership_dto.py",
+      "package": "dto.group_membership",
+      "id": "class_GroupMembershipCreateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupMembershipUpdateRequest",
+      "file": "group_membership_dto.py",
+      "package": "dto.group_membership",
+      "id": "class_GroupMembershipUpdateRequest"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupMembershipResponse",
+      "file": "group_membership_dto.py",
+      "package": "dto.group_membership",
+      "id": "class_GroupMembershipResponse"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.group_membership",
+      "layer": "repository",
+      "path": "src/repository/group_membership",
+      "id": "pkg_repository.group_membership"
+    },
+    {
+      "node_type": "class_node",
+      "name": "JoinRequestManagementUI",
+      "file": "group_membership_repository.py",
+      "package": "repository.group_membership",
+      "id": "class_JoinRequestManagementUI"
+    },
+    {
+      "node_type": "class_node",
+      "name": "JoinRequestsDatabase",
+      "file": "group_membership_repository.py",
+      "package": "repository.group_membership",
+      "id": "class_JoinRequestsDatabase"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupAPI",
+      "file": "group_membership_repository.py",
+      "package": "repository.group_membership",
+      "id": "class_GroupAPI"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.group_membership",
+      "layer": "orm",
+      "path": "src/orm/group_membership",
+      "id": "pkg_orm.group_membership"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupMembershipORM",
+      "file": "group_membership_orm.py",
+      "package": "orm.group_membership",
+      "id": "class_GroupMembershipORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.group_membership",
+      "layer": "infra",
+      "path": "src/infra/group_membership",
+      "id": "pkg_infra.group_membership"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyGroupMembershipRepository",
+      "file": "group_membership_repo_impl.py",
+      "package": "infra.group_membership",
+      "id": "class_SQLAlchemyGroupMembershipRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.group_membership",
+      "layer": "service",
+      "path": "src/service/group_membership",
+      "id": "pkg_service.group_membership"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupMembershipService",
+      "file": "group_membership_service.py",
+      "package": "service.group_membership",
+      "id": "class_GroupMembershipService"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupMembershipServiceImpl",
+      "file": "group_membership_service.py",
+      "package": "service.group_membership",
+      "id": "class_GroupMembershipServiceImpl"
+    },
+    {
+      "node_type": "package",
+      "name": "api.group_membership",
+      "layer": "api",
+      "path": "src/api/group_membership",
+      "id": "pkg_api.group_membership"
+    },
+    {
+      "node_type": "class_node",
+      "name": "GroupMembershipRouter",
+      "file": "group_membership_router.py",
+      "package": "api.group_membership",
+      "id": "class_GroupMembershipRouter"
+    },
+    {
+      "node_type": "package",
+      "name": "domain.notification",
+      "layer": "domain",
+      "path": "src/domain/notification",
+      "id": "pkg_domain.notification"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Notification",
+      "file": "Notification.py",
+      "package": "domain.notification",
+      "id": "class_Notification"
+    },
+    {
+      "node_type": "class_node",
+      "name": "ChannelType",
+      "file": "Notification.py",
+      "package": "domain.notification",
+      "id": "class_ChannelType"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationState",
+      "file": "Notification.py",
+      "package": "domain.notification",
+      "id": "class_NotificationState"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationId",
+      "file": "Notification.py",
+      "package": "domain.notification",
+      "id": "class_NotificationId"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationCreatedEvent",
+      "file": "Notification.py",
+      "package": "domain.notification",
+      "id": "class_NotificationCreatedEvent"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationUpdatedEvent",
+      "file": "Notification.py",
+      "package": "domain.notification",
+      "id": "class_NotificationUpdatedEvent"
+    },
+    {
+      "node_type": "package",
+      "name": "dto.notification",
+      "layer": "dto",
+      "path": "src/dto/notification",
+      "id": "pkg_dto.notification"
+    },
+    {
+      "node_type": "class_node",
+      "name": "LikeDTO",
+      "file": "notification_dto.py",
+      "package": "dto.notification",
+      "id": "class_LikeDTO"
+    },
+    {
+      "node_type": "class_node",
+      "name": "CommentDTO",
+      "file": "notification_dto.py",
+      "package": "dto.notification",
+      "id": "class_CommentDTO"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationDTO",
+      "file": "notification_dto.py",
+      "package": "dto.notification",
+      "id": "class_NotificationDTO"
+    },
+    {
+      "node_type": "package",
+      "name": "repository.notification",
+      "layer": "repository",
+      "path": "src/repository/notification",
+      "id": "pkg_repository.notification"
+    },
+    {
+      "node_type": "class_node",
+      "name": "EmailNotificationAdapter",
+      "file": "notification_repository.py",
+      "package": "repository.notification",
+      "id": "class_EmailNotificationAdapter"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PushNotificationAdapter",
+      "file": "notification_repository.py",
+      "package": "repository.notification",
+      "id": "class_PushNotificationAdapter"
+    },
+    {
+      "node_type": "class_node",
+      "name": "InAppNotificationAdapter",
+      "file": "notification_repository.py",
+      "package": "repository.notification",
+      "id": "class_InAppNotificationAdapter"
+    },
+    {
+      "node_type": "class_node",
+      "name": "PreferencesDatabaseAdapter",
+      "file": "notification_repository.py",
+      "package": "repository.notification",
+      "id": "class_PreferencesDatabaseAdapter"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuthenticationAdapter",
+      "file": "notification_repository.py",
+      "package": "repository.notification",
+      "id": "class_AuthenticationAdapter"
+    },
+    {
+      "node_type": "package",
+      "name": "orm.notification",
+      "layer": "orm",
+      "path": "src/orm/notification",
+      "id": "pkg_orm.notification"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationORM",
+      "file": "notification_orm.py",
+      "package": "orm.notification",
+      "id": "class_NotificationORM"
+    },
+    {
+      "node_type": "package",
+      "name": "infra.notification",
+      "layer": "infra",
+      "path": "src/infra/notification",
+      "id": "pkg_infra.notification"
+    },
+    {
+      "node_type": "class_node",
+      "name": "SQLAlchemyNotificationRepository",
+      "file": "notification_repo_impl.py",
+      "package": "infra.notification",
+      "id": "class_SQLAlchemyNotificationRepository"
+    },
+    {
+      "node_type": "package",
+      "name": "service.notification",
+      "layer": "service",
+      "path": "src/service/notification",
+      "id": "pkg_service.notification"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationServiceAPI",
+      "file": "notification_service.py",
+      "package": "service.notification",
+      "id": "class_NotificationServiceAPI"
+    },
+    {
+      "node_type": "class_node",
+      "name": "UserPreferencesDatabase",
+      "file": "notification_service.py",
+      "package": "service.notification",
+      "id": "class_UserPreferencesDatabase"
+    },
+    {
+      "node_type": "class_node",
+      "name": "AuthenticationSystem",
+      "file": "notification_service.py",
+      "package": "service.notification",
+      "id": "class_AuthenticationSystem"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationService",
+      "file": "notification_service.py",
+      "package": "service.notification",
+      "id": "class_NotificationService"
+    },
+    {
+      "node_type": "package",
+      "name": "api.notification",
+      "layer": "api",
+      "path": "src/api/notification",
+      "id": "pkg_api.notification"
+    },
+    {
+      "node_type": "class_node",
+      "name": "CommentController",
+      "file": "notification_router.py",
+      "package": "api.notification",
+      "id": "class_CommentController"
+    },
+    {
+      "node_type": "class_node",
+      "name": "NotificationPreferenceController",
+      "file": "notification_router.py",
+      "package": "api.notification",
+      "id": "class_NotificationPreferenceController"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.user",
+      "layer": "tests",
+      "path": "tests/unit/user",
+      "id": "pkg_tests.unit.user"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.post",
+      "layer": "tests",
+      "path": "tests/unit/post",
+      "id": "pkg_tests.unit.post"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.notification_preference",
+      "layer": "tests",
+      "path": "tests/unit/notification_preference",
+      "id": "pkg_tests.unit.notification_preference"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.verified_badge",
+      "layer": "tests",
+      "path": "tests/unit/verified_badge",
+      "id": "pkg_tests.unit.verified_badge"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.group",
+      "layer": "tests",
+      "path": "tests/unit/group",
+      "id": "pkg_tests.unit.group"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.profile",
+      "layer": "tests",
+      "path": "tests/unit/profile",
+      "id": "pkg_tests.unit.profile"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.friendship",
+      "layer": "tests",
+      "path": "tests/unit/friendship",
+      "id": "pkg_tests.unit.friendship"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.audit_log",
+      "layer": "tests",
+      "path": "tests/unit/audit_log",
+      "id": "pkg_tests.unit.audit_log"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.block",
+      "layer": "tests",
+      "path": "tests/unit/block",
+      "id": "pkg_tests.unit.block"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.follow",
+      "layer": "tests",
+      "path": "tests/unit/follow",
+      "id": "pkg_tests.unit.follow"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.message",
+      "layer": "tests",
+      "path": "tests/unit/message",
+      "id": "pkg_tests.unit.message"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.like",
+      "layer": "tests",
+      "path": "tests/unit/like",
+      "id": "pkg_tests.unit.like"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.bookmark",
+      "layer": "tests",
+      "path": "tests/unit/bookmark",
+      "id": "pkg_tests.unit.bookmark"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.report",
+      "layer": "tests",
+      "path": "tests/unit/report",
+      "id": "pkg_tests.unit.report"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.comment",
+      "layer": "tests",
+      "path": "tests/unit/comment",
+      "id": "pkg_tests.unit.comment"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.group_membership",
+      "layer": "tests",
+      "path": "tests/unit/group_membership",
+      "id": "pkg_tests.unit.group_membership"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.unit.notification",
+      "layer": "tests",
+      "path": "tests/unit/notification",
+      "id": "pkg_tests.unit.notification"
+    },
+    {
+      "node_type": "package",
+      "name": "tests.integration",
+      "layer": "tests",
+      "path": "tests/integration",
+      "id": "pkg_tests.integration"
+    },
+    {
+      "node_type": "package",
+      "name": "config.settings",
+      "layer": "config",
+      "path": "src/config",
+      "id": "pkg_config.settings"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Settings",
+      "file": "settings.py",
+      "package": "config.settings",
+      "id": "class_Settings"
+    },
+    {
+      "node_type": "class_node",
+      "name": "Container",
+      "file": "dependencies.py",
+      "package": "config.settings",
+      "id": "class_Container"
+    },
+    {
+      "node_type": "package",
+      "name": "docs.api_and_deployment",
+      "layer": "docs",
+      "path": "docs",
+      "id": "pkg_docs.api_and_deployment"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-REG-01",
+      "title": "User Registration",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-REG-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-ACC-01",
+      "title": "Soft Delete User Account",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-ACC-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-PAGIN-01",
+      "title": "Implement paginated results for feeds and search results",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-PAGIN-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-CONTENT-PUB-01",
+      "title": "User can create a text post and optionally upload images",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-CONTENT-PUB-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-NOTIFY-01",
+      "title": "User receives notification on post interactions",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-NOTIFY-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-ADM-BADGE-01",
+      "title": "Admin can grant verified badges on user profiles",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-ADM-BADGE-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-GROUP-01",
+      "title": "Group Owner/Admin Join Request Management",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-GROUP-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-PROF-01",
+      "title": "Toggle Profile Visibility",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-PROF-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-USER-FR-01",
+      "title": "Send Friend Request",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-USER-FR-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-ADMIN-LOG-01",
+      "title": "Admin Actions Logging Requirement",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-ADMIN-LOG-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-USER-BLOCK-01",
+      "title": "User must be able to block another user to hide their posts and messages",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-USER-BLOCK-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-USER-01",
+      "title": "Create a User Profile",
+      "req_type": "Functional",
+      "priority": "Medium",
+      "status": "Proposed",
+      "id": "req_REQ-USER-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-USER-FOLL-01",
+      "title": "User Follow/Unfollow Functionality",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-USER-FOLL-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-PRIV-MES-01",
+      "title": "User can send and receive private messages",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-PRIV-MES-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-POST-LIKE-01",
+      "title": "User can like and unlike a post",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-POST-LIKE-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-SEARCH-01",
+      "title": "User and Post Search Functionality",
+      "req_type": "Functional",
+      "priority": "Medium",
+      "status": "Proposed",
+      "id": "req_REQ-SEARCH-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-BOOKMARK-01",
+      "title": "User should be able to bookmark posts and view them later",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-BOOKMARK-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-USER-HIST-01",
+      "title": "View Post History",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-USER-HIST-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-POST-RPT-01",
+      "title": "User should be able to report a post by selecting a reason from a dropdown menu",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-POST-RPT-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-POST-COMMENT-01",
+      "title": "Add, edit, and delete comments on posts",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-POST-COMMENT-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-USERFEED-01",
+      "title": "Display News Feed Sorted by Time",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-USERFEED-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-MOD-01",
+      "title": "Admin Reported Content Panel",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-MOD-01"
+    },
+    {
+      "node_type": "requirement",
+      "entity_id": "REQ-MEM-01",
+      "title": "Group Post Feed Filter",
+      "req_type": "Functional",
+      "priority": "High",
+      "status": "Proposed",
+      "id": "req_REQ-MEM-01"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_180.als",
+      "id": "spec_formal_spec_180"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_179.als",
+      "id": "spec_formal_spec_179"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_157.als",
+      "id": "spec_formal_spec_157"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_176.als",
+      "id": "spec_formal_spec_176"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_177.als",
+      "id": "spec_formal_spec_177"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_159.als",
+      "id": "spec_formal_spec_159"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_165.als",
+      "id": "spec_formal_spec_165"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_174.als",
+      "id": "spec_formal_spec_174"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_163.als",
+      "id": "spec_formal_spec_163"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_181.als",
+      "id": "spec_formal_spec_181"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_175.als",
+      "id": "spec_formal_spec_175"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_168.als",
+      "id": "spec_formal_spec_168"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_164.als",
+      "id": "spec_formal_spec_164"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_171.als",
+      "id": "spec_formal_spec_171"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_160.als",
+      "id": "spec_formal_spec_160"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_158.als",
+      "id": "spec_formal_spec_158"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_170.als",
+      "id": "spec_formal_spec_170"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_178.als",
+      "id": "spec_formal_spec_178"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_172.als",
+      "id": "spec_formal_spec_172"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_162.als",
+      "id": "spec_formal_spec_162"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_161.als",
+      "id": "spec_formal_spec_161"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_166.als",
+      "id": "spec_formal_spec_166"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_173.als",
+      "id": "spec_formal_spec_173"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_169.als",
+      "id": "spec_formal_spec_169"
+    },
+    {
+      "node_type": "specification",
+      "path": "experiments/project_16/formal_spec_167.als",
+      "id": "spec_formal_spec_167"
+    }
+  ],
+  "edges": [
+    {
+      "edge_type": "implements",
+      "source": "task_157",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_157",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_157",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_157",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_157",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_157",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_157",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_157",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_158",
+      "target": "task_157"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_dto.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_repository.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_orm.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_infra.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_service.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_api.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_158",
+      "target": "pkg_tests.unit.profile"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_159",
+      "target": "task_157"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_dto.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_repository.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_orm.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_infra.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_service.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_api.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_159",
+      "target": "pkg_tests.unit.post"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_160",
+      "target": "task_159"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_dto.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_repository.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_orm.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_infra.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_service.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_api.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_domain.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_dto.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_repository.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_orm.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_infra.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_service.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_api.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_tests.unit.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_160",
+      "target": "pkg_tests.unit.like"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_161",
+      "target": "task_159"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_dto.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_repository.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_orm.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_infra.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_service.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_api.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_domain.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_dto.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_repository.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_orm.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_infra.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_service.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_api.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_tests.unit.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_161",
+      "target": "pkg_tests.unit.comment"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_162",
+      "target": "task_159"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_162",
+      "target": "task_163"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_dto.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_repository.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_orm.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_infra.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_service.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_api.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_domain.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_dto.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_repository.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_orm.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_infra.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_service.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_api.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_tests.unit.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_162",
+      "target": "pkg_tests.unit.friendship"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_163",
+      "target": "task_157"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_domain.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_dto.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_repository.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_orm.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_infra.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_service.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_api.friendship"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_163",
+      "target": "pkg_tests.unit.friendship"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_164",
+      "target": "task_157"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_domain.follow"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_dto.follow"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_repository.follow"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_orm.follow"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_infra.follow"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_service.follow"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_api.follow"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_164",
+      "target": "pkg_tests.unit.follow"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_165",
+      "target": "task_157"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_dto.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_repository.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_orm.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_infra.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_service.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_api.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_165",
+      "target": "pkg_tests.unit.group"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_166",
+      "target": "task_165"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_dto.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_repository.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_orm.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_infra.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_service.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_api.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_domain.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_dto.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_repository.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_orm.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_infra.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_service.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_api.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_tests.unit.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_166",
+      "target": "pkg_tests.unit.group_membership"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_167",
+      "target": "task_159"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_167",
+      "target": "task_166"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_dto.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_repository.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_orm.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_infra.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_service.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_api.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_dto.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_repository.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_orm.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_infra.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_service.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_api.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_domain.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_dto.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_repository.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_orm.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_infra.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_service.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_api.group_membership"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_tests.unit.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_tests.unit.group"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_167",
+      "target": "pkg_tests.unit.group_membership"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_168",
+      "target": "task_157"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_domain.message"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_dto.message"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_repository.message"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_orm.message"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_infra.message"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_service.message"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_api.message"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_168",
+      "target": "pkg_tests.unit.message"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_169",
+      "target": "task_160"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_169",
+      "target": "task_161"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_dto.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_repository.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_orm.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_infra.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_service.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_api.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_domain.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_dto.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_repository.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_orm.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_infra.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_service.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_api.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_domain.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_dto.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_repository.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_orm.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_infra.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_service.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_api.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_domain.notification"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_dto.notification"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_repository.notification"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_orm.notification"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_infra.notification"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_service.notification"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_api.notification"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_tests.unit.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_tests.unit.like"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_tests.unit.comment"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_169",
+      "target": "pkg_tests.unit.notification"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_170",
+      "target": "task_159"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_dto.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_repository.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_orm.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_infra.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_service.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_api.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_170",
+      "target": "pkg_tests.unit.post"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_171",
+      "target": "task_159"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_dto.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_repository.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_orm.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_infra.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_service.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_api.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_domain.bookmark"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_dto.bookmark"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_repository.bookmark"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_orm.bookmark"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_infra.bookmark"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_service.bookmark"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_api.bookmark"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_tests.unit.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_171",
+      "target": "pkg_tests.unit.bookmark"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_172",
+      "target": "task_159"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_dto.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_repository.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_orm.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_infra.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_service.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_api.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_domain.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_dto.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_repository.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_orm.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_infra.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_service.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_api.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_tests.unit.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_172",
+      "target": "pkg_tests.unit.report"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_173",
+      "target": "task_172"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_domain.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_dto.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_repository.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_orm.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_infra.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_service.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_api.report"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_173",
+      "target": "pkg_tests.unit.report"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_174",
+      "target": "task_157"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_dto.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_repository.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_orm.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_infra.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_service.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_api.profile"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_174",
+      "target": "pkg_tests.unit.profile"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_175",
+      "target": "task_157"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_domain.block"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_dto.block"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_repository.block"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_orm.block"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_infra.block"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_service.block"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_api.block"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_175",
+      "target": "pkg_tests.unit.block"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_176",
+      "target": "task_157"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_domain.notification_preference"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_dto.notification_preference"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_repository.notification_preference"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_orm.notification_preference"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_infra.notification_preference"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_service.notification_preference"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_api.notification_preference"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_176",
+      "target": "pkg_tests.unit.notification_preference"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_177",
+      "target": "task_157"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_domain.verified_badge"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_dto.verified_badge"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_repository.verified_badge"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_orm.verified_badge"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_infra.verified_badge"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_service.verified_badge"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_api.verified_badge"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_177",
+      "target": "pkg_tests.unit.verified_badge"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_178",
+      "target": "task_159"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_dto.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_repository.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_orm.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_infra.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_service.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_api.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_178",
+      "target": "pkg_tests.unit.post"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_180",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_180",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_180",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_180",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_180",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_180",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_180",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_180",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "blocks",
+      "source": "task_181",
+      "target": "task_157"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_domain.audit_log"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_dto.audit_log"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_repository.audit_log"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_orm.audit_log"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_infra.audit_log"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_service.audit_log"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_api.audit_log"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_tests.unit.user"
+    },
+    {
+      "edge_type": "implements",
+      "source": "task_181",
+      "target": "pkg_tests.unit.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserAccount",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AccountStatus",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_EmailConfirmation",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Resource",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Resource",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Resource",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Resource",
+      "target": "pkg_domain.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Resource",
+      "target": "pkg_domain.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Resource",
+      "target": "pkg_domain.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Resource",
+      "target": "pkg_domain.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Actor",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Actor",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Actor",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Actor",
+      "target": "pkg_domain.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Actor",
+      "target": "pkg_domain.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Actor",
+      "target": "pkg_domain.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.notification_preference"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Permission",
+      "target": "pkg_domain.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_State",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_State",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_State",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_State",
+      "target": "pkg_domain.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_State",
+      "target": "pkg_domain.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_State",
+      "target": "pkg_domain.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_State",
+      "target": "pkg_domain.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_State",
+      "target": "pkg_domain.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_State",
+      "target": "pkg_domain.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Interface",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Interface",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Interface",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Interface",
+      "target": "pkg_domain.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_InterfaceKind",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_REQ_REG_01",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserAccountStatus",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Operation",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Operation",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Operation",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Operation",
+      "target": "pkg_domain.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_User",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserId",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserCreatedEvent",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserUpdatedEvent",
+      "target": "pkg_domain.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SoftDeleteRequest",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_RecoveryRequest",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AccountStatusResponse",
+      "target": "pkg_dto.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_RegistrationPage",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserDatabase",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserDatabase",
+      "target": "pkg_repository.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_EmailNotificationSystem",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_EmailValidator",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AccountManagementService",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserDataRepository",
+      "target": "pkg_repository.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserORM",
+      "target": "pkg_orm.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyUserRepository",
+      "target": "pkg_infra.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserService",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserServiceImpl",
+      "target": "pkg_service.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserRouter",
+      "target": "pkg_api.user"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Post",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Image",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Role",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Role",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Role",
+      "target": "pkg_domain.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Role",
+      "target": "pkg_domain.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PostState",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PostId",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PostCreatedEvent",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PostUpdatedEvent",
+      "target": "pkg_domain.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_CreatePostRequest",
+      "target": "pkg_dto.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_CreatePostResponse",
+      "target": "pkg_dto.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ContentDatabase",
+      "target": "pkg_repository.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ImageStorageService",
+      "target": "pkg_repository.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PostORM",
+      "target": "pkg_orm.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyPostRepository",
+      "target": "pkg_infra.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PostService",
+      "target": "pkg_service.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PostServiceImpl",
+      "target": "pkg_service.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PostCreationAPI",
+      "target": "pkg_api.post"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationPreference",
+      "target": "pkg_domain.notification_preference"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationCategory",
+      "target": "pkg_domain.notification_preference"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserState",
+      "target": "pkg_domain.notification_preference"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationPreferenceId",
+      "target": "pkg_domain.notification_preference"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationPreferenceCreatedEvent",
+      "target": "pkg_domain.notification_preference"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationPreferenceUpdatedEvent",
+      "target": "pkg_domain.notification_preference"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationPreferenceDTO",
+      "target": "pkg_dto.notification_preference"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationPreferenceDTO",
+      "target": "pkg_dto.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationPreferenceRepository",
+      "target": "pkg_repository.notification_preference"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationPreferenceORM",
+      "target": "pkg_orm.notification_preference"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyNotificationPreferenceRepository",
+      "target": "pkg_infra.notification_preference"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationSettingsService",
+      "target": "pkg_service.notification_preference"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationSettingsController",
+      "target": "pkg_api.notification_preference"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserProfile",
+      "target": "pkg_domain.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserProfile",
+      "target": "pkg_domain.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Admin",
+      "target": "pkg_domain.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Admin",
+      "target": "pkg_domain.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditEntry",
+      "target": "pkg_domain.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditEntry",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditAction",
+      "target": "pkg_domain.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_VerifiedBadge",
+      "target": "pkg_domain.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_VerifiedBadgeId",
+      "target": "pkg_domain.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_VerifiedBadgeCreatedEvent",
+      "target": "pkg_domain.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_VerifiedBadgeUpdatedEvent",
+      "target": "pkg_domain.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_VerifiedBadgeCreateRequest",
+      "target": "pkg_dto.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_VerifiedBadgeUpdateRequest",
+      "target": "pkg_dto.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_VerifiedBadgeResponse",
+      "target": "pkg_dto.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditLoggingAPI",
+      "target": "pkg_repository.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_VerifiedBadgeORM",
+      "target": "pkg_orm.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyVerifiedBadgeRepository",
+      "target": "pkg_infra.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BadgeManagementService",
+      "target": "pkg_service.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BadgeOperationRequest",
+      "target": "pkg_service.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AdminUserManagementInterface",
+      "target": "pkg_api.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AdminUserManagementController",
+      "target": "pkg_api.verified_badge"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupName",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Visibility",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Visibility",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Group",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_IfaceKind",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_IfaceKind",
+      "target": "pkg_domain.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupId",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupCreatedEvent",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupUpdatedEvent",
+      "target": "pkg_domain.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_CreateGroupRequest",
+      "target": "pkg_dto.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_CreateGroupResponse",
+      "target": "pkg_dto.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupCreationAPI",
+      "target": "pkg_repository.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupDB",
+      "target": "pkg_repository.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupORM",
+      "target": "pkg_orm.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyGroupRepository",
+      "target": "pkg_infra.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupCreationService",
+      "target": "pkg_service.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupController",
+      "target": "pkg_api.group"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Profile",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Photo",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Biography",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ProfileResource",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuthenticationStatus",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ProfileId",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ProfileCreatedEvent",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ProfileUpdatedEvent",
+      "target": "pkg_domain.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ProfileCreateRequest",
+      "target": "pkg_dto.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ProfileUpdateRequest",
+      "target": "pkg_dto.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ProfileResponse",
+      "target": "pkg_dto.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserProfilesDatabase",
+      "target": "pkg_repository.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ProfileORM",
+      "target": "pkg_orm.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyProfileRepository",
+      "target": "pkg_infra.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_REQ_USER_01",
+      "target": "pkg_service.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Account_Settings_Page",
+      "target": "pkg_api.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ProfileSettingsAPI",
+      "target": "pkg_api.profile"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_OnlineStatus",
+      "target": "pkg_domain.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FriendRequestStatus",
+      "target": "pkg_domain.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationType",
+      "target": "pkg_domain.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationType",
+      "target": "pkg_domain.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FriendRequest",
+      "target": "pkg_domain.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Friendship",
+      "target": "pkg_domain.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FriendshipId",
+      "target": "pkg_domain.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FriendshipCreatedEvent",
+      "target": "pkg_domain.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FriendshipUpdatedEvent",
+      "target": "pkg_domain.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FriendshipCreateRequest",
+      "target": "pkg_dto.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FriendshipUpdateRequest",
+      "target": "pkg_dto.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FriendshipResponse",
+      "target": "pkg_dto.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FriendshipRepository",
+      "target": "pkg_repository.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FriendshipORM",
+      "target": "pkg_orm.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyFriendshipRepository",
+      "target": "pkg_infra.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FriendshipService",
+      "target": "pkg_service.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FriendshipServiceImpl",
+      "target": "pkg_service.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FriendshipRouter",
+      "target": "pkg_api.friendship"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditLog",
+      "target": "pkg_domain.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditLogId",
+      "target": "pkg_domain.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditLogCreatedEvent",
+      "target": "pkg_domain.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditLogUpdatedEvent",
+      "target": "pkg_domain.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditLogCreateRequest",
+      "target": "pkg_dto.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditLogUpdateRequest",
+      "target": "pkg_dto.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditLogResponse",
+      "target": "pkg_dto.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditLogRepository",
+      "target": "pkg_repository.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditLogORM",
+      "target": "pkg_orm.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyAuditLogRepository",
+      "target": "pkg_infra.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditLogService",
+      "target": "pkg_service.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditLogServiceImpl",
+      "target": "pkg_service.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuditLogRouter",
+      "target": "pkg_api.audit_log"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BlockRecord",
+      "target": "pkg_domain.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Block",
+      "target": "pkg_domain.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BlockId",
+      "target": "pkg_domain.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BlockCreatedEvent",
+      "target": "pkg_domain.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BlockUpdatedEvent",
+      "target": "pkg_domain.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BlockCreateRequest",
+      "target": "pkg_dto.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BlockUpdateRequest",
+      "target": "pkg_dto.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BlockResponse",
+      "target": "pkg_dto.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserProfileAPI",
+      "target": "pkg_repository.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PostsDatabase",
+      "target": "pkg_repository.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_MessagesDatabase",
+      "target": "pkg_repository.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationSystem",
+      "target": "pkg_repository.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BlockORM",
+      "target": "pkg_orm.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyBlockRepository",
+      "target": "pkg_infra.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BlockService",
+      "target": "pkg_service.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BlockServiceImpl",
+      "target": "pkg_service.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BlockRouter",
+      "target": "pkg_api.block"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Follow",
+      "target": "pkg_domain.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FollowId",
+      "target": "pkg_domain.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FollowCreatedEvent",
+      "target": "pkg_domain.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FollowUpdatedEvent",
+      "target": "pkg_domain.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FollowRequest",
+      "target": "pkg_dto.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UnfollowRequest",
+      "target": "pkg_dto.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FollowResponse",
+      "target": "pkg_dto.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FollowUnfollowAPI",
+      "target": "pkg_repository.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserProfileDatabase",
+      "target": "pkg_repository.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FollowORM",
+      "target": "pkg_orm.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyFollowRepository",
+      "target": "pkg_infra.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FollowUnfollowService",
+      "target": "pkg_service.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_FollowUnfollowController",
+      "target": "pkg_api.follow"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Message_Service_API",
+      "target": "pkg_domain.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_User_Database",
+      "target": "pkg_domain.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Message",
+      "target": "pkg_domain.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_MessageId",
+      "target": "pkg_domain.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_MessageCreatedEvent",
+      "target": "pkg_domain.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_MessageUpdatedEvent",
+      "target": "pkg_domain.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_MessageCreateRequest",
+      "target": "pkg_dto.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_MessageUpdateRequest",
+      "target": "pkg_dto.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_MessageResponse",
+      "target": "pkg_dto.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_MessageRepository",
+      "target": "pkg_repository.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_MessageORM",
+      "target": "pkg_orm.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyMessageRepository",
+      "target": "pkg_infra.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_REQ_PRIV_MES_01",
+      "target": "pkg_service.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SendMessageOperation",
+      "target": "pkg_service.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ReceiveMessageOperation",
+      "target": "pkg_service.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ReplyToMessageOperation",
+      "target": "pkg_service.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_MessageRouter",
+      "target": "pkg_api.message"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Like",
+      "target": "pkg_domain.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_LikeId",
+      "target": "pkg_domain.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_LikeCreatedEvent",
+      "target": "pkg_domain.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_LikeUpdatedEvent",
+      "target": "pkg_domain.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_LikeRequest",
+      "target": "pkg_dto.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_LikeResponse",
+      "target": "pkg_dto.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_LikeApi",
+      "target": "pkg_repository.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PostDatabase",
+      "target": "pkg_repository.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_LikeORM",
+      "target": "pkg_orm.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyLikeRepository",
+      "target": "pkg_infra.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_LikeService",
+      "target": "pkg_service.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_LikeController",
+      "target": "pkg_api.like"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_LikeController",
+      "target": "pkg_api.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_LoginStatus",
+      "target": "pkg_domain.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Bookmark",
+      "target": "pkg_domain.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SavedList",
+      "target": "pkg_domain.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BookmarkId",
+      "target": "pkg_domain.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BookmarkCreatedEvent",
+      "target": "pkg_domain.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BookmarkUpdatedEvent",
+      "target": "pkg_domain.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BookmarkRequest",
+      "target": "pkg_dto.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BookmarkResponse",
+      "target": "pkg_dto.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SavedListResponse",
+      "target": "pkg_dto.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_IUserDatabase",
+      "target": "pkg_repository.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BookmarkORM",
+      "target": "pkg_orm.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyBookmarkRepository",
+      "target": "pkg_infra.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_BookmarkService",
+      "target": "pkg_service.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_IUserUI",
+      "target": "pkg_api.bookmark"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Report",
+      "target": "pkg_domain.report"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ReportId",
+      "target": "pkg_domain.report"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ReportCreatedEvent",
+      "target": "pkg_domain.report"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ReportUpdatedEvent",
+      "target": "pkg_domain.report"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ReportCreateRequest",
+      "target": "pkg_dto.report"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ReportUpdateRequest",
+      "target": "pkg_dto.report"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ReportResponse",
+      "target": "pkg_dto.report"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ReportRepository",
+      "target": "pkg_repository.report"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ReportORM",
+      "target": "pkg_orm.report"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyReportRepository",
+      "target": "pkg_infra.report"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ReportService",
+      "target": "pkg_service.report"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ReportServiceImpl",
+      "target": "pkg_service.report"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ReportRouter",
+      "target": "pkg_api.report"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Comment",
+      "target": "pkg_domain.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_CommentId",
+      "target": "pkg_domain.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_CommentCreatedEvent",
+      "target": "pkg_domain.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_CommentUpdatedEvent",
+      "target": "pkg_domain.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_CommentDto",
+      "target": "pkg_dto.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PostDto",
+      "target": "pkg_dto.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserDto",
+      "target": "pkg_dto.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_CommentManagementAPI",
+      "target": "pkg_repository.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_CommentORM",
+      "target": "pkg_orm.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyCommentRepository",
+      "target": "pkg_infra.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_CommentService",
+      "target": "pkg_service.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PostDetailPageUI",
+      "target": "pkg_api.comment"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_JoinRequestStatus",
+      "target": "pkg_domain.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_JoinRequest",
+      "target": "pkg_domain.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupMembership",
+      "target": "pkg_domain.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupMembershipId",
+      "target": "pkg_domain.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupMembershipCreatedEvent",
+      "target": "pkg_domain.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupMembershipUpdatedEvent",
+      "target": "pkg_domain.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupMembershipCreateRequest",
+      "target": "pkg_dto.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupMembershipUpdateRequest",
+      "target": "pkg_dto.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupMembershipResponse",
+      "target": "pkg_dto.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_JoinRequestManagementUI",
+      "target": "pkg_repository.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_JoinRequestsDatabase",
+      "target": "pkg_repository.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupAPI",
+      "target": "pkg_repository.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupMembershipORM",
+      "target": "pkg_orm.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyGroupMembershipRepository",
+      "target": "pkg_infra.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupMembershipService",
+      "target": "pkg_service.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupMembershipServiceImpl",
+      "target": "pkg_service.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_GroupMembershipRouter",
+      "target": "pkg_api.group_membership"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Notification",
+      "target": "pkg_domain.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_ChannelType",
+      "target": "pkg_domain.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationState",
+      "target": "pkg_domain.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationId",
+      "target": "pkg_domain.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationCreatedEvent",
+      "target": "pkg_domain.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationUpdatedEvent",
+      "target": "pkg_domain.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_LikeDTO",
+      "target": "pkg_dto.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_CommentDTO",
+      "target": "pkg_dto.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationDTO",
+      "target": "pkg_dto.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_EmailNotificationAdapter",
+      "target": "pkg_repository.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PushNotificationAdapter",
+      "target": "pkg_repository.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_InAppNotificationAdapter",
+      "target": "pkg_repository.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_PreferencesDatabaseAdapter",
+      "target": "pkg_repository.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuthenticationAdapter",
+      "target": "pkg_repository.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationORM",
+      "target": "pkg_orm.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_SQLAlchemyNotificationRepository",
+      "target": "pkg_infra.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationServiceAPI",
+      "target": "pkg_service.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_UserPreferencesDatabase",
+      "target": "pkg_service.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_AuthenticationSystem",
+      "target": "pkg_service.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationService",
+      "target": "pkg_service.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_CommentController",
+      "target": "pkg_api.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_NotificationPreferenceController",
+      "target": "pkg_api.notification"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Settings",
+      "target": "pkg_config.settings"
+    },
+    {
+      "edge_type": "in_package",
+      "source": "class_Container",
+      "target": "pkg_config.settings"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-REG-01",
+      "target": "task_157"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-ACC-01",
+      "target": "task_180"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-PAGIN-01",
+      "target": "task_179"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-CONTENT-PUB-01",
+      "target": "task_159"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-NOTIFY-01",
+      "target": "task_176"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-NOTIFY-01",
+      "target": "task_169"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-ADM-BADGE-01",
+      "target": "task_177"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-GROUP-01",
+      "target": "task_165"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-GROUP-01",
+      "target": "task_166"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-PROF-01",
+      "target": "task_174"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-USER-FR-01",
+      "target": "task_163"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-ADMIN-LOG-01",
+      "target": "task_181"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-USER-BLOCK-01",
+      "target": "task_175"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-USER-01",
+      "target": "task_158"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-USER-FOLL-01",
+      "target": "task_164"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-PRIV-MES-01",
+      "target": "task_168"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-POST-LIKE-01",
+      "target": "task_160"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-SEARCH-01",
+      "target": "task_170"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-BOOKMARK-01",
+      "target": "task_171"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-USER-HIST-01",
+      "target": "task_178"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-POST-RPT-01",
+      "target": "task_172"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-POST-COMMENT-01",
+      "target": "task_161"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-USERFEED-01",
+      "target": "task_162"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-MOD-01",
+      "target": "task_173"
+    },
+    {
+      "edge_type": "covers",
+      "source": "req_REQ-MEM-01",
+      "target": "task_167"
+    }
+  ]
+}

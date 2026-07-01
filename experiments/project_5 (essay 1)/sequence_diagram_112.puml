@@ -1,0 +1,201 @@
+@startuml
+
+' ===== Participants grouped by layer =====
+box "UI Layer" #LightBlue
+  participant "GameInterface" as GI
+end box
+
+box "Application Layer" #LightGreen
+  participant "Operation" as O
+  participant "Actor" as A
+  participant "Resource" as Res
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Player" as P
+  participant "Streak" as S
+  participant "NuggetWallet" as NW
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "PlayerDataDatabase" as DB
+  participant "Question API" as QA
+end box
+
+' ===== Correct Answer Flow =====
+== Correct Answer Flow ==
+
+A -> GI : answerQuestion(questionId, answer)
+activate GI
+GI -> O : submitAnswer(questionId, answer)
+activate O
+
+' Authorization check
+O -> A : hasPermission(Permission.Write)
+activate A
+return granted
+O -> Res : isAccessible(A)
+activate Res
+return true
+
+alt Authorization failed
+  O -> GI : return 403 Forbidden
+  GI -> A : display error
+  deactivate O
+  deactivate GI
+else Authorization passed
+  ' Validate answer via external API
+  O -> QA : POST /validate [Authenticated]\n(questionId, answer)
+  activate QA
+
+  alt Question API error
+    QA -> O : 4xx/5xx
+    O -> GI : return 400/500 error
+    GI -> A : display error
+    deactivate O
+    deactivate GI
+  else Answer is correct
+    QA -> O : correct
+
+    ' Domain operations
+    O -> P : getStreak()
+    activate P
+    P -> S : correctAnswer()
+    activate S
+    note right of S : count++\nmultiplier = 1.0 + 0.5×min(count-1,4)\n(max 3.0×)
+    deactivate S
+    deactivate P
+
+    O -> P : getWallet()
+    activate P
+    P -> NW : addNuggets(baseNuggets × multiplier)
+    activate NW
+    note right of NW : balance += amount\ninvariant: balance ≥ 0
+    deactivate NW
+    deactivate P
+
+    ' Persist
+    O -> DB : updateStreakAndWallet(playerId, streak, wallet) [TLS]
+    activate DB
+
+    alt Database error
+      DB -> O : error
+      O -> GI : return 500 Internal Server Error
+      GI -> A : display error
+    else Database success
+      DB -> O : success
+      O -> GI : return 200 {streak, multiplier, balance}
+      GI -> A : display new streak & mult
+    end
+    deactivate DB
+    deactivate O
+    deactivate GI
+
+  else Answer is incorrect
+    ' This case is handled in the Incorrect Answer Flow
+    ' For correct flow, we treat it as an error path – validation returns incorrect
+    QA -> O : incorrect
+    O -> GI : return 400 "Incorrect answer"
+    GI -> A : display error
+    deactivate QA
+    deactivate O
+    deactivate GI
+  end
+end
+
+' ===== Incorrect Answer Flow =====
+== Incorrect Answer Flow ==
+
+A -> GI : answerQuestion(questionId, answer)
+activate GI
+GI -> O : submitAnswer(questionId, answer)
+activate O
+
+' Authorization (same as before)
+O -> A : hasPermission(Permission.Write)
+activate A
+return granted
+O -> Res : isAccessible(A)
+activate Res
+return true
+
+alt Authorization failed
+  O -> GI : return 403 Forbidden
+  GI -> A : display error
+  deactivate O
+  deactivate GI
+else Authorization passed
+  O -> QA : POST /validate [Authenticated]\n(questionId, answer)
+  activate QA
+
+  alt Question API error
+    QA -> O : 4xx/5xx
+    O -> GI : return error
+    GI -> A : display error
+    deactivate O
+    deactivate GI
+  else Answer is incorrect
+    QA -> O : incorrect
+
+    ' Domain operations
+    O -> P : getStreak()
+    activate P
+    P -> S : incorrectAnswer()
+    activate S
+    note right of S : count = 0\nmultiplier = 1.0×
+    deactivate S
+    deactivate P
+
+    ' Persist
+    O -> DB : updateStreak(playerId, streak) [TLS]
+    activate DB
+
+    alt Database error
+      DB -> O : error
+      O -> GI : return 500 Internal Server Error
+      GI -> A : display error
+    else Database success
+      DB -> O : success
+      O -> GI : return 200 {streak:0, multiplier:1.0, balance unchanged}
+      GI -> A : display streak reset to 0, mult 1×
+    end
+    deactivate DB
+    deactivate O
+    deactivate GI
+
+  else Answer is correct
+    ' This case is handled in Correct Answer Flow
+    QA -> O : correct
+    O -> GI : return 400 "Unexpected correct"
+    GI -> A : display error
+    deactivate QA
+    deactivate O
+    deactivate GI
+  end
+end
+
+' ===== Error Path: Validation failure (generic) =====
+== Validation Error Path ==
+
+A -> GI : answerQuestion(questionId, answer)
+GI -> O : submitAnswer(questionId, answer)
+O -> QA : POST /validate [Authenticated]
+QA -> O : Error (invalid question, timeout, etc.)
+O -> GI : return 4xx/5xx with error message
+GI -> A : display error
+deactivate all
+
+' ===== Error Path: Authorization failure =====
+== Authorization Failure Path ==
+
+A -> GI : answerQuestion(questionId, answer)
+GI -> O : submitAnswer(questionId, answer)
+O -> A : hasPermission(Permission.Write)
+A -> O : false
+O -> Res : isAccessible(A)
+Res -> O : false
+O -> GI : return 403 Forbidden
+GI -> A : display "Access Denied"
+deactivate all
+
+@enduml

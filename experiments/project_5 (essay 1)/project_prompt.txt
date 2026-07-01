@@ -1,0 +1,22 @@
+5. Gamified Competency Assessment Platform
+
+An educational platform where instructors design competency-based practice exams delivered to students in a gamified environment. Students earn nuggets by demonstrating mastery, while instructors gain rich analytics to evaluate individual and cohort competencies.
+
+Core features:
+- Let instructors register, log in, and manage a personal dashboard showing active exams, enrollment counts, and competency coverage
+- Let instructors build exams with mixed question types (MCQ, drag-and-drop, code snippet) and tag - each question with one or more competencies
+- Assign a difficulty tier (Beginner, Intermediate, Advanced) to each question that determines its nugget reward multiplier
+- Let instructors schedule exams with an open date, a close date, and an optional per-attempt time limit enforced server-side
+- Let instructors create cohorts, enroll students individually, and restrict each exam to one or more cohorts
+- Show instructors a per-competency heatmap after each exam, highlighting competencies below a configurable mastery threshold in red
+- Let instructors grant manual bonus nuggets to individual students with a written justification logged as an audit event
+- Let students register and personalize a profile with an avatar, and display their nugget balance, earned badges, and competency radar chart
+- Deliver exams to students one question at a time in a game-like interface with a live timer, progress bar, and animated nugget counter
+- Build a streak system where consecutive correct answers apply a nugget multiplier (1.5×, 2×, 3×) that resets on any wrong answer
+- Show students an instant competency breakdown after submission, flagging weak competencies with an study tip for each
+- Maintain a nugget wallet per student redeemable in a reward store for virtual items or instructor-configured institutional perks
+- Rank students on a cohort leaderboard by nuggets earned over a configurable window, with opt-out and instructor disable options
+- Let students review every past attempt with their answers, correct answers, nuggets earned per question, and competency trend charts over time
+- Enforce role-based access control across Admin, Instructor, and Student roles and write every sensitive action to an immutable audit log
+
+keep each task description as detailed as possible matching all the details in this text and also make them as accurate as possible to the prompt and well explained without missing any detail. Features: Instructor registration, login, and personal dashboard with active exams, enrollment counts, and competency coverage; Exam builder with mixed question types (MCQ, drag-and-drop, code snippet) tagged with one or more competencies and difficulty tiers (Beginner, Intermediate, Advanced) with nugget reward multipliers; Exam scheduling with open date, close date, and optional per-attempt time limit enforced server-side; Cohort creation, individual student enrollment, and exam restriction to one or more cohorts; Manual bonus nuggets grant to individual students with written justification logged as audit event; Student registration with personalized profile including avatar, nugget balance, earned badges, and competency radar chart; One-question-at-a-time exam delivery with game-like interface, live timer, progress bar, and animated nugget counter; Streak system with consecutive correct answers applying nugget multiplier (1.5×, 2×, 3×) resetting on wrong answer; Instant competency breakdown after submission with weak competency flags and study tips; Student nugget wallet redeemable in reward store for virtual items or instructor-configured institutional perks; Cohort leaderboard ranked by nuggets over configurable window with opt-out and instructor disable options; Past attempt review with student answers, correct answers, nuggets per question, and competency trend charts

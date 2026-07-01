@@ -1,0 +1,44 @@
+\begin{table*}[t]
+\centering
+\caption{Experimental configuration: generative LLM hyperparameters, NLI model architecture, and agent-framework settings used in all 12 pipeline runs. Temperature is reduced to $\leq 0.15$ for phases that require deterministic structured output (formal specifications, UML diagrams). The NLI model runs locally; no user-story content is sent to external services.}
+\label{tab:config}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{} l l l l l X @{}}
+\toprule
+\multicolumn{6}{@{}l}{\textit{\textbf{Generative LLM Configuration}}} \\\midrule
+\textbf{Role} & \textbf{Model ID} & \textbf{Provider} & \textbf{Temp.} & \textbf{Max tokens} & \textbf{Deployment} \\
+\midrule
+  All agents (default) & \texttt{deepseek/deepseek-v4-flash} & OpenRouter & 0.70 & 8\,192 & Cloud API \\ % Orchestration, planning, implementation, frontend, DevOps
+  Formal spec --- generation & \texttt{deepseek/deepseek-v4-flash} & OpenRouter & 0.10 & 8\,192 & Cloud API \\ % Low temperature for deterministic Alloy output
+  Formal spec --- fix pass & \texttt{deepseek/deepseek-v4-flash} & OpenRouter & 0.10 & 16\,384 & Cloud API \\ % Extended budget for iterative Alloy repair
+  UML generation & \texttt{deepseek/deepseek-v4-flash} & OpenRouter & 0.10--0.15 & 8\,192 & Cloud API \\ % Near-deterministic structural diagram output
+  Local code tasks & \texttt{qwen2.5-coder:7b} & Ollama & 0.70 & 8\,192$^{*}$ & Self-hosted \\ % Context window 8\,192; no cloud egress
+\midrule
+\multicolumn{6}{@{}l}{\textit{\textbf{NLI Classification Model Configuration}}} \\\midrule
+\multicolumn{2}{@{}l}{\textbf{Parameter}} & \multicolumn{4}{l}{\textbf{Value}} \\
+\midrule
+  \multicolumn{2}{@{}l}{Model identifier} & \multicolumn{4}{l}{\texttt{khalidalt/DeBERTa-v3-large-mnli}} \\
+  \multicolumn{2}{@{}l}{Architecture} & \multicolumn{4}{l}{DeBERTa-v3-large fine-tuned on MultiNLI~\cite{williams2018multinli}} \\
+  \multicolumn{2}{@{}l}{Hidden dimension} & \multicolumn{4}{l}{1{,}024} \\
+  \multicolumn{2}{@{}l}{Transformer layers} & \multicolumn{4}{l}{24} \\
+  \multicolumn{2}{@{}l}{Attention heads} & \multicolumn{4}{l}{16} \\
+  \multicolumn{2}{@{}l}{Max sequence length} & \multicolumn{4}{l}{512 tokens (premise--hypothesis pair)} \\
+  \multicolumn{2}{@{}l}{Vocabulary size} & \multicolumn{4}{l}{128{,}100} \\
+  \multicolumn{2}{@{}l}{Inference classes} & \multicolumn{4}{l}{\textit{entailment} / \textit{neutral} / \textit{contradiction}} \\
+  \multicolumn{2}{@{}l}{Entailment threshold} & \multicolumn{4}{l}{0.60 (softmax probability on entailment class)} \\
+  \multicolumn{2}{@{}l}{Input truncation} & \multicolumn{4}{l}{Enabled (premise--hypothesis pair truncated jointly)} \\
+  \multicolumn{2}{@{}l}{Inference device} & \multicolumn{4}{l}{CUDA if available, else CPU (float32)} \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{\textbf{Agent Framework Configuration}}} \\\midrule
+\multicolumn{2}{@{}l}{\textbf{Component}} & \multicolumn{3}{l}{\textbf{Setting}} & \textbf{Note} \\
+\midrule
+  \multicolumn{2}{@{}l}{Agent framework} & \multicolumn{3}{l}{smolagents \texttt{CodeAgent}~\cite{smolagents2025}} & — \\
+  \multicolumn{2}{@{}l}{Scrum Master (orchestrator)} & \multicolumn{3}{l}{\texttt{planning\_interval}=6, \texttt{max\_steps}=20} & Plans every 6 steps; re-plans on escalation \\
+  \multicolumn{2}{@{}l}{Developer / Frontend agents} & \multicolumn{3}{l}{\texttt{max\_steps}=200} & Long horizon for iterative code generation \\
+  \multicolumn{2}{@{}l}{DevOps agent} & \multicolumn{3}{l}{\texttt{max\_steps}=50} &  \\
+  \multicolumn{2}{@{}l}{All other agents} & \multicolumn{3}{l}{\texttt{max\_steps}=5} & Formal spec, UML, requirements, user stories \\
+  \multicolumn{2}{@{}l}{Max execution time} & \multicolumn{3}{l}{3{,}600 seconds per run} & Hard timeout per full-pipeline execution \\
+\bottomrule
+\end{tabularx}
+\footnotesize $^{*}$Qwen2.5-Coder is used via Ollama with a fixed context window of 8{,}192 tokens; \texttt{max\_tokens} is governed by the context budget. \texttt{DeBERTa-v3-large-mnli} is loaded from HuggingFace Hub at first use and cached locally.
+\end{table*}

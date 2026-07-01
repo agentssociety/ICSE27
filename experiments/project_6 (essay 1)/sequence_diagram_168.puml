@@ -1,0 +1,185 @@
+@startuml
+!theme plain
+
+box "Controller" #LightBlue
+participant "MessageController" as Controller
+end box
+
+box "Application" #LightGreen
+participant "AuthenticationService" as Auth
+participant "AuthorizationService" as Authz
+participant "SendMessageOperation" as SendOp
+participant "ReceiveMessageOperation" as RecvOp
+participant "ReplyToMessageOperation" as ReplyOp
+end box
+
+box "Domain" #LightYellow
+participant "Actor" as Actor
+participant "Resource" as Resource
+participant "Permission" as Permission
+participant "State" as State
+participant "REQ_PRIV_MES_01" as Request
+end box
+
+box "Infrastructure" #LightCoral
+participant "Message_Service_API" as API
+participant "User_Database" as DB
+end box
+
+== Send Message Flow ==
+
+Controller -> Controller : POST /messages\n(create REQ_PRIV_MES_01 with grant=Write)
+Controller -> SendOp : execute(request: REQ_PRIV_MES_01)
+
+alt Precondition: user logged in
+    SendOp -> Auth : isAuthenticated(actor: Actor) : Bool
+    Auth --> SendOp : true
+else Not authenticated
+    Auth --> SendOp : false
+    SendOp --> Controller : 401 Unauthorized
+    Controller -> Controller : return error response
+end
+
+alt Authorization: Write permission
+    SendOp -> Authz : hasPermission(actor: Actor, permission: Permission.Write) : Bool
+    Authz --> SendOp : true
+else No Write permission
+    Authz --> SendOp : false
+    SendOp --> Controller : 403 Forbidden
+    Controller -> Controller : return error response
+end
+
+alt Resource accessibility
+    SendOp -> Resource : isAccessible(actor: Actor) : Bool
+    Resource --> SendOp : true
+else Not accessible
+    Resource --> SendOp : false
+    SendOp --> Controller : 403 Forbidden
+    Controller -> Controller : return error response
+end
+
+alt Channel authenticated and encrypted
+    SendOp -> API : isAuthenticated() : Bool
+    API --> SendOp : true
+    SendOp -> API : isEncrypted() : Bool
+    API --> SendOp : true
+else Channel not secure
+    API --> SendOp : false
+    SendOp --> Controller : 500 Internal Server Error
+    Controller -> Controller : return error response
+end
+
+note right of SendOp : Constraint: at most one channel used\n(performance proxy)
+
+SendOp -> API : sendMessage(message: String) : Bool
+API --> SendOp : success
+
+SendOp -> State : setState(Post1)
+State --> SendOp : state changed
+
+SendOp --> Controller : 201 Created
+Controller -> Controller : return success response
+
+== Receive Message Flow ==
+
+Controller -> Controller : GET /inbox\n(create REQ_PRIV_MES_01 with grant=Read)
+Controller -> RecvOp : execute(request: REQ_PRIV_MES_01)
+
+alt Precondition: user logged in
+    RecvOp -> Auth : isAuthenticated(actor: Actor) : Bool
+    Auth --> RecvOp : true
+else Not authenticated
+    Auth --> RecvOp : false
+    RecvOp --> Controller : 401 Unauthorized
+    Controller -> Controller : return error response
+end
+
+alt Authorization: Read permission
+    RecvOp -> Authz : hasPermission(actor: Actor, permission: Permission.Read) : Bool
+    Authz --> RecvOp : true
+else No Read permission
+    Authz --> RecvOp : false
+    RecvOp --> Controller : 403 Forbidden
+    Controller -> Controller : return error response
+end
+
+alt Resource accessibility (inbox)
+    RecvOp -> Resource : isAccessible(actor: Actor) : Bool
+    Resource --> RecvOp : true
+else Not accessible
+    Resource --> RecvOp : false
+    RecvOp --> Controller : 403 Forbidden
+    Controller -> Controller : return error response
+end
+
+alt Channel encrypted
+    RecvOp -> DB : isEncrypted() : Bool
+    DB --> RecvOp : true
+else Not encrypted
+    DB --> RecvOp : false
+    RecvOp --> Controller : 500 Internal Server Error
+    Controller -> Controller : return error response
+end
+
+RecvOp -> DB : getMessages(actor: Actor) : List<Message>
+DB --> RecvOp : messages
+
+RecvOp -> State : setState(Post2)
+State --> RecvOp : state changed
+
+RecvOp --> Controller : 200 OK (messages)
+Controller -> Controller : return inbox
+
+== Reply to Message Flow ==
+
+Controller -> Controller : POST /messages/reply\n(create REQ_PRIV_MES_01 with grant=Write)
+Controller -> ReplyOp : execute(request: REQ_PRIV_MES_01)
+
+alt Precondition: user logged in
+    ReplyOp -> Auth : isAuthenticated(actor: Actor) : Bool
+    Auth --> ReplyOp : true
+else Not authenticated
+    Auth --> ReplyOp : false
+    ReplyOp --> Controller : 401 Unauthorized
+    Controller -> Controller : return error response
+end
+
+alt Authorization: Write permission
+    ReplyOp -> Authz : hasPermission(actor: Actor, permission: Permission.Write) : Bool
+    Authz --> ReplyOp : true
+else No Write permission
+    Authz --> ReplyOp : false
+    ReplyOp --> Controller : 403 Forbidden
+    Controller -> Controller : return error response
+end
+
+alt Resource accessibility (conversation)
+    ReplyOp -> Resource : isAccessible(actor: Actor) : Bool
+    Resource --> ReplyOp : true
+else Not accessible
+    Resource --> ReplyOp : false
+    ReplyOp --> Controller : 403 Forbidden
+    Controller -> Controller : return error response
+end
+
+alt Channel authenticated and encrypted
+    ReplyOp -> API : isAuthenticated() : Bool
+    API --> ReplyOp : true
+    ReplyOp -> API : isEncrypted() : Bool
+    API --> ReplyOp : true
+else Channel not secure
+    API --> ReplyOp : false
+    ReplyOp --> Controller : 500 Internal Server Error
+    Controller -> Controller : return error response
+end
+
+ReplyOp -> API : sendReply(reply: String) : Bool
+API --> ReplyOp : success
+
+ReplyOp -> State : setState(Post3)
+State --> ReplyOp : state changed
+
+ReplyOp --> Controller : 201 Created
+Controller -> Controller : return success response
+
+@enduml

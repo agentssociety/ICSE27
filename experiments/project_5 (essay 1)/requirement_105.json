@@ -1,0 +1,104 @@
+{
+  "id": "REQ-DASHBOARD-01",
+  "title": "Instructor Registration and Login",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall allow an instructor to create an account with required details, log in with valid credentials, and be redirected to their personal dashboard.",
+  "rationale": "This requirement ensures that instructors can access the necessary tools for managing courses and monitoring student progress efficiently.",
+  "business_value": "By enabling instructors to register and log in, the system enhances productivity and allows for better tracking of course enrollment and student performance.",
+  "source": {
+    "type": "User Story",
+    "id": 105,
+    "description": "As a instructor I need to register and log in to a personal dashboard that shows active exams, enrollment counts, and competency coverage so that I can manage my courses and monitor student progress efficiently."
+  },
+  "stakeholders": [
+    "Instructors"
+  ],
+  "acceptance_criteria": [
+    "An instructor can create an account with required details when accessing the registration page.",
+    "An instructor is redirected to their personal dashboard upon logging in with valid credentials.",
+    "An instructor sees active exams, enrollment counts, and competency coverage when viewing their dashboard."
+  ],
+  "preconditions": [
+    "Instructor is not registered (for registration feature).",
+    "Instructor has registered and knows valid credentials (for login feature).",
+    "Instructor is on their personal dashboard."
+  ],
+  "postconditions": [
+    "An instructor's account is created with required details.",
+    "An instructor logs in successfully and is redirected to the dashboard.",
+    "The dashboard displays active exams, enrollment counts, and competency coverage."
+  ],
+  "functional_constraints": [],
+  "security_requirements": [
+    "Strong authentication mechanism for user accounts.",
+    "Data encryption for sensitive information."
+  ],
+  "non_functional_requirements": {
+    "performance": "Dashboard updates in real-time or near real-time.",
+    "availability": "99.9% uptime during business hours.",
+    "scalability": "System should handle an increase in the number of registered instructors and students without performance degradation.",
+    "usability": "Clear and intuitive interface for easy navigation and data interpretation."
+  },
+  "edge_cases": [
+    "What happens if an instructor tries to register with existing credentials?",
+    "How does the system handle a sudden surge in user activity?",
+    "What actions should be taken if a user attempts to log in from an unrecognized device?"
+  ],
+  "dependencies": [
+    "User Management System",
+    "Authentication Service"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Registration API",
+      "description": "Handles the creation of new instructor accounts."
+    },
+    {
+      "type": "API",
+      "name": "Login API",
+      "description": "Authenticates user credentials and returns a session token."
+    },
+    {
+      "type": "Database",
+      "name": "User Database",
+      "description": "Stores user information including login details and dashboard data."
+    },
+    {
+      "type": "UI",
+      "name": "Dashboard UI",
+      "description": "Displays active exams, enrollment counts, and competency coverage."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-REG-01",
+      "description": "Instructor tries to register with existing credentials.",
+      "expected_result": "System displays an error message indicating that the account already exists."
+    },
+    {
+      "id": "TC-LGN-02",
+      "description": "User attempts to log in from an unrecognized device.",
+      "expected_result": "System prompts for a second factor authentication or blocks access after several failed attempts."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-29T14:06:40.277462",
+  "last_updated": "2026-06-29T14:57:40.845170",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "Instructor",
+      "InstructorDashboard",
+      "Exam",
+      "Enrollment",
+      "Competency"
+    ],
+    "test_artifacts": []
+  }
+}

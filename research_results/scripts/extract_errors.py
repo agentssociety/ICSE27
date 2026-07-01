@@ -213,9 +213,9 @@ def run() -> None:
     output = {
         "metric":      "rq1a_autonomy",
         "description": (
-            "Error incident analysis across all 12 runs (4 projects × 3 seeds). "
+            "Error incident analysis across all runs (6 projects: 4×3 seeds + 2×1 seed). "
             "SR = fixed / total incidents. "
-            "Values reported as mean ± std across 3 essay seeds per project."
+            "Values reported as mean ± std across essay seeds per project."
         ),
         "projects": projects_summary,
         "cross_run_aggregate": {

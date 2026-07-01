@@ -1,0 +1,139 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #FAFAFA
+skinparam interfaceBackgroundColor #E8F0FE
+skinparam enumBackgroundColor #E8FEE8
+skinparam exceptionBackgroundColor #FEE8E8
+skinparam defaultFontSize 12
+skinparam classFontSize 10
+skinparam attributeFontSize 9
+skinparam noteFontSize 8
+
+package "Domain Model" {
+  interface "Actor" as Actor {
+    + getPermissions(): Set<Permission>
+  }
+
+  class "User" as User {
+    - permissions: Set<Permission>
+    {constraint} Must be logged in to report a post
+  + hasPermission(Permission.WRITE) : boolean
+  }
+
+  class "ContentModerator" as ContentModerator {
+    - permissions: Set<Permission>
+  }
+
+  enum "Permission" as Permission {
+    Read
+    Write
+    Admin
+  }
+
+  enum "PostStatus" as PostStatus {
+    normal
+    flagged_for_review
+  }
+
+  enum "Reason" as Reason {
+    INAPPROPRIATE_CONTENT
+    SPAM
+    HARASSMENT
+    COPYRIGHT_VIOLATION
+    OTHER
+  }
+
+  class "Post" as Post {
+    - id: String
+    - status: PostStatus
+  + getStatus() : PostStatus
+  + setStatus(PostStatus.FLAGGED_FOR_REVIEW)
+  }
+
+  class "Report" as Report {
+    - reason: Reason
+  + create(post: Post, reporter: User, \nreason: Reason) : Report
+  }
+
+  class "Dropdown" as Dropdown {
+    {constraint} Must have at least one option
+  + isValidReason(selectedReason: String) : boolean
+  }
+
+  class "AuthToken" as AuthToken {
+    - token: String
+    {constraint} User must be logged in
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface "PostReportUI" as PostReportUI {
+    {constraint} secure, authenticated
+  }
+
+  interface "ContentModerationAPI" as ContentModerationAPI {
+    {constraint} secure, authenticated
+  }
+}
+
+package "DTOs" {
+  class "ReportRequestDTO" as ReportRequestDTO <<dto>> {
+    - reason: Reason
+    - postId: String
+  }
+
+  class "ReportResponseDTO" as ReportResponseDTO <<dto>> {
+    - message: String
+    - success: Boolean
+    - postStatus: PostStatus
+  }
+}
+
+package "Exceptions" {
+  class "AuthenticationException" as AuthenticationException <<exception>> {
+    - message: String
+  }
+
+  class "InvalidReasonException" as InvalidReasonException <<exception>> {
+    - message: String
+  }
+
+  class "DropdownUnavailableException" as DropdownUnavailableException <<exception>> {
+    - message: String
+  }
+}
+
+' Inheritance
+Actor <|-- User
+Actor <|-- ContentModerator
+
+' Associations with multiplicities
+User "1" -- "*" Report : creates
+Report "*" -- "1" Post : applies to
+Report "*" -- "1" Dropdown : selects reason from
+Post "*" -- "1" User : owned by
+ContentModerator "0..*" -- "0..*" Post : reviews
+AuthToken "1" -- "1" Actor : owner
+
+' Composition for Dropdown options
+Dropdown *-- "*" Reason : contains
+
+' Dependencies
+User ..> AuthToken : has
+PostReportUI ..> ReportRequestDTO : uses
+PostReportUI ..> ReportResponseDTO : returns
+ContentModerationAPI ..> ReportRequestDTO : receives
+
+note top of PostReportUI
+  UI displays dropdown of predefined reasons;
+  user selects and confirms report
+end note
+
+note top of ContentModerationAPI
+  API receives report,
+  flags post for review,
+  returns confirmation
+end note
+
+@enduml

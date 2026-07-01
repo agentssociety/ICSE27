@@ -33,6 +33,8 @@ PROJ_NAMES = {
     2: "Blood-Type Alert",
     3: "Airport Runway",
     4: "ATM Withdrawal",
+    5: "Competency Platform",
+    6: "Social Network",
 }
 
 ICSE_HEADER = r"""\usepackage{booktabs}
@@ -48,6 +50,8 @@ ROW_COLORS = {
     2: r"\rowcolor[HTML]{E8F5E8}",   # pastel green
     3: r"\rowcolor[HTML]{FEF7E0}",   # pastel amber
     4: r"\rowcolor[HTML]{F8EAF2}",   # pastel rose
+    5: r"\rowcolor[HTML]{EAF0FF}",   # pastel indigo
+    6: r"\rowcolor[HTML]{FFF5E0}",   # pastel gold
 }
 BEST_COLOR  = r"\cellcolor[HTML]{D6EFD6}"   # soft green
 WORST_COLOR = r"\cellcolor[HTML]{FDDADA}"   # soft red
@@ -640,6 +644,30 @@ def _table_dataset() -> str:
             "be_loc":  3908,
             "fe_loc":  1290,
             "tests":   30,
+        },
+        {
+            "id":      "P5",
+            "system":  "Competency Assessment Platform",
+            "domain":  "Education",
+            "descr":   "Gamified exam platform where instructors build competency-tagged assessments.",
+            "stories": 12,
+            "tasks":   12,
+            "alloy":   12,
+            "be_loc":  9953,
+            "fe_loc":  3142,
+            "tests":   173,
+        },
+        {
+            "id":      "P6",
+            "system":  "Community Social Network",
+            "domain":  "Social",
+            "descr":   "Social media platform with profiles, posts, communities, and moderation.",
+            "stories": 25,
+            "tasks":   25,
+            "alloy":   25,
+            "be_loc":  7618,
+            "fe_loc":  1866,
+            "tests":   81,
         },
     ]
 

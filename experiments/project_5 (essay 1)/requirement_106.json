@@ -1,0 +1,91 @@
+{
+  "id": "REQ-EXAM-BLD-01",
+  "title": "Support multiple question types and tagging",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall support creation of multiple choice, drag-and-drop, and code snippet questions.",
+  "rationale": "To enable instructors to create diverse assessments that accurately test competencies with appropriate difficulty levels.",
+  "business_value": "Improves the effectiveness of assessments by providing a variety of question types and difficulty tiers, thereby better aligning with learning objectives.",
+  "source": {
+    "type": "User Story",
+    "id": 106,
+    "description": "As an instructor I need an exam builder that supports multiple choice, drag-and-drop, and code snippet questions"
+  },
+  "stakeholders": [
+    "Instructors",
+    "Learning Management System (LMS) Developers"
+  ],
+  "acceptance_criteria": [
+    "I can assign one or more competencies, a difficulty tier from Beginner, Intermediate, or Advanced, and a nugget reward multiplier to that question"
+  ],
+  "preconditions": [
+    "The system is running and accessible.",
+    "An exam creator is logged in."
+  ],
+  "postconditions": [
+    "A new question of the specified type has been created with the assigned competencies, difficulty tier, and nugget reward multiplier."
+  ],
+  "functional_constraints": [
+    "The system must support multiple choice, drag-and-drop, and code snippet questions.",
+    "Each question can be tagged with one or more competencies.",
+    "Each question must have a difficulty tier from Beginner, Intermediate, or Advanced.",
+    "Each question can have an associated nugget reward multiplier."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens if a question is created without any competencies?",
+    "Can a question be tagged with multiple difficulty tiers simultaneously?",
+    "How does the system handle invalid or incorrect input for competencies, difficulty tiers, and nugget reward multipliers?"
+  ],
+  "dependencies": [
+    "Learning Management System (LMS)",
+    "Competency Management Service",
+    "Difficulty Tier Classification Service"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Question Creation API",
+      "description": "Used by the LMS to create new questions with specified details."
+    },
+    {
+      "type": "Database",
+      "name": "Exam Builder Database",
+      "description": "Stores information about created questions, including their type, competencies, difficulty tiers, and nugget reward multipliers."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-EXAM-BLD-01",
+      "description": "Create a multiple choice question with one competency and Beginner difficulty.",
+      "expected_result": "A new multiple choice question is created and saved in the database with the specified competency and difficulty."
+    },
+    {
+      "id": "TC-EXAM-BLD-02",
+      "description": "Attempt to create a question without specifying any competencies.",
+      "expected_result": "The system should return an error message indicating that at least one competency must be specified."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-29T14:09:18.647640",
+  "last_updated": "2026-06-29T15:12:19.042360",
+  "traceability": {
+    "related_requirements": [],
+    "design_components": [
+      "ExamBuilder",
+      "Question",
+      "Competency"
+    ],
+    "test_artifacts": []
+  }
+}

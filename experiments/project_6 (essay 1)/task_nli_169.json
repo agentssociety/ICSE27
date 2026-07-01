@@ -1,0 +1,30 @@
+{
+  "task_id": 169,
+  "confidence": 0.9501,
+  "evidence": [
+    {
+      "claim": "If I have disabled notifications for a post, I do not receive notifications for interactions on that post.",
+      "fact": "Blocking hides the blocked user's posts from the blocker.",
+      "score": 0.9861,
+      "user_story_span": "I do not receive any notification",
+      "fact_span": ""
+    },
+    {
+      "claim": "I am a logged-in user with a published post.",
+      "fact": "Privacy controls whether non-friends can view their posts.",
+      "score": 0.9694,
+      "user_story_span": "I am a logged-in user with a published post",
+      "fact_span": ""
+    },
+    {
+      "claim": "The user has enabled notifications for post interactions.",
+      "fact": "Notifications include comments.",
+      "score": 0.8949,
+      "user_story_span": "The user has enabled notifications for post interactions",
+      "fact_span": "Notifications include comments."
+    }
+  ],
+  "total_claims": 7,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

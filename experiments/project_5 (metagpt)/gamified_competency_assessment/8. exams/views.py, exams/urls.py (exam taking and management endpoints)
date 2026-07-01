@@ -1,0 +1,493 @@
+```python
+# exams/views.py
+"""
+Views for exam management: creating, taking, submitting exams and questions.
+Handles instructor exam builder and student exam interface.
+"""
+import json
+import logging
+from datetime import timedelta
+from typing import Any, Dict, Optional
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.db import transaction
+from django.db.models import Max
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    JsonResponse,
+)
+from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
+from django.views.decorators.http import require_http_methods
+from django.core.exceptions import PermissionDenied
+
+from accounts.models import StudentProfile, InstructorProfile
+from analytics.utils import update_competency_masteries, get_student_competency_breakdown
+from audit.models import AuditLog
+from .models import Exam, Question, Competency, Cohort, ExamAttempt
+from .forms import ExamForm, QuestionForm, CompetencyForm
+from gamification.models import Badge, StudentBadge
+
+
+logger = logging.getLogger(__name__)
+
+
+# ============================================================
+# HELPER FUNCTIONS
+# ============================================================
+
+def _get_student_profile(user: User) -> StudentProfile:
+    """Retrieve the StudentProfile for a user. Raises PermissionDenied if not a student."""
+    try:
+        return user.student_profile
+    except StudentProfile.DoesNotExist:
+        raise PermissionDenied("User is not a student.")
+
+
+def _get_instructor_profile(user: User) -> InstructorProfile:
+    """Retrieve the InstructorProfile for a user. Raises PermissionDenied if not an instructor."""
+    try:
+        return user.instructor_profile
+    except InstructorProfile.DoesNotExist:
+        raise PermissionDenied("User is not an instructor.")
+
+
+def _log_exam_action(
+    actor: User,
+    action: str,
+    exam_id: Optional[int] = None,
+    details: Optional[Dict[str, Any]] = None,
+) -> None:
+    """Helper to log exam-related actions to the audit log."""
+    AuditLog.log(
+        action=action,
+        actor=actor,
+        resource_type='exam',
+        resource_id=exam_id,
+        details=details or {},
+    )
+
+
+def _calculate_streak_multiplier(student: StudentProfile) -> float:
+    """Calculate nugget multiplier based on current streak (0.1 per day, max 2.0x)."""
+    base_multiplier = 1.0
+    max_multiplier = 2.0
+    increment_per_streak = 0.1
+    multiplier = base_multiplier + (student.current_streak * increment_per_streak)
+    return min(multiplier, max_multiplier)
+
+
+def _serialize_question(question: Question) -> Dict[str, Any]:
+    """Serialize a question for the API response, handling different types."""
+    base = {
+        'id': question.id,
+        'question_type': question.question_type,
+        'content': question.content,
+        'difficulty': question.difficulty,
+        'nugget_multiplier': question.nugget_multiplier,
+    }
+    if question.question_type == 'MCQ':
+        base['options'] = question.content.get('options', [])
+    elif question.question_type == 'DRAG_DROP':
+        base['drag_items'] = question.content.get('drag_items', [])
+        base['drop_zones'] = question.content.get('drop_zones', [])
+    elif question.question_type == 'CODE':
+        base['starter_code'] = question.content.get('starter_code', '')
+        base['language'] = question.content.get('language', 'python')
+    return base
+
+
+def _prepare_attempt_response(attempt: ExamAttempt) -> JsonResponse:
+    """Build response for starting or continuing an exam. Returns next question or completion signal."""
+    exam = attempt.exam
+    questions = exam.questions.all().order_by('order')
+    answered_ids = set(int(k) for k in (attempt.responses or {}).keys())
+
+    next_question = None
+    for q in questions:
+        if q.id not in answered_ids:
+            next_question = q
+            break
+
+    response_data = {
+        'attempt_id': attempt.id,
+        'exam_title': exam.title,
+        'time_limit_minutes': exam.time_limit_minutes,
+        'start_time': attempt.start_time.isoformat(),
+        'total_questions': questions.count(),
+        'answered_count': len(answered_ids),
+    }
+
+    if next_question:
+        response_data['question'] = _serialize_question(next_question)
+        response_data['is_complete'] = False
+    else:
+        response_data['is_complete'] = True
+        response_data['message'] = 'All questions answered. Submit your exam.'
+
+    return JsonResponse(response_data)
+
+
+def _check_exam_time_limit(attempt: ExamAttempt) -> bool:
+    """Check if the attempt has exceeded the time limit. If so, auto-submit."""
+    if attempt.end_time:
+        return True  # Already finalized
+    exam = attempt.exam
+    if exam.time_limit_minutes:
+        deadline = attempt.start_time + timedelta(minutes=exam.time_limit_minutes)
+        if timezone.now() >= deadline:
+            # Auto-finalize attempt
+            attempt.end_time = timezone.now()
+            attempt.save(update_fields=['end_time'])
+            return True
+    return False
+
+
+# ============================================================
+# EXAM CRUD (Instructor)
+# ============================================================
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def exam_list_create(request: HttpRequest) -> HttpResponse:
+    """List all exams (instructor sees own, student sees available) or create a new exam."""
+    user = request.user
+
+    if request.method == "GET":
+        if hasattr(user, 'instructor_profile'):
+            exams = Exam.objects.filter(creator=user.instructor_profile).order_by('-created_at')
+        elif hasattr(user, 'student_profile'):
+            student = user.student_profile
+            cohorts = Cohort.objects.filter(students=student)
+            exams = Exam.objects.filter(
+                cohorts__in=cohorts,
+                open_date__lte=timezone.now(),
+                close_date__gte=timezone.now(),
+            ).distinct().order_by('-open_date')
+        else:
+            exams = Exam.objects.none()
+        return render(request, 'exams/exam_list.html', {'exams': exams})
+
+    elif request.method == "POST":
+        instructor = _get_instructor_profile(user)
+        form = ExamForm(request.POST)
+        if form.is_valid():
+            exam = form.save(commit=False)
+            exam.creator = instructor
+            exam.save()
+            form.save_m2m()  # Save many-to-many relationships (cohorts)
+            _log_exam_action(
+                actor=user,
+                action='exam_created',
+                exam_id=exam.id,
+                details={'title': exam.title},
+            )
+            return JsonResponse({'id': exam.id, 'title': exam.title}, status=201)
+        else:
+            return JsonResponse({'errors': form.errors}, status=400)
+
+
+@login_required
+@require_http_methods(["GET", "PUT", "DELETE"])
+def exam_detail(request: HttpRequest, exam_id: int) -> HttpResponse:
+    """Retrieve, update, or delete an exam. Only the creator (instructor) can modify or delete."""
+    instructor = _get_instructor_profile(request.user)
+    exam = get_object_or_404(Exam, pk=exam_id, creator=instructor)
+
+    if request.method == "GET":
+        return render(request, 'exams/exam_detail.html', {
+            'exam': exam,
+            'questions': exam.questions.all().order_by('order'),
+            'competencies': Competency.objects.filter(question__exam=exam).distinct(),
+        })
+
+    elif request.method == "PUT":
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON.'}, status=400)
+        form = ExamForm(data, instance=exam)
+        if form.is_valid():
+            form.save()
+            _log_exam_action(
+                actor=request.user,
+                action='exam_updated',
+                exam_id=exam.id,
+                details={'title': exam.title},
+            )
+            return JsonResponse({'id': exam.id, 'title': exam.title})
+        else:
+            return JsonResponse({'errors': form.errors}, status=400)
+
+    elif request.method == "DELETE":
+        exam.delete()
+        _log_exam_action(
+            actor=request.user,
+            action='exam_deleted',
+            exam_id=exam_id,
+            details={},
+        )
+        return JsonResponse({'message': 'Exam deleted.'})
+
+
+# ============================================================
+# QUESTION CRUD (Instructor)
+# ============================================================
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def question_list_create(request: HttpRequest, exam_id: int) -> HttpResponse:
+    """List or create questions for a specific exam."""
+    instructor = _get_instructor_profile(request.user)
+    exam = get_object_or_404(Exam, pk=exam_id, creator=instructor)
+
+    if request.method == "GET":
+        questions = exam.questions.all().order_by('order')
+        return render(request, 'exams/question_list.html', {
+            'exam': exam,
+            'questions': questions,
+        })
+
+    elif request.method == "POST":
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.exam = exam
+            if question.order is None:
+                max_order = exam.questions.aggregate(Max('order'))['order__max'] or 0
+                question.order = max_order + 1
+            question.save()
+            form.save_m2m()  # Save competencies
+            _log_exam_action(
+                actor=request.user,
+                action='question_created',
+                exam_id=exam.id,
+                details={
+                    'question_id': question.id,
+                    'question_type': question.question_type,
+                },
+            )
+            return JsonResponse({'id': question.id, 'content': question.content}, status=201)
+        else:
+            return JsonResponse({'errors': form.errors}, status=400)
+
+
+@login_required
+@require_http_methods(["GET", "PUT", "DELETE"])
+def question_detail(request: HttpRequest, exam_id: int, question_id: int) -> HttpResponse:
+    """Retrieve, update, or delete a specific question."""
+    instructor = _get_instructor_profile(request.user)
+    exam = get_object_or_404(Exam, pk=exam_id, creator=instructor)
+    question = get_object_or_404(Question, pk=question_id, exam=exam)
+
+    if request.method == "GET":
+        return render(request, 'exams/question_detail.html', {
+            'question': question,
+            'exam': exam,
+        })
+
+    elif request.method == "PUT":
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON.'}, status=400)
+        form = QuestionForm(data, instance=question)
+        if form.is_valid():
+            form.save()
+            _log_exam_action(
+                actor=request.user,
+                action='question_updated',
+                exam_id=exam.id,
+                details={'question_id': question.id},
+            )
+            return JsonResponse({'id': question.id, 'content': question.content})
+        else:
+            return JsonResponse({'errors': form.errors}, status=400)
+
+    elif request.method == "DELETE":
+        question.delete()
+        _log_exam_action(
+            actor=request.user,
+            action='question_deleted',
+            exam_id=exam.id,
+            details={'question_id': question_id},
+        )
+        return JsonResponse({'message': 'Question deleted.'})
+
+
+# ============================================================
+# COMPETENCY CRUD (Instructor)
+# ============================================================
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def competency_list_create(request: HttpRequest) -> HttpResponse:
+    """List all competencies or create a new one. Competencies are global."""
+    _get_instructor_profile(request.user)  # Ensure only instructors can manage competencies
+
+    if request.method == "GET":
+        competencies = Competency.objects.all().order_by('name')
+        return render(request, 'exams/competency_list.html', {'competencies': competencies})
+
+    elif request.method == "POST":
+        form = CompetencyForm(request.POST)
+        if form.is_valid():
+            competency = form.save()
+            _log_exam_action(
+                actor=request.user,
+                action='competency_created',
+                details={'name': competency.name},
+            )
+            return JsonResponse({'id': competency.id, 'name': competency.name}, status=201)
+        else:
+            return JsonResponse({'errors': form.errors}, status=400)
+
+
+# ============================================================
+# COHORT MANAGEMENT (Instructor)
+# ============================================================
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def cohort_list_create(request: HttpRequest) -> HttpResponse:
+    """List or create cohorts for the instructor."""
+    instructor = _get_instructor_profile(request.user)
+
+    if request.method == "GET":
+        cohorts = Cohort.objects.filter(creator=instructor).order_by('name')
+        return render(request, 'exams/cohort_list.html', {'cohorts': cohorts})
+
+    elif request.method == "POST":
+        name = request.POST.get('name', '').strip()
+        if not name:
+            return JsonResponse({'error': 'Cohort name is required.'}, status=400)
+        cohort = Cohort.objects.create(creator=instructor, name=name)
+        _log_exam_action(
+            actor=request.user,
+            action='cohort_created',
+            details={'name': name},
+        )
+        return JsonResponse({'id': cohort.id, 'name': cohort.name}, status=201)
+
+
+@login_required
+@require_http_methods(["POST"])
+def cohort_enroll_student(request: HttpRequest, cohort_id: int) -> HttpResponse:
+    """Enroll a student in a cohort. Expects JSON with 'student_id' or 'student_email'."""
+    instructor = _get_instructor_profile(request.user)
+    cohort = get_object_or_404(Cohort, pk=cohort_id, creator=instructor)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON.'}, status=400)
+
+    student_id = data.get('student_id')
+    student_email = data.get('student_email')
+
+    if student_id:
+        student = get_object_or_404(StudentProfile, pk=student_id)
+    elif student_email:
+        try:
+            user = User.objects.get(email=student_email)
+            student = get_object_or_404(StudentProfile, user=user)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User with this email does not exist.'}, status=404)
+    else:
+        return JsonResponse({'error': 'Provide student_id or student_email.'}, status=400)
+
+    if student in cohort.students.all():
+        return JsonResponse({'message': 'Student already enrolled.'}, status=200)
+
+    cohort.students.add(student)
+    _log_exam_action(
+        actor=request.user,
+        action='student_enrolled',
+        details={
+            'cohort_id': cohort_id,
+            'student_id': student.id,
+        },
+    )
+    return JsonResponse({'message': f'Student {student.user.username} enrolled in {cohort.name}.'}, status=200)
+
+
+# ============================================================
+# EXAM TAKING (Student)
+# ============================================================
+
+@login_required
+@require_http_methods(["POST"])
+def start_exam(request: HttpRequest, exam_id: int) -> HttpResponse:
+    """Start a new exam attempt. Returns first question and timer info."""
+    student = _get_student_profile(request.user)
+    exam = get_object_or_404(Exam, pk=exam_id)
+
+    now = timezone.now()
+    if exam.open_date > now or exam.close_date < now:
+        return JsonResponse({'error': 'Exam is not currently active.'}, status=400)
+
+    if not exam.cohorts.filter(students=student).exists():
+        return JsonResponse({'error': 'You are not enrolled in this exam.'}, status=403)
+
+    existing_attempt = ExamAttempt.objects.filter(
+        student=student,
+        exam=exam,
+        end_time__isnull=True,
+    ).first()
+    if existing_attempt:
+        return _prepare_attempt_response(existing_attempt)
+
+    attempt = ExamAttempt.objects.create(
+        student=student,
+        exam=exam,
+        start_time=now,
+        responses={},
+        results={},
+        total_nuggets_earned=0,
+        streak_multiplier=1.0,
+    )
+    _log_exam_action(
+        actor=request.user,
+        action='exam_started',
+        exam_id=exam.id,
+        details={'attempt_id': attempt.id},
+    )
+    return _prepare_attempt_response(attempt)
+
+
+@login_required
+@require_http_methods(["POST"])
+def submit_answer(request: HttpRequest, exam_id: int) -> HttpResponse:
+    """Submit an answer for the current question. Evaluates correctness, updates streak, calculates nuggets."""
+    student = _get_student_profile(request.user)
+    exam = get_object_or_404(Exam, pk=exam_id)
+
+    attempt = ExamAttempt.objects.filter(
+        student=student,
+        exam=exam,
+        end_time__isnull=True,
+    ).first()
+    if not attempt:
+        return JsonResponse({'error': 'No active exam attempt.'}, status=400)
+
+    # Check time limit; auto-submit if expired
+    if _check_exam_time_limit(attempt):
+        return JsonResponse({'error': 'Time limit exceeded. Exam has been auto-submitted.'}, status=400)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON.'}, status=400)
+
+    question_id = data.get('question_id')
+    response = data.get('response')
+
+    if not question_id or response is None:
+        return JsonResponse({'error': 'question_id and response are required.'}, status=400)
+
+    question = get_object_or_404(Question, pk=question_id, exam=exam)
+
+    # Check if already answered
+    responses = attempt.responses or {}

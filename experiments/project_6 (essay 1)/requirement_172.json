@@ -1,0 +1,104 @@
+{
+  "id": "REQ-POST-RPT-01",
+  "title": "User should be able to report a post by selecting a reason from a dropdown menu",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall allow a logged-in user to report a post by selecting a reason from a dropdown menu and confirming the report.",
+  "rationale": "This requirement enables users to flag inappropriate content for review, ensuring the integrity of the platform's content.",
+  "business_value": "Improves the quality and safety of the platform's content by allowing timely review of flagged posts.",
+  "source": {
+    "type": "User Story",
+    "id": 172,
+    "description": "As a user, I need to report a post by selecting a reason from a dropdown menu so that inappropriate content can be flagged and reviewed."
+  },
+  "stakeholders": [
+    "Content Moderators",
+    "Users"
+  ],
+  "acceptance_criteria": [
+    "A dropdown menu with predefined report reasons is provided.",
+    "The user selects a reason and confirms the report.",
+    "The post is flagged for review.",
+    "A confirmation message is shown."
+  ],
+  "preconditions": [
+    "The user must be logged in to report a post."
+  ],
+  "postconditions": [
+    "The selected report reason is recorded for the post.",
+    "The post status is updated to 'flagged for review'.",
+    "A confirmation message is displayed to the user indicating that their report has been submitted."
+  ],
+  "functional_constraints": [],
+  "security_requirements": [
+    "User authentication must be required to submit a report."
+  ],
+  "non_functional_requirements": {
+    "performance": "Response time for submitting a report should not exceed 500ms.",
+    "availability": "The system must be available 99.9% of the time.",
+    "scalability": "The system should handle up to 1,000 reports per minute during peak hours.",
+    "usability": "Error messages should be clear and user-friendly."
+  },
+  "edge_cases": [
+    "User tries to report a post without being logged in.",
+    "Dropdown menu is empty or does not contain any options.",
+    "User selects an invalid reason from the dropdown menu."
+  ],
+  "dependencies": [
+    "User Authentication System",
+    "Content Moderation System"
+  ],
+  "interfaces": [
+    {
+      "type": "UI",
+      "name": "Post Report UI",
+      "description": "The user interface where users can select a reason to report a post and confirm the action."
+    },
+    {
+      "type": "API",
+      "name": "Content Moderation API",
+      "description": "The API that receives the report, flags the post for review, and updates the post status."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-POST-RPT-01",
+      "description": "User tries to report a post without being logged in.",
+      "expected_result": "System displays an error message prompting the user to log in and prevents the report from being submitted."
+    },
+    {
+      "id": "TC-POST-RPT-02",
+      "description": "Dropdown menu is empty or does not contain any options.",
+      "expected_result": "System displays an error message indicating that the dropdown menu is unavailable and prevents the report from being submitted."
+    },
+    {
+      "id": "TC-POST-RPT-03",
+      "description": "User selects an invalid reason from the dropdown menu.",
+      "expected_result": "System displays an error message indicating that the selected reason is invalid and prevents the report from being submitted."
+    },
+    {
+      "id": "TC-POST-RPT-04",
+      "description": "User successfully reports a post with a valid reason.",
+      "expected_result": "Post is flagged for review, system updates the post status to 'flagged for review', and displays a confirmation message to the user."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T12:12:25.428245",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-CONTENT-PUB-01",
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "Report",
+      "Post",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

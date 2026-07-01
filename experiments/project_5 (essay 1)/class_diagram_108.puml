@@ -1,0 +1,177 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam classBorderColor #333333
+skinparam classHeaderBackgroundColor #EEEEEE
+
+package "Domain Model" {
+    class Student {
+        - id: String
+    }
+
+    class Cohort {
+        - name: String {unique}
+        - students: Set<Student>
+  + addStudent(student)
+    }
+
+    class Exam {
+        - id: String
+        - restrictedCohorts: Set<Cohort>
+  + addRestrictedCohort(cohort)
+    }
+
+    class Administrator {
+    }
+
+    class IT_Team {
+    }
+
+    Cohort "1" --> "*" Student : contains
+    Exam "*" --> "*" Cohort : restricted to
+}
+
+package "Application" {
+    interface "CohortAPI" as CohortAPI <<interface>> {
+        +{abstract} createCohort(name: String): Cohort
+        +{abstract} enrollStudent(cohort: Cohort, student: Student): void
+        +{abstract} deleteCohort(cohort: Cohort): void
+        +{abstract} getCohort(name: String): Cohort
+    }
+
+    interface "ExamRestrictionAPI" as ExamRestrictionAPI <<interface>> {
+        +{abstract} restrictExamToCohorts(exam: Exam, cohorts: Set<Cohort>): void
+        +{abstract} getRestrictedCohorts(exam: Exam): Set<Cohort>
+    }
+
+    class CohortServiceImpl {
+        - cohortRepository: CohortRepository
+        +{abstract} createCohort(name: String): Cohort
+        +{abstract} enrollStudent(cohort: Cohort, student: Student): void
+        +{abstract} deleteCohort(cohort: Cohort): void
+        +{abstract} getCohort(name: String): Cohort
+    }
+
+    class ExamRestrictionServiceImpl {
+        - examRepository: ExamRepository
+        +{abstract} restrictExamToCohorts(exam: Exam, cohorts: Set<Cohort>): void
+        +{abstract} getRestrictedCohorts(exam: Exam): Set<Cohort>
+    }
+
+    CohortAPI <|.. CohortServiceImpl
+    ExamRestrictionAPI <|.. ExamRestrictionServiceImpl
+}
+
+package "Infrastructure — Ports" {
+    interface "CohortRepository" as CohortRepository <<interface>> {
+        +{abstract} save(cohort: Cohort): Cohort
+        +{abstract} findByName(name: String): Cohort
+        +{abstract} findAll(): List<Cohort>
+        +{abstract} delete(cohort: Cohort): void
+    }
+
+    interface "ExamRepository" as ExamRepository <<interface>> {
+        +{abstract} save(exam: Exam): Exam
+        +{abstract} findById(id: String): Exam
+        +{abstract} findAll(): List<Exam>
+    }
+
+    class "StudentCohortDatabase" as StudentCohortDatabase <<Database>> {
+        - connection: Connection
+        +{abstract} executeQuery(query: String): ResultSet
+        +{abstract} executeUpdate(query: String): int
+  + findCohortByName(name)
+  + findCohortById(cohortId)
+  + findStudentById(studentId)
+  + findExamById(examId)
+    }
+
+    CohortRepository <|.. StudentCohortDatabase
+    ExamRepository <|.. StudentCohortDatabase
+}
+
+package "Controllers" {
+    class "CohortController" as CohortController {
+        - cohortService: CohortAPI
+        +{abstract} createCohort(request: CreateCohortRequest): ResponseEntity
+        +{abstract} enrollStudent(request: EnrollStudentRequest): ResponseEntity
+        +{abstract} deleteCohort(cohortName: String): ResponseEntity
+    }
+
+    class "ExamRestrictionController" as ExamRestrictionController {
+        - examRestrictionService: ExamRestrictionAPI
+        +{abstract} restrictExam(request: RestrictExamRequest): ResponseEntity
+        +{abstract} getRestrictedCohorts(examId: String): ResponseEntity
+    }
+
+    CohortController --> CohortAPI
+    ExamRestrictionController --> ExamRestrictionAPI
+}
+
+package "DTOs" {
+    class "CreateCohortRequest" as CreateCohortRequest <<dto>> {
+        + name: String
+    }
+
+    class "EnrollStudentRequest" as EnrollStudentRequest <<dto>> {
+        + cohortName: String
+        + studentId: String
+    }
+
+    class "RestrictExamRequest" as RestrictExamRequest <<dto>> {
+        + examId: String
+        + cohortNames: Set<String>
+    }
+
+    class "CohortResponse" as CohortResponse <<dto>> {
+        + name: String
+        + studentCount: int
+    }
+
+    class "ExamRestrictionResponse" as ExamRestrictionResponse <<dto>> {
+        + examId: String
+        + restrictedCohorts: Set<String>
+    }
+}
+
+package "Exceptions" {
+    class "CohortAlreadyExistsException" as CohortAlreadyExistsException <<exception>> {
+        + message: String
+    }
+
+    class "CohortNotFoundException" as CohortNotFoundException <<exception>> {
+        + message: String
+    }
+
+    class "UnauthorizedAccessException" as UnauthorizedAccessException <<exception>> {
+        + message: String
+    }
+
+    class "InvalidOperationException" as InvalidOperationException <<exception>> {
+        + message: String
+    }
+}
+
+' Relationships between layers
+CohortServiceImpl --> CohortRepository : uses
+ExamRestrictionServiceImpl --> ExamRepository : uses
+CohortServiceImpl ..> CohortAlreadyExistsException : throws
+CohortServiceImpl ..> CohortNotFoundException : throws
+ExamRestrictionServiceImpl ..> CohortNotFoundException : throws
+CohortController ..> UnauthorizedAccessException : throws
+ExamRestrictionController ..> UnauthorizedAccessException : throws
+
+' Domain model relationships to repositories
+CohortRepository --> Cohort : manages
+ExamRepository --> Exam : manages
+
+' DTO usage
+CohortController --> CreateCohortRequest : receives
+CohortController --> EnrollStudentRequest : receives
+CohortController --> CohortResponse : returns
+ExamRestrictionController --> RestrictExamRequest : receives
+ExamRestrictionController --> ExamRestrictionResponse : returns
+
+@enduml

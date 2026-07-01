@@ -1,0 +1,23 @@
+{
+  "task_id": 163,
+  "confidence": 0.8791,
+  "evidence": [
+    {
+      "claim": "The system allows users to send friend requests to other users.",
+      "fact": "Notifications include friend requests.",
+      "score": 0.9689,
+      "user_story_span": "send friend requests to other users",
+      "fact_span": "Notifications include friend requests."
+    },
+    {
+      "claim": "The system allows users to reject incoming friend requests.",
+      "fact": "Group creators can reject join requests for private groups.",
+      "score": 0.7893,
+      "user_story_span": "reject incoming requests",
+      "fact_span": "Group creators can reject join requests for private groups."
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

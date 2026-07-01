@@ -261,7 +261,7 @@ def run() -> None:
     output = {
         "metric":      "rq1b_coordination",
         "description": (
-            "Orchestration quality metrics across all 12 runs (4 projects × 3 seeds). "
+            "Orchestration quality metrics across all runs (6 projects: 4×3 seeds + 2×1 seed). "
             "SR = N_fixed / N_incidents (Self-fix Rate, reported as %). "
             "PL = (N_steps - N_backtracks) / N_steps (Path Linearity, 0–1). "
             "DS = (N_delegations - N_redelegations) / N_delegations (Delegation Stability, 0–1). "

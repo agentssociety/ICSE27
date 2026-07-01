@@ -1,0 +1,81 @@
+{
+  "id": "REQ-NOTIFY-01",
+  "title": "Enable/Disable Notifications per Category",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall allow users to enable or disable notifications per category such as likes, comments, and friend requests.",
+  "rationale": "Enabling users to control which notifications they receive provides a personalized experience and reduces unnecessary alerts, improving user satisfaction and engagement.",
+  "business_value": "Improves user satisfaction by allowing them to tailor their notification preferences, potentially leading to higher app retention rates and more active participation in the application's features.",
+  "source": {
+    "type": "User Story",
+    "id": 176,
+    "description": "As a user I need to enable or disable notifications per category (e.g., likes, comments, friend requests) So that I can control which notifications I receive"
+  },
+  "stakeholders": [
+    "Product Management",
+    "User Experience Team",
+    "Development Team"
+  ],
+  "acceptance_criteria": [
+    "Given I am logged into the application When I navigate to the notification settings Then I see a list of notification categories with toggles",
+    "Given I am on the notification settings page When I toggle off \"likes\" notifications Then I no longer receive notifications for likes",
+    "Given I am on the notification settings page When I toggle on \"comments\" notifications Then I receive notifications for comments"
+  ],
+  "preconditions": [
+    "The user is logged into the application."
+  ],
+  "postconditions": [],
+  "functional_constraints": [
+    "Each category has a toggle (on/off).",
+    "Changes take effect immediately.",
+    "Supported notification categories include likes, comments, and friend requests."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": null,
+    "availability": null,
+    "scalability": null,
+    "usability": null
+  },
+  "edge_cases": [
+    "What happens if a user tries to toggle a notification category that is not supported by the system?",
+    "How does the system handle changes when multiple users are toggling different categories simultaneously?"
+  ],
+  "dependencies": [],
+  "interfaces": [
+    {
+      "type": "UI",
+      "name": "Notification Settings Page",
+      "description": "The requirement interacts with the user interface to display notification settings and receive user inputs."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-NOTIFY-01",
+      "description": "Toggle off 'likes' notifications and verify no notifications are received for likes.",
+      "expected_result": "User no longer receives notifications for likes when toggled off."
+    },
+    {
+      "id": "TC-NOTIFY-02",
+      "description": "Toggle on 'comments' notifications and verify notifications are received for comments.",
+      "expected_result": "User receives notifications for comments when toggled on."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T12:16:46.602563",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "NotificationPreference",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

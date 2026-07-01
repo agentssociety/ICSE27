@@ -1,0 +1,102 @@
+{
+  "id": "REQ-CONTENT-PUB-01",
+  "title": "User can create a text post and optionally upload images",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow a logged-in user to create a new post containing text content and optionally upload one or more images, which will then be saved and shared with other users.",
+  "rationale": "This requirement is necessary to enable users to share their thoughts and media with others, enhancing community engagement and interaction.",
+  "business_value": "Increasing user engagement and content sharing can lead to higher user retention and a more vibrant social environment within the platform.",
+  "source": {
+    "type": "User Story",
+    "id": 159,
+    "description": "As a user I need to create a text post and optionally upload images so that I can share content with others."
+  },
+  "stakeholders": [
+    "Content Creators",
+    "Community Managers",
+    "User Experience Team"
+  ],
+  "acceptance_criteria": [
+    "A logged-in user can create a new post containing text content.",
+    "A logged-in user can optionally upload one or more images to the post.",
+    "The post is saved and shared with other users."
+  ],
+  "preconditions": [
+    "The user must be logged in."
+  ],
+  "postconditions": [
+    "The post is successfully created and saved.",
+    "The post is visible to other users."
+  ],
+  "functional_constraints": [],
+  "security_requirements": [
+    "Authentication of the user before creating a post.",
+    "Encryption of any uploaded images for data security."
+  ],
+  "non_functional_requirements": {
+    "performance": "The system must respond within 2 seconds when creating and saving a post with text content and images.",
+    "availability": "The system must be available 99.9% of the time.",
+    "scalability": "The system must handle at least 1,000 concurrent users without performance degradation.",
+    "usability": "Error messages should be clear and user-friendly."
+  },
+  "edge_cases": [
+    "User tries to create a post without any content or images.",
+    "System fails to save a post due to network issues.",
+    "A user attempts to upload an image that exceeds the file size limit."
+  ],
+  "dependencies": [
+    "Authentication system for verifying user identity.",
+    "Image processing service for handling uploaded images."
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Post Creation API",
+      "description": "Interface used to receive and process post creation requests from the UI or other services."
+    },
+    {
+      "type": "Database",
+      "name": "Content Database",
+      "description": "Stores information about posts, including text content and image metadata."
+    },
+    {
+      "type": "External System",
+      "name": "Image Storage Service",
+      "description": "Used for storing uploaded images securely and making them accessible to other users."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-POST-CREATION-01",
+      "description": "User creates a post with text content only.",
+      "expected_result": "The post is successfully created, saved in the database, and visible to other users."
+    },
+    {
+      "id": "TC-POST-CREATION-02",
+      "description": "User creates a post with both text content and images.",
+      "expected_result": "The post is successfully created, saved in the database, and visible to other users. Images are stored securely and linked to the post."
+    },
+    {
+      "id": "TC-POST-CREATION-03",
+      "description": "User tries to create a post without any content or images.",
+      "expected_result": "The system rejects the request and displays an error message indicating that both text content and/or images are required."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T11:47:45.318978",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "Post",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

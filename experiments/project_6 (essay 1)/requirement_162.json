@@ -1,0 +1,102 @@
+{
+  "id": "REQ-USERFEED-01",
+  "title": "Display News Feed Sorted by Time",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall display a list of posts from the user's friends on the news feed page, sorted by creation time in descending order.",
+  "rationale": "Users need to see their friends' recent activities without missing any updates, and this feature ensures they can quickly access new content from people they follow.",
+  "business_value": "Increased engagement and satisfaction with the platform as users can stay up-to-date on friends' activities efficiently.",
+  "source": {
+    "type": "User Story",
+    "id": 162,
+    "description": "As a user, I need to see a news feed showing posts from my friends in chronological order so that I can view my friends' recent activities without missing any updates."
+  },
+  "stakeholders": [
+    "Product Management",
+    "Development Team",
+    "QA Team"
+  ],
+  "acceptance_criteria": [
+    "The user sees a list of posts from friends sorted by time (newest first)."
+  ],
+  "preconditions": [
+    "The user is logged in.",
+    "The user has friends with posts."
+  ],
+  "postconditions": [],
+  "functional_constraints": [
+    "Posts are displayed only from friends of the user.",
+    "Posts are sorted by creation time, with the newest appearing first."
+  ],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens when a user has no friends with posts?",
+    "How does the system handle new posts from friends added after the feed is loaded?",
+    "What if a friend deletes their post while the user is viewing the news feed?"
+  ],
+  "dependencies": [
+    "User Authentication System",
+    "Friendship Management Service",
+    "Post Storage and Retrieval"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Friendship API",
+      "description": "The requirement interacts with this API to retrieve the list of friends for the authenticated user."
+    },
+    {
+      "type": "Database",
+      "name": "Post Database",
+      "description": "The requirement retrieves posts from this database, filtered by the authenticated user's friends and sorted by creation time."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-USERFEED-01",
+      "description": "User with no friends should see an empty news feed.",
+      "expected_result": "The news feed displays no posts."
+    },
+    {
+      "id": "TC-USERFEED-02",
+      "description": "User with one friend and one post from that friend.",
+      "expected_result": "The news feed shows the single post in descending order of creation time."
+    },
+    {
+      "id": "TC-USERFEED-03",
+      "description": "User adds a new friend, who posts immediately after adding the user to their friends list.",
+      "expected_result": "The new post from the added friend appears at the top of the news feed."
+    },
+    {
+      "id": "TC-USERFEED-04",
+      "description": "User views the news feed while a friend's post is being deleted.",
+      "expected_result": "The news feed does not show the deleted post, and any existing posts remain sorted correctly."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T11:51:28.384408",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-CONTENT-PUB-01",
+      "REQ-REG-01",
+      "REQ-USER-FR-01"
+    ],
+    "design_components": [
+      "Post",
+      "Friendship",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

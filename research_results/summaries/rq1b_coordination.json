@@ -521,6 +521,210 @@
           0.538
         ]
       }
+    },
+    {
+      "project_id": 5,
+      "n_essays": 1,
+      "pipeline_steps": {
+        "mean": 216.0,
+        "std": 0.0,
+        "values": [
+          216.0
+        ]
+      },
+      "phase_backtracks": {
+        "mean": 15.0,
+        "std": 0.0,
+        "values": [
+          15.0
+        ]
+      },
+      "phase_reentries": {
+        "mean": 27.0,
+        "std": 0.0,
+        "values": [
+          27.0
+        ]
+      },
+      "orch_overhead_pct": {
+        "mean": 29.6,
+        "std": 0.0,
+        "values": [
+          29.6
+        ]
+      },
+      "sm_delegations": {
+        "mean": 5.0,
+        "std": 0.0,
+        "values": [
+          5.0
+        ]
+      },
+      "redelegations": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0
+        ]
+      },
+      "escalation_zone_pct": {
+        "mean": 21.8,
+        "std": 0.0,
+        "values": [
+          21.8
+        ]
+      },
+      "total_incidents": {
+        "mean": 9.0,
+        "std": 0.0,
+        "values": [
+          9.0
+        ]
+      },
+      "escalated_incidents": {
+        "mean": 3.0,
+        "std": 0.0,
+        "values": [
+          3.0
+        ]
+      },
+      "self_fix_rate_sr": {
+        "mean": 66.7,
+        "std": 0.0,
+        "values": [
+          66.7
+        ]
+      },
+      "wall_clock_min": {
+        "mean": 278.4,
+        "std": 0.0,
+        "values": [
+          278.4
+        ]
+      },
+      "SR": {
+        "mean": 66.7,
+        "std": 0.0,
+        "values": [
+          66.7
+        ]
+      },
+      "PL": {
+        "mean": 0.931,
+        "std": 0.0,
+        "values": [
+          0.931
+        ]
+      },
+      "DS": {
+        "mean": 0.8,
+        "std": 0.0,
+        "values": [
+          0.8
+        ]
+      }
+    },
+    {
+      "project_id": 6,
+      "n_essays": 1,
+      "pipeline_steps": {
+        "mean": 273.0,
+        "std": 0.0,
+        "values": [
+          273.0
+        ]
+      },
+      "phase_backtracks": {
+        "mean": 32.0,
+        "std": 0.0,
+        "values": [
+          32.0
+        ]
+      },
+      "phase_reentries": {
+        "mean": 59.0,
+        "std": 0.0,
+        "values": [
+          59.0
+        ]
+      },
+      "orch_overhead_pct": {
+        "mean": 29.7,
+        "std": 0.0,
+        "values": [
+          29.7
+        ]
+      },
+      "sm_delegations": {
+        "mean": 8.0,
+        "std": 0.0,
+        "values": [
+          8.0
+        ]
+      },
+      "redelegations": {
+        "mean": 6.0,
+        "std": 0.0,
+        "values": [
+          6.0
+        ]
+      },
+      "escalation_zone_pct": {
+        "mean": 54.9,
+        "std": 0.0,
+        "values": [
+          54.9
+        ]
+      },
+      "total_incidents": {
+        "mean": 18.0,
+        "std": 0.0,
+        "values": [
+          18.0
+        ]
+      },
+      "escalated_incidents": {
+        "mean": 3.0,
+        "std": 0.0,
+        "values": [
+          3.0
+        ]
+      },
+      "self_fix_rate_sr": {
+        "mean": 83.3,
+        "std": 0.0,
+        "values": [
+          83.3
+        ]
+      },
+      "wall_clock_min": {
+        "mean": 513.1,
+        "std": 0.0,
+        "values": [
+          513.1
+        ]
+      },
+      "SR": {
+        "mean": 83.3,
+        "std": 0.0,
+        "values": [
+          83.3
+        ]
+      },
+      "PL": {
+        "mean": 0.883,
+        "std": 0.0,
+        "values": [
+          0.883
+        ]
+      },
+      "DS": {
+        "mean": 0.25,
+        "std": 0.0,
+        "values": [
+          0.25
+        ]
+      }
     }
   ]
 }

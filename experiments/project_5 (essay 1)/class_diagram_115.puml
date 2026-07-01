@@ -1,0 +1,109 @@
+@startuml
+skinparam classBackgroundColor #FEFEFE
+skinparam classBorderColor #333333
+skinparam packageBackgroundColor #F0F0F0
+skinparam packageBorderColor #666666
+skinparam arrowColor #333333
+skinparam noteBackgroundColor #FFFFCC
+skinparam noteBorderColor #CCCC00
+
+package "Domain Model" {
+  class Actor {
+    + mayPerform : set Permission
+  + validatePermissions(instructor: Instructor, permission: Permission) : Boolean
+  }
+  class Student {
+  }
+  class Instructor {
+  }
+  class Resource {
+    + owner : Actor
+    + accessible : set Actor
+  + checkAccessibility(actor: Instructor) : Boolean
+  }
+  class Interface {
+    + kind : IfaceKind
+    + encrypted : Bool
+    + authenticated : Bool
+  + validateChannel(channel: Interface) : Boolean
+  }
+  enum Permission <<enum>> {
+    Read
+    Write
+    Execute
+    Admin
+  }
+  enum State <<enum>> {
+    Pre1
+    Pre2
+    Post1
+    Post2
+  }
+  note top of Resource : "invariant: owner always in accessible"
+  Student --|> Actor
+  Instructor --|> Actor
+  Resource *-- "1" Actor : owner
+  Student "1" -- "*" Resource : accessible
+  Instructor "1" -- "*" Resource : accessible
+}
+
+package "Application" {
+  class REQ_COHORT_LEADERBOARD_01 {
+    + initiator : Actor
+    + target : set Resource
+    + channel : set Interface
+    + grant : Permission
+    + pre : State
+    + post : State
+  + viewLeaderboard(student: Student) : State
+  + aggregateAndRank(nuggets: List) : List<RankedStudent>
+  + aggregateAndRank(emptyList) : List<RankedStudent>
+  + configureLeaderboard(instructor: Instructor, settings: Map) : State
+  }
+  note top of REQ_COHORT_LEADERBOARD_01
+    "invariants:\n" +
+    "  some channel\n" +
+    "  some target\n" +
+    "  grant in initiator.mayPerform\n" +
+    "  initiator in target.accessible\n" +
+    "  pre != post\n" +
+    "  some c: channel | c.authenticated = True\n" +
+    "  post in Post1 + Post2"
+  end note
+  REQ_COHORT_LEADERBOARD_01 ..> Interface : channel
+  REQ_COHORT_LEADERBOARD_01 ..> Resource : target
+  REQ_COHORT_LEADERBOARD_01 ..> Actor : initiator
+  REQ_COHORT_LEADERBOARD_01 ..> State : pre
+  REQ_COHORT_LEADERBOARD_01 ..> State : post
+}
+
+package "Infrastructure — Ports" {
+  class Student_Data_Store <<interface>> {
+    + kind : IfaceKind = Database
+    + encrypted : Bool = false
+    + authenticated : Bool = false
+  }
+  class Cohort_Settings_API <<interface>> {
+    + kind : IfaceKind = API
+    + encrypted : Bool = false
+    + authenticated : Bool = false
+  }
+  class Leaderboard_Display <<interface>> {
+    + kind : IfaceKind = UI
+    + encrypted : Bool = false
+    + authenticated : Bool = false
+  + renderLeaderboard(rankedList)
+  + showOptOutMessage()
+  + showLeaderboardDisabledMessage()
+  + renderEmptyLeaderboard()
+  + showUnauthorizedMessage()
+  + showSettingsUpdated()
+  + showAuthenticationError()
+  + showAccessDeniedError()
+  }
+  Student_Data_Store --|> Interface
+  Cohort_Settings_API --|> Interface
+  Leaderboard_Display --|> Interface
+}
+
+@enduml

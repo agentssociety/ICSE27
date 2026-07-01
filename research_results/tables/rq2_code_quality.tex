@@ -1,0 +1,36 @@
+\begin{table}[t]
+\centering
+\caption{Code quality and design-rigour comparison (cross-project means; AS: $n=6$ projects, MG: $n=5$ projects with runnable code). Cyclomatic complexity (CC) measured with \texttt{radon~cc} on functions and methods only (class-aggregate CC excluded); lower = simpler. Full type-hint coverage = \% of functions with all parameters \emph{and} return annotated. HTTP error density = \texttt{raise~HTTPException} + \texttt{return \{\}, 4xx/5xx} per 100~functions (captures both FastAPI and Flask-RESTful error patterns). Pydantic count is transitive: includes \texttt{XxxBase}, \texttt{XxxCreate}, \texttt{XxxUpdate}, \texttt{XxxResponse} subclasses. Design-completeness ratio = design-artifact classes $\div$ implemented classes. Alloy:impl ratio uses domain-specific sigs only (framework boilerplate excluded).}
+\label{tab:rq2_code_quality}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Metric} & \textbf{\textsc{AgentsSociety}} & \textbf{MetaGPT} \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{A.\ Design completeness}} \\
+Design-artifact classes (mean) & 136 & 9 \\
+Implemented classes (mean) & 228 & 13 \\
+Design-completeness ratio & \textbf{0.73} & 0.76 \\
+Alloy domain types modelled (sigs, mean) & 48 & N/A \\
+Alloy sig : impl-class ratio (domain) & 0.26 & N/A \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{B.\ Code hygiene}} \\
+Cyclomatic complexity (mean CC per fn) & \textbf{1.51} & 2.94 \\
+Avg.\ function length (lines) & \textbf{3.8} & 21.8 \\
+Full type-hint coverage (\%) & 78.9 & \textbf{83.6} \\
+Docstring coverage (\%) & 8.8 & \textbf{94.5} \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{C.\ Defensive rigour and input validation}} \\
+Error-handling density (try/100~fns) & \textbf{0.9} & 21.7 \\
+HTTP error density (/100~fns) & 12.6 & \textbf{33.9} \\
+Pydantic schema classes (mean / project) & \textbf{72} & 1.0 \\
+Pydantic field validators (mean / project) & \textbf{0.8} & 0.0 \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{D.\ Formal-specification grounding (\textsc{AgentsSociety} only)}} \\
+Alloy formal spec files / project & \checkmark (per task) & \ding{55} \\
+SAT-solver verified invariants & \checkmark & \ding{55} \\
+Schema-typed API contracts (Pydantic) & \checkmark & partial \\
+Business-rule validators (\texttt{@field\_validator}) & \checkmark & \ding{55} \\
+\bottomrule
+\end{tabular}
+\end{table}

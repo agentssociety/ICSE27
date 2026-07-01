@@ -1,0 +1,118 @@
+@startuml
+!pragma use_separator_box
+
+' Use exact names from domain model
+actor "Instructor" as Instructor
+box "Controller" #LightCyan
+  participant "Registration_API" as RegAPI
+  participant "Login_API" as LoginAPI
+end box
+box "UI" #LightGreen
+  participant "Dashboard_UI" as DashUI
+end box
+box "Domain" #LightYellow
+  participant "InstructorAccount" as Account
+  participant "DashboardContent" as Dashboard
+  participant "Exam" as Exam
+  participant "Enrollment" as Enroll
+  participant "Competency" as Compet
+end box
+box "Infrastructure" #LightPink
+  participant "User_Database" as DB
+end box
+
+== Instructor Registration ==
+
+Instructor -> RegAPI : **POST** /register\n(credentials: Name, Email, Password) [TLS]
+activate RegAPI
+
+RegAPI -> DB : checkDuplicate(email: Email) : Boolean [TLS, authenticated]
+activate DB
+DB --> RegAPI : result
+deactivate DB
+
+alt Duplicate exists
+    RegAPI --> Instructor : **409 Conflict**\n"Account with this email already exists"
+else No duplicate
+    RegAPI -> Account : create(owner: Instructor, permission: Permission.Write)
+    activate Account
+    note right of Account : State: owner = Instructor,\naccessible = {Instructor}
+    Account --> RegAPI : created
+    deactivate Account
+
+    RegAPI -> DB : save(account: InstructorAccount) [TLS, authenticated]
+    activate DB
+    note right of DB : Write protected by\nsafety constraint
+    DB --> RegAPI : success
+    deactivate DB
+
+    RegAPI --> Instructor : **201 Created**\n"Account created successfully"
+end
+deactivate RegAPI
+
+== Instructor Login ==
+
+Instructor -> LoginAPI : **POST** /login\n(email, password) [TLS]
+activate LoginAPI
+
+LoginAPI -> DB : verifyCredentials(email, password) [TLS, authenticated]
+activate DB
+DB --> LoginAPI : (valid: Boolean, deviceInfo)
+deactivate DB
+
+alt Invalid credentials
+    LoginAPI --> Instructor : **401 Unauthorized**\n"Invalid email or password"
+else Valid credentials
+    alt Unrecognized device (deviceInfo.newDevice)
+        LoginAPI -> LoginAPI : checkFailedAttempts(email)
+        alt Too many failed attempts
+            LoginAPI --> Instructor : **423 Locked**\n"Account temporarily blocked. Try later."
+        else
+            LoginAPI --> Instructor : **200 OK**\n"New device detected. Check email for 2FA code." [TLS]
+            ' In real flow would wait for 2FA, but here we simplify
+            Instructor -> LoginAPI : **POST** /verify-2fa(code) [TLS]
+            LoginAPI -> DB : validate2FA(email, code) [TLS, authenticated]
+            DB --> LoginAPI : valid
+            alt 2FA valid
+                LoginAPI -> Account : generateSessionToken()
+                activate Account
+                Account --> LoginAPI : token
+                deactivate Account
+                LoginAPI --> Instructor : **200 OK**\n{sessionToken, redirect: /dashboard}
+            else 2FA invalid
+                LoginAPI --> Instructor : **401 Unauthorized**\n"Invalid 2FA code"
+            end
+        end
+    else Recognized device
+        LoginAPI -> Account : generateSessionToken()
+        activate Account
+        Account --> LoginAPI : token
+        deactivate Account
+        LoginAPI --> Instructor : **200 OK**\n{sessionToken, redirect: /dashboard}
+    end
+end
+deactivate LoginAPI
+
+== Dashboard View ==
+
+Instructor -> DashUI : **GET** /dashboard\n(Authorization: Bearer sessionToken) [TLS]
+activate DashUI
+
+DashUI -> DB : fetchDashboardData(owner: Instructor) [TLS, authenticated]
+activate DB
+DB --> DashUI : (activeExams: List<Exam>, enrollmentCounts: Map, competencyCoverage: List<Competency>)
+deactivate DB
+
+alt Data found
+    DashUI -> Dashboard : create(owner: Instructor, data: ..)
+    activate Dashboard
+    note right of Dashboard : State: owner = Instructor,\naccessible = {Instructor}
+    Dashboard --> DashUI : dashboardView
+    deactivate Dashboard
+
+    DashUI --> Instructor : **200 OK**\nDashboad HTML/JSON with active exams,\nenrollment counts, competency coverage
+else No data (e.g., empty state)
+    DashUI --> Instructor : **200 OK**\n"Welcome! No exams yet.\nCreate your first exam."
+end
+deactivate DashUI
+@enduml

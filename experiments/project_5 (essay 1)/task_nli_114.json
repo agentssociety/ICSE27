@@ -1,0 +1,65 @@
+{
+  "task_id": 114,
+  "confidence": 0.9921,
+  "evidence": [
+    {
+      "claim": "The reward store contains virtual items.",
+      "fact": "The reward store offers virtual items.",
+      "score": 0.9991,
+      "user_story_span": "The reward store contains both virtual items",
+      "fact_span": "The reward store offers virtual items"
+    },
+    {
+      "claim": "The system allows a nugget wallet redeemable for virtual items in a reward store.",
+      "fact": "The reward store lets students use their nugget wallet to acquire virtual items or institution-specific benefits that the instructor has set up.",
+      "score": 0.999,
+      "user_story_span": "a nugget wallet redeemable in a reward store for virtual items",
+      "fact_span": "use their nugget wallet to acquire virtual items"
+    },
+    {
+      "claim": "The student has earned nuggets in their wallet.",
+      "fact": "Nuggets accumulated by a student are stored in a wallet and can be used to purchase virtual rewards or instructor-defined institutional privileges from a store.",
+      "score": 0.999,
+      "user_story_span": "a student has earned nuggets in their wallet",
+      "fact_span": "Nuggets accumulated by a student are stored in a wallet"
+    },
+    {
+      "claim": "The system allows a nugget wallet redeemable for instructor-configured institutional perks in a reward store.",
+      "fact": "The reward store lets students use their nugget wallet to acquire virtual items or institution-specific benefits that the instructor has set up.",
+      "score": 0.9989,
+      "user_story_span": "",
+      "fact_span": "institution-specific benefits that the instructor has set up"
+    },
+    {
+      "claim": "The student receives a perk applied.",
+      "fact": "Teachers can issue bonus rewards to a specific student, and every such action leaves an audit trail with the stated rationale.",
+      "score": 0.9987,
+      "user_story_span": "the student receives the reward (virtual item unlock or perk applied)",
+      "fact_span": ""
+    },
+    {
+      "claim": "The reward store contains real-world perks configured by instructors.",
+      "fact": "The learner's nugget account is redeemable in a shop for digital goods or for real-world benefits that instructors have configured.",
+      "score": 0.9971,
+      "user_story_span": "real-world perks configured by instructors",
+      "fact_span": "real-world benefits that instructors have configured"
+    },
+    {
+      "claim": "The wallet tracks nugget balance.",
+      "fact": "Nuggets accumulated by a student are stored in a wallet and can be used to purchase virtual rewards or instructor-defined institutional privileges from a store.",
+      "score": 0.9968,
+      "user_story_span": "The wallet tracks nugget balance",
+      "fact_span": ""
+    },
+    {
+      "claim": "Nuggets are earned through desired behaviors.",
+      "fact": "Getting several questions right in succession increases the nugget multiplier through three stages, and a single incorrect answer eliminates the bonus.",
+      "score": 0.9954,
+      "user_story_span": "Nuggets are earned through desired behaviors",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 17,
+  "supported_claims": 8,
+  "threshold": 0.6
+}

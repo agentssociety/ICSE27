@@ -1,0 +1,141 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor #FEFEFE
+  BorderColor #333
+}
+skinparam interface {
+  BackgroundColor #E6F2FF
+  BorderColor #1F6FEB
+}
+skinparam enum {
+  BackgroundColor #FFF3E0
+  BorderColor #E67E22
+}
+skinparam exception {
+  BackgroundColor #FFEBEE
+  BorderColor #C62828
+}
+
+package "Domain Model" {
+  class User {
+    + id: String
+    + authentication_status: AuthenticationStatus
+    + role: Role
+  + getAuthenticationStatus() : AuthenticationStatus
+  + getRole() : Role
+  + getAuthenticationStatus() : AUTHENTICATED
+  }
+  note right of User::authentication_status
+    Must be authenticated to access profile settings
+  end note
+
+  enum AuthenticationStatus {
+    AUTHENTICATED
+    UNAUTHENTICATED
+  }
+
+  enum Role {
+    USER
+    ADMIN
+  }
+
+  enum Permission {
+    WRITE
+    ADMIN
+  }
+
+  class Profile {
+    + visibility: Visibility
+    + owner: User
+  + getOwner() : User
+  + hasPermission(permission: Permission.WRITE) : Boolean
+  + setVisibility(newVisibility: Visibility)
+  + hasPermission(...) : true
+  + setVisibility(...)
+  }
+  note right of Profile::visibility
+    Visibility toggles between public and private
+  end note
+  note right of Profile::owner
+    Must be owner of the profile to toggle visibility
+  end note
+
+  enum Visibility {
+    PUBLIC
+    PRIVATE
+  }
+
+  class AuditEntry {
+    + operation: Operation
+    + timestamp: DateTime
+  + createEntry(operation: Operation.TOGGLE_VISIBILITY, timestamp: Timestamp)
+  }
+  note right of AuditEntry::operation
+    Each visibility toggle is logged
+  end note
+
+  enum Operation {
+    TOGGLE_VISIBILITY
+  }
+
+  ' Relationships
+  User "1" -- "1" Profile : owns
+  Profile "1" --> "0..*" AuditEntry : logs
+}
+
+package "Infrastructure — Ports" {
+  interface UserProfilesDatabase {
+    ' No methods yet
+  + updateProfile(...)
+  }
+  note right of UserProfilesDatabase
+    Stores profile data including visibility status
+  end note
+}
+
+package "Controllers" {
+  interface ProfileSettingsAPI {
+    ' No methods yet
+  }
+  note right of ProfileSettingsAPI
+    GET /profile/settings
+    PATCH /profile/settings
+    Requires authentication and encryption
+  end note
+}
+
+package "Exceptions" {
+  class UnauthorizedException <<exception>> {
+    + message: String
+  }
+  class ForbiddenException <<exception>> {
+    + message: String
+  }
+  class ServiceUnavailableException <<exception>> {
+    + message: String
+  }
+  note right of UnauthorizedException
+    Return 401 Unauthorized
+  end note
+  note right of ForbiddenException
+    Return 403 Forbidden
+  end note
+  note right of ServiceUnavailableException
+    Return 503 Service Unavailable
+  end note
+}
+
+' Dependencies (no methods, but show usage relation)
+ProfileSettingsAPI ..> UserProfilesDatabase : uses
+ProfileSettingsAPI ..> UnauthorizedException
+ProfileSettingsAPI ..> ForbiddenException
+ProfileSettingsAPI ..> ServiceUnavailableException
+
+' Domain model dependencies on enums
+Profile ..> Visibility
+AuditEntry ..> Operation
+User ..> AuthenticationStatus
+User ..> Role
+
+@enduml

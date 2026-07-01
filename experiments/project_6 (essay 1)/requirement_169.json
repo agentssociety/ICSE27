@@ -1,0 +1,110 @@
+{
+  "id": "REQ-NOTIFY-01",
+  "title": "User receives notification on post interactions",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall notify a user via email, push, or in-app when someone likes or comments on their published post.",
+  "rationale": "To keep users informed about interactions with their content, ensuring they stay engaged and connected with their audience.",
+  "business_value": "Increased engagement from followers by promptly receiving notifications of likes and comments, potentially leading to more interaction and community building.",
+  "source": {
+    "type": "User Story",
+    "id": 169,
+    "description": "As a user, I need to receive notifications when someone likes or comments on my post so that I can stay updated on interactions with my post."
+  },
+  "stakeholders": [
+    "Product Management",
+    "Design Team",
+    "Development Team",
+    "QA Team"
+  ],
+  "acceptance_criteria": [
+    "Given I am a logged-in user with a published post, When another user likes my post, Then I receive a notification that someone liked my post.",
+    "Given I am a logged-in user with a published post, When another user comments on my post, Then I receive a notification that someone commented on my post.",
+    "Given I am a logged-in user with a published post, When I have disabled notifications for that post, And another user likes or comments on my post, Then I do not receive any notification."
+  ],
+  "preconditions": [
+    "The user must be logged in to the system",
+    "The user's account must have notifications enabled for post interactions",
+    "The post must be published and accessible to other users"
+  ],
+  "postconditions": [
+    "The user receives a notification if their post is liked or commented on by another user",
+    "No notification is received if the user has disabled notifications for that specific post"
+  ],
+  "functional_constraints": [
+    "Notifications may be delivered via email, push, or in-app",
+    "The system must track likes and comments on posts",
+    "The system must differentiate between types of notifications (likes vs. comments)"
+  ],
+  "security_requirements": [
+    "User authentication is required to receive notifications",
+    "Notifications should not contain sensitive user information"
+  ],
+  "non_functional_requirements": {
+    "performance": "Notification delivery within a maximum time frame",
+    "availability": "High availability of the notification system",
+    "scalability": "The system must handle an increasing number of users and posts without performance degradation",
+    "usability": "Notifications should be easily visible and understandable to the user"
+  },
+  "edge_cases": [
+    "What happens if a user has multiple devices and notifications are enabled on all of them?",
+    "How does the system handle high traffic periods when many users interact with posts?",
+    "What if a user changes their notification preferences while an interaction is being processed?"
+  ],
+  "dependencies": [
+    "User authentication system",
+    "Post tracking and management system"
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "Notification Service API",
+      "description": "The requirement interacts with this API to send notifications via email, push, or in-app."
+    },
+    {
+      "type": "Database",
+      "name": "User Preferences Database",
+      "description": "The requirement reads from and writes to this database to determine if notifications are enabled for specific posts."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-NOTIFY-01",
+      "description": "A logged-in user receives a notification when another user likes their post.",
+      "expected_result": "The system sends a notification to the user's preferred method (email, push, or in-app) confirming that someone liked their post."
+    },
+    {
+      "id": "TC-NOTIFY-02",
+      "description": "A logged-in user receives a notification when another user comments on their post.",
+      "expected_result": "The system sends a notification to the user's preferred method (email, push, or in-app) confirming that someone commented on their post."
+    },
+    {
+      "id": "TC-NOTIFY-03",
+      "description": "A logged-in user does not receive a notification when another user likes or comments on their post if notifications are disabled.",
+      "expected_result": "The system does not send any notification to the user, and no record of attempted notification is created."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T12:09:18.490383",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-POST-LIKE-01",
+      "REQ-CONTENT-PUB-01",
+      "REQ-REG-01",
+      "REQ-POST-COMMENT-01"
+    ],
+    "design_components": [
+      "Notification",
+      "Like",
+      "Comment",
+      "Post",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

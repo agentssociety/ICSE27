@@ -1,0 +1,96 @@
+@startuml
+!theme plain
+
+box "Controller" #LightBlue
+participant ProfileSettingsController
+end box
+
+box "Application" #LightGreen
+participant ProfileService
+end box
+
+box "Domain" #LightCoral
+participant User
+participant Profile
+participant AuditEntry
+end box
+
+box "Infrastructure" #LightYellow
+participant "UserProfilesDatabase" as DB
+end box
+
+actor "Authenticated User" as Actor
+
+== Main Flow: Toggle Profile Visibility ==
+
+Actor -> ProfileSettingsController: PATCH /profile/settings\n[TLS]
+note right: HTTP request with auth token
+
+ProfileSettingsController -> ProfileService: toggleVisibility(userId: UUID, ownerId: UUID): Visibility
+note right: Validate input and context
+
+ProfileService -> User: getAuthenticationStatus(): AuthenticationStatus
+User --> ProfileService: AuthenticationStatus.AUTHENTICATED
+
+alt User authenticated
+
+  ProfileService -> Profile: getOwner(): User
+  Profile --> ProfileService: User (owner)
+
+  ProfileService -> User: getRole(): Role
+  User --> ProfileService: Role.USER
+
+  ProfileService -> Profile: hasPermission(permission: Permission.WRITE): Boolean
+  note right: Verify owner equals logged user and has Write permission
+  Profile --> ProfileService: true
+
+  alt Permission granted
+
+    ProfileService -> Profile: setVisibility(newVisibility: Visibility)
+    note right: **State transition**: pre != post\n(e.g., PUBLIC → PRIVATE)
+    Profile --> ProfileService: void
+
+    ProfileService -> DB: updateProfile(profileId: UUID, visibility: Visibility) [encrypted at rest]
+    note right: Atomic write with consistency guard
+    DB --> ProfileService: success
+
+    ProfileService -> AuditEntry: createEntry(operation: Operation.TOGGLE_VISIBILITY, timestamp: Timestamp)
+    AuditEntry --> ProfileService: void
+
+    ProfileService --> ProfileSettingsController: 200 OK, { newVisibility: "PRIVATE" }
+    ProfileSettingsController --> Actor: HTTP 200 OK
+
+  else Permission denied (not owner or missing Write)
+
+    ProfileService --> ProfileSettingsController: 403 Forbidden, "Insufficient permissions"
+    ProfileSettingsController --> Actor: HTTP 403 Forbidden
+
+  end
+
+else User not authenticated
+
+  ProfileService --> ProfileSettingsController: 401 Unauthorized, "Authentication required"
+  ProfileSettingsController --> Actor: HTTP 401 Unauthorized
+
+end
+
+== Error Flow: Network / Database Failure ==
+
+Actor -> ProfileSettingsController: PATCH /profile/settings [TLS]
+ProfileSettingsController -> ProfileService: toggleVisibility(...)
+ProfileService -> User: getAuthenticationStatus(): AUTHENTICATED
+ProfileService -> Profile: getOwner(): User
+ProfileService -> Profile: hasPermission(...): true
+ProfileService -> Profile: setVisibility(...)
+ProfileService -> DB: updateProfile(...)
+
+alt DB write fails (timeout or inconsistency)
+
+  DB --> ProfileService: failure (exception)
+  note right: No state changed, rollback not needed\nbecause visibility not persisted
+  ProfileService --> ProfileSettingsController: 503 Service Unavailable, "Unable to update profile"
+  ProfileSettingsController --> Actor: HTTP 503 Service Unavailable
+
+end
+
+@enduml

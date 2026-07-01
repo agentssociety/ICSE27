@@ -1,0 +1,306 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+  participant "CommentController" as CC
+end box
+
+box "Application Layer" #LightGreen
+  participant "CommentService" as CS
+  participant "AuthService" as AS
+end box
+
+box "Domain Layer" #LightYellow
+  participant "Resource" as R
+  participant "User" as U
+  participant "Role" as RO
+  participant "Permission" as P
+  participant "State" as S
+end box
+
+box "Infrastructure Layer" #LightCoral
+  participant "CommentRepository" as CR
+  participant "PostRepository" as PR
+  database "Database" as DB
+end box
+
+box "External" #LightGray
+  participant "PostDetailPageUI" as UI
+end box
+
+== Submit Comment Flow ==
+
+UI -> CC : POST /api/comments\n(userId, postId, content)
+activate CC
+
+CC -> AS : authenticateUser(token: String) : User
+activate AS
+
+alt Authentication Failure
+  AS --> CC : return error("User not authenticated")
+  CC --> UI : 401 Unauthorized
+  deactivate AS
+  deactivate CC
+end
+
+AS --> CC : return user
+deactivate AS
+
+CC -> CS : submitComment(user: User, postId: String, content: String) : Comment
+activate CS
+
+CS -> CS : validateContent(content: String)
+
+alt Comment too long (>10k characters)
+  CS --> CC : return error("Comment exceeds 10,000 character limit")
+  CC --> UI : 400 Bad Request
+  deactivate CS
+  deactivate CC
+end
+
+CS -> U : getPermission(user: User) : Permission
+activate U
+U -> RO : getRole() : Role
+RO --> U : role
+U -> P : getRequiredPermission("WRITE") : Permission
+P --> U : writePermission
+U --> CS : permission
+deactivate U
+
+alt Authorization Failure (no Write permission)
+  CS --> CC : return error("User does not have Write permission")
+  CC --> UI : 403 Forbidden
+  deactivate CS
+  deactivate CC
+end
+
+CS -> PR : getPost(postId: String) : Post
+activate PR
+PR -> DB : SELECT * FROM posts WHERE id = postId [TLS]
+DB --> PR : post
+PR --> CS : post
+deactivate PR
+
+CS -> CR : saveComment(comment: Comment) : Comment
+activate CR
+CR -> DB : INSERT INTO comments (owner, content, post_id) VALUES (...) [TLS, encrypted at rest]
+DB --> CR : comment
+CR --> CS : comment
+deactivate CR
+
+CS -> S : transitionState("Pre1", "Post1") : State
+activate S
+S --> CS : state
+deactivate S
+
+CS --> CC : return comment
+CC --> UI : 201 Created\n{commentId, content, owner}
+deactivate CS
+deactivate CC
+
+== Edit Comment Flow ==
+
+UI -> CC : PUT /api/comments/{commentId}\n(userId, content)
+activate CC
+
+CC -> AS : authenticateUser(token: String) : User
+activate AS
+
+alt Authentication Failure
+  AS --> CC : return error("User not authenticated")
+  CC --> UI : 401 Unauthorized
+  deactivate AS
+  deactivate CC
+end
+
+AS --> CC : return user
+deactivate AS
+
+CC -> CS : editComment(user: User, commentId: String, newContent: String) : Comment
+activate CS
+
+CS -> CR : getComment(commentId: String) : Comment
+activate CR
+CR -> DB : SELECT * FROM comments WHERE id = commentId [TLS]
+DB --> CR : comment
+CR --> CS : comment
+deactivate CR
+
+alt Comment Not Found
+  CS --> CC : return error("Comment not found")
+  CC --> UI : 404 Not Found
+  deactivate CS
+  deactivate CC
+end
+
+CS -> CS : validateContent(newContent: String)
+
+alt Comment too long (>10k characters)
+  CS --> CC : return error("Comment exceeds 10,000 character limit")
+  CC --> UI : 400 Bad Request
+  deactivate CS
+  deactivate CC
+end
+
+note right of CS : Check comment ownership\nand Write permission
+
+CS -> U : isOwner(user: User, comment: Comment) : Boolean
+activate U
+U --> CS : isOwner
+deactivate U
+
+alt Non-owner attempts edit
+  CS -> U : getPermission(user: User) : Permission
+  activate U
+  U -> RO : getRole() : Role
+  RO --> U : role
+  U -> P : getRequiredPermission("WRITE") : Permission
+  P --> U : writePermission
+  U --> CS : permission
+  deactivate U
+  
+  alt No Write permission
+    CS --> CC : return error("Only the comment owner can edit this comment")
+    CC --> UI : 403 Forbidden
+    deactivate CS
+    deactivate CC
+  end
+end
+
+CS -> CR : updateComment(commentId: String, newContent: String) : Comment
+activate CR
+CR -> DB : UPDATE comments SET content = newContent WHERE id = commentId [TLS, encrypted at rest]
+DB --> CR : comment
+CR --> CS : comment
+deactivate CR
+
+CS -> S : transitionState("Post1", "Post2") : State
+activate S
+S --> CS : state
+deactivate S
+
+CS --> CC : return comment
+CC --> UI : 200 OK\n{commentId, content, updatedAt}
+deactivate CS
+deactivate CC
+
+== Delete Comment Flow ==
+
+UI -> CC : DELETE /api/comments/{commentId}\n(userId)
+activate CC
+
+CC -> AS : authenticateUser(token: String) : User
+activate AS
+
+alt Authentication Failure
+  AS --> CC : return error("User not authenticated")
+  CC --> UI : 401 Unauthorized
+  deactivate AS
+  deactivate CC
+end
+
+AS --> CC : return user
+deactivate AS
+
+CC -> CS : deleteComment(user: User, commentId: String) : Boolean
+activate CS
+
+CS -> CR : getComment(commentId: String) : Comment
+activate CR
+CR -> DB : SELECT * FROM comments WHERE id = commentId [TLS]
+DB --> CR : comment
+CR --> CS : comment
+deactivate CR
+
+alt Comment Not Found or Already Deleted
+  CS --> CC : return error("Comment not found or already deleted")
+  CC --> UI : 404 Not Found
+  deactivate CS
+  deactivate CC
+end
+
+note right of CS : Check ownership or Admin permission\nfor delete
+
+CS -> U : isOwner(user: User, comment: Comment) : Boolean
+activate U
+U --> CS : isOwner
+deactivate U
+
+alt Non-owner attempts delete
+  CS -> U : getPermission(user: User) : Permission
+  activate U
+  U -> RO : getRole() : Role
+  RO --> U : role
+  U -> P : getRequiredPermission("ADMIN") : Permission
+  P --> U : adminPermission
+  U --> CS : permission
+  deactivate U
+  
+  alt No Admin permission
+    CS --> CC : return error("Only the comment owner or an Admin can delete this comment")
+    CC --> UI : 403 Forbidden
+    deactivate CS
+    deactivate CC
+  end
+end
+
+CS -> CR : deleteComment(commentId: String) : Boolean
+activate CR
+CR -> DB : DELETE FROM comments WHERE id = commentId [TLS, encrypted at rest]
+DB --> CR : success
+CR --> CS : true
+deactivate CR
+
+CS -> S : transitionState("Post1", "Post3") : State
+activate S
+S --> CS : state
+deactivate S
+
+CS --> CC : return success
+CC --> UI : 204 No Content
+deactivate CS
+deactivate CC
+
+== Concurrency Limit Error Path ==
+
+UI -> CC : POST/PUT/DELETE /api/comments/...
+activate CC
+
+CC -> AS : authenticateUser(token: String) : User
+activate AS
+AS --> CC : return user
+deactivate AS
+
+CC -> CS : checkResourceAccess(resourceId: String) : Boolean
+activate CS
+
+CS -> CS : countActiveActors(resourceId: String) : Integer
+
+alt Concurrency limit reached (>5 actors)
+  CS --> CC : return error("Resource concurrency limit reached. Please try again later.")
+  CC --> UI : 429 Too Many Requests
+  deactivate CS
+  deactivate CC
+  deactivate CC
+end
+
+CS --> CC : return allowed
+deactivate CS
+
+== Network Timeout Error Path ==
+
+UI -> CC : POST/PUT/DELETE /api/comments/...
+activate CC
+
+CC -> AS : authenticateUser(token: String) : User
+activate AS
+
+alt Network Timeout (>2 seconds)
+  AS --> CC : return timeout error
+  CC --> UI : 504 Gateway Timeout\n{error: "Request timed out. Please try again."}
+  deactivate AS
+  deactivate CC
+  deactivate CC
+end
+
+@enduml

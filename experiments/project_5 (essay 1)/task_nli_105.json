@@ -1,0 +1,65 @@
+{
+  "task_id": 105,
+  "confidence": 0.9793,
+  "evidence": [
+    {
+      "claim": "The dashboard shows active exams",
+      "fact": "The dashboard displays the number of active exams, total enrolled students, and how many competencies are covered.",
+      "score": 0.9985,
+      "user_story_span": "dashboard that shows active exams",
+      "fact_span": "displays the number of active exams"
+    },
+    {
+      "claim": "The system allows registration and login to a personal dashboard",
+      "fact": "Instructors can create accounts and log in to the system to access their personal dashboard.",
+      "score": 0.9984,
+      "user_story_span": "register and log in to a personal dashboard",
+      "fact_span": "create accounts and log in to the system to access their personal dashboard"
+    },
+    {
+      "claim": "The dashboard shows enrollment counts",
+      "fact": "The dashboard displays the number of active exams, total enrolled students, and how many competencies are covered.",
+      "score": 0.9974,
+      "user_story_span": "shows active exams, enrollment counts",
+      "fact_span": "total enrolled students"
+    },
+    {
+      "claim": "Active exams refer to exams that are currently ongoing or scheduled",
+      "fact": "Instructors can schedule exams with a close date.",
+      "score": 0.9889,
+      "user_story_span": "Active exams refer to exams that are currently ongoing or scheduled",
+      "fact_span": "can schedule exams"
+    },
+    {
+      "claim": "The dashboard shows competency coverage",
+      "fact": "The personal dashboard shows competency coverage.",
+      "score": 0.9846,
+      "user_story_span": "and competency coverage",
+      "fact_span": "shows competency coverage"
+    },
+    {
+      "claim": "An instructor on their dashboard sees active exams",
+      "fact": "A teacher registers, signs in, and views a control panel showing live tests, enrollment figures, and skill coverage.",
+      "score": 0.9819,
+      "user_story_span": "they see active exams",
+      "fact_span": "showing live tests"
+    },
+    {
+      "claim": "Competency coverage indicates which skills or topics are being assessed",
+      "fact": "Instructors tag questions with one or more skill areas and set their difficulty to control the reward rate.",
+      "score": 0.9813,
+      "user_story_span": "Competency coverage indicates which skills or topics are being assessed",
+      "fact_span": "tag questions with one or more skill areas"
+    },
+    {
+      "claim": "An instructor on their dashboard sees competency coverage",
+      "fact": "A teacher registers, signs in, and views a control panel showing live tests, enrollment figures, and skill coverage.",
+      "score": 0.9587,
+      "user_story_span": "see active exams, enrollment counts, and competency coverage",
+      "fact_span": "showing live tests, enrollment figures, and skill coverage"
+    }
+  ],
+  "total_claims": 18,
+  "supported_claims": 8,
+  "threshold": 0.6
+}

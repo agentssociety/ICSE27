@@ -103,7 +103,7 @@ def main(plots: bool = True, tables: bool = True) -> None:
 
     # ── 9. Gantt Execution Traces ─────────────────────────────────────────────
     if plots:
-        _banner("Step 9/12 — Execution Trace Gantt (4 projects × 3 seeds + radar)")
+        _banner("Step 9/12 — Execution Trace Gantt (6 projects: 4×3 seeds + 2×1 seed)")
         from research_results.scripts.plot_gantt import run as run_gantt
         run_gantt()
 

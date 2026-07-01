@@ -21,7 +21,7 @@ REPO_ROOT    = Path(__file__).parent.parent.parent
 EXPERIMENTS  = REPO_ROOT / "experiments"
 RESULTS_ROOT = Path(__file__).parent.parent
 
-PROJECTS = [1, 2, 3, 4]
+PROJECTS = [1, 2, 3, 4, 5, 6]
 ESSAYS   = [1, 2, 3]
 
 

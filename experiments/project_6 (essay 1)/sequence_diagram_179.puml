@@ -1,0 +1,306 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+box "Controller Layer" #LightBlue
+participant "Feed_and_Search_Result_Pages" as UI
+participant "PaginationController" as Ctrl
+end box
+
+box "Application Layer" #LightGreen
+participant "PaginationService" as Svc
+end box
+
+box "Domain Layer" #LightYellow
+participant "Actor" as Actor
+participant "Resource" as Res
+participant "Page" as Page
+participant "InvalidPage" as InvPage
+participant "State" as State
+participant "REQ_PAGIN_01" as Req
+end box
+
+box "Infrastructure / External" #LightCoral
+participant "Data_Fetching_API" as API
+end box
+
+== Flow: ac_reach_1 - Display Pagination Controls ==
+Actor -> UI : interactWithFeedOrSearch()
+activate UI
+UI -> Ctrl : GET /api/pagination/controls [HTTP 200]
+activate Ctrl
+Ctrl -> Svc : getPaginationControls()
+activate Svc
+Svc -> Req : validateInitiator(Actor, Read)
+activate Req
+alt [initiator has Read permission and is in accessible set]
+    Req --> Svc : valid
+    Svc -> Res : getAccessibleResources(Actor)
+    activate Res
+    Res --> Svc : resourceList
+    deactivate Res
+    Svc -> Page : createPage(resourceList, pageNumber=1)
+    activate Page
+    Page --> Svc : page
+    deactivate Page
+    Svc --> Ctrl : paginationControls
+    deactivate Svc
+    Ctrl --> UI : 200 OK (controls)
+    deactivate Ctrl
+    UI -> Actor : showLoadMoreButtonOrPageNav()
+else [initiator lacks permission or not in accessible set]
+    Req --> Svc : invalid
+    Svc --> Ctrl : 403 Forbidden
+    deactivate Svc
+    Ctrl --> UI : 403 Forbidden
+    deactivate Ctrl
+    UI -> Actor : showError("Access denied")
+end
+deactivate Req
+deactivate UI
+
+== Flow: ac_reach_2 - Initial Load First Page ==
+Actor -> UI : viewFeedOrSearchResults()
+activate UI
+UI -> Ctrl : GET /api/pages?page=1&count=20 [HTTP 200]
+activate Ctrl
+Ctrl -> Svc : loadFirstPage()
+activate Svc
+Svc -> Req : validateInitiator(Actor, Read)
+activate Req
+alt [valid]
+    Req --> Svc : ok
+    Svc -> API : fetchPageData(page=1, count=20) [TLS]
+    activate API
+    API --> Svc : pageData
+    deactivate API
+    Svc -> Page : createPage(pageData, pageNumber=1)
+    activate Page
+    Page --> Svc : firstPage
+    deactivate Page
+    Svc -> State : transitionTo(PostDone)
+    activate State
+    State --> Svc : done
+    deactivate State
+    Svc --> Ctrl : firstPage
+    deactivate Svc
+    Ctrl --> UI : 200 OK (firstPage)
+    deactivate Ctrl
+    UI -> Actor : displayFirstPage()
+else [invalid]
+    Req --> Svc : invalid
+    Svc --> Ctrl : 403 Forbidden
+    deactivate Svc
+    Ctrl --> UI : 403 Forbidden
+    deactivate Ctrl
+    UI -> Actor : showError("Access denied")
+end
+deactivate Req
+deactivate UI
+
+== Flow: tc_PAGIN_01 - Verify Pagination Controls Displayed ==
+Actor -> UI : onFeedOrSearchPage()
+activate UI
+UI -> Ctrl : GET /api/pagination/controls [HTTP 200]
+activate Ctrl
+Ctrl -> Svc : getPaginationControls()
+activate Svc
+Svc -> Req : validateInitiator(Actor, Read)
+activate Req
+alt [valid]
+    Req --> Svc : ok
+    Svc -> Res : getAccessibleResources(Actor)
+    activate Res
+    Res --> Svc : resourceList
+    deactivate Res
+    Svc -> Page : createPage(resourceList, pageNumber=1)
+    activate Page
+    Page --> Svc : page
+    deactivate Page
+    Svc --> Ctrl : controls
+    deactivate Svc
+    Ctrl --> UI : 200 OK (controls)
+    deactivate Ctrl
+    UI -> Actor : showPaginationControls()
+    note right: No state transition (remains Pre1)
+else [invalid]
+    Req --> Svc : invalid
+    Svc --> Ctrl : 403 Forbidden
+    deactivate Svc
+    Ctrl --> UI : 403 Forbidden
+    deactivate Ctrl
+    UI -> Actor : showError("Access denied")
+end
+deactivate Req
+deactivate UI
+
+== Flow: tc_PAGIN_02 - Verify Only First Page Loaded Initially ==
+Actor -> UI : viewFeedOrSearchResults()
+activate UI
+UI -> Ctrl : GET /api/pages?page=1&count=20 [HTTP 200]
+activate Ctrl
+Ctrl -> Svc : loadFirstPage()
+activate Svc
+Svc -> Req : validateInitiator(Actor, Read)
+activate Req
+alt [valid]
+    Req --> Svc : ok
+    Svc -> API : fetchPageData(page=1, count=20) [TLS]
+    activate API
+    API --> Svc : pageData
+    deactivate API
+    Svc -> Page : createPage(pageData, pageNumber=1)
+    activate Page
+    Page --> Svc : firstPage
+    deactivate Page
+    note right: No state transition (remains Pre1)
+    Svc --> Ctrl : firstPage
+    deactivate Svc
+    Ctrl --> UI : 200 OK (firstPage)
+    deactivate Ctrl
+    UI -> Actor : displayFirstPage()
+else [invalid]
+    Req --> Svc : invalid
+    Svc --> Ctrl : 403 Forbidden
+    deactivate Svc
+    Ctrl --> UI : 403 Forbidden
+    deactivate Ctrl
+    UI -> Actor : showError("Access denied")
+end
+deactivate Req
+deactivate UI
+
+== Flow: tc_PAGIN_03 - Navigate to Subsequent Pages (Encrypted) ==
+Actor -> UI : navigateToNextPage()
+activate UI
+UI -> Ctrl : GET /api/pages?page=2&count=20 [HTTP 200, encrypted channel]
+activate Ctrl
+Ctrl -> Svc : loadPage(pageNumber=2)
+activate Svc
+Svc -> Req : validateInitiator(Actor, Read)
+activate Req
+alt [valid]
+    Req --> Svc : ok
+    Svc -> API : fetchPageData(page=2, count=20) [TLS]
+    activate API
+    API --> Svc : pageData
+    deactivate API
+    Svc -> Page : createPage(pageData, pageNumber=2)
+    activate Page
+    Page --> Svc : nextPage
+    deactivate Page
+    Svc -> State : transitionTo(PostDone)
+    activate State
+    State --> Svc : done
+    deactivate State
+    Svc --> Ctrl : nextPage
+    deactivate Svc
+    Ctrl --> UI : 200 OK (nextPage)
+    deactivate Ctrl
+    UI -> Actor : displayNextPage()
+else [invalid]
+    Req --> Svc : invalid
+    Svc --> Ctrl : 403 Forbidden
+    deactivate Svc
+    Ctrl --> UI : 403 Forbidden
+    deactivate Ctrl
+    UI -> Actor : showError("Access denied")
+end
+deactivate Req
+deactivate UI
+
+== Flow: tc_PAGIN_04 - Error Handling When No More Pages ==
+Actor -> UI : attemptLoadMorePages()
+activate UI
+UI -> Ctrl : GET /api/pages?page=3&count=20 [HTTP 200]
+activate Ctrl
+Ctrl -> Svc : loadPage(pageNumber=3)
+activate Svc
+Svc -> Req : validateInitiator(Actor, Read)
+activate Req
+alt [valid]
+    Req --> Svc : ok
+    Svc -> API : fetchPageData(page=3, count=20) [TLS]
+    activate API
+    alt [no more pages]
+        API --> Svc : emptyResponse
+        deactivate API
+        Svc -> State : transitionTo(Pre1)
+        activate State
+        State --> Svc : done
+        deactivate State
+        Svc --> Ctrl : 404 No More Pages
+        deactivate Svc
+        Ctrl --> UI : 404 Not Found
+        deactivate Ctrl
+        UI -> Actor : showError("No more pages available")
+    else [pages available]
+        API --> Svc : pageData
+        deactivate API
+        Svc -> Page : createPage(pageData, pageNumber=3)
+        activate Page
+        Page --> Svc : nextPage
+        deactivate Page
+        Svc -> State : transitionTo(PostDone)
+        activate State
+        State --> Svc : done
+        deactivate State
+        Svc --> Ctrl : nextPage
+        deactivate Svc
+        Ctrl --> UI : 200 OK (nextPage)
+        deactivate Ctrl
+        UI -> Actor : displayNextPage()
+    end
+else [invalid]
+    Req --> Svc : invalid
+    Svc --> Ctrl : 403 Forbidden
+    deactivate Svc
+    Ctrl --> UI : 403 Forbidden
+    deactivate Ctrl
+    UI -> Actor : showError("Access denied")
+end
+deactivate Req
+deactivate UI
+
+== Error Path: InvalidPage Target ==
+Actor -> UI : attemptToAccessInvalidPage()
+activate UI
+UI -> Ctrl : GET /api/pages?page=999 [HTTP 200]
+activate Ctrl
+Ctrl -> Svc : loadPage(pageNumber=999)
+activate Svc
+Svc -> Req : validateInitiator(Actor, Read)
+activate Req
+alt [valid]
+    Req --> Svc : ok
+    Svc -> API : fetchPageData(page=999, count=20) [TLS]
+    activate API
+    API --> Svc : invalidPageData
+    deactivate API
+    Svc -> InvPage : createInvalidPage(owner, accessible)
+    activate InvPage
+    note right: Invariant: owner must be in accessible set
+    InvPage --> Svc : invalidPage
+    deactivate InvPage
+    Svc -> State : transitionTo(Pre1)
+    activate State
+    State --> Svc : done
+    deactivate State
+    Svc --> Ctrl : 400 Bad Request (InvalidPage)
+    deactivate Svc
+    Ctrl --> UI : 400 Bad Request
+    deactivate Ctrl
+    UI -> Actor : showError("Invalid page requested")
+else [invalid]
+    Req --> Svc : invalid
+    Svc --> Ctrl : 403 Forbidden
+    deactivate Svc
+    Ctrl --> UI : 403 Forbidden
+    deactivate Ctrl
+    UI -> Actor : showError("Access denied")
+end
+deactivate Req
+deactivate UI
+
+@enduml

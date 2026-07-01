@@ -1,0 +1,164 @@
+
+classDiagram
+    class User {
+        +int id
+        +string email
+        +string username
+        +string password_hash
+        +bool email_verified
+        +string profile_picture
+        +string cover_photo
+        +string bio
+        +string location
+        +bool is_private
+        +bool is_admin
+        +bool is_verified
+        +bool is_active
+        +bool is_deleted
+        +datetime created_at
+        +datetime updated_at
+        +set_password(password: str)
+        +check_password(password: str) bool
+        +verify_email()
+        +soft_delete()
+    }
+    class Post {
+        +int id
+        +int user_id
+        +string content
+        +string images  # JSON list of image paths
+        +int group_id (nullable)
+        +datetime created_at
+        +datetime updated_at
+        +bool is_deleted
+        +soft_delete()
+    }
+    class Comment {
+        +int id
+        +int post_id
+        +int user_id
+        +string content
+        +datetime created_at
+        +datetime updated_at
+        +bool is_deleted
+        +soft_delete()
+    }
+    class Like {
+        +int id
+        +int post_id
+        +int user_id
+        +datetime created_at
+    }
+    class FriendRequest {
+        +int id
+        +int sender_id
+        +int receiver_id
+        +string status  # pending, accepted, rejected
+        +datetime created_at
+        +datetime updated_at
+    }
+    class Follow {
+        +int id
+        +int follower_id
+        +int followed_id
+        +datetime created_at
+    }
+    class Group {
+        +int id
+        +string name
+        +string description
+        +bool is_public
+        +int creator_id
+        +datetime created_at
+        +bool is_deleted
+    }
+    class GroupMembership {
+        +int id
+        +int group_id
+        +int user_id
+        +string role  # member, admin
+        +datetime joined_at
+    }
+    class GroupJoinRequest {
+        +int id
+        +int group_id
+        +int user_id
+        +string status  # pending, approved, rejected
+        +datetime created_at
+    }
+    class Message {
+        +int id
+        +int sender_id
+        +int receiver_id
+        +string content
+        +datetime sent_at
+        +bool is_read
+    }
+    class Notification {
+        +int id
+        +int user_id
+        +string type  # like, comment, friend_request, group_invite
+        +int source_id  # id of related object
+        +string message
+        +bool is_read
+        +datetime created_at
+    }
+    class Bookmark {
+        +int id
+        +int user_id
+        +int post_id
+        +datetime created_at
+    }
+    class Report {
+        +int id
+        +int reporter_id
+        +int post_id
+        +string reason
+        +string status  # pending, reviewed, dismissed
+        +datetime created_at
+    }
+    class AdminLog {
+        +int id
+        +int admin_id
+        +string action
+        +string target_type
+        +int target_id
+        +string details
+        +datetime created_at
+    }
+    class Block {
+        +int id
+        +int blocker_id
+        +int blocked_id
+        +datetime created_at
+    }
+    class NotificationPreference {
+        +int id
+        +int user_id
+        +bool likes
+        +bool comments
+        +bool friend_requests
+        +datetime updated_at
+    }
+    User "1" --> "*" Post : creates
+    User "1" --> "*" Comment : writes
+    User "1" --> "*" Like : gives
+    User "1" --> "*" FriendRequest : sends/receives
+    User "1" --> "*" Follow : follows/followed
+    User "1" --> "*" Group : creates
+    User "1" --> "*" GroupMembership : member of
+    User "1" --> "*" GroupJoinRequest : requests
+    User "1" --> "*" Message : sends/receives
+    User "1" --> "*" Notification : receives
+    User "1" --> "*" Bookmark : saves
+    User "1" --> "*" Report : reports
+    User "1" --> "*" AdminLog : performs
+    User "1" --> "*" Block : blocks/blocked
+    User "1" --> "1" NotificationPreference : has
+    Post "1" --> "*" Comment : has
+    Post "1" --> "*" Like : has
+    Post "1" --> "*" Bookmark : bookmarked
+    Post "1" --> "*" Report : reported
+    Group "1" --> "*" Post : contains
+    Group "1" --> "*" GroupMembership : has
+    Group "1" --> "*" GroupJoinRequest : receives

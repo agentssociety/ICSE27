@@ -1,0 +1,519 @@
+@startuml PackageArchitecture
+!pragma layout smetana
+scale 0.75
+
+title Package Architecture — Project 16
+
+skinparam {
+  BackgroundColor transparent
+  ComponentBorderColor #AAAAAA
+  ComponentFontSize 11
+  PackageFontSize 12
+  PackageFontStyle bold
+  ArrowColor #666666
+  ArrowThickness 1
+  Shadowing false
+}
+
+skinparam package<<Domain>> {
+  BackgroundColor #E1F5E1
+}
+skinparam package<<DTO>> {
+  BackgroundColor #E3F2FD
+}
+skinparam package<<Repository>> {
+  BackgroundColor #FCE4EC
+}
+skinparam package<<ORM>> {
+  BackgroundColor #FFF3E0
+}
+skinparam package<<Infra>> {
+  BackgroundColor #F3E5F5
+}
+skinparam package<<Service>> {
+  BackgroundColor #E0F2F1
+}
+skinparam package<<API>> {
+  BackgroundColor #FFF9C4
+}
+skinparam package<<UI>> {
+  BackgroundColor #F1F8E9
+}
+skinparam package<<Tests>> {
+  BackgroundColor #EEEEEE
+}
+skinparam package<<Config>> {
+  BackgroundColor #C8E6C9
+}
+skinparam package<<Docs>> {
+  BackgroundColor #BBDEFB
+}
+skinparam package<<Shared>> {
+  BackgroundColor #F5F5F5
+}
+
+package "Domain layer" <<Domain>> {
+  [domain.audit_log] as domain_audit_log
+  [domain.block] as domain_block
+  [domain.bookmark] as domain_bookmark
+  [domain.comment] as domain_comment
+  [domain.follow] as domain_follow
+  [domain.friendship] as domain_friendship
+  [domain.group] as domain_group
+  [domain.group_membership] as domain_group_membership
+  [domain.like] as domain_like
+  [domain.message] as domain_message
+  [domain.notification] as domain_notification
+  [domain.notification_preference] as domain_notification_preference
+  [domain.post] as domain_post
+  [domain.profile] as domain_profile
+  [domain.report] as domain_report
+  [domain.user] as domain_user
+  [domain.verified_badge] as domain_verified_badge
+}
+
+package "DTO layer" <<DTO>> {
+  [dto.audit_log] as dto_audit_log
+  [dto.block] as dto_block
+  [dto.bookmark] as dto_bookmark
+  [dto.comment] as dto_comment
+  [dto.follow] as dto_follow
+  [dto.friendship] as dto_friendship
+  [dto.group] as dto_group
+  [dto.group_membership] as dto_group_membership
+  [dto.like] as dto_like
+  [dto.message] as dto_message
+  [dto.notification] as dto_notification
+  [dto.notification_preference] as dto_notification_preference
+  [dto.post] as dto_post
+  [dto.profile] as dto_profile
+  [dto.report] as dto_report
+  [dto.user] as dto_user
+  [dto.verified_badge] as dto_verified_badge
+}
+
+package "Repository layer" <<Repository>> {
+  [repository.audit_log] as repository_audit_log
+  [repository.block] as repository_block
+  [repository.bookmark] as repository_bookmark
+  [repository.comment] as repository_comment
+  [repository.follow] as repository_follow
+  [repository.friendship] as repository_friendship
+  [repository.group] as repository_group
+  [repository.group_membership] as repository_group_membership
+  [repository.like] as repository_like
+  [repository.message] as repository_message
+  [repository.notification] as repository_notification
+  [repository.notification_preference] as repository_notification_preference
+  [repository.post] as repository_post
+  [repository.profile] as repository_profile
+  [repository.report] as repository_report
+  [repository.user] as repository_user
+  [repository.verified_badge] as repository_verified_badge
+}
+
+package "ORM layer" <<ORM>> {
+  [orm.audit_log] as orm_audit_log
+  [orm.block] as orm_block
+  [orm.bookmark] as orm_bookmark
+  [orm.comment] as orm_comment
+  [orm.follow] as orm_follow
+  [orm.friendship] as orm_friendship
+  [orm.group] as orm_group
+  [orm.group_membership] as orm_group_membership
+  [orm.like] as orm_like
+  [orm.message] as orm_message
+  [orm.notification] as orm_notification
+  [orm.notification_preference] as orm_notification_preference
+  [orm.post] as orm_post
+  [orm.profile] as orm_profile
+  [orm.report] as orm_report
+  [orm.user] as orm_user
+  [orm.verified_badge] as orm_verified_badge
+}
+
+package "Infra layer" <<Infra>> {
+  [infra.audit_log] as infra_audit_log
+  [infra.block] as infra_block
+  [infra.bookmark] as infra_bookmark
+  [infra.comment] as infra_comment
+  [infra.follow] as infra_follow
+  [infra.friendship] as infra_friendship
+  [infra.group] as infra_group
+  [infra.group_membership] as infra_group_membership
+  [infra.like] as infra_like
+  [infra.message] as infra_message
+  [infra.notification] as infra_notification
+  [infra.notification_preference] as infra_notification_preference
+  [infra.post] as infra_post
+  [infra.profile] as infra_profile
+  [infra.report] as infra_report
+  [infra.user] as infra_user
+  [infra.verified_badge] as infra_verified_badge
+}
+
+package "Service layer" <<Service>> {
+  [service.audit_log] as service_audit_log
+  [service.block] as service_block
+  [service.bookmark] as service_bookmark
+  [service.comment] as service_comment
+  [service.follow] as service_follow
+  [service.friendship] as service_friendship
+  [service.group] as service_group
+  [service.group_membership] as service_group_membership
+  [service.like] as service_like
+  [service.message] as service_message
+  [service.notification] as service_notification
+  [service.notification_preference] as service_notification_preference
+  [service.post] as service_post
+  [service.profile] as service_profile
+  [service.report] as service_report
+  [service.user] as service_user
+  [service.verified_badge] as service_verified_badge
+}
+
+package "API layer" <<API>> {
+  [api.audit_log] as api_audit_log
+  [api.block] as api_block
+  [api.bookmark] as api_bookmark
+  [api.comment] as api_comment
+  [api.follow] as api_follow
+  [api.friendship] as api_friendship
+  [api.group] as api_group
+  [api.group_membership] as api_group_membership
+  [api.like] as api_like
+  [api.message] as api_message
+  [api.notification] as api_notification
+  [api.notification_preference] as api_notification_preference
+  [api.post] as api_post
+  [api.profile] as api_profile
+  [api.report] as api_report
+  [api.user] as api_user
+  [api.verified_badge] as api_verified_badge
+}
+
+package "Config layer" <<Config>> {
+  [config.settings] as config_settings
+}
+
+package "Docs layer" <<Docs>> {
+  [docs.api_and_deployment] as docs_api_and_deployment
+}
+
+package "Tests layer" <<Tests>> {
+  [tests.integration] as tests_integration
+  [tests.unit.audit_log] as tests_unit_audit_log
+  [tests.unit.block] as tests_unit_block
+  [tests.unit.bookmark] as tests_unit_bookmark
+  [tests.unit.comment] as tests_unit_comment
+  [tests.unit.follow] as tests_unit_follow
+  [tests.unit.friendship] as tests_unit_friendship
+  [tests.unit.group] as tests_unit_group
+  [tests.unit.group_membership] as tests_unit_group_membership
+  [tests.unit.like] as tests_unit_like
+  [tests.unit.message] as tests_unit_message
+  [tests.unit.notification] as tests_unit_notification
+  [tests.unit.notification_preference] as tests_unit_notification_preference
+  [tests.unit.post] as tests_unit_post
+  [tests.unit.profile] as tests_unit_profile
+  [tests.unit.report] as tests_unit_report
+  [tests.unit.user] as tests_unit_user
+  [tests.unit.verified_badge] as tests_unit_verified_badge
+}
+
+' ── Dependencies ──
+dto_user --> domain_user
+repository_user --> domain_user
+orm_user --> domain_user
+infra_user --> domain_user
+infra_user --> repository_user
+infra_user --> orm_user
+service_user --> domain_user
+service_user --> repository_user
+service_user --> dto_user
+api_user --> service_user
+api_user --> dto_user
+dto_post --> domain_post
+repository_post --> domain_post
+orm_post --> domain_post
+infra_post --> domain_post
+infra_post --> repository_post
+infra_post --> orm_post
+service_post --> domain_post
+service_post --> repository_post
+service_post --> dto_post
+service_post --> service_user
+api_post --> service_post
+api_post --> dto_post
+dto_notification_preference --> domain_notification_preference
+repository_notification_preference --> domain_notification_preference
+orm_notification_preference --> domain_notification_preference
+infra_notification_preference --> domain_notification_preference
+infra_notification_preference --> repository_notification_preference
+infra_notification_preference --> orm_notification_preference
+service_notification_preference --> domain_notification_preference
+service_notification_preference --> repository_notification_preference
+service_notification_preference --> dto_notification_preference
+service_notification_preference --> service_user
+api_notification_preference --> service_notification_preference
+api_notification_preference --> dto_notification_preference
+dto_verified_badge --> domain_verified_badge
+repository_verified_badge --> domain_verified_badge
+orm_verified_badge --> domain_verified_badge
+infra_verified_badge --> domain_verified_badge
+infra_verified_badge --> repository_verified_badge
+infra_verified_badge --> orm_verified_badge
+service_verified_badge --> domain_verified_badge
+service_verified_badge --> repository_verified_badge
+service_verified_badge --> dto_verified_badge
+service_verified_badge --> service_user
+api_verified_badge --> service_verified_badge
+api_verified_badge --> dto_verified_badge
+dto_group --> domain_group
+repository_group --> domain_group
+orm_group --> domain_group
+infra_group --> domain_group
+infra_group --> repository_group
+infra_group --> orm_group
+service_group --> domain_group
+service_group --> repository_group
+service_group --> dto_group
+service_group --> service_user
+api_group --> service_group
+api_group --> dto_group
+dto_profile --> domain_profile
+repository_profile --> domain_profile
+orm_profile --> domain_profile
+infra_profile --> domain_profile
+infra_profile --> repository_profile
+infra_profile --> orm_profile
+service_profile --> domain_profile
+service_profile --> repository_profile
+service_profile --> dto_profile
+service_profile --> service_user
+api_profile --> service_profile
+api_profile --> dto_profile
+dto_friendship --> domain_friendship
+repository_friendship --> domain_friendship
+orm_friendship --> domain_friendship
+infra_friendship --> domain_friendship
+infra_friendship --> repository_friendship
+infra_friendship --> orm_friendship
+service_friendship --> domain_friendship
+service_friendship --> repository_friendship
+service_friendship --> dto_friendship
+service_friendship --> service_user
+api_friendship --> service_friendship
+api_friendship --> dto_friendship
+dto_audit_log --> domain_audit_log
+repository_audit_log --> domain_audit_log
+orm_audit_log --> domain_audit_log
+infra_audit_log --> domain_audit_log
+infra_audit_log --> repository_audit_log
+infra_audit_log --> orm_audit_log
+service_audit_log --> domain_audit_log
+service_audit_log --> repository_audit_log
+service_audit_log --> dto_audit_log
+service_audit_log --> service_user
+api_audit_log --> service_audit_log
+api_audit_log --> dto_audit_log
+dto_block --> domain_block
+repository_block --> domain_block
+orm_block --> domain_block
+infra_block --> domain_block
+infra_block --> repository_block
+infra_block --> orm_block
+service_block --> domain_block
+service_block --> repository_block
+service_block --> dto_block
+service_block --> service_user
+api_block --> service_block
+api_block --> dto_block
+dto_follow --> domain_follow
+repository_follow --> domain_follow
+orm_follow --> domain_follow
+infra_follow --> domain_follow
+infra_follow --> repository_follow
+infra_follow --> orm_follow
+service_follow --> domain_follow
+service_follow --> repository_follow
+service_follow --> dto_follow
+service_follow --> service_user
+api_follow --> service_follow
+api_follow --> dto_follow
+dto_message --> domain_message
+repository_message --> domain_message
+orm_message --> domain_message
+infra_message --> domain_message
+infra_message --> repository_message
+infra_message --> orm_message
+service_message --> domain_message
+service_message --> repository_message
+service_message --> dto_message
+service_message --> service_user
+api_message --> service_message
+api_message --> dto_message
+dto_like --> domain_like
+repository_like --> domain_like
+orm_like --> domain_like
+infra_like --> domain_like
+infra_like --> repository_like
+infra_like --> orm_like
+service_like --> domain_like
+service_like --> repository_like
+service_like --> dto_like
+service_like --> service_user
+service_like --> service_post
+api_like --> service_like
+api_like --> dto_like
+dto_bookmark --> domain_bookmark
+repository_bookmark --> domain_bookmark
+orm_bookmark --> domain_bookmark
+infra_bookmark --> domain_bookmark
+infra_bookmark --> repository_bookmark
+infra_bookmark --> orm_bookmark
+service_bookmark --> domain_bookmark
+service_bookmark --> repository_bookmark
+service_bookmark --> dto_bookmark
+service_bookmark --> service_user
+service_bookmark --> service_post
+api_bookmark --> service_bookmark
+api_bookmark --> dto_bookmark
+dto_report --> domain_report
+repository_report --> domain_report
+orm_report --> domain_report
+infra_report --> domain_report
+infra_report --> repository_report
+infra_report --> orm_report
+service_report --> domain_report
+service_report --> repository_report
+service_report --> dto_report
+service_report --> service_user
+service_report --> service_post
+api_report --> service_report
+api_report --> dto_report
+dto_comment --> domain_comment
+repository_comment --> domain_comment
+orm_comment --> domain_comment
+infra_comment --> domain_comment
+infra_comment --> repository_comment
+infra_comment --> orm_comment
+service_comment --> domain_comment
+service_comment --> repository_comment
+service_comment --> dto_comment
+service_comment --> service_user
+service_comment --> service_post
+api_comment --> service_comment
+api_comment --> dto_comment
+dto_group_membership --> domain_group_membership
+repository_group_membership --> domain_group_membership
+orm_group_membership --> domain_group_membership
+infra_group_membership --> domain_group_membership
+infra_group_membership --> repository_group_membership
+infra_group_membership --> orm_group_membership
+service_group_membership --> domain_group_membership
+service_group_membership --> repository_group_membership
+service_group_membership --> dto_group_membership
+service_group_membership --> service_user
+service_group_membership --> service_group
+api_group_membership --> service_group_membership
+api_group_membership --> dto_group_membership
+dto_notification --> domain_notification
+repository_notification --> domain_notification
+orm_notification --> domain_notification
+infra_notification --> domain_notification
+infra_notification --> repository_notification
+infra_notification --> orm_notification
+service_notification --> domain_notification
+service_notification --> repository_notification
+service_notification --> dto_notification
+service_notification --> service_user
+service_notification --> service_post
+service_notification --> service_like
+service_notification --> service_comment
+api_notification --> service_notification
+api_notification --> dto_notification
+tests_unit_user --> domain_user
+tests_unit_user --> service_user
+tests_unit_user --> api_user
+tests_unit_post --> domain_post
+tests_unit_post --> service_post
+tests_unit_post --> api_post
+tests_unit_notification_preference --> domain_notification_preference
+tests_unit_notification_preference --> service_notification_preference
+tests_unit_notification_preference --> api_notification_preference
+tests_unit_verified_badge --> domain_verified_badge
+tests_unit_verified_badge --> service_verified_badge
+tests_unit_verified_badge --> api_verified_badge
+tests_unit_group --> domain_group
+tests_unit_group --> service_group
+tests_unit_group --> api_group
+tests_unit_profile --> domain_profile
+tests_unit_profile --> service_profile
+tests_unit_profile --> api_profile
+tests_unit_friendship --> domain_friendship
+tests_unit_friendship --> service_friendship
+tests_unit_friendship --> api_friendship
+tests_unit_audit_log --> domain_audit_log
+tests_unit_audit_log --> service_audit_log
+tests_unit_audit_log --> api_audit_log
+tests_unit_block --> domain_block
+tests_unit_block --> service_block
+tests_unit_block --> api_block
+tests_unit_follow --> domain_follow
+tests_unit_follow --> service_follow
+tests_unit_follow --> api_follow
+tests_unit_message --> domain_message
+tests_unit_message --> service_message
+tests_unit_message --> api_message
+tests_unit_like --> domain_like
+tests_unit_like --> service_like
+tests_unit_like --> api_like
+tests_unit_bookmark --> domain_bookmark
+tests_unit_bookmark --> service_bookmark
+tests_unit_bookmark --> api_bookmark
+tests_unit_report --> domain_report
+tests_unit_report --> service_report
+tests_unit_report --> api_report
+tests_unit_comment --> domain_comment
+tests_unit_comment --> service_comment
+tests_unit_comment --> api_comment
+tests_unit_group_membership --> domain_group_membership
+tests_unit_group_membership --> service_group_membership
+tests_unit_group_membership --> api_group_membership
+tests_unit_notification --> domain_notification
+tests_unit_notification --> service_notification
+tests_unit_notification --> api_notification
+tests_integration --> api_user
+tests_integration --> api_post
+tests_integration --> api_notification_preference
+tests_integration --> api_verified_badge
+tests_integration --> api_group
+tests_integration --> api_profile
+tests_integration --> api_friendship
+tests_integration --> api_audit_log
+tests_integration --> api_block
+tests_integration --> api_follow
+tests_integration --> api_message
+tests_integration --> api_like
+tests_integration --> api_bookmark
+tests_integration --> api_report
+tests_integration --> api_comment
+tests_integration --> api_group_membership
+tests_integration --> api_notification
+
+legend right
+  **Layers (top → bottom)**
+  Domain → DTO → Repository → ORM → Infra
+  → Service → API → UI
+  Shared: cross-cutting utilities
+  Tests: mirrors every layer
+  Config / Docs: support concerns
+  ----
+  Packages: 139
+  Tasks: 25
+  Domain classes: 17
+  Generated: 2026-06-30 17:42 UTC
+end legend
+
+@enduml

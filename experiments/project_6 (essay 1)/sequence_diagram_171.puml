@@ -1,0 +1,143 @@
+@startuml
+title Bookmark Feature – Sequence Diagram
+
+actor "User" as actorUser
+
+box "Controller (UI)" #LightBlue
+    participant "IUserUI" as ui
+end box
+
+box "Application" #LightGreen
+    participant "BookmarkApplicationService" as app
+end box
+
+box "Domain" #LightYellow
+    participant "User" as userDomain
+    participant "Post" as postDomain
+    participant "Bookmark" as bookmarkDomain
+    participant "SavedList" as savedListDomain
+end box
+
+box "Infrastructure" #LightPink
+    participant "IUserDatabase" as db
+end box
+
+== User Bookmarks a Post ==
+
+actorUser -> ui: Click "Bookmark" on post
+ui -> app: POST /bookmarks {postId}
+note right: Authentication token in header
+app -> userDomain: checkLoginStatus(token): LoginStatus
+alt LoginStatus != LoggedIn
+    app -> ui: 401 Unauthorized
+    ui -> actorUser: Display "Please log in"
+else LoginStatus == LoggedIn
+    app -> userDomain: hasPermission(Permission.WRITE): boolean
+    alt hasPermission == false
+        app -> ui: 403 Forbidden
+        ui -> actorUser: Display "No write permission"
+    else hasPermission == true
+        app -> db: getPost(postId): Post
+        alt post == null
+            app -> ui: 404 Not Found
+            ui -> actorUser: Display "Post not found"
+        else post != null
+            app -> userDomain: getSavedList(): SavedList
+            app -> db: isPostAccessibleToUser(postId, userId): boolean
+            alt isAccessible == false
+                app -> ui: 403 Forbidden
+                ui -> actorUser: Display "Post not accessible"
+            else isAccessible == true
+                app -> savedListDomain: addBookmark(post, timestamp)
+                note right of savedListDomain: State transition: pre no bookmark, post bookmark added
+                alt duplicate bookmark (unique constraint)
+                    app -> ui: 409 Conflict
+                    ui -> actorUser: Display "Already bookmarked"
+                else bookmark added
+                    savedListDomain -> db: persist(savedList) [TLS]
+                    note right: Must use at least one authenticated channel
+                    db -> app: success
+                    app -> ui: 201 Created
+                    ui -> actorUser: Display "Bookmarked"
+                end
+            end
+        end
+    end
+end
+
+== User Views Saved List ==
+
+actorUser -> ui: Navigate to saved list
+ui -> app: GET /saved-list
+note right: Authentication token in header
+app -> userDomain: checkLoginStatus(token): LoginStatus
+alt LoginStatus != LoggedIn
+    app -> ui: 401 Unauthorized
+    ui -> actorUser: Display "Please log in"
+else LoginStatus == LoggedIn
+    app -> userDomain: hasPermission(Permission.READ): boolean
+    alt hasPermission == false
+        app -> ui: 403 Forbidden
+        ui -> actorUser: Display "No read permission"
+    else hasPermission == true
+        app -> userDomain: getSavedList(): SavedList
+        app -> savedListDomain: getBookmarks(): List<Bookmark>
+        loop each bookmark
+            app -> db: getPost(bookmark.postId): Post
+            alt post != null and accessible
+                app -> ui: include post data
+            else post != null but not accessible
+                app -> ui: include placeholder "Post not available"
+            else post == null (deleted)
+                app -> ui: include placeholder "Post deleted"
+            end
+        end
+        ui -> actorUser: Display list (with placeholders if needed)
+    end
+end
+
+== User Logs Out While Bookmarking ==
+
+actorUser -> ui: Click "Bookmark"
+ui -> app: POST /bookmarks {postId}
+note right: Authentication token in header
+app -> userDomain: checkLoginStatus(token): LoginStatus
+note over app: Session valid at this point
+app -> userDomain: hasPermission(Permission.WRITE): boolean
+app -> db: getPost(postId): Post
+app -> db: isPostAccessibleToUser(postId, userId): boolean
+app -> savedListDomain: addBookmark(post, timestamp)
+note over savedListDomain: User logs out or session expires
+alt token invalidated before persist
+    savedListDomain -> db: persist(savedList) [TLS]
+    db -> app: 401 Unauthorized
+    note right: No state change – rollback domain object
+    app -> ui: 401 Unauthorized
+    ui -> actorUser: Display "Session expired, bookmark not saved"
+else token still valid
+    savedListDomain -> db: persist(savedList) [TLS]
+    db -> app: success
+    app -> ui: 201 Created
+    ui -> actorUser: Display "Bookmarked"
+end
+
+== Post Deleted After Bookmark (Later View) ==
+
+note over actorUser, db: Precondition: User has bookmarked a post that is later deleted
+actorUser -> ui: Navigate to saved list
+ui -> app: GET /saved-list
+app -> userDomain: getSavedList(): SavedList
+app -> savedListDomain: getBookmarks(): List<Bookmark>
+loop each bookmark
+    app -> db: getPost(bookmark.postId): Post
+    alt post == null (deleted)
+        app -> ui: include placeholder "Post deleted"
+    else post exists but not accessible
+        app -> ui: include placeholder "Post not available"
+    else post exists and accessible
+        app -> ui: include post data
+    end
+end
+ui -> actorUser: Display list with placeholders
+
+@enduml

@@ -1,0 +1,102 @@
+{
+  "id": "REQ-TEACH-01",
+  "title": "Manual Bonus Nugget Granting with Justification",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow a teacher to manually grant bonus nuggets to individual students and record the justification for each grant as an audit event.",
+  "rationale": "This requirement is necessary to enable teachers to reward students appropriately while maintaining a record of all grants for auditing purposes.",
+  "business_value": "It enhances the flexibility of grading by allowing teachers to recognize exceptional performance and ensures accountability in the distribution of bonus nuggets.",
+  "source": {
+    "type": "User Story",
+    "id": 109,
+    "description": "As a teacher I need to grant manual bonus nuggets to individual students with a written justification so that the justification is logged as an audit event for record-keeping."
+  },
+  "stakeholders": [
+    "Teacher",
+    "IT Team"
+  ],
+  "acceptance_criteria": [
+    "A teacher is logged into the system",
+    "The teacher grants a manual bonus nugget to a student with a written justification",
+    "The bonus nugget is added to the student's account",
+    "An audit event is created containing the teacher, student, amount, and justification"
+  ],
+  "preconditions": [
+    "A teacher is logged into the system"
+  ],
+  "postconditions": [
+    "The bonus nugget is added to the student's account",
+    "An audit event is created containing the teacher, student, amount, and justification"
+  ],
+  "functional_constraints": [],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "Teacher attempts to grant a bonus nugget without a justification",
+    "Non-teaching staff tries to access the bonus granting feature",
+    "System fails to create an audit event due to database issues"
+  ],
+  "dependencies": [
+    "Student account management system",
+    "Audit logging system"
+  ],
+  "interfaces": [
+    {
+      "type": "UI",
+      "name": "Teacher Dashboard",
+      "description": "The requirement interacts with the user interface where teachers can grant bonus nuggets and provide justifications."
+    },
+    {
+      "type": "API",
+      "name": "Student Account API",
+      "description": "The requirement uses an API to update a student's account balance after granting a bonus nugget."
+    },
+    {
+      "type": "API",
+      "name": "Audit Logging API",
+      "description": "The requirement sends data to an audit logging system to record each bonus grant with the teacher, student, amount, and justification."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-TEACH-01",
+      "description": "Teacher grants a manual bonus nugget with a written justification.",
+      "expected_result": "The bonus nugget is added to the student's account, and an audit event is created containing the teacher, student, amount, and justification."
+    },
+    {
+      "id": "TC-TEACH-02",
+      "description": "Teacher attempts to grant a bonus nugget without a justification.",
+      "expected_result": "The system displays an error message and prevents the bonus from being granted."
+    },
+    {
+      "id": "TC-TEACH-03",
+      "description": "Non-teaching staff tries to access the bonus granting feature.",
+      "expected_result": "The system denies access and prompts the user with a permission denied message."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-29T14:14:57.705470",
+  "last_updated": "2026-06-29T15:12:27.637727",
+  "traceability": {
+    "related_requirements": [
+      "REQ-DASHBOARD-01"
+    ],
+    "design_components": [
+      "BonuNuggetGrant",
+      "AuditEvent",
+      "Teacher",
+      "Student",
+      "NuggetWallet"
+    ],
+    "test_artifacts": []
+  }
+}

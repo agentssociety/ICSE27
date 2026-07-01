@@ -1,0 +1,227 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam class {
+    BorderColor #333333
+    FontColor #333333
+    BackgroundColor #FFFFFF
+}
+skinparam interface {
+    BorderColor #0066CC
+    FontColor #0066CC
+}
+skinparam enum {
+    BorderColor #666666
+    FontColor #333333
+}
+
+package "Domain Model" {
+    class StudentAccount {
+        - id: String
+        - registrationData: RegistrationData
+        + StudentAccount(registrationData: RegistrationData)
+        + getId(): String
+        + getRegistrationData(): RegistrationData
+  + create(data: RegistrationData)
+  + getProfile()
+    }
+    note right of StudentAccount::StudentAccount
+        created upon successful registration
+    end note
+
+    class StudentProfile {
+        - avatar: Avatar {default}
+        - nuggetBalance: int = 0
+        - badges: Set<Badge> = {}
+        - competencyRadarChart: RadarChart = empty
+        + StudentProfile()
+        + getAvatar(): Avatar
+        + setAvatar(avatar: Avatar): void
+        + getNuggetBalance(): int
+        + addNuggets(amount: int): void
+        + getBadges(): Set<Badge>
+        + addBadge(badge: Badge): void
+        + getCompetencyRadarChart(): RadarChart
+        + updateCompetencyRadarChart(chart: RadarChart): void
+  + create(avatar, nuggets=0, badges=[], radarChart=[])
+  + failure(rollback)
+    }
+    note right of StudentProfile::StudentProfile
+        created automatically with StudentAccount
+        belongs to exactly one student
+    end note
+
+    StudentAccount *-- StudentProfile : owns >
+    note on link: profile lifecycle bound to account
+
+    class RegistrationData {
+        <<dto>>
+        - name: String
+        - email: String
+        - password: String
+        + RegistrationData(name: String, email: String, password: String)
+        + getName(): String
+        + getEmail(): String
+        + getPassword(): String
+    }
+
+    class Avatar {
+        <<dto>>
+        - imageUrl: String
+        + Avatar()
+        + Avatar(imageUrl: String)
+        + getImageUrl(): String
+        + setImageUrl(url: String): void
+    }
+
+    class Badge {
+        <<dto>>
+        - id: String
+        - name: String
+        - description: String
+        + Badge(id: String, name: String, description: String)
+        + getId(): String
+        + getName(): String
+        + getDescription(): String
+    }
+
+    class RadarChart {
+        <<dto>>
+        - competencies: Map<String, int>
+        + RadarChart()
+        + getCompetencies(): Map<String, int>
+        + setCompetency(name: String, value: int): void
+    }
+
+    StudentProfile --> Avatar : has
+    StudentProfile --> Badge : contains
+    StudentProfile --> RadarChart : has
+}
+
+package "Application" {
+    class RegistrationService {
+        + register(input: RegistrationInput): StudentAccount
+        + validateInput(input: RegistrationInput): boolean
+    }
+    note right of RegistrationService::register
+        creates StudentAccount with default StudentProfile
+        rolls back on internal error
+    end note
+
+    class RegistrationInput {
+        <<dto>>
+        - name: String
+        - email: String
+        - password: String
+        + RegistrationInput(name: String, email: String, password: String)
+        + getName(): String
+        + getEmail(): String
+        + getPassword(): String
+    }
+
+    RegistrationService --> RegistrationInput : uses
+    RegistrationService --> StudentAccount : creates
+}
+
+package "Infrastructure — Ports" {
+    interface "RegistrationAPI" as RegistrationAPI {
+        <<interface>>
+        + register(input: RegistrationInput): StudentAccount
+        + validate(input: RegistrationInput): ValidationResult
+    }
+    note right of RegistrationAPI
+        requires authentication
+    end note
+
+    interface "UserDatabase" as UserDatabase {
+        <<interface>>
+        + saveStudentAccount(account: StudentAccount): void
+        + findStudentAccount(id: String): StudentAccount
+        + saveStudentProfile(profile: StudentProfile): void
+        + findStudentProfile(studentId: String): StudentProfile
+    }
+    note right of UserDatabase
+        requires authentication
+    end note
+
+    interface "ProfileUI" as ProfileUI {
+        <<interface>>
+        + displayProfile(profile: StudentProfile): void
+        + displayError(message: String): void
+  + display(profile)
+    }
+    note right of ProfileUI
+        requires authentication
+    end note
+
+    class ValidationResult {
+        <<dto>>
+        - isValid: boolean
+        - errorMessage: String
+        + ValidationResult(isValid: boolean, errorMessage: String)
+        + isValid(): boolean
+        + getErrorMessage(): String
+  + validate(input)
+    }
+
+    RegistrationAPI --> ValidationResult : returns
+}
+
+package "Controllers" {
+    class RegistrationController {
+        + handleRegistration(input: RegistrationInput): void
+    }
+
+    RegistrationController --> RegistrationAPI : calls
+    RegistrationController --> RegistrationService : delegates
+}
+
+package "Exceptions" {
+    class InvalidInputException {
+        <<exception>>
+        - message: String
+        + InvalidInputException(message: String)
+        + getMessage(): String
+    }
+
+    class RegistrationFailedException {
+        <<exception>>
+        - message: String
+        + RegistrationFailedException(message: String)
+        + getMessage(): String
+    }
+
+    RegistrationService --> InvalidInputException : throws
+    RegistrationService --> RegistrationFailedException : throws
+}
+
+enum Permission {
+    READ_OWN_PROFILE
+    CUSTOMIZE_AVATAR
+    WRITE_REGISTRATION_API
+    WRITE_USER_DATABASE
+    READ_USER_DATABASE
+    DISPLAY_PROFILE_UI
+    ADMIN
+}
+
+enum RegistrationState {
+    PRE_REGISTRATION
+    PROFILE_CREATED
+    PROFILE_UPDATED
+}
+
+note right of RegistrationState::PRE_REGISTRATION
+    System idle; no student account exists
+end note
+note right of RegistrationState::PROFILE_CREATED
+    Account and profile created, displayed
+end note
+note right of RegistrationState::PROFILE_UPDATED
+    Profile modified by platform activities
+end note
+
+RegistrationService --> RegistrationState : manages state
+StudentAccount --> RegistrationState : has state
+
+@enduml

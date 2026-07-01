@@ -1,0 +1,155 @@
+@startuml
+!theme plain
+
+box "Controller Layer" #LightBlue
+    participant "Leaderboard_Display" as UI
+end box
+
+box "Application Layer" #LightGreen
+    participant "REQ_COHORT_LEADERBOARD_01" as Controller
+end box
+
+box "Domain Layer" #LightCoral
+    participant "Student" as Student
+    participant "Instructor" as Instructor
+    participant "Actor" as Actor
+    participant "Resource" as Resource
+    participant "Interface" as Iface
+    participant "Permission" as Permission
+    participant "State" as State
+end box
+
+box "Infrastructure Layer" #LightYellow
+    participant "Cohort_Settings_API" as Settings
+    participant "Student_Data_Store" as DB
+end box
+
+== View Leaderboard - Happy Path ==
+
+UI -> Actor : GET /leaderboard\n[HTTP 200] 
+Actor -> Controller : viewLeaderboard(student: Student) : State
+
+note over Controller : precondition: leaderboard enabled\nAND student not opted out
+
+Controller -> Settings : GET /cohort/{id}/settings\n[TLS]
+Settings --> Controller : {leaderboardEnabled: true,\ntimeWindow: {start, end}}
+
+alt Student Opted Out
+    Controller -> DB : GET /student/{id}/opt-out\n[encrypted at rest]
+    DB --> Controller : {optedOut: false}
+    
+    Controller -> DB : GET /students/{cohortId}/nuggets\n?start={start}&end={end}\n[encrypted at rest]
+    DB --> Controller : [{studentId, nuggetCount}, ...]
+    
+    Controller -> Controller : aggregateAndRank(nuggets: List) : List<RankedStudent>
+    note over Controller : state transition: pre -> Post2
+    note over Controller : state transition: pre -> Post1
+    
+    Controller --> Actor : {rankedList, studentRank}
+    Actor --> UI : renderLeaderboard(rankedList)
+else Student Opted In
+    Controller -> DB : GET /student/{id}/opt-out\n[encrypted at rest]
+    DB --> Controller : {optedOut: true}
+    Controller --> Actor : {error: "STUDENT_OPTED_OUT"}
+    Actor --> UI : showOptOutMessage()
+end
+
+== View Leaderboard - Leaderboard Disabled ==
+
+UI -> Actor : GET /leaderboard\n[HTTP 200]
+Actor -> Controller : viewLeaderboard(student: Student) : State
+
+Controller -> Settings : GET /cohort/{id}/settings\n[TLS]
+Settings --> Controller : {leaderboardEnabled: false}
+
+Controller --> Actor : {error: "LEADERBOARD_DISABLED"}
+Actor --> UI : showLeaderboardDisabledMessage()
+
+== View Leaderboard - No Data ==
+
+UI -> Actor : GET /leaderboard\n[HTTP 200]
+Actor -> Controller : viewLeaderboard(student: Student) : State
+
+Controller -> Settings : GET /cohort/{id}/settings\n[TLS]
+Settings --> Controller : {leaderboardEnabled: true,\ntimeWindow: {start, end}}
+
+Controller -> DB : GET /students/{cohortId}/nuggets\n?start={start}&end={end}\n[encrypted at rest]
+DB --> Controller : []
+
+Controller -> Controller : aggregateAndRank(emptyList) : List<RankedStudent>
+note over Controller : state transition: pre -> Post1
+note over Controller : empty leaderboard or all zeros
+
+Controller --> Actor : {rankedList: [],\nstudentRank: 0}
+Actor --> UI : renderEmptyLeaderboard()
+
+== Instructor Configure Leaderboard - Enable ==
+
+UI -> Instructor : POST /cohort/{id}/settings\n[HTTP 200]
+Instructor -> Controller : configureLeaderboard(instructor: Instructor, settings: Map) : State
+
+note over Controller : precondition: instructor authenticated
+note over Controller : security: initiator must have Write permission\nAND be in accessible set
+
+alt Invalid Permission
+    Controller -> Actor : validatePermissions(instructor: Instructor, permission: Permission) : Boolean
+    Actor --> Controller : false
+    Controller --> Instructor : {error: "UNAUTHORIZED"}
+    Instructor --> UI : showUnauthorizedMessage()
+else Valid Permission
+    Controller -> Actor : validatePermissions(instructor: Instructor, permission: Permission) : Boolean
+    Actor --> Controller : true
+    
+    Controller -> Settings : PUT /cohort/{id}/settings\n[TLS]\n{leaderboardEnabled: true,\ntimeWindow: {start, end}}
+    Settings --> Controller : {status: "UPDATED"}
+    
+    note over Controller : state transition: pre -> Post1
+    note over Controller : state transition: pre -> Post2
+    
+    Controller --> Instructor : {status: "SUCCESS"}
+    Instructor --> UI : showSettingsUpdated()
+end
+
+== Instructor Configure Leaderboard - Disable ==
+
+UI -> Instructor : POST /cohort/{id}/settings\n[HTTP 200]
+Instructor -> Controller : configureLeaderboard(instructor: Instructor, settings: Map) : State
+
+Controller -> Actor : validatePermissions(instructor: Instructor, permission: Permission) : Boolean
+Actor --> Controller : true
+
+Controller -> Settings : PUT /cohort/{id}/settings\n[TLS]\n{leaderboardEnabled: false}
+Settings --> Controller : {status: "UPDATED"}
+
+note over Controller : state transition: pre -> Post1
+note over Controller : state transition: pre -> Post2
+
+Controller --> Instructor : {status: "SUCCESS"}
+Instructor --> UI : showSettingsUpdated()
+
+== Error - Authentication Required ==
+
+UI -> Actor : GET /leaderboard\n[HTTP 401]
+Actor -> Controller : viewLeaderboard(student: Student) : State
+
+Controller -> Iface : validateChannel(channel: Interface) : Boolean
+Iface --> Controller : false
+
+Controller --> Actor : {error: "AUTHENTICATION_REQUIRED"}
+Actor --> UI : showAuthenticationError()
+
+== Error - Resource Not Accessible ==
+
+UI -> Instructor : POST /cohort/{id}/settings\n[HTTP 200]
+Instructor -> Controller : configureLeaderboard(instructor: Instructor, settings: Map) : State
+
+Controller -> Actor : validatePermissions(instructor: Instructor, permission: Permission) : Boolean
+Actor --> Controller : true
+
+Controller -> Resource : checkAccessibility(actor: Instructor) : Boolean
+Resource --> Controller : false
+
+Controller --> Instructor : {error: "RESOURCE_NOT_ACCESSIBLE"}
+Instructor --> UI : showAccessDeniedError()
+
+@enduml

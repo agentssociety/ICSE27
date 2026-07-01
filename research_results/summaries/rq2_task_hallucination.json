@@ -2,10 +2,10 @@
   "metric": "rq2_task_hallucination",
   "description": "Task-level structural hallucination: tasks created by the agent (confirmed via 'Successfully created the task' in run.log) that were subsequently deleted by the human operator (absent from agent.md and task_implementation_order.json). Root causes: (1) duplicate creation from pipeline restarts — the agent re-generated already-existing tasks; (2) over-generation — agent created more tasks than specified; (3) retry-replacement — a task was created then re-created with corrections. task_deletion_rate = n_deleted / n_created per run. Runs with no 'Successfully created' log entries (different log format) are treated as 0 deletions (conservative). Values reported as mean ± std (ddof=1) across 3 seeds per project.",
   "totals": {
-    "total_tasks_created_in_logs": 92,
-    "total_tasks_deleted": 10,
-    "overall_deletion_rate": 0.1087,
-    "runs_with_deletions": 3
+    "total_tasks_created_in_logs": 133,
+    "total_tasks_deleted": 14,
+    "overall_deletion_rate": 0.1053,
+    "runs_with_deletions": 4
   },
   "projects": [
     {
@@ -286,6 +286,97 @@
               "is_duplicate": true
             }
           ]
+        }
+      ]
+    },
+    {
+      "project_id": 5,
+      "n_essays": 1,
+      "n_deleted_tasks": {
+        "mean": 4.0,
+        "std": 0.0,
+        "values": [
+          4.0
+        ]
+      },
+      "task_deletion_rate": {
+        "mean": 0.25,
+        "std": 0.0,
+        "values": [
+          0.25
+        ]
+      },
+      "n_duplicate_deleted": {
+        "mean": 2.0,
+        "std": 0.0,
+        "values": [
+          2.0
+        ]
+      },
+      "per_essay": [
+        {
+          "essay": 1,
+          "n_created": 16,
+          "n_kept": 12,
+          "n_deleted": 4,
+          "task_deletion_rate": 0.25,
+          "deleted_tasks": [
+            {
+              "task_id": 117,
+              "title": "Instructor Registration, Login, and Dashboard",
+              "is_duplicate": true
+            },
+            {
+              "task_id": 118,
+              "title": "Flexible Exam Builder with Competency & Difficulty Multiplie",
+              "is_duplicate": false
+            },
+            {
+              "task_id": 119,
+              "title": "Exam Scheduling with Time Windows and Time Limit",
+              "is_duplicate": true
+            },
+            {
+              "task_id": 120,
+              "title": "Cohort Creation and Exam Restriction",
+              "is_duplicate": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "project_id": 6,
+      "n_essays": 1,
+      "n_deleted_tasks": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "task_deletion_rate": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "n_duplicate_deleted": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0
+        ]
+      },
+      "per_essay": [
+        {
+          "essay": 1,
+          "n_created": 25,
+          "n_kept": 25,
+          "n_deleted": 0,
+          "task_deletion_rate": 0.0,
+          "deleted_tasks": []
         }
       ]
     }

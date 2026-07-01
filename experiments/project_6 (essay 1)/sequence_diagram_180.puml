@@ -1,0 +1,174 @@
+@startuml
+!theme plain
+
+title Account Soft Delete, Recovery, and Grace Period Expiry
+
+participant User as User
+box "Controller" #LightBlue
+  participant "Account Management API" as API
+end box
+box "Application" #LightYellow
+  participant "AccountManagementService" as Service
+end box
+box "Domain" #LightGreen
+  participant "UserAccount" as Account
+  participant "Actor" as Actor
+  participant "Operation" as Op
+  participant "Interface" as Iface
+  participant "State" as State
+end box
+box "Infrastructure" #LightCoral
+  participant "User_Data_Database" as DB
+end box
+box "External" #LightGray
+  participant "Data Retention Policy" as Policy
+  participant "System Timer" as Timer
+end box
+
+== Soft Delete (TC-ACC-01) ==
+
+User -> API : POST /accounts/{id}/soft-delete HTTP 1.1\n[authenticated]
+activate API
+
+API -> Service : softDeleteAccount(accountId, initiator)
+activate Service
+
+alt Account status is Active
+  Service -> Account : checkStatus()
+  activate Account
+  Account --> Service : UserAccountStatus.Active
+  deactivate Account
+
+  Service -> Actor : checkPermission(initiator, Write)
+  activate Actor
+  Actor --> Service : true
+  deactivate Actor
+
+  Service -> Account : checkAccessible(initiator)
+  activate Account
+  Account --> Service : true (initiator in accessible set)
+  deactivate Account
+
+  note right of Service : At least one channel must be authenticated\n(API does HTTPS with auth)
+
+  Service -> Account : setStatus(GracePeriodState)
+  activate Account
+  Account -> Account : status = UserAccountStatus.GracePeriodState
+  note left: Transition from Active to GracePeriodState
+  deactivate Account
+
+  Service -> Op : createOperation(initiator, targets, channels, Write, pre=Active, post=GracePeriodState)
+  activate Op
+  Op -> Op : validate invariants\n(pre != post, initiator has permission,\ninitiator in accessible)
+  Op --> Service : Operation created
+  deactivate Op
+
+  Service -> DB : preserveData(userId) [encrypted at rest]
+  activate DB
+  DB --> Service : ok
+  deactivate DB
+
+  Service --> API : 200 OK
+  API --> User : 200 OK
+else Account status is GracePeriodState
+  Service --> API : 409 Conflict\n"Account already in grace period"
+  API --> User : 409 Conflict
+end
+
+deactivate Service
+deactivate API
+
+== Recovery (TC-ACC-02) ==
+
+User -> API : POST /accounts/{id}/recover HTTP 1.1\n[authenticated, encrypted]
+activate API
+
+API -> Service : recoverAccount(accountId, initiator, verificationInfo)
+activate Service
+
+alt Account status is GracePeriodState
+  Service -> Account : checkStatus()
+  activate Account
+  Account --> Service : UserAccountStatus.GracePeriodState
+  deactivate Account
+
+  Service -> Account : checkAccessible(initiator)
+  activate Account
+  Account --> Service : true
+  deactivate Account
+
+  Service -> Actor : checkPermission(initiator, Admin)
+  activate Actor
+  Actor --> Service : true
+  deactivate Actor
+
+  note right of Service : Recovery requires both authenticated and encrypted channel\n(API enforces TLS)
+
+  alt Verification successful
+    Service -> Account : setStatus(RecoveredState)
+    activate Account
+    Account -> Account : status = UserAccountStatus.RecoveredState
+    note left: Transition from GracePeriodState to RecoveredState
+    deactivate Account
+
+    Service -> Op : createOperation(initiator, targets, channels, Admin, pre=GracePeriodState, post=RecoveredState)
+    activate Op
+    Op --> Service : Operation created
+    deactivate Op
+
+    Service -> DB : restoreData(userId) [encrypted at rest]
+    activate DB
+    DB --> Service : ok
+    deactivate DB
+
+    Service --> API : 200 OK
+    API --> User : 200 OK
+  else Insufficient credentials or verification fails
+    Service --> API : 401 Unauthorized / 403 Forbidden
+    API --> User : 401 Unauthorized
+  end
+else Account status is not GracePeriodState
+  Service --> API : 400 Bad Request\n"Account not in recoverable state"
+  API --> User : 400 Bad Request
+end
+
+deactivate Service
+deactivate API
+
+== Grace Period Expiry (TC-ACC-03) ==
+
+activate Timer
+Timer -> Service : triggerGracePeriodExpiry(accountId)
+activate Service
+
+alt Account status is GracePeriodState
+  Service -> Account : checkStatus()
+  activate Account
+  Account --> Service : UserAccountStatus.GracePeriodState
+  deactivate Account
+
+  Service -> Account : setStatus(PostDone)
+  activate Account
+  Account -> Account : status = UserAccountStatus.PostDone
+  note left: Transition from GracePeriodState to PostDone (permanent deletion)
+  deactivate Account
+
+  Service -> Op : createOperation(system, targets, channels, Admin, pre=GracePeriodState, post=PostDone)
+  activate Op
+  Op --> Service : Operation created
+  deactivate Op
+
+  Service -> DB : deleteData(userId) [encrypted at rest]
+  activate DB
+  DB --> Service : ok
+  deactivate DB
+
+  Service --> Timer : ok
+else Account status is not GracePeriodState
+  Service --> Timer : ignored (no action)
+end
+
+deactivate Service
+deactivate Timer
+
+@enduml

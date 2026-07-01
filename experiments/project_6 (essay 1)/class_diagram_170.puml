@@ -1,0 +1,98 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam classBorderColor #333333
+skinparam classHeaderBackgroundColor #E0E0E0
+skinparam interfaceBackgroundColor #D0E0F0
+skinparam enumBackgroundColor #F0E0D0
+
+package "Domain Model" {
+  class Actor {
+    mayPerform: set Permission
+  + checkPermission(permission: Permission.Read) : Boolean
+  }
+
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+
+  class Resource {
+    owner: one Actor
+    accessible: set Actor
+  }
+
+  enum State {
+    Pre1
+    Post1
+  + transitionTo(State.Post1)
+  }
+
+  class Interface {
+    kind: IfaceKind
+    encrypted: Bool
+    authenticated: Bool
+  }
+
+  enum IfaceKind {
+    API
+    Database
+  }
+}
+
+package "Application" {
+  class REQ_SEARCH_01 {
+    initiator: one Actor
+    target: some Resource
+    channel: some Interface
+    grant: one Permission
+    pre: one State
+    post: one State
+  + executeSearch(keyword: String) : List<Resource>
+  + combineResults(users: List<Resource>, posts: List<Resource>) : List<Resource>
+  + executeSearch(keyword: "") : List<Resource>
+  + executeSearch(keyword: null) : List<Resource>
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface SearchAPI {
+    kind: API
+  }
+
+  interface UserDatabase {
+    kind: Database
+  + searchUsers(keyword: String) : List<Resource>
+  }
+
+  interface PostDatabase {
+    kind: Database
+  + searchPosts(keyword: String) : List<Resource>
+  }
+}
+
+' Relationships
+Actor "1" -- "0..*" Permission : mayPerform
+Resource "1" -- "1" Actor : owner
+Resource "1" -- "0..*" Actor : accessible
+REQ_SEARCH_01 "1" -- "1" Actor : initiator
+REQ_SEARCH_01 "1" -- "1..*" Resource : target
+REQ_SEARCH_01 "1" -- "1..*" Interface : channel
+REQ_SEARCH_01 "1" -- "1" Permission : grant
+REQ_SEARCH_01 "1" -- "1" State : pre
+REQ_SEARCH_01 "1" -- "1" State : post
+
+' Note: Interface is abstract; specific interfaces are specializations
+Interface <|-- SearchAPI
+Interface <|-- UserDatabase
+Interface <|-- PostDatabase
+
+' Invariant annotations (as notes)
+note top of Resource : invariant: owner always in accessible
+note top of REQ_SEARCH_01 : invariant: pre != post\npost in Post1\ngrant in initiator.mayPerform\ninitiator in target.accessible\nsome channel requires authenticated = True
+
+@enduml

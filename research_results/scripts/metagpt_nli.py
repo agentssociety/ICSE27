@@ -53,6 +53,8 @@ METAGPT_PROJECTS = {
     2: EXPERIMENTS / "project_2 (metagpt)",
     3: EXPERIMENTS / "project_3 (metagpt)",
     4: EXPERIMENTS / "project_4 (metagpt)",
+    5: EXPERIMENTS / "project_5 (metagpt)",
+    6: EXPERIMENTS / "project_6 (metagpt)",
 }
 
 THRESHOLD = 0.6   # same as AgentsSociety
@@ -444,16 +446,25 @@ def run() -> None:
     lo_thr = q1 - 1.5 * iqr_val
     hi_thr = q3 + 1.5 * iqr_val
 
-    # Build comparison table vs AgentsSociety
-    agentsociety_ref = {
-        "pooled_mean_alignment":        0.9683,
-        "pooled_median_alignment":      0.9877,
-        "pooled_std_alignment":         0.1112,
-        "pooled_iqr_alignment":         0.0168,
-        "spec_extrapolation_rate_mean": 0.522,
-        "n_stories":                    82,
-        "source":                       "summaries/rq2_nli_confidence.json",
-    }
+    # Build comparison table vs AgentsSociety (read live from summary JSON)
+    as_summary_path = SUMMARY_DIR / "rq2_nli_confidence.json"
+    if as_summary_path.exists():
+        as_data = json.loads(as_summary_path.read_text(encoding="utf-8"))
+        as_pooled = as_data["pooled_all_runs"]
+        as_proj_means = [p["mean_confidence"]["mean"] for p in as_data["projects"]]
+        as_proj_halluc = [p["overall_hallucination_rate"]["mean"] for p in as_data["projects"]]
+        agentsociety_ref = {
+            "pooled_mean_alignment":        round(as_pooled["mean"], 4),
+            "pooled_median_alignment":      round(as_pooled["median"], 4),
+            "pooled_std_alignment":         round(as_pooled["std"], 4),
+            "pooled_iqr_alignment":         round(as_pooled["iqr"], 4),
+            "cross_project_mean_alignment": round(sum(as_proj_means) / len(as_proj_means), 4),
+            "spec_extrapolation_rate_mean": round(sum(as_proj_halluc) / len(as_proj_halluc), 4),
+            "n_stories":                    as_pooled["n_scores"],
+            "source":                       "summaries/rq2_nli_confidence.json",
+        }
+    else:
+        agentsociety_ref = {"source": "summaries/rq2_nli_confidence.json (not found)"}
 
     summary = {
         "metric":      "rq2_nli_metagpt",

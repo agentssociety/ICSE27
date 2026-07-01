@@ -1,0 +1,292 @@
+{
+  "detected_cycles": [],
+  "removed_edges_to_break_cycles": [],
+  "relationship_corrections": [
+    {
+      "original": {
+        "left": "Admin",
+        "arrow": "--|>",
+        "right": "Permission"
+      },
+      "corrected": {
+        "left": "Admin",
+        "arrow": "--|>",
+        "right": "Actor"
+      },
+      "reason": "Admin is a type of Actor, not Permission. Inheritance from Actor is correct."
+    },
+    {
+      "original": {
+        "left": "BonusNugget",
+        "arrow": "\"0..1\" ..> \"1\"",
+        "right": "AuditEvent"
+      },
+      "corrected": {
+        "left": "BonusNugget",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "AuditEvent"
+      },
+      "reason": "Each bonus nugget grant must be logged as an audit event, so a 1-to-1 directed association is more appropriate than a dependency with cardinalities."
+    },
+    {
+      "original": {
+        "left": "Instructor",
+        "arrow": "..>",
+        "right": "Dashboard_UI"
+      },
+      "corrected": {
+        "left": "Dashboard_UI",
+        "arrow": "..>",
+        "right": "Instructor"
+      },
+      "reason": "The UI depends on the Instructor model, not the other way around. Dependency direction should be from UI to domain class."
+    },
+    {
+      "original": {
+        "left": "Instructor_Configuration_System",
+        "arrow": "--|>",
+        "right": "Interface"
+      },
+      "corrected": {
+        "left": "Instructor_Configuration_System",
+        "arrow": "..>",
+        "right": "Interface"
+      },
+      "reason": "The configuration system likely depends on an Interface, not inherits from it. Changing to dependency."
+    },
+    {
+      "original": {
+        "left": "NuggetBalance",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "Student"
+      },
+      "corrected": {
+        "left": "Student",
+        "arrow": "\"1\" --> \"1\"",
+        "right": "NuggetBalance"
+      },
+      "reason": "A student owns a nugget balance; the association should originate from Student to NuggetBalance."
+    },
+    {
+      "original": {
+        "left": "Resource",
+        "arrow": "*-- \"1\"",
+        "right": "Actor"
+      },
+      "corrected": {
+        "left": "Actor",
+        "arrow": "\"1\" --> \"*\"",
+        "right": "Resource"
+      },
+      "reason": "An actor (e.g., Instructor) can own multiple resources; the composition was reversed. Changing to directed association with correct cardinality."
+    },
+    {
+      "original": {
+        "left": "Schedule",
+        "arrow": "\"1\" -- \"1\"",
+        "right": "Date"
+      },
+      "corrected": {
+        "left": "Schedule",
+        "arrow": "\"1\" *-- \"2\"",
+        "right": "Date"
+      },
+      "reason": "A schedule must have exactly two dates (open and close), so composition with multiplicity 2 is appropriate."
+    },
+    {
+      "original": {
+        "left": "StudentProfile",
+        "arrow": "-->",
+        "right": "Badge"
+      },
+      "corrected": {
+        "left": "StudentProfile",
+        "arrow": "\"1\" --> \"*\"",
+        "right": "Badge"
+      },
+      "reason": "A student profile can have multiple badges, so multiplicity should be many (0..* or *). Adding explicit multiplicity."
+    }
+  ],
+  "architecture_corrections": [
+    {
+      "kind": "missing_relationship",
+      "description": "Task #106 requires class ExamBuilder, but it is missing from the class list.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "affected_classes": [
+            "ExamBuilder"
+          ],
+          "new_relationship": "ExamBuilder --|> (owns) Question, Competency"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Task #113 requires classes CompetencyBreakdown and StudyTip, but they are missing.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "affected_classes": [
+            "CompetencyBreakdown",
+            "StudyTip"
+          ],
+          "new_relationship": "CompetencyBreakdown --> StudyTip"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Task #114 requires classes RewardStore, RewardItem, and Redemption, but they are missing.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "affected_classes": [
+            "RewardStore",
+            "RewardItem",
+            "Redemption"
+          ],
+          "new_relationship": "RewardStore *-- RewardItem, Redemption --> RewardItem"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Task #116 requires classes AttemptReview and CompetencyTrendChart, but they are missing.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "affected_classes": [
+            "AttemptReview",
+            "CompetencyTrendChart"
+          ],
+          "new_relationship": "AttemptReview --> CompetencyTrendChart"
+        }
+      }
+    },
+    {
+      "kind": "missing_relationship",
+      "description": "Task #105 requires class InstructorDashboard, but it is missing.",
+      "fix": {
+        "action": "add_relation",
+        "details": {
+          "affected_classes": [
+            "InstructorDashboard"
+          ],
+          "new_relationship": "Instructor -- InstructorDashboard"
+        }
+      }
+    },
+    {
+      "kind": "duplicate_concept",
+      "description": "Player and Student represent the same concept; Player should be merged into Student or removed.",
+      "fix": {
+        "action": "merge_classes",
+        "details": {
+          "keep": "Student",
+          "remove": "Player",
+          "transfer_relationships": [
+            "Player to NuggetWallet composition",
+            "Player to Streak composition",
+            "Player to Question association"
+          ]
+        }
+      }
+    },
+    {
+      "kind": "duplicate_concept",
+      "description": "Teacher and Instructor represent the same role; Teacher should be merged into Instructor.",
+      "fix": {
+        "action": "merge_classes",
+        "details": {
+          "keep": "Instructor",
+          "remove": "Teacher",
+          "transfer_relationships": [
+            "Teacher to BonusNugget association"
+          ]
+        }
+      }
+    },
+    {
+      "kind": "duplicate_concept",
+      "description": "BonusNugget and BonusNuggetGrant (from Task #109) are the same; rename BonusNugget to BonusNuggetGrant or merge.",
+      "fix": {
+        "action": "merge_classes",
+        "details": {
+          "keep": "BonusNuggetGrant",
+          "remove": "BonusNugget",
+          "transfer_relationships": [
+            "BonusNugget to AuditEvent",
+            "BonusNugget to Justification",
+            "Student to BonusNugget",
+            "Teacher to BonusNugget"
+          ]
+        }
+      }
+    },
+    {
+      "kind": "other_correction",
+      "description": "Student has both a composition relationship and a directed association to NuggetWallet; this is redundant and should be unified.",
+      "fix": {
+        "action": "remove_relation",
+        "details": {
+          "affected_classes": [
+            "Student",
+            "NuggetWallet"
+          ],
+          "remove_arrow": "Student --> NuggetWallet (directed association) or keep one"
+        }
+      }
+    }
+  ],
+  "architecture_suggestions": [
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "Player"
+      ],
+      "suggestion": "Rename Player to Student to align with ubiquitous language from tasks."
+    },
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "Teacher"
+      ],
+      "suggestion": "Rename Teacher to Instructor to match task descriptions."
+    },
+    {
+      "kind": "rename_for_clarity",
+      "affected_classes": [
+        "BonusNugget"
+      ],
+      "suggestion": "Rename BonusNugget to BonusNuggetGrant to match Task #109."
+    },
+    {
+      "kind": "introduce_value_object",
+      "affected_classes": [
+        "Question"
+      ],
+      "suggestion": "Introduce a value object DifficultyTier (enum: Beginner, Intermediate, Advanced) to replace the primitive attribute on Question."
+    },
+    {
+      "kind": "introduce_value_object",
+      "affected_classes": [
+        "Streak"
+      ],
+      "suggestion": "Introduce a value object NuggetMultiplier to encapsulate the multiplier logic (1x, 1.5x, 2x, 3x)."
+    },
+    {
+      "kind": "general",
+      "affected_classes": [
+        "State",
+        "Permission",
+        "Resource",
+        "Actor",
+        "Interface",
+        "User_Database",
+        "REQ_*"
+      ],
+      "suggestion": "Consider removing generic or infrastructural classes (State, Permission, Resource, Actor, Interface, User_Database, REQ_*) from the domain model if they are not core to the business logic, to keep the model focused."
+    }
+  ]
+}

@@ -1,0 +1,222 @@
+@startuml
+' Diagram covering all main flows and error paths for the exam system
+
+' Participants grouped by layer
+box "External"
+  participant Students
+  participant Instructors
+  participant Timer
+end box
+
+box "Controller"
+  participant "Exam_Access_API" as AccessAPI
+  participant "Attempt_Submission_API" as AttemptAPI
+end box
+
+box "Application"
+  participant AuthService
+  participant ExamService
+  participant AttemptService
+end box
+
+box "Domain"
+  participant "ExamDatabaseResource" as ExamDBRes
+  participant "AttemptResource" as AttemptRes
+  participant "Schedule" as Schedule
+  participant "State" as State
+  participant "Date" as Date
+  participant "Permission" as Permission
+end box
+
+box "Infrastructure"
+  participant "Exam_Database" as ExamDB
+end box
+
+' ========== FLOWS ==========
+
+== FLOW-SCHEDULE-EXAM ==
+' Instructor sets open/close dates
+' Pre: Pre1 (exam created), Post: Post1 (date enforcement active)
+
+Instructors -> ExamDB : setExamSchedule(examId, openDate, closeDate)
+note right: Channel: Exam_Database (Interface)\nencrypted=false, authenticated=false
+ExamDB -> AuthService : checkPermission(Instructor, Write, ExamDatabaseResource)
+alt Permission not granted
+  AuthService --> ExamDB : denied
+  ExamDB --> Instructors : 403 Forbidden
+else Permission granted
+  ExamDB -> AuthService : checkAccessible(Instructor, ExamDatabaseResource)
+  alt Accessible denied
+    AuthService --> ExamDB : denied
+    ExamDB --> Instructors : 403 Forbidden
+  else Accessible granted
+    ExamDB -> ExamDBRes : getState()
+    ExamDBRes -> State : getCurrentState()
+    State --> ExamDBRes : Pre1
+    alt State is not Pre1
+      ExamDBRes --> ExamDB : conflict
+      ExamDB --> Instructors : 409 Conflict (exam already scheduled)
+    else State is Pre1
+      ExamDBRes -> Schedule : setOpenDate(openDate)
+      Schedule -> Schedule : storeDate(openDate)
+      ExamDBRes -> Schedule : setCloseDate(closeDate)
+      Schedule -> Schedule : storeDate(closeDate)
+      ExamDBRes -> State : transitionTo(Post1)
+      State --> ExamDBRes : done
+      ExamDBRes --> ExamDB : schedule updated
+      ExamDB --> Instructors : 201 Created
+    end
+  end
+end
+
+== FLOW-SET-TIME-LIMIT ==
+' Instructor sets per-attempt time limit
+' Pre: Pre2 (dates set), Post: Post2 (time limit enforced)
+
+Instructors -> ExamDB : setAttemptTimeLimit(examId, timeLimitMinutes)
+alt Permission check (Admin required)
+  ExamDB -> AuthService : checkPermission(Instructor, Admin, AttemptResource)
+  alt Permission not granted
+    AuthService --> ExamDB : denied
+    ExamDB --> Instructors : 403 Forbidden
+  else Permission granted
+    ExamDB -> AuthService : checkAccessible(Instructor, AttemptResource)
+    alt Accessible denied
+      AuthService --> ExamDB : denied
+      ExamDB --> Instructors : 403 Forbidden
+    else Accessible granted
+      ExamDB -> ExamDBRes : getState()
+      ExamDBRes -> State : getCurrentState()
+      State --> ExamDBRes : Pre2
+      alt State is not Pre2
+        ExamDBRes --> ExamDB : conflict
+        ExamDB --> Instructors : 409 Conflict (dates not set yet)
+      else State is Pre2
+        ExamDBRes -> AttemptRes : setTimeLimit(timeLimitMinutes)
+        AttemptRes -> AttemptRes : recordTimeLimit()
+        AttemptRes -> State : transitionTo(Pre3)
+        State --> AttemptRes : done
+        ExamDBRes --> ExamDB : time limit set
+        ExamDB --> Instructors : 200 OK
+      end
+    end
+  end
+end
+
+== FLOW-ACCESS-OUTSIDE-WINDOW ==
+' Student attempts to access exam; main path = outside window (denied)
+' Pre: Pre2 (dates set), Post: Post1 (denied if outside, else allowed)
+
+Students -> AccessAPI : GET /exams/{examId}
+AccessAPI -> AuthService : checkPermission(Student, Read, ExamDatabaseResource)
+alt Permission not granted
+  AuthService --> AccessAPI : denied
+  AccessAPI --> Students : 403 Forbidden
+else Permission granted
+  AccessAPI -> AuthService : checkAccessible(Student, ExamDatabaseResource)
+  alt Accessible denied
+    AuthService --> AccessAPI : denied
+    AccessAPI --> Students : 403 Forbidden
+  else Accessible granted
+    AccessAPI -> ExamDB : getExamDates(examId)
+    ExamDB -> Schedule : getOpenDate()
+    Schedule --> ExamDB : openDate
+    ExamDB -> Schedule : getCloseDate()
+    Schedule --> ExamDB : closeDate
+    ExamDB --> AccessAPI : openDate, closeDate
+    AccessAPI -> System : now() 
+    alt currentDate < openDate OR currentDate > closeDate
+      ' Outside window – main flow
+      AccessAPI --> Students : 403 Forbidden "Exam not available"
+      note right: State remains Pre2 (unchanged)
+    else currentDate >= openDate AND currentDate <= closeDate
+      ' Within window – error path from flow perspective
+      AccessAPI --> Students : 200 OK (exam content)
+      note right: Student can now start an attempt
+    end
+  end
+end
+
+== FLOW-ATTEMPT-WITH-TIME-LIMIT ==
+' Student starts attempt with time limit; includes auto-submit on expiry
+' Pre: Pre3 (time limit set), Post: Post2 (auto-submitted)
+
+Students -> AttemptAPI : POST /attempts/{examId}/start
+AttemptAPI -> AuthService : checkPermission(Student, Write, AttemptResource)
+alt Permission not granted
+  AuthService --> AttemptAPI : denied
+  AttemptAPI --> Students : 403 Forbidden
+else Permission granted
+  AttemptAPI -> AuthService : checkAccessible(Student, AttemptResource)
+  alt Accessible denied
+    AuthService --> AttemptAPI : denied
+    AttemptAPI --> Students : 403 Forbidden
+  else Accessible granted
+    AttemptAPI -> ExamDB : getExamConfig(examId)
+    ExamDB -> ExamDBRes : getState()
+    ExamDBRes -> State : getCurrentState()
+    State --> ExamDBRes : Pre3
+    alt State is not Pre3
+      AttemptAPI --> Students : 409 Conflict (time limit not configured)
+    else State is Pre3
+      AttemptAPI -> AttemptRes : startAttempt(studentId)
+      AttemptRes -> AttemptRes : recordStartTime(now)
+      AttemptRes -> State : transitionTo(Post2)
+      State --> AttemptRes : attempt started
+      AttemptAPI --> Students : 201 Created (attemptId, timer duration)
+      ' Timer starts in background
+      Timer -> AttemptRes : startTimer(attemptId, timeLimit)
+      note right: Timer will fire after timeLimit
+
+      ' Two possible outcomes: timer expiry or manual submit
+      alt Timer fires (time limit exceeded)
+        Timer -> AttemptAPI : autoSubmitAttempt(attemptId)
+        AttemptAPI -> AttemptRes : forceSubmit()
+        AttemptRes -> AttemptRes : markAsSubmitted()
+        AttemptRes -> State : transitionTo(Post2_submitted)
+        AttemptAPI --> Students : 200 OK (auto-submitted)
+      else Student submits before expiry (manual)
+        Students -> AttemptAPI : PUT /attempts/{attemptId}/submit
+        AttemptAPI -> AttemptRes : submitAttempt()
+        AttemptRes -> Timer : cancelTimer(attemptId)
+        AttemptRes -> AttemptRes : markAsSubmitted()
+        AttemptRes -> State : transitionTo(Post2_manual)
+        AttemptAPI --> Students : 200 OK (submitted)
+      end
+    end
+  end
+end
+
+== FLOW-ATTEMPT-NO-TIME-LIMIT ==
+' Student completes attempt without time limit
+' Pre: Pre2 (dates set, no time limit), Post: Post3 (completed at own pace)
+
+Students -> AttemptAPI : POST /attempts/{examId}/submit
+AttemptAPI -> AuthService : checkPermission(Student, Write, AttemptResource)
+alt Permission not granted
+  AuthService --> AttemptAPI : denied
+  AttemptAPI --> Students : 403 Forbidden
+else Permission granted
+  AttemptAPI -> AuthService : checkAccessible(Student, AttemptResource)
+  alt Accessible denied
+    AuthService --> AttemptAPI : denied
+    AttemptAPI --> Students : 403 Forbidden
+  else Accessible granted
+    AttemptAPI -> ExamDB : getExamDates(examId)
+    ExamDB -> Schedule : getOpenDate() / getCloseDate()
+    Schedule --> ExamDB : dates
+    ExamDB --> AttemptAPI : openDate, closeDate
+    AttemptAPI -> System : now()
+    alt now() not in [openDate, closeDate]
+      AttemptAPI --> Students : 403 Forbidden (outside window)
+    else now() in window
+      AttemptAPI -> AttemptRes : submitAttempt(studentId)
+      AttemptRes -> AttemptRes : recordSubmissionTime(now)
+      AttemptRes -> State : transitionTo(Post3)
+      State --> AttemptRes : attempt completed
+      AttemptAPI --> Students : 200 OK
+    end
+  end
+end
+
+@enduml

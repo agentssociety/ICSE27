@@ -1,0 +1,37 @@
+{
+  "task_id": 115,
+  "confidence": 0.9981,
+  "evidence": [
+    {
+      "claim": "The leaderboard aggregates nuggets earned within a configurable time window.",
+      "fact": "A cohort leaderboard ranks students by total nuggets earned over a configurable time period, with options for students to opt out or for instructors to disable it entirely.",
+      "score": 0.9986,
+      "user_story_span": "The leaderboard aggregates nuggets earned within a configurable time window",
+      "fact_span": "ranks students by total nuggets earned over a configurable time period"
+    },
+    {
+      "claim": "The system provides a cohort leaderboard ranked by nuggets over a configurable time window.",
+      "fact": "The leaderboard shows cohort members ordered by nugget earnings for a chosen timeframe, and both students (via opt-out) and instructors (via disable) can hide rankings.",
+      "score": 0.9984,
+      "user_story_span": "a cohort leaderboard ranked by nuggets over a configurable window",
+      "fact_span": "shows cohort members ordered by nugget earnings for a chosen timeframe"
+    },
+    {
+      "claim": "Students can opt out of appearing on the leaderboard.",
+      "fact": "Students are positioned on a leaderboard within their cohort based on nuggets collected during a customizable window, and participation can be turned off by the student or the teacher.",
+      "score": 0.9984,
+      "user_story_span": "Students can opt out of appearing on the leaderboard.",
+      "fact_span": "participation can be turned off by the student"
+    },
+    {
+      "claim": "Instructors can disable the entire leaderboard for the cohort.",
+      "fact": "A cohort leaderboard ranks students by total nuggets earned over a configurable time period, with options for students to opt out or for instructors to disable it entirely.",
+      "score": 0.9971,
+      "user_story_span": "Instructors can disable the entire leaderboard for the cohort.",
+      "fact_span": "for instructors to disable it entirely"
+    }
+  ],
+  "total_claims": 5,
+  "supported_claims": 4,
+  "threshold": 0.6
+}

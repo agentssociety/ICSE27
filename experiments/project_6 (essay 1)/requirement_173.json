@@ -1,0 +1,97 @@
+{
+  "id": "REQ-MOD-01",
+  "title": "Admin Reported Content Panel",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall provide an admin panel to review reported content and take appropriate actions such as warn, hide, or delete.",
+  "rationale": "This requirement is necessary for effective content moderation by admins, ensuring that harmful or inappropriate content can be managed promptly.",
+  "business_value": "Effective moderation leads to a safer user experience and maintains the integrity of the platform's content.",
+  "source": {
+    "type": "User Story",
+    "id": 173,
+    "description": "As an admin, I need a panel to review reported content and take appropriate actions so that I can moderate content effectively."
+  },
+  "stakeholders": [
+    "Admin Team",
+    "Content Moderation Team"
+  ],
+  "acceptance_criteria": [
+    "I see a list of reported items with options to warn, hide, or delete"
+  ],
+  "preconditions": [
+    "I am logged in as an admin"
+  ],
+  "postconditions": [],
+  "functional_constraints": [],
+  "security_requirements": [
+    "Admin must be authenticated"
+  ],
+  "non_functional_requirements": {
+    "performance": null,
+    "availability": null,
+    "scalability": null,
+    "usability": null
+  },
+  "edge_cases": [
+    "What happens if there are no reported items?",
+    "How should the system handle actions that result in errors (e.g., deleting a non-existent item)?",
+    "What if an admin tries to perform an action without sufficient permissions?"
+  ],
+  "dependencies": [
+    "Authentication System",
+    "Content Management Database"
+  ],
+  "interfaces": [
+    {
+      "type": "UI",
+      "name": "Admin Reported Content Panel",
+      "description": "The user interface for admins to view and manage reported content."
+    },
+    {
+      "type": "Database",
+      "name": "Content Management Database",
+      "description": "Stores information about reported content, including the items to be moderated and their current status."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-MOD-01",
+      "description": "Admin logs in and navigates to the reported content panel.",
+      "expected_result": "The admin sees a list of reported items with options to warn, hide, or delete."
+    },
+    {
+      "id": "TC-MOD-02",
+      "description": "Admin selects an item to warn.",
+      "expected_result": "The system warns the user who posted the content and marks it as reviewed."
+    },
+    {
+      "id": "TC-MOD-03",
+      "description": "Admin selects an item to hide.",
+      "expected_result": "The system hides the content from public view but retains it for further review."
+    },
+    {
+      "id": "TC-MOD-04",
+      "description": "Admin attempts to perform an action without being authenticated.",
+      "expected_result": "The system denies access and prompts the admin to log in."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T12:13:29.120107",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-POST-RPT-01",
+      "REQ-CONTENT-PUB-01",
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "Report",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

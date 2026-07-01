@@ -1,0 +1,23 @@
+{
+  "task_id": 178,
+  "confidence": 0.9897,
+  "evidence": [
+    {
+      "claim": "The user is logged in.",
+      "fact": "Logged admin actions include ban, delete, and verify.",
+      "score": 0.9905,
+      "user_story_span": "User is logged in",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system allows deleting account.",
+      "fact": "Logged admin actions include ban, delete, and verify.",
+      "score": 0.9888,
+      "user_story_span": "delete my account",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 7,
+  "supported_claims": 2,
+  "threshold": 0.6
+}

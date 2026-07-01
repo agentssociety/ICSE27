@@ -1,0 +1,116 @@
+@startuml
+skinparam defaultFontSize 12
+skinparam classFontStyle bold
+skinparam interfaceFontStyle italic
+skinparam packageBackgroundColor #FEFEFE
+skinparam packageBorderColor #666666
+skinparam classBackgroundColor #F0F8FF
+skinparam interfaceBackgroundColor #FFF0F5
+skinparam enumBackgroundColor #F5F5DC
+skinparam exceptionBackgroundColor #FFE4E1
+
+package "Domain Model" as domain {
+  enum JoinRequestStatus {
+    Pending
+    Approved
+    Rejected
+  }
+
+  enum Permission {
+    Admin
+    Read
+  }
+
+  class User {
+    - userId : String
+    - name : String
+    - role : Role
+  + getRole(adminUserId, groupId) : Permission
+  }
+
+  class Group {
+    - groupId : String
+    - name : String
+    - isPrivate : Boolean
+  + findById(groupId) : Group
+  }
+
+  class JoinRequest {
+    - requestId : String
+    - userId : String
+    - groupId : String
+    - status : JoinRequestStatus
+    - createdAt : DateTime
+  }
+
+  class GroupMembership {
+    - groupId : String
+    - userId : String
+  + create(groupId, userId)
+  }
+
+  class Role {
+    - name : String
+    - permissions : Permission[]
+  }
+
+  User "1" -- "*" JoinRequest : creates
+  Group "1" -- "*" JoinRequest : has
+  Group "1" -- "*" GroupMembership : has
+  User "1" -- "*" GroupMembership : member
+
+  JoinRequest "1" ..> "0..1" GroupMembership : approved (optional)
+  User "1" -- "1" Role
+  Role "1" -- "*" Permission : requires
+}
+
+package "Infrastructure — Ports" as infra {
+  interface JoinRequestManagementUI <<interface>> {
+  + error("Insufficient permissions")
+  + error("Unauthorized")
+  + error("Request already handled or not found")
+  + error("Group has been deleted")
+  + success("Request approved, user added")
+  + error("Failed to add user to group")
+  + success("Request rejected")
+  + error("Request already handled by another admin")
+  }
+
+  interface JoinRequestsDatabase <<interface>> {
+  + findPendingByGroup(groupId) : List<JoinRequest>
+  + getRequestById(requestId) : JoinRequest
+  + updateStatus(requestId, Approved)
+  + rollbackStatus(requestId, Pending)
+  + updateStatus(requestId, Rejected)
+  }
+
+  interface GroupAPI <<interface>> {
+  }
+}
+
+package "Exceptions" as exceptions {
+  class JoinRequestNotPendingException <<exception>> {
+    - message : String
+  }
+
+  class GroupDeletedDuringProcessingException <<exception>> {
+    - message : String
+  }
+
+  class ConcurrentActionException <<exception>> {
+    - message : String
+  }
+}
+
+' Relationships between layers (dependencies)
+' Domain entities are used by infrastructure ports
+JoinRequest --> Infra.JoinRequestManagementUI : displayed
+JoinRequest --> Infra.JoinRequestsDatabase : persisted
+Group --> Infra.GroupAPI : accessed
+
+' Exceptions are thrown from domain/infrastructure
+JoinRequest ..> Exceptions.JoinRequestNotPendingException : raises
+JoinRequest ..> Exceptions.GroupDeletedDuringProcessingException : raises
+JoinRequest ..> Exceptions.ConcurrentActionException : raises
+
+@enduml

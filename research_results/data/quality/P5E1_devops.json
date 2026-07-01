@@ -1,0 +1,14 @@
+{
+  "run_id": "P5E1",
+  "project": 5,
+  "essay": 1,
+  "n_tasks": 12,
+  "project_completed": true,
+  "docker_compose_generated": true,
+  "docker_containers_started": 18,
+  "health_ok_signals": 0,
+  "health_fail_signals": 0,
+  "build_ok_signals": 0,
+  "deployment_success": true,
+  "deployment_success_int": 1
+}

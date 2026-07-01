@@ -125,14 +125,64 @@
           6.0
         ]
       }
+    },
+    {
+      "project_id": 5,
+      "n_essays": 1,
+      "verification_rate": {
+        "mean": 1.0,
+        "std": 0.0,
+        "values": [
+          1.0
+        ]
+      },
+      "total_specs": {
+        "mean": 12.0,
+        "std": 0.0,
+        "values": [
+          12.0
+        ]
+      },
+      "verified_specs": {
+        "mean": 12.0,
+        "std": 0.0,
+        "values": [
+          12.0
+        ]
+      }
+    },
+    {
+      "project_id": 6,
+      "n_essays": 1,
+      "verification_rate": {
+        "mean": 0.92,
+        "std": 0.0,
+        "values": [
+          0.92
+        ]
+      },
+      "total_specs": {
+        "mean": 25.0,
+        "std": 0.0,
+        "values": [
+          25.0
+        ]
+      },
+      "verified_specs": {
+        "mean": 23.0,
+        "std": 0.0,
+        "values": [
+          23.0
+        ]
+      }
     }
   ],
   "cross_run_aggregate": {
-    "total_runs": 12,
-    "total_specs": 82,
-    "verified_specs": 78,
-    "failed_specs": 4,
-    "specs_with_commented_blocks": 4,
-    "overall_rate": 0.9512
+    "total_runs": 14,
+    "total_specs": 119,
+    "verified_specs": 113,
+    "failed_specs": 6,
+    "specs_with_commented_blocks": 6,
+    "overall_rate": 0.9496
   }
 }

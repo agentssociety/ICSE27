@@ -1,0 +1,30 @@
+{
+  "task_id": 176,
+  "confidence": 0.971,
+  "evidence": [
+    {
+      "claim": "The user receives notifications for comments.",
+      "fact": "Notifications include comments.",
+      "score": 0.9986,
+      "user_story_span": "Then I receive notifications for comments",
+      "fact_span": "Notifications include comments."
+    },
+    {
+      "claim": "The system supports notification categories such as likes, comments, and friend requests.",
+      "fact": "Users can build personal profiles, post updates, and engage with friends and groups through likes and comments.",
+      "score": 0.982,
+      "user_story_span": "* The system supports notification categories such as likes, comments, and friend requests.",
+      "fact_span": ""
+    },
+    {
+      "claim": "The user is logged into the application.",
+      "fact": "Blocking hides the blocker's posts from the blocked user.",
+      "score": 0.9324,
+      "user_story_span": "I am logged into the application",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 12,
+  "supported_claims": 3,
+  "threshold": 0.6
+}

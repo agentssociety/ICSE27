@@ -1,0 +1,322 @@
+@startuml
+title Project 14 - Full Domain Model Architecture
+top to bottom direction
+scale max 2400 width
+hide empty members
+skinparam shadowing false
+skinparam dpi 180
+skinparam nodesep 100
+skinparam ranksep 140
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment center
+skinparam packageTitleFontStyle bold
+skinparam class {
+  BackgroundColor #FCFCFC
+  BorderColor #4F4F4F
+  ArrowColor #4F4F4F
+}
+skinparam class {
+  BackgroundColor<<main>> #D9EAD3
+  BorderColor<<main>> #38761D
+}
+skinparam class {
+  BackgroundColor<<shared>> #E8D5F5
+  BorderColor<<shared>> #7B2D8B
+}
+skinparam class {
+  BackgroundColor<<level0>> #FFE6E6
+  BorderColor<<level0>> #CC0000
+}
+skinparam class {
+  BackgroundColor<<level1>> #FFE6B3
+  BorderColor<<level1>> #FF9900
+}
+skinparam class {
+  BackgroundColor<<level2>> #FFFFCC
+  BorderColor<<level2>> #CCCC00
+}
+skinparam note {
+  BackgroundColor #FFF8DC
+  BorderColor #B7A56A
+}
+
+note as RelationshipCorrections
+  <b>Relationship cardinalities corrected by LLM review</b>
+  Admin --|> Permission → Admin --|> Actor
+    Reason: Admin is a type of Actor, not Permission. Inheritance from Actor is correct.
+  BonusNugget "0..1" ..> "1" AuditEvent → BonusNugget "1" --> "1" AuditEvent
+    Reason: Each bonus nugget grant must be logged as an audit event, so a 1-to-1 directed association is more appropriate than a dependency with cardinalities.
+  Instructor ..> Dashboard_UI → Dashboard_UI ..> Instructor
+    Reason: The UI depends on the Instructor model, not the other way around. Dependency direction should be from UI to domain class.
+  Instructor_Configuration_System --|> Interface → Instructor_Configuration_System ..> Interface
+    Reason: The configuration system likely depends on an Interface, not inherits from it. Changing to dependency.
+  NuggetBalance "1" --> "1" Student → Student "1" --> "1" NuggetBalance
+    Reason: A student owns a nugget balance; the association should originate from Student to NuggetBalance.
+  Resource *-- "1" Actor → Actor "1" --> "*" Resource
+    Reason: An actor (e.g., Instructor) can own multiple resources; the composition was reversed. Changing to directed association with correct cardinality.
+  Schedule "1" -- "1" Date → Schedule "1" *-- "2" Date
+    Reason: A schedule must have exactly two dates (open and close), so composition with multiplicity 2 is appropriate.
+  StudentProfile --> Badge → StudentProfile "1" --> "*" Badge
+    Reason: A student profile can have multiple badges, so multiplicity should be many (0..* or *). Adding explicit multiplicity.
+end note
+
+note as ArchitectureCorrections
+  <b>Architecture mistakes corrected automatically</b>
+  [missing_relationship] Task #106 requires class ExamBuilder, but it is missing from the class list.
+    Fix applied: add_relation
+  [missing_relationship] Task #113 requires classes CompetencyBreakdown and StudyTip, but they are missing.
+    Fix applied: add_relation
+  [missing_relationship] Task #114 requires classes RewardStore, RewardItem, and Redemption, but they are missing.
+    Fix applied: add_relation
+  [missing_relationship] Task #116 requires classes AttemptReview and CompetencyTrendChart, but they are missing.
+    Fix applied: add_relation
+  [missing_relationship] Task #105 requires class InstructorDashboard, but it is missing.
+    Fix applied: add_relation
+  [duplicate_concept] Player and Student represent the same concept; Player should be merged into Student or removed.
+    Fix applied: merge_classes
+  [duplicate_concept] Teacher and Instructor represent the same role; Teacher should be merged into Instructor.
+    Fix applied: merge_classes
+  [duplicate_concept] BonusNugget and BonusNuggetGrant (from Task #109) are the same; rename BonusNugget to BonusNuggetGrant or merge.
+    Fix applied: merge_classes
+  [other_correction] Student has both a composition relationship and a directed association to NuggetWallet; this is redundant and should be unified.
+    Fix applied: remove_relation
+end note
+
+package "Task #106\nExam Builder with Mixed\nQuestion Types" {
+  class ExamBuilder <<main>> <<level0>>
+  class Question <<main>> <<level1>>
+  class Competency <<main>> <<level2>>
+}
+
+package "Task #107\nExam Scheduling" {
+  class Schedule <<main>> <<level0>>
+  class Actor
+  class Date
+  class Interface
+  class Permission
+  class REQ_EXAM_SCHED_01
+  class Resource
+  class State
+}
+
+package "Task #110\nStudent Registration and\nProfile" {
+  class Student <<main>> <<level1>>
+  class StudentProfile <<main>> <<level2>>
+  class NuggetWallet <<main>> <<level0>>
+  class Badge <<main>> <<level1>>
+  class RadarChart <<main>> <<level2>>
+  class Avatar
+  class NuggetBalance
+  enum RegistrationState
+  class StudentAccount
+}
+
+package "Task #113\nInstant Competency\nBreakdown" {
+  class CompetencyBreakdown <<main>> <<level0>>
+  class StudyTip <<main>> <<level1>>
+  class REQ_EDU_01
+}
+
+package "Task #108\nCohort Creation and\nStudent Enrollment" {
+  class Cohort <<main>> <<level2>>
+  class Enrollment <<main>> <<level0>>
+  class Exam
+}
+
+package "Task #111\nOne-Question-at-a-Time\nExam Delivery" {
+  class ExamSession <<main>> <<level0>>
+}
+
+package "Task #112\nStreak System with\nNugget Multiplier" {
+  class Streak <<main>> <<level1>>
+}
+
+package "Task #114\nStudent Nugget Wallet\nand Reward Store" {
+  class RewardStore <<main>> <<level2>>
+  class RewardItem <<main>> <<level0>>
+  class Redemption <<main>> <<level1>>
+  class Admin
+  class Execute
+  class Instructor_Configuration_System
+  class ItemCost
+  class Post1
+  class Post2
+  class Pre1
+  class Pre2
+  class REQ_STU_01
+  class Read
+  class RedemptionItem
+  class Reward_Store_Administrator
+  class Student_Dashboard
+  class Write
+}
+
+package "Task #116\nPast Attempt Review" {
+  class AttemptReview <<main>> <<level1>>
+  class CompetencyTrendChart <<main>> <<level2>>
+  class Attempt
+  class DashboardData
+  class PastAttemptData
+}
+
+package "Task #105\nInstructor Registration,\nLogin, and Dashboard" {
+  class Instructor <<main>> <<level0>>
+  class InstructorDashboard <<main>> <<level1>>
+  class DashboardContent
+  interface Dashboard_UI
+  class InstructorAccount
+  interface User_Database
+}
+
+package "Task #115\nCohort Leaderboard" {
+  class CohortLeaderboard <<main>> <<level2>>
+  class Leaderboard_Display
+  class REQ_COHORT_LEADERBOARD_01
+  class Student_Data_Store
+}
+
+package "Task #109\nManual Bonus Nuggets\nGrant" {
+  class BonuNuggetGrant <<main>> <<level2>>
+  class AuditEvent <<main>> <<level0>>
+  class BonusNugget
+  class Justification
+}
+
+Actor "1" -- "0..*" Permission
+Actor "1" --> "*" Resource
+Admin --|> Actor
+Attempt "1" -- "1..*" Question
+BonusNugget "1" --> "1" AuditEvent
+BonusNugget "1" --> "1" Justification
+Cohort "1" --> "*" Student
+DashboardData --> Attempt
+DashboardData --> Competency
+Dashboard_UI ..> Instructor
+Dashboard_UI ..> User_Database
+Exam "*" --> "*" Cohort
+Exam "1" *-- "1..*" Question
+ExamSession "0..*" --> "1" Exam
+ExamSession "0..*" --> "1" Student
+Execute --|> Permission
+Instructor "1" -- "*" DashboardContent
+Instructor "1" -- "*" Resource
+Instructor "1" -- "1" InstructorAccount
+Instructor "1" --> "0..*" BonusNugget
+Instructor --|> Actor
+Instructor_Configuration_System ..> Interface
+ItemCost "1" --> "1" Resource
+Leaderboard_Display --|> Interface
+PastAttemptData --> Attempt
+Post1 --|> State
+Post2 --|> State
+Pre1 --|> State
+Pre2 --|> State
+Question "*" -- "*" Competency
+REQ_COHORT_LEADERBOARD_01 ..> Actor
+REQ_COHORT_LEADERBOARD_01 ..> Interface
+REQ_COHORT_LEADERBOARD_01 ..> Resource
+REQ_COHORT_LEADERBOARD_01 ..> State
+REQ_EDU_01 "1" --> "0..*" Interface
+REQ_EDU_01 "1" --> "0..*" Resource
+REQ_EDU_01 "1" --> "1" Actor
+REQ_EDU_01 "1" --> "1" Permission
+REQ_EDU_01 "1" --> "1" State
+REQ_EXAM_SCHED_01 "1" -- "1" Actor
+REQ_EXAM_SCHED_01 "1" -- "1" Permission
+REQ_EXAM_SCHED_01 "1" -- "1" State
+REQ_EXAM_SCHED_01 "1" -- "1..*" Interface
+REQ_EXAM_SCHED_01 "1" -- "1..*" Resource
+REQ_STU_01 "1" --> "0..*" Interface
+REQ_STU_01 "1" --> "0..*" Resource
+REQ_STU_01 "1" --> "1" Actor
+REQ_STU_01 "1" --> "1" Permission
+REQ_STU_01 "1" --> "1" State
+Read --|> Permission
+RedemptionItem "1" --> "1" Resource
+Resource "0..*" --> "0..*" Actor
+Resource "1" -- "0..*" Actor
+Resource "1" -- "1" Actor
+Resource "1" --> "0..*" Actor
+Resource "1" --> "1" Actor
+Reward_Store_Administrator --|> Actor
+Schedule "1" *-- "2" Date
+Schedule "1" -- "1" Resource
+Streak ..> NuggetWallet
+Student "*" -- "*" Question
+Student "0..*" --> "0..*" Exam
+Student "1" *-- "1" NuggetWallet
+Student "1" *-- "1" Streak
+Student "1" -- "*" Resource
+Student "1" -- "0..*" Attempt
+Student "1" -- "0..*" Competency
+Student "1" --> "0..*" BonusNugget
+Student "1" --> "1" NuggetBalance
+Student "1" --> "1" NuggetWallet
+Student --|> Actor
+StudentAccount *-- StudentProfile
+StudentAccount --> RegistrationState
+StudentProfile "1" --> "*" Badge
+StudentProfile --> Avatar
+StudentProfile --> RadarChart
+Student_Dashboard --|> Interface
+Student_Data_Store --|> Interface
+Write --|> Permission
+note as ArchSuggestion1 #FDFDE0
+  <b>SUGGESTION #1 (not applied)</b>
+  Affects: Player
+  [rename_for_clarity] Rename Player to Student to\nalign with ubiquitous language from tasks.
+end note
+
+note as ArchSuggestion2 #FDFDE0
+  <b>SUGGESTION #2 (not applied)</b>
+  Affects: Teacher
+  [rename_for_clarity] Rename Teacher to\nInstructor to match task descriptions.
+end note
+
+note right of BonusNugget #FDFDE0
+  <b>SUGGESTION #3 (not applied)</b>
+  [rename_for_clarity] Rename BonusNugget to\nBonusNuggetGrant to match Task #109.
+end note
+
+note right of Question #FDFDE0
+  <b>SUGGESTION #4 (not applied)</b>
+  [introduce_value_object] Introduce a value\nobject DifficultyTier (enum: Beginner,\nIntermediate, Advanced) to replace the primitive\nattribute on Question.
+end note
+
+note right of Streak #FDFDE0
+  <b>SUGGESTION #5 (not applied)</b>
+  [introduce_value_object] Introduce a value\nobject NuggetMultiplier to encapsulate the\nmultiplier logic (1x, 1.5x, 2x, 3x).
+end note
+
+note right of State #FDFDE0
+  <b>SUGGESTION #6 (not applied)</b>
+  [general] Consider removing generic or\ninfrastructural classes (State, Permission,\nResource, Actor, Interface, User_Database,\nREQ_*) from the domain model if they are not\ncore to the business logic, to keep the model\nfocused.
+end note
+
+note right of Permission #FDFDE0
+  <b>SUGGESTION #6 (not applied)</b>
+  [general] Consider removing generic or\ninfrastructural classes (State, Permission,\nResource, Actor, Interface, User_Database,\nREQ_*) from the domain model if they are not\ncore to the business logic, to keep the model\nfocused.
+end note
+
+note right of Resource #FDFDE0
+  <b>SUGGESTION #6 (not applied)</b>
+  [general] Consider removing generic or\ninfrastructural classes (State, Permission,\nResource, Actor, Interface, User_Database,\nREQ_*) from the domain model if they are not\ncore to the business logic, to keep the model\nfocused.
+end note
+
+note right of Actor #FDFDE0
+  <b>SUGGESTION #6 (not applied)</b>
+  [general] Consider removing generic or\ninfrastructural classes (State, Permission,\nResource, Actor, Interface, User_Database,\nREQ_*) from the domain model if they are not\ncore to the business logic, to keep the model\nfocused.
+end note
+
+note right of Interface #FDFDE0
+  <b>SUGGESTION #6 (not applied)</b>
+  [general] Consider removing generic or\ninfrastructural classes (State, Permission,\nResource, Actor, Interface, User_Database,\nREQ_*) from the domain model if they are not\ncore to the business logic, to keep the model\nfocused.
+end note
+
+note right of User_Database #FDFDE0
+  <b>SUGGESTION #6 (not applied)</b>
+  [general] Consider removing generic or\ninfrastructural classes (State, Permission,\nResource, Actor, Interface, User_Database,\nREQ_*) from the domain model if they are not\ncore to the business logic, to keep the model\nfocused.
+end note
+
+@enduml

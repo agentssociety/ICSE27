@@ -1,0 +1,152 @@
+@startuml
+skinparam defaultFontName sans-serif
+skinparam class {
+    BackgroundColor white
+    BorderColor black
+    FontColor black
+}
+skinparam interface {
+    BackgroundColor lightblue
+    BorderColor black
+    FontColor black
+}
+skinparam package {
+    BackgroundColor #F8F8F8
+    BorderColor #A0A0A0
+}
+
+package "Domain Model" {
+    class Student {
+        - id: String
+        - name: String
+        - nuggetWallet: NuggetWallet
+  + validatePermission(studentId: String, permission: Permission) : Boolean
+    }
+    note left of Student
+        mayPerform Read and Write on UI_Resource
+        cannot write to Progress_Database_Resource
+    end note
+
+    class Instructor {
+        - id: String
+        - name: String
+  + validatePermission(instructorId: String, permission: Permission) : Boolean
+    }
+    note left of Instructor
+        mayPerform Write on Progress_Database_Resource
+        can end exam
+    end note
+
+    class IT_Team {
+        - id: String
+  + validatePermission(adminId: String, permission: Permission) : Boolean
+    }
+    note left of IT_Team
+        mayPerform Admin permissions
+    end note
+
+    class Exam {
+        - id: String
+        - title: String
+        - questions: List<Question>
+        - timerDuration: int
+        - currentQuestionIndex: int
+        - progress: String
+  + loadExam(examId: String) : Exam
+    }
+    note left of Exam
+        has at least one question
+    end note
+
+    class Question {
+        - id: String
+        - text: String
+        - options: List<String>
+        - correctAnswer: String
+  + getFirstQuestion(exam: Exam) : Question
+  + validateAnswer(questionId: String, answer: String) : Boolean
+  + getNextQuestion(exam: Exam, currentIndex: Integer) : Question
+  + validateAnswerFormat(questionId: String, answer: String) : Boolean
+    }
+    note left of Question
+        has exactly one correct answer
+    end note
+
+    class NuggetWallet {
+        - nuggetCount: int
+        - owner: Student
+  + incrementNuggetCount(studentId: String) : Integer
+    }
+    note left of NuggetWallet
+        NuggetWallet.owner is Student
+        nuggetCount >= 0
+    end note
+
+    class ExamSession {
+        - student: Student
+        - exam: Exam
+        - startTime: DateTime
+        - endTime: DateTime
+        - answers: Map<Question, String>
+        - status: ExamStatus
+  + create(student: Student, exam: Exam) : ExamSession
+  + validateSession(sessionId: String) : Boolean
+  + recordAnswer(questionId: String, answer: String)
+  + addAnswer(questionId, answer)
+  + endExam(sessionId: String)
+  + getCurrentAnswer(sessionId: String) : Answer
+  + recordAnswer(questionId: String, answer: null)
+  + addAnswer(questionId, null)
+  + checkExamStatus(sessionId: String) : ExamStatus
+  + getExamSession(sessionId: String) : ExamSession
+  + resetSession(sessionId: String)
+    }
+    note left of ExamSession
+        ExamSession links one Student and one Exam
+        status ∈ {in_progress, completed, timed_out}
+    end note
+
+    enum ExamStatus {
+        in_progress
+        completed
+        timed_out
+    }
+
+    enum Permission {
+        READ
+        WRITE
+        ADMIN
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface "ExamInterface" as EI <<interface>> {
+    }
+    note right of EI
+        Displays one question at a time
+        Game-like elements, live timer,
+        progress bar, animated nugget counter
+    end note
+
+    interface "QuestionServiceAPI" as QS <<interface>> {
+    }
+    note right of QS
+        Provides next question during exam
+    end note
+
+    interface "ProgressTrackingDatabase" as PTDB <<interface>> {
+    }
+    note right of PTDB
+        Stores student progress and nugget counts
+    end note
+}
+
+' --- Relationships ---
+Student "1" *-- "1" NuggetWallet : owns
+Exam "1" *-- "1..*" Question : contains
+Student "0..*" --> "0..*" Exam : takes
+ExamSession "0..*" --> "1" Student : belongs to
+ExamSession "0..*" --> "1" Exam : references
+ExamSession .> Question : records answers to
+
+@enduml

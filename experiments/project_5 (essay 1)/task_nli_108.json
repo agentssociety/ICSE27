@@ -1,0 +1,65 @@
+{
+  "task_id": 108,
+  "confidence": 0.9954,
+  "evidence": [
+    {
+      "claim": "The user has an exam.",
+      "fact": "Immediately after submitting the exam, students see a competency breakdown that highlights weak areas and provides a study tip for each flagged competency.",
+      "score": 0.9987,
+      "user_story_span": "restrict exams to one or more cohorts",
+      "fact_span": "submitting the exam"
+    },
+    {
+      "claim": "The cohort is available for enrollment.",
+      "fact": "Instructors can enroll students individually into cohorts.",
+      "score": 0.9981,
+      "user_story_span": "create a new cohort",
+      "fact_span": "enroll students individually into cohorts"
+    },
+    {
+      "claim": "The system allows enrolling individual students.",
+      "fact": "New learners sign up and personalize their profile with a picture, then see their total nuggets, achievement badges, and a visual radar of their skills.",
+      "score": 0.998,
+      "user_story_span": "enroll individual students",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system allows creating cohorts.",
+      "fact": "The leaderboard shows cohort members ordered by nugget earnings for a chosen timeframe, and both students (via opt-out) and instructors (via disable) can hide rankings.",
+      "score": 0.9978,
+      "user_story_span": "create a new cohort",
+      "fact_span": ""
+    },
+    {
+      "claim": "Cohorts are groups of students.",
+      "fact": "Students are positioned on a leaderboard within their cohort based on nuggets collected during a customizable window, and participation can be turned off by the student or the teacher.",
+      "score": 0.9972,
+      "user_story_span": "Cohorts are groups of students",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system allows restricting exams to one or more cohorts.",
+      "fact": "Instructors can form cohorts, enroll individual students into them, and restrict exam access to one or more specified cohorts.",
+      "score": 0.9953,
+      "user_story_span": "restrict exams to one or more cohorts",
+      "fact_span": "restrict exam access to one or more specified cohorts"
+    },
+    {
+      "claim": "The cohort is saved.",
+      "fact": "Nuggets accumulated by a student are stored in a wallet and can be used to purchase virtual rewards or instructor-defined institutional privileges from a store.",
+      "score": 0.9934,
+      "user_story_span": "the cohort is saved",
+      "fact_span": ""
+    },
+    {
+      "claim": "The user has one or more cohorts.",
+      "fact": "Students are positioned on a leaderboard within their cohort based on nuggets collected during a customizable window, and participation can be turned off by the student or the teacher.",
+      "score": 0.9848,
+      "user_story_span": "one or more cohorts",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 9,
+  "supported_claims": 8,
+  "threshold": 0.6
+}

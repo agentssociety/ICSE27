@@ -1,0 +1,484 @@
+```python
+"""
+Integration tests for the competency-based exam platform.
+Covers core user stories using model methods and utility functions,
+avoiding dependence on unimplemented HTTP endpoints.
+Uses Django's TestCase with in-memory channel layer (for any WebSocket usage).
+"""
+import json
+from datetime import timedelta
+from unittest.mock import patch
+
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.db.models import Sum
+from django.test import TestCase, override_settings
+from django.utils import timezone
+
+from accounts.models import StudentProfile, InstructorProfile
+from analytics.models import CompetencyMastery
+from analytics.utils import (
+    get_student_competency_breakdown,
+    get_competency_coverage,
+    get_heatmap_data,
+    update_competency_masteries,
+)
+from audit.models import AuditLog
+from exams.models import Exam, Question, Competency, Cohort, ExamAttempt
+from gamification.models import Badge, StudentBadge, RewardItem
+from store.models import Redemption
+
+
+# Use in-memory channel layer for tests to avoid Redis dependency
+@override_settings(CHANNEL_LAYERS={
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+})
+class IntegrationTest(TestCase):
+    """Integration tests covering core data flows without relying on incomplete views."""
+
+    def setUp(self):
+        """Create test users, cohorts, exam, and initial data."""
+        # Create instructor
+        self.instructor_user = User.objects.create_user(
+            username='instructor1',
+            email='instructor@test.com',
+            password='testpass123'
+        )
+        self.instructor = InstructorProfile.objects.create(
+            user=self.instructor_user,
+            department='Computer Science'
+        )
+
+        # Create student
+        self.student_user = User.objects.create_user(
+            username='student1',
+            email='student@test.com',
+            password='testpass123'
+        )
+        self.student = StudentProfile.objects.create(
+            user=self.student_user,
+            nugget_balance=0,
+            current_streak=0,
+            max_streak=0,
+            last_activity_date=None,
+        )
+
+        # Create cohort and enroll student
+        self.cohort = Cohort.objects.create(
+            creator=self.instructor,
+            name='Test Cohort'
+        )
+        self.cohort.students.add(self.student)
+
+        # Create competencies
+        self.comp1 = Competency.objects.create(
+            name='Python Basics',
+            description='Basic Python syntax and semantics',
+            mastery_threshold=80
+        )
+        self.comp2 = Competency.objects.create(
+            name='Data Structures',
+            description='Lists, dicts, sets',
+            mastery_threshold=70
+        )
+
+        # Create exam
+        self.exam = Exam.objects.create(
+            creator=self.instructor,
+            title='Midterm Exam',
+            description='Test your Python knowledge',
+            open_date=timezone.now() - timedelta(days=1),
+            close_date=timezone.now() + timedelta(days=7),
+            time_limit_minutes=30,
+        )
+        self.exam.cohorts.add(self.cohort)
+
+        # Create two questions (MCQ and Code)
+        self.q1 = Question.objects.create(
+            exam=self.exam,
+            question_type='MCQ',
+            content={
+                'question_text': 'What is 2+2?',
+                'options': ['3', '4', '5', '6'],
+                'correct_option': 1,
+                'explanation': 'Basic addition'
+            },
+            difficulty='BEGINNER',
+            nugget_multiplier=1.0,
+            order=1,
+        )
+        self.q1.competencies.add(self.comp1)
+
+        self.q2 = Question.objects.create(
+            exam=self.exam,
+            question_type='CODE',
+            content={
+                'question_text': 'Write a function that returns the sum of two numbers.',
+                'starter_code': 'def add(a, b):\n    pass',
+                'solution': 'def add(a, b):\n    return a + b',
+                'language': 'python',
+                'test_cases': [
+                    {'input': [1, 2], 'expected': 3},
+                    {'input': [10, -5], 'expected': 5},
+                ]
+            },
+            difficulty='INTERMEDIATE',
+            nugget_multiplier=2.0,
+            order=2,
+        )
+        self.q2.competencies.add(self.comp2)
+
+        # Create badge for earning nuggets
+        self.badge = Badge.objects.create(
+            name='First Nuggets',
+            description='Earn your first 10 nuggets',
+            criteria={
+                'field': 'nugget_balance',
+                'operator': '>=',
+                'value': 10
+            },
+        )
+
+        # Create a reward item
+        self.reward = RewardItem.objects.create(
+            name='Virtual Hat',
+            description='A cool virtual hat for your avatar',
+            nugget_cost=50,
+            item_type='VIRTUAL',
+            stock=10
+        )
+
+    # ------------------------------------------------------------------
+    # Helper: Simulate a completed exam attempt (bypasses HTTP endpoints)
+    # ------------------------------------------------------------------
+    def _create_completed_attempt(self, student, responses_correctness):
+        """
+        Create and finalize an ExamAttempt with given responses.
+
+        Args:
+            student: StudentProfile instance
+            responses_correctness: list of tuples (question, response, is_correct)
+
+        Returns:
+            The ExamAttempt instance.
+        """
+        attempt = ExamAttempt.objects.create(
+            student=student,
+            exam=self.exam,
+            start_time=timezone.now() - timedelta(minutes=10),
+            responses={},
+            results={},
+            total_nuggets_earned=0,
+            streak_multiplier=1.0,
+        )
+
+        total_nuggets = 0
+        results = {}
+        responses = {}
+        correct_count_in_attempt = 0
+
+        for question, response, is_correct in responses_correctness:
+            question_id = question.id
+            responses[str(question_id)] = response
+            nuggets_earned = question.nugget_multiplier * 10.0 if is_correct else 0
+            total_nuggets += nuggets_earned
+            if is_correct:
+                correct_count_in_attempt += 1
+            results[str(question_id)] = {
+                'correct': is_correct,
+                'nuggets': nuggets_earned,
+                'time_spent': 30,
+                'feedback': 'OK' if is_correct else 'Wrong'
+            }
+
+        attempt.responses = responses
+        attempt.results = results
+        attempt.total_nuggets_earned = total_nuggets
+        attempt.streak_multiplier = 1.0 + correct_count_in_attempt * 0.1
+        attempt.end_time = timezone.now()
+        attempt.save()
+
+        # Update student's nugget balance and streak
+        student.nugget_balance += total_nuggets
+        for _, __, is_correct in responses_correctness:
+            student.update_streak(is_correct)
+        student.save()
+
+        # Update competency masteries
+        update_competency_masteries(attempt)
+
+        return attempt
+
+    # ------------------------------------------------------------------
+    # Tests
+    # ------------------------------------------------------------------
+    def test_competency_breakdown_calculation(self):
+        """
+        Verify that get_student_competency_breakdown returns correct percentages.
+        """
+        attempt = self._create_completed_attempt(
+            self.student,
+            [
+                (self.q1, 1, True),   # correct -> Python Basics 100%
+                (self.q2, 'def add(a,b): return a+b', True),  # correct -> Data Structures 100%
+            ]
+        )
+
+        breakdown = get_student_competency_breakdown(attempt)
+        self.assertAlmostEqual(breakdown['Python Basics'], 100.0)
+        self.assertAlmostEqual(breakdown['Data Structures'], 100.0)
+
+        # Test with both incorrect
+        attempt2 = self._create_completed_attempt(
+            self.student,
+            [
+                (self.q1, 2, False),  # incorrect
+                (self.q2, 'def add(a,b): return a-b', False),  # incorrect
+            ]
+        )
+        breakdown2 = get_student_competency_breakdown(attempt2)
+        self.assertAlmostEqual(breakdown2['Python Basics'], 0.0)
+        self.assertAlmostEqual(breakdown2['Data Structures'], 0.0)
+
+    def test_nugget_and_streak_accumulation(self):
+        """
+        Test that updating streak and nugget balance works correctly.
+        """
+        # Initially zero
+        self.assertEqual(self.student.nugget_balance, 0)
+        self.assertEqual(self.student.current_streak, 0)
+
+        # Simulate a correct answer (streak becomes 1)
+        self.student.update_streak(True)
+        self.assertEqual(self.student.current_streak, 1)
+        self.assertEqual(self.student.max_streak, 1)
+
+        # Add nuggets
+        self.student.add_nuggets(10, 'correct answer')
+        self.assertEqual(self.student.nugget_balance, 10)
+
+        # Wrong answer resets streak
+        self.student.update_streak(False)
+        self.assertEqual(self.student.current_streak, 0)
+        self.assertEqual(self.student.max_streak, 1)  # max unchanged
+
+    def test_badge_eligibility(self):
+        """
+        Check badge award after attaining criteria.
+        """
+        # Set nuggets to 15 (>=10 triggers badge)
+        self.student.nugget_balance = 15
+        self.student.save()
+
+        # Check eligibility manually (as done by check_badges endpoint)
+        self.assertTrue(self.badge.check_eligibility(self.student))
+
+        # Award badge
+        StudentBadge.objects.create(student=self.student, badge=self.badge)
+        badges = StudentBadge.objects.filter(student=self.student)
+        self.assertEqual(badges.count(), 1)
+
+    def test_store_redemption_atomicity(self):
+        """
+        Test that redemption correctly deducts nuggets, decrements stock,
+        and creates a Redemption record with atomicity.
+        """
+        self.student.nugget_balance = 100
+        self.student.save()
+
+        # Successful redemption
+        redemption = Redemption.create_redemption(self.student, self.reward)
+        self.assertIsNotNone(redemption)
+        self.assertEqual(redemption.status, Redemption.Status.COMPLETED)
+        self.student.refresh_from_db()
+        self.assertEqual(self.student.nugget_balance, 50)  # 100 - 50
+        self.reward.refresh_from_db()
+        self.assertEqual(self.reward.stock, 9)
+
+        # Insufficient nuggets (student has 50, item costs 50, but student still has 50 after first redemption)
+        # Actually after first redemption, student has 50, so trying to redeem again (cost 50) should succeed
+        # Let's adjust: use a second student with low balance
+        student2_user = User.objects.create_user(
+            username='student_low',
+            email='low@test.com',
+            password='testpass123'
+        )
+        student2 = StudentProfile.objects.create(
+            user=student2_user,
+            nugget_balance=10,
+        )
+        with self.assertRaises(ValueError):
+            Redemption.create_redemption(student2, self.reward)
+
+        # Out-of-stock scenario
+        self.student.nugget_balance = 200
+        self.student.save()
+        self.reward.stock = 0
+        self.reward.save()
+        with self.assertRaises(ValueError):
+            Redemption.create_redemption(self.student, self.reward)
+
+        # Redemption cancellation
+        self.reward.stock = 10
+        self.reward.save()
+        self.student.nugget_balance = 100
+        self.student.save()
+        redemption2 = Redemption.create_redemption(self.student, self.reward)
+        self.student.refresh_from_db()
+        balance_before_cancel = self.student.nugget_balance
+        redemption2.cancel(reason='Testing cancellation')
+        self.student.refresh_from_db()
+        self.assertEqual(self.student.nugget_balance,
+                         balance_before_cancel + self.reward.nugget_cost)
+        self.reward.refresh_from_db()
+        self.assertEqual(self.reward.stock, 10)  # restored to original (10)
+        self.assertEqual(redemption2.status, Redemption.Status.CANCELLED)
+
+    def test_gamification_reward_item_redeem_method(self):
+        """
+        Test the legacy RewardItem.redeem() method for backward compatibility.
+        This method is still present in gamification.models; ensure it works.
+        """
+        self.student.nugget_balance = 100
+        self.student.save()
+
+        # Successful redeem via RewardItem.redeem()
+        result = self.reward.redeem(self.student)
+        self.assertTrue(result)
+        self.student.refresh_from_db()
+        self.assertEqual(self.student.nugget_balance, 50)
+        self.reward.refresh_from_db()
+        self.assertEqual(self.reward.stock, 9)
+
+        # Insufficient nuggets
+        result = self.reward.redeem(self.student)  # student now has 50, item costs 50
+        self.assertTrue(result)  # should succeed
+        self.student.refresh_from_db()
+        self.assertEqual(self.student.nugget_balance, 0)
+        self.reward.refresh_from_db()
+        self.assertEqual(self.reward.stock, 8)
+
+        # Out of stock
+        self.reward.stock = 0
+        self.reward.save()
+        self.student.nugget_balance = 200
+        self.student.save()
+        result = self.reward.redeem(self.student)
+        self.assertFalse(result)
+
+    def test_competency_mastery_cache(self):
+        """
+        Verify that update_competency_masteries correctly caches results.
+        """
+        attempt = self._create_completed_attempt(
+            self.student,
+            [(self.q1, 1, True), (self.q2, 'wrong', False)]
+        )
+        # Expect Python Basics 100%, Data Structures 0%
+        mastery_entries = CompetencyMastery.objects.filter(
+            student=self.student, exam=self.exam
+        )
+        self.assertEqual(mastery_entries.count(), 2)
+        for entry in mastery_entries:
+            if entry.competency == self.comp1:
+                self.assertEqual(entry.mastery_percentage, 100.0)
+            else:
+                self.assertEqual(entry.mastery_percentage, 0.0)
+
+    def test_leaderboard_logic(self):
+        """
+        Test leaderboard calculation using model methods (without HTTP).
+        """
+        # Student 2
+        student2_user = User.objects.create_user(
+            username='student2',
+            email='student2@test.com',
+            password='testpass123'
+        )
+        student2 = StudentProfile.objects.create(
+            user=student2_user,
+            nugget_balance=0,
+            current_streak=0,
+            max_streak=0,
+        )
+        self.cohort.students.add(student2)
+
+        # Student 1 gets 1 correct (+10 nuggets), student2 gets both correct (+30 nuggets)
+        self._create_completed_attempt(
+            self.student,
+            [(self.q1, 1, True), (self.q2, 'wrong', False)]
+        )
+        self._create_completed_attempt(
+            student2,
+            [(self.q1, 2, True), (self.q2, 'def add(a,b): return a+b', True)]
+        )
+
+        # Query leaderboard directly: aggregated nuggets by student
+        leaderboard = (
+            ExamAttempt.objects
+            .filter(
+                student__cohort=self.cohort,
+                end_time__gte=timezone.now() - timedelta(days=30),
+                end_time__isnull=False,
+            )
+            .values('student')
+            .annotate(total_nuggets=Sum('total_nuggets_earned'))
+            .order_by('-total_nuggets')
+        )
+        # student2 should have more nuggets (30 vs 10)
+        student1_entry = [l for l in leaderboard if l['student'] == self.student.id][0]
+        student2_entry = [l for l in leaderboard if l['student'] == student2.id][0]
+        self.assertGreater(student2_entry['total_nuggets'], student1_entry['total_nuggets'])
+
+    def test_leaderboard_empty_cohort(self):
+        """
+        Test leaderboard returns empty list for a cohort with no students.
+        """
+        empty_cohort = Cohort.objects.create(
+            creator=self.instructor,
+            name='Empty Cohort'
+        )
+        # No students enrolled, so no attempts
+        leaderboard = (
+            ExamAttempt.objects
+            .filter(
+                student__cohort=empty_cohort,
+                end_time__gte=timezone.now() - timedelta(days=30),
+                end_time__isnull=False,
+            )
+            .values('student')
+            .annotate(total_nuggets=Sum('total_nuggets_earned'))
+            .order_by('-total_nuggets')
+        )
+        self.assertEqual(list(leaderboard), [])
+
+    def test_audit_log_creation_at_model_level(self):
+        """
+        Verify that AuditLog.log() creates an entry and that the log is immutable.
+        """
+        entry = AuditLog.log(
+            action='test_action',
+            actor=self.student_user,
+            details={'test': 'data'},
+            resource_type='test',
+            resource_id=42,
+            ip_address='127.0.0.1',
+        )
+        self.assertIsNotNone(entry.pk)
+        self.assertEqual(entry.action, 'test_action')
+        self.assertEqual(entry.actor, self.student_user)
+        self.assertEqual(entry.details, {'test': 'data'})
+        self.assertEqual(entry.resource_type, 'test')
+        self.assertEqual(entry.resource_id, 42)
+        self.assertEqual(entry.ip_address, '127.0.0.1')
+
+        # Test immutability: modifying and saving should raise PermissionError
+        with self.assertRaises(PermissionError):
+            entry.action = 'modified'
+            entry.save()
+
+        # Test

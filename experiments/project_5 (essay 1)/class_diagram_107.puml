@@ -1,0 +1,145 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam classBorderColor #333333
+skinparam classHeaderBackgroundColor #EEEEEE
+
+package "Domain Model" {
+  abstract class Actor {
+    + mayPerform : set Permission
+  }
+
+  class Instructors extends Actor {
+  }
+
+  class Students extends Actor {
+  }
+
+  abstract class Resource {
+    + owner : one Actor
+    + accessible : set Actor
+  }
+
+  class ExamDatabaseResource extends Resource {
+  }
+
+  class AttemptResource extends Resource {
+  }
+
+  abstract class Interface {
+    + kind : one IfaceKind
+    + encrypted : one Bool
+    + authenticated : one Bool
+  }
+
+  class Exam_Access_API extends Interface {
+  }
+
+  class Attempt_Submission_API extends Interface {
+  }
+
+  class Exam_Database extends Interface {
+  }
+
+  abstract class State {
+  + getCurrentState()
+  + transitionTo(Post1)
+  + transitionTo(Pre3)
+  + transitionTo(Post2)
+  + transitionTo(Post2_submitted)
+  + transitionTo(Post2_manual)
+  + transitionTo(Post3)
+  }
+
+  class Pre1 extends State {
+  }
+
+  class Pre2 extends State {
+  }
+
+  class Pre3 extends State {
+  }
+
+  class Post1 extends State {
+  }
+
+  class Post2 extends State {
+  }
+
+  class Post3 extends State {
+  }
+
+  abstract class Permission {
+  }
+
+  class Read extends Permission {
+  }
+
+  class Write extends Permission {
+  }
+
+  class Execute extends Permission {
+  }
+
+  class Admin extends Permission {
+  }
+
+  class Date {
+  }
+
+  class Schedule {
+    + resource : Resource
+    + openDate : one Date
+  + setOpenDate(openDate)
+  + storeDate(openDate)
+  + setCloseDate(closeDate)
+  + storeDate(closeDate)
+  + getOpenDate()
+  + getCloseDate()
+  }
+
+  class DSTInfo {
+    + state : State
+    + isDST : one Bool
+  }
+
+  class Connectivity {
+    + state : State
+    + connected : one Bool
+  }
+}
+
+package "Application" {
+  class REQ_EXAM_SCHED_01 {
+    + initiator : one Actor
+    + target : some Resource
+    + channel : some Interface
+    + grant : one Permission
+    + pre : one State
+    + post : one State
+  }
+}
+
+package "Infrastructure — Ports" {
+  interface IfaceKind {
+  }
+}
+
+' Relationships
+Actor "1" -- "0..*" Permission : mayPerform
+Resource "1" -- "1" Actor : owner
+Resource "1" -- "0..*" Actor : accessible
+
+REQ_EXAM_SCHED_01 "1" -- "1" Actor : initiator
+REQ_EXAM_SCHED_01 "1" -- "1..*" Resource : target
+REQ_EXAM_SCHED_01 "1" -- "1..*" Interface : channel
+REQ_EXAM_SCHED_01 "1" -- "1" Permission : grant
+REQ_EXAM_SCHED_01 "1" -- "1" State : pre
+REQ_EXAM_SCHED_01 "1" -- "1" State : post
+
+Schedule "1" -- "1" Resource : resource
+Schedule "1" -- "1" Date : openDate
+
+@enduml

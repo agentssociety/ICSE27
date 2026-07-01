@@ -1,0 +1,268 @@
+# analytics/models.py
+"""
+Models for caching aggregated analytics data.
+Stores per-student competency mastery percentages to avoid recomputation.
+"""
+from django.db import models
+from django.utils import timezone
+
+
+class CompetencyMastery(models.Model):
+    """
+    Caches a student's mastery percentage for a specific competency within an exam.
+    Updated after each exam attempt submission.
+    """
+    student = models.ForeignKey(
+        'accounts.StudentProfile',
+        on_delete=models.CASCADE,
+        related_name='competency_masteries',
+        help_text='The student whose mastery is recorded.'
+    )
+    competency = models.ForeignKey(
+        'exams.Competency',
+        on_delete=models.CASCADE,
+        related_name='student_masteries',
+        help_text='The competency being measured.'
+    )
+    exam = models.ForeignKey(
+        'exams.Exam',
+        on_delete=models.CASCADE,
+        related_name='competency_masteries',
+        help_text='The exam context for this mastery measurement.'
+    )
+    mastery_percentage = models.FloatField(
+        default=0.0,
+        help_text='Percentage of questions answered correctly for this competency (0.0 to 100.0).'
+    )
+    last_updated = models.DateTimeField(
+        default=timezone.now,
+        help_text='Timestamp of the last update to this mastery record.'
+    )
+
+    class Meta:
+        app_label = 'analytics'
+        verbose_name = 'Competency Mastery'
+        verbose_name_plural = 'Competency Masteries'
+        unique_together = ('student', 'competency', 'exam')
+        ordering = ['-mastery_percentage']
+
+    def __str__(self) -> str:
+        return (
+            f"{self.student.user.username} - {self.competency.name} "
+            f"({self.mastery_percentage:.1f}%)"
+        )
+
+    def update_mastery(self, correct_count: int, total_count: int) -> None:
+        """
+        Recalculate and save the mastery percentage based on new data.
+
+        Args:
+            correct_count: Number of correctly answered questions for this competency.
+            total_count: Total number of questions for this competency in the exam.
+        """
+        if total_count == 0:
+            self.mastery_percentage = 0.0
+        else:
+            self.mastery_percentage = (correct_count / total_count) * 100.0
+        self.last_updated = timezone.now()
+        self.save(update_fields=['mastery_percentage', 'last_updated'])
+
+
+# analytics/utils.py
+"""
+Utility functions for computing analytics data:
+- Competency coverage for an exam
+- Heatmap data for instructor dashboards
+- Student competency breakdown after exam submission
+- Aggregated exam analytics
+"""
+from typing import Dict, List, Optional, Tuple
+from django.db.models import Count, Q, Avg
+from django.db import transaction
+from exams.models import Exam, Competency, ExamAttempt, Question
+from accounts.models import StudentProfile
+
+
+def get_exam_analytics(exam_id: int) -> Dict:
+    """
+    Retrieve comprehensive analytics for a given exam.
+    Returns aggregated data including average score, competency heatmap,
+    and cohort performance statistics.
+
+    Args:
+        exam_id: The ID of the exam to analyze.
+
+    Returns:
+        Dictionary with keys:
+            - 'exam_title': str
+            - 'total_attempts': int
+            - 'average_score': float (percentage)
+            - 'competency_heatmap': list of dicts (per competency)
+            - 'cohort_performance': list of dicts (per student)
+    """
+    try:
+        exam = Exam.objects.get(pk=exam_id)
+    except Exam.DoesNotExist:
+        raise ValueError(f"Exam with id {exam_id} does not exist.")
+
+    attempts = ExamAttempt.objects.filter(exam=exam)
+    total_attempts = attempts.count()
+
+    # Calculate average score across all attempts
+    avg_score = attempts.aggregate(
+        avg=Avg('total_nuggets_earned')  # Placeholder: actual score calculation may differ
+    )['avg'] or 0.0
+
+    # Get competency heatmap data
+    heatmap = get_heatmap_data(exam)
+
+    # Get per-student performance (cohort)
+    cohort_performance = []
+    for attempt in attempts.select_related('student__user').iterator():
+        student = attempt.student
+        # Compute student's overall score (percentage of correct answers)
+        results = attempt.results or {}
+        correct_count = sum(
+            1 for r in results.values() if r.get('correct', False)
+        )
+        total_questions = len(results)
+        score_pct = (correct_count / total_questions * 100) if total_questions > 0 else 0.0
+
+        cohort_performance.append({
+            'student_id': student.id,
+            'username': student.user.username,
+            'score_percentage': round(score_pct, 2),
+            'nuggets_earned': attempt.total_nuggets_earned,
+            'streak_multiplier': attempt.streak_multiplier,
+        })
+
+    return {
+        'exam_title': exam.title,
+        'total_attempts': total_attempts,
+        'average_score': round(avg_score, 2),
+        'competency_heatmap': heatmap,
+        'cohort_performance': cohort_performance,
+    }
+
+
+def get_competency_coverage(exam: Exam) -> Dict[str, int]:
+    """
+    Calculate how many questions in the exam map to each competency.
+
+    Args:
+        exam: The Exam instance.
+
+    Returns:
+        Dictionary mapping competency name to question count.
+    """
+    coverage = {}
+    questions = Question.objects.filter(exam=exam).prefetch_related('competencies')
+    for question in questions:
+        for competency in question.competencies.all():
+            coverage[competency.name] = coverage.get(competency.name, 0) + 1
+    return coverage
+
+
+def get_heatmap_data(exam: Exam) -> List[Dict]:
+    """
+    Generate heatmap data for instructor dashboard.
+    Shows per-student mastery percentages for each competency.
+
+    Args:
+        exam: The Exam instance.
+
+    Returns:
+        List of dictionaries, each containing:
+            - 'student_name': str
+            - 'competency_name': str
+            - 'mastery_percentage': float
+    """
+    heatmap = []
+    # Get all students who attempted this exam
+    attempts = ExamAttempt.objects.filter(exam=exam).select_related('student__user')
+    students = set(attempt.student for attempt in attempts)
+
+    competencies = Competency.objects.filter(
+        question__exam=exam
+    ).distinct()
+
+    for student in students:
+        for competency in competencies:
+            # Retrieve cached mastery or compute on the fly
+            mastery, _ = CompetencyMastery.objects.get_or_create(
+                student=student,
+                competency=competency,
+                exam=exam,
+                defaults={'mastery_percentage': 0.0}
+            )
+            heatmap.append({
+                'student_name': student.user.username,
+                'competency_name': competency.name,
+                'mastery_percentage': round(mastery.mastery_percentage, 2),
+            })
+    return heatmap
+
+
+def get_student_competency_breakdown(attempt: ExamAttempt) -> Dict[str, float]:
+    """
+    Compute per-competency mastery percentages for a single exam attempt.
+
+    Args:
+        attempt: The ExamAttempt instance to analyze.
+
+    Returns:
+        Dictionary mapping competency name to mastery percentage (0-100).
+    """
+    results = attempt.results or {}
+    questions = Question.objects.filter(exam=attempt.exam).prefetch_related('competencies')
+    # Build mapping: question_id -> list of competency names
+    question_competencies = {}
+    for q in questions:
+        question_competencies[q.id] = list(q.competencies.values_list('name', flat=True))
+
+    # Initialize counters per competency
+    competency_correct = {}
+    competency_total = {}
+
+    for qid, result in results.items():
+        qid = int(qid)
+        comps = question_competencies.get(qid, [])
+        for comp in comps:
+            competency_total[comp] = competency_total.get(comp, 0) + 1
+            if result.get('correct', False):
+                competency_correct[comp] = competency_correct.get(comp, 0) + 1
+
+    breakdown = {}
+    for comp in competency_total:
+        correct = competency_correct.get(comp, 0)
+        total = competency_total[comp]
+        breakdown[comp] = round((correct / total) * 100.0, 2) if total > 0 else 0.0
+
+    return breakdown
+
+
+def update_competency_masteries(attempt: ExamAttempt) -> None:
+    """
+    Update the CompetencyMastery cache for a student after an exam attempt.
+    Should be called after the attempt is finalized.
+
+    Args:
+        attempt: The completed ExamAttempt instance.
+    """
+    breakdown = get_student_competency_breakdown(attempt)
+    competencies = Competency.objects.filter(
+        question__exam=attempt.exam
+    ).distinct()
+
+    for competency in competencies:
+        mastery_pct = breakdown.get(competency.name, 0.0)
+        # Use update_or_create to handle first-time or update
+        CompetencyMastery.objects.update_or_create(
+            student=attempt.student,
+            competency=competency,
+            exam=attempt.exam,
+            defaults={
+                'mastery_percentage': mastery_pct,
+                'last_updated': attempt.end_time or attempt.start_time,
+            }
+        )

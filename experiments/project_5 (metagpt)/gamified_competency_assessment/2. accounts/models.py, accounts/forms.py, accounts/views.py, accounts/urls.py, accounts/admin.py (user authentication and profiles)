@@ -1,0 +1,306 @@
+# accounts/models.py
+"""
+Models for user profiles: StudentProfile and InstructorProfile.
+Extends Django's built-in User model with one-to-one relationships.
+"""
+from django.contrib.auth.models import User
+from django.db import models
+from django.utils import timezone
+
+
+class StudentProfile(models.Model):
+    """Profile for student users, managing nuggets, streaks, and avatar."""
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='student_profile'
+    )
+    avatar_url = models.URLField(max_length=500, blank=True, default='')
+    nugget_balance = models.IntegerField(default=0)
+    current_streak = models.IntegerField(default=0)
+    max_streak = models.IntegerField(default=0)
+    last_activity_date = models.DateField(null=True, blank=True)
+
+    def add_nuggets(self, amount: int, reason: str) -> None:
+        """Add nuggets to student's balance. Audit logging handled by middleware."""
+        if amount <= 0:
+            raise ValueError("Amount must be positive")
+        self.nugget_balance += amount
+        self.save(update_fields=['nugget_balance'])
+
+    def deduct_nuggets(self, amount: int) -> bool:
+        """Deduct nuggets if sufficient balance exists. Returns True if successful."""
+        if amount <= 0:
+            raise ValueError("Amount must be positive")
+        if self.nugget_balance < amount:
+            return False
+        self.nugget_balance -= amount
+        self.save(update_fields=['nugget_balance'])
+        return True
+
+    def update_streak(self, correct: bool) -> None:
+        """Update streak based on answer correctness. Resets to 0 if incorrect."""
+        today = timezone.now().date()
+        if correct:
+            if self.last_activity_date == today:
+                # Already answered correctly today, streak unchanged
+                return
+            if self.last_activity_date is None or self.last_activity_date != today - timezone.timedelta(days=1):
+                self.current_streak = 1
+            else:
+                self.current_streak += 1
+            if self.current_streak > self.max_streak:
+                self.max_streak = self.current_streak
+        else:
+            self.current_streak = 0
+        self.last_activity_date = today
+        self.save(update_fields=['current_streak', 'max_streak', 'last_activity_date'])
+
+    def __str__(self) -> str:
+        return f"StudentProfile(user={self.user.username}, nuggets={self.nugget_balance})"
+
+
+class InstructorProfile(models.Model):
+    """Profile for instructor users, managing exams and cohorts."""
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='instructor_profile'
+    )
+    department = models.CharField(max_length=200, blank=True, default='')
+
+    def create_exam(self, exam_data: dict) -> 'Exam':
+        """Create a new exam with validated fields (lazy import to avoid circular)."""
+        from exams.models import Exam
+        valid_fields = {
+            k: v for k, v in exam_data.items()
+            if k in [f.name for f in Exam._meta.get_fields()]
+        }
+        exam = Exam.objects.create(creator=self, **valid_fields)
+        return exam
+
+    def view_analytics(self, exam_id: int) -> dict:
+        """Retrieve analytics for a given exam (lazy import)."""
+        from analytics.utils import get_exam_analytics
+        return get_exam_analytics(exam_id)
+
+    def __str__(self) -> str:
+        return f"InstructorProfile(user={self.user.username}, dept={self.department})"
+
+
+# accounts/forms.py
+"""
+Forms for user registration, login, and profile editing.
+"""
+from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import StudentProfile, InstructorProfile
+
+
+class UserRegistrationForm(UserCreationForm):
+    """Form for registering a new user with role selection."""
+    ROLE_CHOICES = [
+        ('student', 'Student'),
+        ('instructor', 'Instructor'),
+    ]
+    email = forms.EmailField(required=True)
+    role = forms.ChoiceField(choices=ROLE_CHOICES, required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2', 'role')
+
+    def save(self, commit: bool = True) -> User:
+        """Save user and create corresponding profile based on role."""
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        if commit:
+            user.save()
+            role = self.cleaned_data['role']
+            if role == 'student':
+                StudentProfile.objects.create(user=user)
+            elif role == 'instructor':
+                InstructorProfile.objects.create(user=user)
+        return user
+
+
+class UserLoginForm(AuthenticationForm):
+    """Form for user login (uses Django's built-in authentication)."""
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput)
+
+
+class StudentProfileForm(forms.ModelForm):
+    """Form for editing student profile (avatar, etc.)."""
+    class Meta:
+        model = StudentProfile
+        fields = ('avatar_url',)
+
+
+class InstructorProfileForm(forms.ModelForm):
+    """Form for editing instructor profile."""
+    class Meta:
+        model = InstructorProfile
+        fields = ('department',)
+
+
+# accounts/views.py
+"""
+Views for user authentication and profile management.
+"""
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+from .forms import (
+    UserRegistrationForm,
+    UserLoginForm,
+    StudentProfileForm,
+    InstructorProfileForm,
+)
+from .models import StudentProfile, InstructorProfile
+
+
+@require_http_methods(["GET", "POST"])
+def register_view(request):
+    """Handle user registration."""
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Registration successful.')
+            return redirect('dashboard')
+        else:
+            messages.error(request, 'Registration failed. Please correct the errors.')
+    else:
+        form = UserRegistrationForm()
+    return render(request, 'accounts/register.html', {'form': form})
+
+
+@require_http_methods(["GET", "POST"])
+def login_view(request):
+    """Handle user login."""
+    if request.method == 'POST':
+        form = UserLoginForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            messages.success(request, 'Login successful.')
+            return redirect('dashboard')
+        else:
+            messages.error(request, 'Invalid username or password.')
+    else:
+        form = UserLoginForm()
+    return render(request, 'accounts/login.html', {'form': form})
+
+
+@login_required
+def logout_view(request):
+    """Handle user logout."""
+    logout(request)
+    messages.success(request, 'Logged out successfully.')
+    return redirect('login')
+
+
+@login_required
+def profile_view(request):
+    """Display and edit user profile."""
+    user = request.user
+    if hasattr(user, 'student_profile'):
+        profile = user.student_profile
+        form_class = StudentProfileForm
+    elif hasattr(user, 'instructor_profile'):
+        profile = user.instructor_profile
+        form_class = InstructorProfileForm
+    else:
+        messages.error(request, 'Profile not found.')
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = form_class(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated.')
+            return redirect('profile')
+    else:
+        form = form_class(instance=profile)
+
+    return render(request, 'accounts/profile.html', {'form': form, 'profile': profile})
+
+
+@login_required
+def dashboard_view(request):
+    """Redirect user to appropriate dashboard based on role."""
+    user = request.user
+    if hasattr(user, 'student_profile'):
+        return redirect('student_dashboard')
+    elif hasattr(user, 'instructor_profile'):
+        return redirect('instructor_dashboard')
+    else:
+        messages.error(request, 'Role not recognized.')
+        return redirect('login')
+
+
+# accounts/urls.py
+"""
+URL patterns for accounts app.
+"""
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('register/', views.register_view, name='register'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('profile/', views.profile_view, name='profile'),
+    path('dashboard/', views.dashboard_view, name='dashboard'),
+]
+
+
+# accounts/admin.py
+"""
+Admin configuration for accounts models.
+"""
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.models import User
+from .models import StudentProfile, InstructorProfile
+
+
+class StudentProfileInline(admin.StackedInline):
+    """Inline admin for StudentProfile."""
+    model = StudentProfile
+    can_delete = False
+    verbose_name_plural = 'Student Profiles'
+
+
+class InstructorProfileInline(admin.StackedInline):
+    """Inline admin for InstructorProfile."""
+    model = InstructorProfile
+    can_delete = False
+    verbose_name_plural = 'Instructor Profiles'
+
+
+class UserAdmin(BaseUserAdmin):
+    """Custom User admin with profile inlines."""
+    inlines = (StudentProfileInline, InstructorProfileInline)
+
+
+# Re-register UserAdmin
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
+
+
+@admin.register(StudentProfile)
+class StudentProfileAdmin(admin.ModelAdmin):
+    """Admin for StudentProfile."""
+    list_display = ('user', 'nugget_balance', 'current_streak', 'max_streak')
+    search_fields = ('user__username', 'user__email')
+    list_filter = ('current_streak',)
+
+
+@admin.register(InstructorProfile)
+class InstructorProfileAdmin(admin.ModelAdmin):
+    """Admin for InstructorProfile."""
+    list_display = ('user', 'department')
+    search_fields = ('user__username', 'department')

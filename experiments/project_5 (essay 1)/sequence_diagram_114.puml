@@ -1,0 +1,86 @@
+@startuml
+title Nugget Redemption Sequence Diagram
+
+' Define participants grouped by layers
+actor Student
+
+box "Controller Layer" #LightCyan
+  participant "Student_Dashboard" as SD <<UI>>
+  participant "Reward_Store_API" as API <<API>>
+end box
+
+box "Application Layer" #LightYellow
+  participant "REQ_STU_01" as Req <<Operation>>
+end box
+
+box "Domain Layer" #LightGreen
+  participant "RedemptionItem" as Item
+  participant "NuggetBalance" as Bal
+  participant "ItemCost" as Cost
+end box
+
+box "Infrastructure Layer" #LightPink
+  participant "Database" as DB
+end box
+
+== Main Flow - Successful Redemption ==
+
+Student -> SD : selectRewardItem(itemId: String)
+SD -> API : initiateRedemption(studentId: String, itemId: String)
+note right of API : [TLS] encrypted authenticated channel
+
+API -> API : authenticateStudent(credentials) : AuthToken
+API -> Req : executeRedemption(student: Student, item: RedemptionItem, grant: Permission)
+
+Req -> Req : checkPermission(initiator: Actor, grant: Permission) : Boolean
+alt permission granted
+  Req -> Item : checkAvailability(itemId: String) : Boolean
+  Req -> Bal : getBalance(studentId: String) : Int
+  Req -> Cost : getCost(itemId: String) : Int
+  note right of Req : Pre1: nuggets exist (balance > 0)\nPre2: item available
+  Req -> Req : validateSufficientBalance(balance: Int, cost: Int) : Boolean
+  alt balance >= cost and item available
+    Req -> Bal : deductBalance(cost: Int) : NuggetBalance
+    note right of Bal : state -> Post1 (balance reduced)
+    Req -> Item : provideToStudent(student: Student) : RedemptionItem
+    note right of Item : state -> Post2 (item delivered)
+    Req -> API : redemptionSuccess(details: RewardDetails)
+    API -> SD : returnSuccess(details: RewardDetails)
+    SD -> Student : displayRewardConfirmation()
+  else insufficient balance
+    Req -> API : error(InsufficientNuggets)
+    API -> SD : returnError("Insufficient nuggets")
+    SD -> Student : displayInsufficientNuggets()
+  end
+else permission denied
+  Req -> API : error(Unauthorized)
+  API -> SD : returnError("Unauthorized")
+  SD -> Student : displayError("You do not have permission")
+end
+
+== Error Flow - Item Unavailable ==
+
+Student -> SD : selectRewardItem(itemId: String)
+SD -> API : initiateRedemption(studentId: String, itemId: String)
+API -> Req : executeRedemption(student, item, grant)
+Req -> Item : checkAvailability(itemId: String) : Boolean
+alt item not available
+  Req -> API : error(ItemUnavailable)
+  API -> SD : returnError("Item not available")
+  SD -> Student : displayError("Reward item no longer available")
+else item available
+  ' continue to balance check (not shown for brevity)
+end
+
+== Precondition Validation ==
+
+Req -> Bal : getBalance(studentId: String) : Int
+Req -> Cost : getCost(itemId: String) : Int
+Req -> Req : validatePreconditions(statePre1: State, statePre2: State) : Boolean
+alt preconditions not satisfied
+  Req -> API : error(PreconditionFailure)
+  API -> SD : returnError("Preconditions not met")
+  SD -> Student : displayError("Reward cannot be processed")
+end
+
+@enduml

@@ -1,0 +1,45 @@
+{
+  "metric": "metagpt_code_hallucination",
+  "description": "AST-based orphan-route and unused-import detection applied to MetaGPT generated Python code. Same protocol as AS extract_hallucination.py. P5 excluded (no Python files generated). Values are per-project totals (each MG project has exactly one run).",
+  "projects": {
+    "P1": {
+      "code_dir": "/home/mahdi/Desktop/Work/dev/product-owner-ai/experiments/project_1 (metagpt)/hospital_triage_queue/hospital_triage_queue",
+      "files_scanned": 6,
+      "total_routes": 8,
+      "orphan_routes": 8,
+      "unused_imports": 2
+    },
+    "P2": {
+      "code_dir": "/home/mahdi/Desktop/Work/dev/product-owner-ai/experiments/project_2 (metagpt)/blood_bank_inventory_manager",
+      "files_scanned": 7,
+      "total_routes": 0,
+      "orphan_routes": 0,
+      "unused_imports": 2
+    },
+    "P3": {
+      "code_dir": "/home/mahdi/Desktop/Work/dev/product-owner-ai/experiments/project_3 (metagpt)/airport_runway_scheduling",
+      "files_scanned": 3,
+      "total_routes": 0,
+      "orphan_routes": 0,
+      "unused_imports": 4
+    },
+    "P4": {
+      "code_dir": "/home/mahdi/Desktop/Work/dev/product-owner-ai/experiments/project_4 (metagpt)/atm_withdrawal_safety_backend",
+      "files_scanned": 14,
+      "total_routes": 0,
+      "orphan_routes": 0,
+      "unused_imports": 10
+    },
+    "P6": {
+      "code_dir": "/home/mahdi/Desktop/Work/dev/product-owner-ai/experiments/project_6 (metagpt)/community_social_network",
+      "files_scanned": 10,
+      "total_routes": 0,
+      "orphan_routes": 0,
+      "unused_imports": 5
+    }
+  },
+  "cross_project_mean": {
+    "orphan_routes": 1.6,
+    "unused_imports": 4.6
+  }
+}

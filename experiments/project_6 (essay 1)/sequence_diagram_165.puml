@@ -1,0 +1,138 @@
+@startuml
+skinparam participantPadding 20
+skinparam boxPadding 10
+
+box "External" #LightBlue
+  participant User as "User (Actor)"
+end box
+
+box "Controller" #LightGreen
+  participant GroupCreationAPI as "GroupCreationAPI"
+end box
+
+box "Application" #LightYellow
+  participant GroupService as "GroupService"
+end box
+
+box "Domain" #LightCoral
+  participant Group as "Group"
+  participant Resource as "Resource"
+  participant Actor as "Actor"
+  participant Operation as "Operation"
+  participant Permission as "Permission"
+  participant State as "State"
+  participant Visibility as "Visibility"
+  participant GroupName as "GroupName"
+end box
+
+box "Infrastructure" #LightGray
+  participant GroupDB as "GroupDB"
+end box
+
+== Main Flow - Group Creation (Public) ==
+
+User -> GroupCreationAPI : POST /groups (groupName, visibility=Public) [TLS]
+note right : All channels encrypted (sr_assert_encryption_in_transit)
+GroupCreationAPI -> GroupService : createGroup(groupName: GroupName, visibility: Visibility)
+GroupService -> GroupService : validatePermission(user, Write|Admin)
+alt user has required permission
+  GroupService -> GroupService : validateAuthorization(user, targetResource)
+  alt user is authorized (in accessible set)
+    GroupService -> GroupService : checkAuthenticatedChannel(GroupCreationAPI, GroupDB)
+    alt at least one authenticated channel
+      GroupService -> Group : new Group(groupName, visibility)
+      note right : State transition: Pre1 -> Post1
+      Group -> Group : setState(Pre1 -> Post1)
+      Group -> Resource : new Resource(owner=user, accessible=allActors)
+      note right : Public: all actors in accessible set
+      GroupService -> GroupDB : save(group) [TLS, authenticated]
+      note right : GroupDB requires authentication (inv_authenticated_channel_required)
+      GroupDB --> GroupService : success
+      GroupService -> Group : setState(Post1 -> Post2)
+      note right : State transition: Post1 -> Post2 (public)
+      GroupService --> GroupCreationAPI : 201 Created
+      GroupCreationAPI --> User : 201 Created (group details)
+    else no authenticated channel
+      GroupService --> GroupCreationAPI : 500 Internal Server Error
+      GroupCreationAPI --> User : 500 Internal Server Error
+    end
+  else user not authorized
+    GroupService --> GroupCreationAPI : 403 Forbidden
+    GroupCreationAPI --> User : 403 Forbidden
+  end
+else user lacks permission
+  GroupService --> GroupCreationAPI : 403 Forbidden
+  GroupCreationAPI --> User : 403 Forbidden
+end
+
+== Main Flow - Group Creation (Private) ==
+
+User -> GroupCreationAPI : POST /groups (groupName, visibility=Private) [TLS]
+GroupCreationAPI -> GroupService : createGroup(groupName: GroupName, visibility: Visibility)
+GroupService -> GroupService : validatePermission(user, Write|Admin)
+alt user has required permission
+  GroupService -> GroupService : validateAuthorization(user, targetResource)
+  alt user is authorized (in accessible set)
+    GroupService -> GroupService : checkAuthenticatedChannel(GroupCreationAPI, GroupDB)
+    alt at least one authenticated channel
+      GroupService -> GroupService : checkPrivateGroupPrivilege(user)
+      note right : Private: initiator must be resource owner or Admin
+      alt user is owner or Admin
+        GroupService -> Group : new Group(groupName, visibility)
+        Group -> Group : setState(Pre1 -> Post1)
+        Group -> Resource : new Resource(owner=user, accessible={user})
+        note right : Private: only owner in accessible set initially
+        GroupService -> GroupDB : save(group) [TLS, authenticated]
+        GroupDB --> GroupService : success
+        GroupService -> Group : setState(Post1 -> Post3)
+        note right : State transition: Post1 -> Post3 (private)
+        GroupService --> GroupCreationAPI : 201 Created
+        GroupCreationAPI --> User : 201 Created (group details)
+      else user not owner nor Admin
+        GroupService --> GroupCreationAPI : 403 Forbidden
+        GroupCreationAPI --> User : 403 Forbidden
+      end
+    else no authenticated channel
+      GroupService --> GroupCreationAPI : 500 Internal Server Error
+      GroupCreationAPI --> User : 500 Internal Server Error
+    end
+  else user not authorized
+    GroupService --> GroupCreationAPI : 403 Forbidden
+    GroupCreationAPI --> User : 403 Forbidden
+  end
+else user lacks permission
+  GroupService --> GroupCreationAPI : 403 Forbidden
+  GroupCreationAPI --> User : 403 Forbidden
+end
+
+== Error - No Visibility Selected ==
+
+User -> GroupCreationAPI : POST /groups (groupName) [TLS]
+GroupCreationAPI -> GroupService : createGroup(groupName: GroupName, visibility: null)
+GroupService -> GroupService : validateVisibility(visibility)
+alt visibility is null
+  GroupService --> GroupCreationAPI : 400 Bad Request (visibility required)
+  GroupCreationAPI --> User : 400 Bad Request (visibility must be Public or Private)
+else visibility provided
+  ' handled in main flows
+end
+
+== Error - Duplicate Group Name ==
+
+User -> GroupCreationAPI : POST /groups (groupName, visibility) [TLS]
+GroupCreationAPI -> GroupService : createGroup(groupName: GroupName, visibility: Visibility)
+GroupService -> GroupService : validatePermission(user, Write|Admin)
+alt user has permission and is authorized
+  GroupService -> GroupDB : checkGroupNameExists(groupName)
+  GroupDB --> GroupService : exists = true
+  alt duplicate name
+    GroupService --> GroupCreationAPI : 409 Conflict (group name must be unique)
+    GroupCreationAPI --> User : 409 Conflict (group name already exists)
+  else name unique
+    ' proceed with creation (main flow)
+  end
+else permission/authorization failure
+  ' handled in main flows
+end
+
+@enduml

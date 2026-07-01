@@ -1,0 +1,170 @@
+@startuml
+!theme plain
+
+box "UI Layer" #LightBlue
+  participant "StudentDashboardUI" as UI
+end box
+
+box "Controller Layer" #LightGreen
+  participant "ReviewController" as RC
+end box
+
+box "Application Layer" #LightYellow
+  participant "ReviewService" as RS
+  participant "TrendService" as TS
+end box
+
+box "Domain Layer" #LightCoral
+  participant "Student" as S
+  participant "Attempt" as A
+  participant "Question" as Q
+  participant "Competency" as C
+  participant "ChartPoint" as CP
+  participant "PastAttemptData" as PAD
+  participant "DashboardData" as DD
+  participant "TrendData" as TD
+end box
+
+box "Infrastructure Layer" #LightGray
+  participant "StudentDataStore" as SDS
+  participant "StudentDataAPI" as API
+  participant "TrendAPI" as TAPI
+end box
+
+== Authentication Flow ==
+Student -> UI : navigates to review section
+UI -> RC : GET /api/review
+RC -> RS : authenticateStudent(token: String) : Student
+RS -> S : validateCredentials(token: String) : boolean
+
+alt Authentication successful
+    S --> RS : true
+    RS --> RC : Student object
+    RC --> UI : 200 OK
+else Authentication failed
+    S --> RS : false
+    RS --> RC : AuthenticationException
+    RC --> UI : 401 Unauthorized
+    UI -> Student : display "Access denied"
+end
+
+== Retrieve Past Attempts Flow ==
+RC -> RS : getPastAttempts(studentId: String) : List<Attempt>
+RS -> API : GET /students/{id}/attempts [TLS]
+API -> SDS : queryPastAttempts(studentId: String) [encrypted at rest]
+
+alt Past attempts found
+    SDS --> API : List<Attempt> data
+    API --> RS : 200 OK with data
+    RS -> DD : createFromAttempts(attempts: List<Attempt>) : DashboardData
+    DD -> A : sortByDate(chronologicalOrder: Date)
+    A --> DD : sorted attempts
+    RS --> RC : DashboardData
+    RC --> UI : 200 OK with dashboard data
+    UI -> Student : display chronological list of attempts
+else No past attempts
+    SDS --> API : empty result
+    API --> RS : 200 OK with empty list
+    RS --> RC : empty DashboardData
+    RC --> UI : 200 OK with empty state
+    UI -> Student : display "No past attempts found"
+else API error
+    API --> RS : 500 Internal Server Error
+    RS --> RC : ApiException
+    RC --> UI : 502 Bad Gateway
+    UI -> Student : display "Unable to load past attempts"
+end
+
+== View Specific Attempt Details Flow ==
+Student -> UI : selects specific attempt
+UI -> RC : GET /api/review/attempts/{attemptId}
+RC -> RS : getAttemptDetails(attemptId: String) : Attempt
+RS -> API : GET /students/{id}/attempts/{attemptId} [TLS]
+API -> SDS : queryAttemptById(attemptId: String) [encrypted at rest]
+
+alt Attempt found
+    SDS --> API : Attempt data with questions
+    API --> RS : 200 OK
+    RS -> A : getQuestions() : List<Question>
+    loop for each question
+        A -> Q : getStudentAnswer() : String
+        A -> Q : getCorrectAnswer() : String
+        A -> Q : getLearningNugget() : String
+    end
+    RS --> RC : Attempt with details
+    RC --> UI : 200 OK with attempt details
+    UI -> Student : display per-question details
+else Attempt not found
+    SDS --> API : null
+    API --> RS : 404 Not Found
+    RS --> RC : ResourceNotFoundException
+    RC --> UI : 404 Not Found
+    UI -> Student : display "Attempt not found"
+end
+
+== View Competency Trends Flow ==
+Student -> UI : requests competency trends
+UI -> RC : GET /api/review/trends
+RC -> RS : getCompetencyTrends(studentId: String) : TrendData
+RS -> TS : fetchTrendData(studentId: String) : TrendData
+TS -> TAPI : GET /students/{id}/trends [TLS]
+TAPI -> SDS : queryCompetencyData(studentId: String) [encrypted at rest]
+
+alt Sufficient data available
+    SDS --> TAPI : Competency data with ChartPoints
+    TAPI --> TS : 200 OK
+    TS -> C : generateTrends(data: List<ChartPoint>) : TrendData
+    C -> CP : calculateTrendPoints()
+    CP --> C : List<ChartPoint>
+    C --> TS : TrendData
+    TS --> RS : TrendData
+    RS --> RC : TrendData
+    RC --> UI : 200 OK with trend data
+    UI -> Student : display competency trend charts
+else Insufficient data
+    SDS --> TAPI : insufficient data
+    TAPI --> TS : 200 OK with insufficient flag
+    TS --> RS : InsufficientDataException
+    RS --> RC : error with message
+    RC --> UI : 200 OK with message
+    UI -> Student : display "Not enough data to generate trends"
+else Trend API error
+    TAPI --> TS : 500 Internal Server Error
+    TS --> RS : ApiException
+    RS --> RC : ApiException
+    RC --> UI : 502 Bad Gateway
+    UI -> Student : display "Unable to load trend data"
+end
+
+== Access Control Validation ==
+alt Student accessing own data
+    RS -> S : ownsResource(studentId: String, resourceId: String) : boolean
+    S --> RS : true
+    RS -> PAD : verifyAccess(student: Student) : boolean
+    PAD --> RS : true
+else Instructor accessing dashboard data
+    RS -> S : hasRole(role: Role.INSTRUCTOR) : boolean
+    S --> RS : true
+    RS -> DD : verifyAccess(actor: Actor) : boolean
+    DD --> RS : true
+else Unauthorized access
+    RS --> RC : AccessDeniedException
+    RC --> UI : 403 Forbidden
+    UI -> Student : display "Access denied"
+end
+
+== State Transitions ==
+note right of S
+    State: Authenticated -> Reviewing
+    Student state transitions:
+    - Pre1: Has completed attempts
+    - Post1: Reviewed attempts and identified improvements
+end note
+
+note right of C
+    Competency state transitions:
+    - Pre2: Sufficient data for trends
+    - Post2: Trends generated or insufficient data message
+end note
+
+@enduml

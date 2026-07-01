@@ -1,0 +1,58 @@
+{
+  "task_id": 159,
+  "confidence": 0.9874,
+  "evidence": [
+    {
+      "claim": "The user can optionally attach one or more images to the post.",
+      "fact": "Users can optionally upload multiple images to a post.",
+      "score": 0.9989,
+      "user_story_span": "The user can optionally attach one or more images to the post.",
+      "fact_span": "Users can optionally upload multiple images to a post."
+    },
+    {
+      "claim": "The user can write text content for the post.",
+      "fact": "Users can create text posts.",
+      "score": 0.9985,
+      "user_story_span": "The user can write text content for the post.",
+      "fact_span": "Users can create text posts."
+    },
+    {
+      "claim": "The user is a logged-in user.",
+      "fact": "Logged admin actions include ban, delete, and verify.",
+      "score": 0.9917,
+      "user_story_span": "I am a logged-in user",
+      "fact_span": ""
+    },
+    {
+      "claim": "The post is shared with others.",
+      "fact": "The news feed lists posts from friends.",
+      "score": 0.9887,
+      "user_story_span": "shared with others",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system allows optionally uploading images.",
+      "fact": "Users can optionally upload multiple images to a post.",
+      "score": 0.9854,
+      "user_story_span": "optionally upload images",
+      "fact_span": "Users can optionally upload multiple images to a post."
+    },
+    {
+      "claim": "The system allows creating a text post.",
+      "fact": "The platform facilitates sharing of text and media content among its users and provides tools for community management.",
+      "score": 0.9749,
+      "user_story_span": "create a text post",
+      "fact_span": ""
+    },
+    {
+      "claim": "The post is saved.",
+      "fact": "There is a single default 'Saved Posts' list.",
+      "score": 0.9736,
+      "user_story_span": "the post is saved",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 7,
+  "threshold": 0.6
+}

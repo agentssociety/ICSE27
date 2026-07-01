@@ -1,0 +1,11 @@
+from __future__ import annotations
+
+import pytest
+
+"""Unit tests for Friendship across domain, service, and API layers
+
+Related tasks: #162, #163
+"""
+
+def test_test_friendship_api_placeholder() -> None:
+    pytest.skip("TODO: implement generated scaffold tests")

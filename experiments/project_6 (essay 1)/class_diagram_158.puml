@@ -1,0 +1,112 @@
+@startuml
+skinparam defaultFontName Arial
+skinparam backgroundColor #FEFEFE
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+
+package "Domain Model" {
+  class User {
+    + id
+    + permissions
+  }
+  class Profile {
+    + photo
+    + biography
+  + setPhoto(photo)
+  + setBiography(biography)
+  + transition(State.PreIdle, State.Post1)
+  + transition(State.Post1, State.Post2)
+  }
+  class Photo {
+    + format
+    + size
+  }
+  class Biography {
+    + text
+  }
+  class Resource {
+    # owner
+    # accessible
+  }
+  class ProfileResource extends Resource {
+  }
+  class Actor {
+    + mayPerform
+  + validateToken(token) : UserInfo
+  + validateToken(token)
+  }
+  enum Permission {
+    Read
+    Write
+    Execute
+    Admin
+  }
+  enum State {
+    PreIdle
+    Post1
+    Post2
+  }
+  class Interface {
+    # kind
+    # encrypted
+    # authenticated
+  }
+}
+
+package "Controllers" {
+  class Account_Settings_Page extends Interface {
+  }
+}
+
+package "Application" {
+  class REQ_USER_01 {
+    + initiator
+    + target
+    + channel
+    + grant
+    + pre
+    + post
+  + checkOperation(initiator=User, target=ProfileResource, channel=UI, grant=Write, pre=PreIdle, post=Post1)
+  + checkOperation(...)
+  + checkOperation(initiator=User, target=ProfileResource, channel=UI, grant=Read, pre=Post1, post=Post2)
+  }
+}
+
+' Relationships
+User "1" -- "1" Profile : owns
+Profile "1" *-- "1" Photo : has
+Profile "1" *-- "1" Biography : has
+
+REQ_USER_01 "1" -- "1" Actor : initiator
+REQ_USER_01 "1" -- "1..*" Resource : target
+REQ_USER_01 "1" -- "1..*" Interface : channel
+REQ_USER_01 "1" -- "1" Permission : grant
+REQ_USER_01 "1" -- "1" State : pre
+REQ_USER_01 "1" -- "1" State : post
+
+Actor "*" -- "*" Permission : mayPerform
+Resource "*" -- "*" Actor : accessible
+Resource "*" -- "1" Actor : owner
+
+' Constraints / invariants as notes
+note top of Photo
+  format ∈ {JPEG, PNG}
+  size ≤ 2MB
+end note
+
+note top of Biography
+  length ≤ 500 chars
+end note
+
+note top of Resource
+  owner always in accessible
+end note
+
+note top of REQ_USER_01
+  initiator must have grant permission
+  initiator in target.accessible
+  pre != post
+  at least one channel authenticated
+end note
+
+@enduml

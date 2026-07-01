@@ -1,0 +1,184 @@
+# audit/models.py
+"""
+Models for immutable audit logging.
+Logs all user actions with timestamp, actor, resource details, and IP address.
+"""
+import json
+from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.utils import timezone
+
+
+class AuditLog(models.Model):
+    """
+    Immutable audit log entry. Records actions performed by users.
+    Fields are intended to be append-only; no update or delete operations.
+    """
+    actor = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='audit_logs',
+        help_text='The user who performed the action. Null if anonymous.'
+    )
+    action = models.CharField(
+        max_length=255,
+        db_index=True,
+        help_text='Descriptive action key, e.g. "exam_created", "nugget_deducted"'
+    )
+    resource_type = models.CharField(
+        max_length=255,
+        db_index=True,
+        help_text='Type of resource affected, e.g. "exam", "question", "user"'
+    )
+    resource_id = models.IntegerField(
+        null=True,
+        blank=True,
+        help_text='ID of the resource affected (nullable if not applicable)'
+    )
+    details = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text='Arbitrary JSON payload with additional context'
+    )
+    timestamp = models.DateTimeField(
+        default=timezone.now,
+        db_index=True,
+        help_text='When the action occurred'
+    )
+    ip_address = models.GenericIPAddressField(
+        null=True,
+        blank=True,
+        help_text='IP address of the client at the time of action'
+    )
+
+    class Meta:
+        app_label = 'audit'
+        ordering = ['-timestamp']
+        verbose_name = 'Audit Log'
+        verbose_name_plural = 'Audit Logs'
+        # Prevent any accidental updates or deletes via model clean/delete override
+        # (not enforced at database level, but at application level)
+
+    def save(self, *args, **kwargs):
+        """Override save to make the log append-only (no updates)."""
+        if self.pk is not None:
+            raise PermissionError('AuditLog entries cannot be modified after creation.')
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Prevent deletion of audit log entries."""
+        raise PermissionError('AuditLog entries cannot be deleted.')
+
+    @classmethod
+    def log(cls, action: str, actor: User, details: dict,
+            resource_type: str = None, resource_id: int = None,
+            ip_address: str = None) -> 'AuditLog':
+        """
+        Convenience class method to create an audit log entry.
+
+        Args:
+            action: Short string describing the action (e.g., 'exam_started').
+            actor: The User performing the action.
+            details: JSON-serializable dict with extra info.
+            resource_type: Optional resource type (e.g., 'exam').
+            resource_id: Optional resource ID.
+            ip_address: Optional IP address.
+
+        Returns:
+            The newly created AuditLog instance.
+        """
+        entry = cls(
+            actor=actor,
+            action=action,
+            resource_type=resource_type or '',
+            resource_id=resource_id,
+            details=details,
+            ip_address=ip_address,
+            timestamp=timezone.now(),
+        )
+        entry.save()
+        return entry
+
+    def __str__(self) -> str:
+        return f"[{self.timestamp.isoformat()}] {self.action} by {self.actor or 'Anonymous'}"
+
+
+# audit/middleware.py
+"""
+Middleware to automatically log HTTP requests to the AuditLog as generic entries.
+For more specific action logging, use AuditLog.log() directly in views.
+"""
+import re
+from django.urls import resolve, Resolver404
+from django.contrib.auth.models import AnonymousUser
+from django.utils.deprecation import MiddlewareMixin
+from .models import AuditLog
+
+
+# Paths that should be excluded from audit logging (static files, admin pages, etc.)
+EXCLUDED_PATHS = [
+    re.compile(r'^/static/'),
+    re.compile(r'^/admin/jsi18n/'),
+    re.compile(r'^/favicon\.ico$'),
+]
+
+
+class AuditMiddleware(MiddlewareMixin):
+    """
+    Middleware that records every authenticated request to the AuditLog.
+    Records the HTTP method, URL path, resolved view name, and IP address.
+    """
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        """
+        Called just before the view is called. We log the request here
+        so we have access to the resolved URL name and arguments.
+        """
+        # Skip excluded paths
+        path = request.path_info
+        for pattern in EXCLUDED_PATHS:
+            if pattern.match(path):
+                return None
+
+        # Only log authenticated users
+        if request.user.is_anonymous:
+            return None
+
+        # Get resolved URL name (if possible) or fallback to path
+        try:
+            match = resolve(path)
+            url_name = match.url_name or path
+        except Resolver404:
+            url_name = path
+
+        # Build details payload
+        details = {
+            'method': request.method,
+            'path': path,
+            'resolved_name': url_name,
+            'query_params': request.GET.urlencode() if request.GET else None,
+            'user_agent': request.META.get('HTTP_USER_AGENT', ''),
+        }
+
+        # Extract client IP
+        ip_address = request.META.get('REMOTE_ADDR')
+        if not ip_address:
+            # Try proxy headers
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip_address = x_forwarded_for.split(',')[0].strip()
+
+        # Log the action
+        AuditLog.log(
+            action='http_request',
+            actor=request.user,
+            resource_type='request',
+            resource_id=None,
+            details=details,
+            ip_address=ip_address,
+        )
+        return None  # Allow the view to continue normally
+

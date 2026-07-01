@@ -1,0 +1,16 @@
+{
+  "task_id": 181,
+  "confidence": 0.9526,
+  "evidence": [
+    {
+      "claim": "Logs should be accessible for review.",
+      "fact": "Users can view their own post history.",
+      "score": 0.9526,
+      "user_story_span": "be accessible for review",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 4,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

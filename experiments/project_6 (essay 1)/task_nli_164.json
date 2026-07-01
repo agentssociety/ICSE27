@@ -1,0 +1,16 @@
+{
+  "task_id": 164,
+  "confidence": 0.9887,
+  "evidence": [
+    {
+      "claim": "The system allows a user to follow other users",
+      "fact": "The news feed lists posts from followed users.",
+      "score": 0.9887,
+      "user_story_span": "follow or unfollow other users",
+      "fact_span": "followed users"
+    }
+  ],
+  "total_claims": 11,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

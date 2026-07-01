@@ -1,0 +1,16 @@
+{
+  "task_id": 170,
+  "confidence": 0.9155,
+  "evidence": [
+    {
+      "claim": "The search returns a combined list of matching users and posts, possibly with type labels.",
+      "fact": "Categories include likes, comments, and friend requests.",
+      "score": 0.9155,
+      "user_story_span": "The search returns a combined list of matching users and posts, possibly with type labels.",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 3,
+  "supported_claims": 1,
+  "threshold": 0.6
+}

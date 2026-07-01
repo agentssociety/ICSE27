@@ -1,0 +1,77 @@
+@startuml
+skinparam classBackgroundColor #FEFEFE
+skinparam classBorderColor #333333
+skinparam interfaceBackgroundColor #E8F0FE
+skinparam enumBackgroundColor #FFF3CD
+skinparam packageBackgroundColor #F8F9FA
+
+package "Domain Model" {
+  class User {
+    - id: String
+    - name: String
+    - email: String
+    - role: Role
+  }
+
+  class Post {
+    - id: String
+    - content: String
+    - creationTime: DateTime
+    - authorId: String
+  }
+
+  class Friendship {
+    - user1Id: String
+    - user2Id: String
+    - createdDate: DateTime
+  }
+
+  class NewsFeed {
+    - userId: String
+    - posts: List<Post>
+  + createEmptyFeed(userId: Long) : NewsFeed
+  + createFeedWithPosts(userId: Long, posts: List<Post>) : NewsFeed
+  + updateFeed(existingFeed, newPosts) : NewsFeed
+  + appendPosts(feed, newPosts) : NewsFeed
+  }
+
+  enum Permission {
+    READ
+    WRITE
+    EXECUTE
+    ADMIN_PERM
+  }
+
+  enum Role {
+    USER
+    ADMIN
+    PRODUCT_MANAGEMENT
+    DEVELOPMENT_TEAM
+    QA_TEAM
+  }
+
+  User "1" --> "*" Post : creates
+  User "1" --> "*" Friendship : user1
+  User "1" --> "*" Friendship : user2
+  NewsFeed "1" o-- "*" Post : aggregates
+}
+
+package "Infrastructure — Ports" {
+  interface FriendshipAPI {
+  }
+
+  interface PostDatabase {
+  + findPostsByAuthorIds(friendIds, sort="creationTime DESC") : List<Post>
+  + findPostsByAuthorIds(friendIds, since=lastFetchTime) : List<Post>
+  }
+}
+
+package "Controllers" {
+  interface NewsFeedPage {
+  }
+
+  NewsFeedPage ..> FriendshipAPI : uses
+  NewsFeedPage ..> PostDatabase : uses
+}
+
+@enduml

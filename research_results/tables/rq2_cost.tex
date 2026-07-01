@@ -1,0 +1,23 @@
+\begin{table*}[t]
+\centering
+\caption{RQ2: Mean Token Consumption and Latency per Task per SDLC Phase (cross-project mean $\pm$ std, $n = 4 \times 3 = 12$ runs, top-8 phases by token budget). Per-task normalization removes the task-count confound across projects. Phase totals exceed the wall-clock total because nested agent steps are attributed to both the sub-phase and the parent ORCHESTRATION phase.}
+\label{tab:rq2_cost}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Phase} & \textbf{Tokens/task (mean)} & \textbf{Tokens/task (std)} & \textbf{Latency/task (mean, s)} & \textbf{Latency/task (std, s)} \\
+\midrule
+\rowcolor[HTML]{FEF7E0} IMPLEMENTATION & 686.0K & 384.0K & 306.0 & 295.8 \\
+ORCHESTRATION & 440.0K & 200.1K & 115.8 & 79.5 \\
+TESTING & 211.8K & 122.2K & 37.1 & 28.2 \\
+FRONTEND & 207.1K & 61.5K & 92.4 & 42.0 \\
+FORMAL\_SPEC & 41.7K & 2.3K & 121.8 & 43.8 \\
+VERIFICATION & 39.4K & 25.0K & 175.7 & 147.0 \\
+ARCHITECTURE & 31.3K & 25.1K & 28.7 & 24.9 \\
+DEVOPS & 22.8K & 7.2K & 40.0 & 15.3 \\
+\midrule
+\multicolumn{5}{l}{\footnotesize \textsc{Implementation} consumes $41\%$ of cross-phase token budget (top-8 phases shown).} \\
+\bottomrule
+\end{tabular}
+\footnotesize Tokens include both agent-reasoning tokens (from \texttt{[Step N: Input/Output tokens: ...]} log lines) and tool-LLM tokens (from \texttt{OpenRouter/Ollama token usage} lines).
+\end{table*}

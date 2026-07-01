@@ -1,0 +1,94 @@
+{
+  "id": "REQ-BOOKMARK-01",
+  "title": "User should be able to bookmark posts and view them later",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Low",
+  "version": "1.0",
+  "description": "The system shall allow a user to mark a post as bookmarked.",
+  "rationale": "This requirement enables users to save posts they find interesting for later access, enhancing the overall usability and satisfaction of the platform.",
+  "business_value": "Improved user experience by providing easy access to previously saved content, leading to increased engagement and time spent on the platform.",
+  "source": {
+    "type": "User Story",
+    "id": 171,
+    "description": "As a user I need to bookmark posts and view them later in a saved list So that I can easily access and revisit posts I find interesting"
+  },
+  "stakeholders": [
+    "End-users",
+    "Product Manager",
+    "Design Team"
+  ],
+  "acceptance_criteria": [
+    "Given I am logged in as a user",
+    "When I bookmark a post",
+    "Then the post should be added to my saved list",
+    "Given I have bookmarked posts",
+    "When I navigate to my saved list",
+    "Then I should see all my bookmarked posts"
+  ],
+  "preconditions": [
+    "User is logged in"
+  ],
+  "postconditions": [
+    "Post is added to the user's saved list"
+  ],
+  "functional_constraints": [],
+  "security_requirements": [],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "User logs out while trying to bookmark a post",
+    "Post is deleted after being bookmarked by the user"
+  ],
+  "dependencies": [],
+  "interfaces": [
+    {
+      "type": "UI",
+      "name": "User Interface",
+      "description": "The requirement interacts with the user interface to allow users to mark posts as bookmarked and access their saved list."
+    },
+    {
+      "type": "Database",
+      "name": "User Database",
+      "description": "The requirement interacts with a database to store and retrieve the list of bookmarked posts for each user."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-BOOKMARK-01",
+      "description": "User bookmarks a post while logged in.",
+      "expected_result": "Post is added to the user's saved list."
+    },
+    {
+      "id": "TC-BOOKMARK-02",
+      "description": "User attempts to bookmark a post while not logged in.",
+      "expected_result": "System displays an error message and prevents the post from being bookmarked."
+    },
+    {
+      "id": "TC-BOOKMARK-03",
+      "description": "User navigates to their saved list after bookmarking several posts.",
+      "expected_result": "All bookmarked posts are displayed in the saved list."
+    }
+  ],
+  "verification_method": "System Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T12:11:10.211171",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-CONTENT-PUB-01",
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "Bookmark",
+      "User",
+      "Post"
+    ],
+    "test_artifacts": []
+  }
+}

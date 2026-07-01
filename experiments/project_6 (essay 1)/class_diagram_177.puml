@@ -1,0 +1,115 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam borderThickness 1
+skinparam arrowThickness 1.5
+skinparam noteBorderColor #CCCCCC
+skinparam noteBackgroundColor #FFFFF0
+
+package "Domain Model" {
+    class UserProfile {
+        - verifiedBadgeStatus: boolean
+  + setVerifiedBadgeStatus(true)
+  + setVerifiedBadgeStatus(false)
+    }
+    note top of UserProfile
+        badge changes are idempotent
+        only one badge status per user
+    end note
+
+    class Admin {
+        - permissions: Set<Permission>
+  + checkPermission(required: Permission.Admin) : boolean
+    }
+    note top of Admin
+        must have Admin permission
+        to grant/revoke badge
+    end note
+
+    class AuditEntry {
+        - operationId: UUID
+        - adminId: UUID
+        - targetUserId: UUID
+        - action: AuditAction
+        - timestamp: ZonedDateTime
+    }
+    note top of AuditEntry
+        every grant/revoke operation
+        produces exactly one audit entry
+    end note
+
+    enum Permission {
+        READ
+        WRITE
+        EXECUTE
+        ADMIN
+    }
+    note top of Permission
+        Admin subsumes all
+        other permissions
+    end note
+
+    enum AuditAction {
+        GRANT
+        REVOKE
+    }
+}
+
+package "Application" {
+    class BadgeManagementService {
+    }
+    class BadgeOperationRequest <<dto>> {
+        - adminId: UUID
+        - targetUserId: UUID
+    }
+}
+
+package "Controllers" {
+    interface AdminUserManagementInterface {
+  + grantBadge(targetUserId: String)
+  + revokeBadge(targetUserId: String)
+  + grantBadge(userX)
+    }
+    note top of AdminUserManagementInterface
+        Authentication required
+    end note
+
+    class AdminUserManagementController {
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface UserDatabase {
+  + findUserProfileById(id: String) : UserProfile
+  + findUserProfileById(userX) : UserProfile
+    }
+    interface AuditLoggingAPI {
+    }
+}
+
+package "Exceptions" {
+    class UserNotFoundException <<exception>> {
+        - userId: UUID
+    }
+    class UnauthorizedException <<exception>> {
+        - message: String
+    }
+}
+
+' Relationships
+AdminUserManagementController ..|> AdminUserManagementInterface : implements
+AdminUserManagementController --> BadgeManagementService : uses
+
+BadgeManagementService --> UserDatabase : stores/retrieves
+BadgeManagementService --> AuditLoggingAPI : records
+BadgeManagementService .> UserNotFoundException : throws
+BadgeManagementService .> UnauthorizedException : throws
+
+Admin "1" -- "*" AuditEntry : performs
+UserProfile "1" -- "*" AuditEntry : target
+
+BadgeManagementService --> Admin : validates
+BadgeManagementService --> UserProfile : modifies
+@enduml

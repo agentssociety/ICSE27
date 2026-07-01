@@ -1,0 +1,49 @@
+<!-- templates/base_instructor.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Instructor Dashboard{% endblock %} | Exam Platform</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/instructor_theme.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="instructor-theme">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="{% url 'instructor_dashboard' %}">Exam Platform</a>
+        </div>
+        <div class="navbar-menu">
+            <a href="{% url 'instructor_dashboard' %}" class="nav-link">Dashboard</a>
+            <a href="{% url 'exam_list_create' %}" class="nav-link">Exams</a>
+            <a href="{% url 'cohort_list_create' %}" class="nav-link">Cohorts</a>
+            <a href="{% url 'competency_list_create' %}" class="nav-link">Competencies</a>
+            <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+            <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 Competency-Based Exam Platform</p>
+    </footer>
+
+    <script src="{% static 'js/exam_timer.js' %}"></script>
+    <script src="{% static 'js/nugget_animation.js' %}"></script>
+    <script src="{% static 'js/streak_tracker.js' %}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,173 @@
+@startuml
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam class {
+    BackgroundColor #F8F8F8
+    BorderColor #333333
+    FontColor #000000
+}
+skinparam interface {
+    BackgroundColor #E8F0FE
+    BorderColor #1A73E8
+    FontColor #1A73E8
+}
+skinparam enum {
+    BackgroundColor #FFF3CD
+    BorderColor #856404
+    FontColor #856404
+}
+skinparam exception {
+    BackgroundColor #F8D7DA
+    BorderColor #842029
+    FontColor #842029
+}
+skinparam dto {
+    BackgroundColor #D1E7DD
+    BorderColor #0F5132
+    FontColor #0F5132
+}
+
+package "Domain Model" {
+    interface Resource {
+        + owner : User
+        + accessible : List<User>
+        .. invariants ..
+        ' Owner always in accessible set
+    }
+    note left of Resource : Owner is always in accessible set
+
+    class Comment implements Resource {
+        + owner : User
+        + content : String
+        + post : Post
+        .. invariants ..
+        - Must be flat, no nesting
+    }
+    note right of Comment : Comments must be flat, no nesting
+
+    class Post implements Resource {
+        + id : String
+        + content : String
+        + comments : List<Comment>
+        .. invariants ..
+        - Can have zero or more comments
+        - Comments are flat
+    }
+
+    class User {
+        + id : String
+        + role : Role
+        + permissions : List<Permission>
+  + getPermission(user: User) : Permission
+  + isOwner(user: User, comment: Comment) : Boolean
+    }
+
+    enum Role {
+        Content_Authors
+        Community_Managers
+        End_Users
+  + getRole() : Role
+    }
+
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+        .. invariants ..
+        - Read < Write < Admin
+  + getRequiredPermission("WRITE") : Permission
+  + getRequiredPermission("ADMIN") : Permission
+    }
+    note bottom of Permission : Partial order: Read < Write < Admin
+
+    enum State {
+        Pre1
+        Pre2
+        Post1
+        Post2
+        Post3
+        .. invariants ..
+        - Pre1: user logged in, post detail page accessible
+        - Pre2: post detail page with comments section
+        - Post1: new comment appears on post
+        - Post2: comment content updated in real-time
+        - Post3: comment removed without trace
+  + transitionState("Pre1", "Post1") : State
+  + transitionState("Post1", "Post2") : State
+  + transitionState("Post1", "Post3") : State
+    }
+
+    ' Ownership: User owns Comment
+    User "1" -- "*" Comment : owns
+
+    ' Composition: Post contains Comment
+    Post "1" *-- "*" Comment : contains
+
+    ' Access: User may access Resource (via accessible set)
+    User "0..*" -- "0..*" Resource : accesses
+}
+
+package "Application" {
+    class CommentService {
+        ' No methods yet – will be added from sequence diagram
+    }
+    note right of CommentService : Orchestrates comment operations
+}
+
+package "Infrastructure — Ports" {
+    interface CommentManagementAPI {
+        ' No methods yet – will be added from sequence diagram
+    }
+    note top of CommentManagementAPI : All channels must be authenticated & encrypted
+}
+
+package "Controllers" {
+    class PostDetailPageUI {
+        ' Frontend controller for post detail & commenting
+    }
+}
+
+package "DTOs" {
+    class CommentDto <<dto>> {
+        + ownerId : String
+        + content : String
+        + postId : String
+    }
+    class PostDto <<dto>> {
+        + id : String
+        + content : String
+        + comments : List<CommentDto>
+    }
+    class UserDto <<dto>> {
+        + id : String
+        + role : Role
+    }
+}
+
+package "Exceptions" {
+    class AuthenticationException <<exception>> {
+    }
+    class AuthorizationException <<exception>> {
+    }
+    class CommentNotFoundException <<exception>> {
+    }
+    class CommentTooLongException <<exception>> {
+    }
+    class ConcurrencyLimitException <<exception>> {
+    }
+    class NetworkTimeoutException <<exception>> {
+    }
+    note bottom of CommentTooLongException : Max content length: 10,000 characters
+}
+
+' Relationships
+CommentManagementAPI <.. CommentService : uses
+CommentService --> Comment : manages
+CommentService --> Post : manages
+CommentService --> User : authorizes
+PostDetailPageUI --> CommentManagementAPI : calls
+
+@enduml

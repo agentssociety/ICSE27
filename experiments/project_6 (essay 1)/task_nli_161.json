@@ -1,0 +1,51 @@
+{
+  "task_id": 161,
+  "confidence": 0.9117,
+  "evidence": [
+    {
+      "claim": "Comments are flat (no nesting).",
+      "fact": "Comments are flat and non-nested.",
+      "score": 0.999,
+      "user_story_span": "Comments are flat (no nesting).",
+      "fact_span": "Comments are flat and non-nested."
+    },
+    {
+      "claim": "The system allows adding comments on posts.",
+      "fact": "Users can build personal profiles, post updates, and engage with friends and groups through likes and comments.",
+      "score": 0.9916,
+      "user_story_span": "add comments on posts",
+      "fact_span": ""
+    },
+    {
+      "claim": "The user has a comment on a post.",
+      "fact": "Users can comment on posts.",
+      "score": 0.9888,
+      "user_story_span": "I have a comment on a post",
+      "fact_span": "Users can comment on posts."
+    },
+    {
+      "claim": "When the interaction occurs, I submit the comment.",
+      "fact": "Notifications include comments.",
+      "score": 0.9623,
+      "user_story_span": "write a comment and submit",
+      "fact_span": ""
+    },
+    {
+      "claim": "When the interaction occurs, I write a comment.",
+      "fact": "Notifications include comments.",
+      "score": 0.8867,
+      "user_story_span": "write a comment",
+      "fact_span": ""
+    },
+    {
+      "claim": "The system allows managing my own comments (edit/delete).",
+      "fact": "Users can delete their own posts.",
+      "score": 0.6418,
+      "user_story_span": "manage my own comments (edit/delete)",
+      "fact_span": ""
+    }
+  ],
+  "total_claims": 12,
+  "supported_claims": 6,
+  "threshold": 0.6
+}

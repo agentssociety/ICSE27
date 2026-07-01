@@ -1,0 +1,141 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classFontSize 12
+skinparam classFontName Arial
+skinparam defaultFontName Arial
+
+package "Domain Model" {
+    class Actor {
+        - id: UUID
+        - name: String
+        - roles: List<Role>
+  + showLoadMoreButtonOrPageNav()
+  + showError("Access denied")
+  + displayFirstPage()
+  + showPaginationControls()
+  + displayNextPage()
+  + showError("No more pages available")
+  + showError("Invalid page requested")
+    }
+
+    enum Permission {
+        Read
+        Write
+        Execute
+        Admin
+    }
+
+    class Resource {
+        - id: UUID
+        - name: String
+        - owner: Actor
+        - accessible: Set<Actor>
+  + getAccessibleResources(Actor)
+    }
+
+    class Page {
+        - owner: Actor
+        - accessible: Set<Actor>
+  + createPage(resourceList, pageNumber=1)
+  + createPage(pageData, pageNumber=1)
+  + createPage(pageData, pageNumber=2)
+  + createPage(pageData, pageNumber=3)
+    }
+
+    class InvalidPage {
+        - owner: Actor
+        - accessible: Set<Actor>
+  + createInvalidPage(owner, accessible)
+    }
+
+    class State {
+        - name: String
+        - description: String
+  + transitionTo(PostDone)
+  + transitionTo(Pre1)
+    }
+
+    class Interface {
+        - name: String
+        - type: String
+        - description: String
+        - encrypted: Boolean
+        - authenticated: Boolean
+    }
+
+    class Role {
+        - name: String
+        - permissions: List<Permission>
+    }
+}
+
+package "Application" {
+    class REQ_PAGIN_01 {
+        - initiator: Actor
+        - target: Set<Resource>
+        - channel: Set<Interface>
+        - grant: Permission
+        - pre: State
+        - post: State
+  + validateInitiator(Actor, Read)
+    }
+}
+
+package "Infrastructure — Ports" {
+    interface Feed_and_Search_Result_Pages <<interface>> {
+  + interactWithFeedOrSearch()
+  + viewFeedOrSearchResults()
+  + onFeedOrSearchPage()
+  + navigateToNextPage()
+  + attemptLoadMorePages()
+  + attemptToAccessInvalidPage()
+    }
+
+    interface Data_Fetching_API <<interface>> {
+    }
+}
+
+package "Exceptions" {
+    class InvalidPageException <<exception>> {
+        - message: String
+        - invalidPage: InvalidPage
+    }
+}
+
+package "DTOs" {
+    class PaginationRequest <<dto>> {
+        - pageNumber: Integer
+        - itemCount: Integer
+        - initiatorId: UUID
+    }
+
+    class PaginationResponse <<dto>> {
+        - page: Page
+        - totalPages: Integer
+        - hasMore: Boolean
+    }
+}
+
+' Relationships
+Resource --> Actor : owner
+Resource --> Actor : accessible
+Page --> Actor : owner
+Page --> Actor : accessible
+InvalidPage --> Actor : owner
+InvalidPage --> Actor : accessible
+
+REQ_PAGIN_01 --> Actor : initiator
+REQ_PAGIN_01 --> Resource : target
+REQ_PAGIN_01 --> Interface : channel
+REQ_PAGIN_01 --> State : pre
+REQ_PAGIN_01 --> State : post
+REQ_PAGIN_01 --> Permission : grant
+
+Actor --> Role : has
+Role --> Permission : grants
+
+Page <|-- InvalidPage : extends
+
+REQ_PAGIN_01 ..> InvalidPageException : throws
+
+@enduml

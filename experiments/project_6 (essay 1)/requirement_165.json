@@ -1,0 +1,93 @@
+{
+  "id": "REQ-GROUP-01",
+  "title": "Create Group and Set Visibility",
+  "type": "Functional",
+  "status": "Proposed",
+  "priority": "High",
+  "risk_level": "Medium",
+  "version": "1.0",
+  "description": "The system shall allow a user to create a group and select its visibility as public or private.",
+  "rationale": "To enable users to control who can view or join their groups, ensuring that only authorized individuals have access.",
+  "business_value": "Improves security and privacy by allowing users to restrict group visibility, reducing the risk of unauthorized access.",
+  "source": {
+    "type": "User Story",
+    "id": 165,
+    "description": "As a user I need to create a group and set its visibility as public or private So that I can control who can view or join the group"
+  },
+  "stakeholders": [
+    "Product Manager",
+    "Security Team"
+  ],
+  "acceptance_criteria": [
+    "The group is created with the specified visibility (public or private)."
+  ],
+  "preconditions": [
+    "A user is on the group creation page."
+  ],
+  "postconditions": [
+    "The system creates a new group with the selected visibility.",
+    "Public groups are visible and joinable by anyone.",
+    "Private groups require approval or invitation."
+  ],
+  "functional_constraints": [],
+  "security_requirements": [
+    "Access control is enforced based on the group visibility setting (public/private)."
+  ],
+  "non_functional_requirements": {
+    "performance": "",
+    "availability": "",
+    "scalability": "",
+    "usability": ""
+  },
+  "edge_cases": [
+    "What happens if a user tries to create a group without selecting a visibility?",
+    "How does the system handle duplicate group names when creating public and private groups?"
+  ],
+  "dependencies": [
+    "Group management module must be implemented.",
+    "User authentication and authorization system must be operational."
+  ],
+  "interfaces": [
+    {
+      "type": "API",
+      "name": "GroupCreationAPI",
+      "description": "Interface for creating a new group with specified visibility."
+    },
+    {
+      "type": "Database",
+      "name": "GroupDB",
+      "description": "Database where group details are stored, including visibility settings."
+    }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-GROUP-01",
+      "description": "User attempts to create a public group.",
+      "expected_result": "A new group is created with the 'public' visibility setting, visible and joinable by anyone."
+    },
+    {
+      "id": "TC-GROUP-02",
+      "description": "User attempts to create a private group.",
+      "expected_result": "A new group is created with the 'private' visibility setting, requiring approval or invitation to join."
+    },
+    {
+      "id": "TC-GROUP-03",
+      "description": "User tries to create a group without selecting a visibility.",
+      "expected_result": "The system displays an error message and prevents group creation until a valid visibility is selected."
+    }
+  ],
+  "verification_method": "Integration Test",
+  "created_by": "Semi Formal Requirements Agent",
+  "creation_date": "2026-06-30T11:54:30.626973",
+  "last_updated": "2026-06-30T13:03:46.010756",
+  "traceability": {
+    "related_requirements": [
+      "REQ-REG-01"
+    ],
+    "design_components": [
+      "Group",
+      "User"
+    ],
+    "test_artifacts": []
+  }
+}

@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\centering
+\caption{Benchmark dataset: 4 software systems used in the evaluation. Each project was executed with 3 independent seeds. Tasks = user stories decomposed from the specification; Alloy = number of formal Alloy specifications generated; BE LOC / FE LOC = backend Python / frontend TypeScript lines of code (measured from seed~1, varies $\leq$5\% across seeds); Tests = automated test files generated.}
+\label{tab:dataset}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{} l l l X r r r r r @{}}
+\toprule
+\rowcolor[HTML]{2D3748}\textcolor{white}{\textbf{ID}} &\textcolor{white}{\textbf{System}} &\textcolor{white}{\textbf{Domain}} &\textcolor{white}{\textbf{Description}} &\textcolor{white}{\textbf{Tasks}} &\textcolor{white}{\textbf{Alloy}} &\textcolor{white}{\textbf{BE LOC}} &\textcolor{white}{\textbf{FE LOC}} &\textcolor{white}{\textbf{Tests}} \\
+\midrule
+  P1 & Hospital Triage Queue & Healthcare & \multicolumn{1}{p{4.5cm}}{\small Emergency-room intake that prioritises patients by clinical urgency.} & 6 & 6 & 2,228 & 590 & 13 \\
+  P2 & Blood Bank Inventory & Healthcare & \multicolumn{1}{p{4.5cm}}{\small Blood-unit stock manager with compatibility rules and expiry tracking.} & 7 & 7 & 2,842 & 798 & 18 \\
+  P3 & Airport Runway Scheduler & Transport & \multicolumn{1}{p{4.5cm}}{\small Slot allocator for two runways with emergency-priority preemption.} & 7 & 7 & 3,295 & 1,151 & 17 \\
+  P4 & ATM Withdrawal Safety & Finance & \multicolumn{1}{p{4.5cm}}{\small Transactional ATM backend with fraud detection and full rollback.} & 8 & 8 & 3,908 & 1,290 & 30 \\
+  P5 & Competency Assessment Platform & Education & \multicolumn{1}{p{4.5cm}}{\small Gamified exam platform where instructors build competency-tagged assessments.} & 12 & 12 & 9,953 & 3,142 & 173 \\
+  P6 & Community Social Network & Social & \multicolumn{1}{p{4.5cm}}{\small Social media platform with profiles, posts, communities, and moderation.} & 25 & 25 & 7,618 & 1,866 & 81 \\
+\bottomrule
+\end{tabularx}
+\footnotesize Projects span three safety-relevant domains (healthcare, transport, finance) and range from 6 to 8 user stories, providing a diverse complexity profile.
+\end{table*}

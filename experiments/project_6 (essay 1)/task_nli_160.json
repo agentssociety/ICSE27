@@ -1,0 +1,16 @@
+{
+  "task_id": 160,
+  "confidence": 0.9978,
+  "evidence": [
+    {
+      "claim": "Users can toggle between like and unlike.",
+      "fact": "Preferences are on/off toggles.",
+      "score": 0.9978,
+      "user_story_span": "Users can toggle between like and unlike",
+      "fact_span": "Preferences are on/off toggles."
+    }
+  ],
+  "total_claims": 8,
+  "supported_claims": 1,
+  "threshold": 0.6
+}
