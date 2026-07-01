@@ -1,0 +1,31 @@
+6. Community Social Networking Platform
+
+A social media platform where users build profiles, share posts, and engage with friends and communities, while admins keep the platform organized through basic moderation tools.
+
+Core features:
+
+- Let users register via email/password with email verification before login is allowed
+- Allow users to build a profile with a profile picture, cover photo, bio, and location
+- Let users create text posts with optional single or multi-image upload, and edit/delete their own posts
+- Let users like a post (toggle like/unlike) and see a simple like count
+- Let users comment on posts (flat, non-nested) and edit/delete their own comments
+- Show a basic news feed listing posts from friends/followed users sorted by most recent first (simple chronological query)
+- Let users send and accept/reject friend requests, with a friends list page
+- Let users follow/unfollow other users without requiring mutual approval, with a followers/following count
+- Let users create Groups with a name, description, and public/private flag, and join/leave public groups directly
+- Let group creators approve or reject join requests for private groups
+- Show a dedicated group feed listing only posts made within that group
+- Provide a basic direct messaging feature: 1:1 text conversations stored and retrieved like a simple chat log (no real-time typing indicators or read receipts)
+- Build a notifications list (likes, comments, friend requests) generated on action and marked read/unread on click
+- Implement basic keyword search across users, posts, and groups using simple text matching (LIKE/contains query, no full-text engine required)
+- Let users bookmark/save posts into a single default 'Saved Posts' list (no custom collections)
+- Provide a 'Report Post' button that creates a report record with a reason dropdown, viewable in an admin list
+- Build a simple admin panel where admins can view reported content and delete a post or suspend a user account (boolean active/suspended flag)
+- Let users set basic privacy on their profile (public or private) controlling whether non-friends can view their posts
+- Let users block another user, which hides each other's posts and prevents messaging
+- Let users update notification preferences with on/off toggles per category (likes, comments, friend requests)
+- Let admins manually grant or revoke a 'verified' badge on a user account (boolean flag toggle)
+- Let users view their own post history and edit account settings (email, password, username)
+- Implement basic pagination/infinite scroll on feeds, comments, and search results (limit/offset queries)
+- Let users delete their own account, which soft-deletes their data (sets a deleted flag rather than hard deletion)
+- Enforce two roles only — Admin and User — with simple route guards (no granular permission matrix), and log admin actions (ban/delete/verify) to a basic activity log table
